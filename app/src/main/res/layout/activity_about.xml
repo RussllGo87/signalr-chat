@@ -38,7 +38,6 @@
         android:text="@string/app_name"
         android:layout_marginBottom="@dimen/activity_vertical_margin"/>
 
-
     <TextView android:id="@+id/tv_about_item_version"
               style="@style/SettingItemStyle"
               android:background="@drawable/selector_settings_item"
@@ -58,6 +57,12 @@
               android:drawableRight="@drawable/setting_view_arrow"
               android:drawableEnd="@drawable/setting_view_arrow"/>
 
+    <TextView android:id="@+id/tv_about_item_share_apk"
+              style="@style/SettingItemStyle"
+              android:background="@drawable/selector_settings_item"
+              android:text="@string/tv_about_item_share_apk"
+              android:drawableRight="@drawable/setting_view_arrow"
+              android:drawableEnd="@drawable/setting_view_arrow"/>
 
 
 </LinearLayout>

@@ -11,6 +11,7 @@
     <string name="hello_world">引导页</string>
 
     <!-- 登录页 -->
+    <string name="title_activity_login">登录</string>
     <string name="hint_et_login_no">手机号码/QQ/微信</string>
     <string name="hint_et_login_pwd">密码</string>
     <string name="cb_show_pwd">显示密码</string>
@@ -41,6 +42,7 @@
 
 
     <!-- Home页 -->
+    <string name="title_activity_home">个人中心</string>
     <string name="tv_activity_title_message">消息</string>
     <string name="tv_activity_title_roster">好友</string>
     <string name="tv_activity_title_account">我</string>
@@ -52,8 +54,12 @@
     <string name="menu_action_resource">资源上传</string>
     <string name="menu_action_maintain">广告维护</string>
 
+    <!-- BuddyFragment -->
+    <string name="tv_fragment_buddy">好友</string>
+
     <!-- AccountFragment -->
     <string name="tv_account_item_settings">@string/title_activity_settings</string>
+    <string name="tv_fragment_account">我</string>
 
     <!-- 聊天页 -->
     <string name="title_activity_chat">与%s对话</string>
@@ -76,7 +82,11 @@
     <string name="tv_about_item_version">检查更新</string>
     <string name="tv_about_item_guide">使用帮助</string>
     <string name="tv_about_item_suggestion">意见反馈</string>
+    <string name="tv_about_item_share_apk">分享安装包</string>
 
+    <!-- 意见反馈 -->
+    <string name="title_activity_feedback">@string/tv_about_item_suggestion</string>
+    <string name="btn_feedback_submit">提交</string>
 
 
 </resources>

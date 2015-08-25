@@ -59,7 +59,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="net.pingfang.signalr.chat.activity.SettingsActivity" />
         </activity>
-
+        <activity
+            android:name=".activity.FeedbackActivity"
+            android:label="@string/title_activity_feedback"
+            android:parentActivityName=".activity.AppAboutActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="net.pingfang.signalr.chat.activity.AppAboutActivity" />
+        </activity>
     </application>
 
 </manifest>
