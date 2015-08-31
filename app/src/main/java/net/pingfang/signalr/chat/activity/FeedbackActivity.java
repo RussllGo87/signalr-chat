@@ -1,29 +1,40 @@
 package net.pingfang.signalr.chat.activity;
 
 import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
+import com.squareup.okhttp.Request;
+
 import net.pingfang.signalr.chat.R;
+import net.pingfang.signalr.chat.net.OkHttpCommonUtil;
+import net.pingfang.signalr.chat.util.GlobalApplication;
+
+import java.util.HashMap;
 
 public class FeedbackActivity extends AppCompatActivity implements View.OnClickListener{
 
     TextView btn_activity_back;
     Button btn_feedback_submit;
 
+    EditText et_keyword;
+    TextView tv_result;
+
+    OkHttpCommonUtil okHttpCommonUtil;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feedback);
+
+        okHttpCommonUtil = OkHttpCommonUtil.newInstance(getApplicationContext());
 
         initView();
     }
@@ -34,6 +45,9 @@ public class FeedbackActivity extends AppCompatActivity implements View.OnClickL
 
         btn_feedback_submit = (Button) findViewById(R.id.btn_feedback_submit);
         btn_feedback_submit.setOnClickListener(this);
+
+        et_keyword = (EditText) findViewById(R.id.et_keyword);
+        tv_result = (TextView) findViewById(R.id.tv_result);
     }
 
     @Override
@@ -50,7 +64,22 @@ public class FeedbackActivity extends AppCompatActivity implements View.OnClickL
     }
 
     private void submitFeedback() {
-
+        String keyword =  et_keyword.getText().toString().trim();
+        if(TextUtils.isEmpty(keyword)) {
+            HashMap<String,String> map = new HashMap<>();
+            map.put("key",GlobalApplication.T_MAP_KEY);
+            Request request =  OkHttpCommonUtil.buildGetFormReq(GlobalApplication.T_MAP_SCHEME, GlobalApplication.T_MAP_HOST,
+                   GlobalApplication.T_MAP_LIST_PATH, map);
+            okHttpCommonUtil.enqueue(request);
+        } else {
+            HashMap<String,String> map = new HashMap<>();
+            map.put("key",GlobalApplication.T_MAP_KEY);
+            map.put("keyword",keyword);
+            map.put("output","json");
+            Request request =  OkHttpCommonUtil.buildGetFormReq(GlobalApplication.T_MAP_SCHEME, GlobalApplication.T_MAP_HOST,
+                    GlobalApplication.T_MAP_SEARCH, map);
+            okHttpCommonUtil.enqueue(request);
+        }
     }
 
     public void navigateUp() {

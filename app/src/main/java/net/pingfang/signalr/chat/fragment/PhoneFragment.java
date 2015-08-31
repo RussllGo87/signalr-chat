@@ -1,10 +1,8 @@
 package net.pingfang.signalr.chat.fragment;
 
 import android.app.Activity;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,8 +11,7 @@ import android.widget.EditText;
 
 import net.pingfang.signalr.chat.R;
 import net.pingfang.signalr.chat.util.CommonTools;
-import net.pingfang.signalr.chat.util.OnFragmentInteractionListener;
-import net.pingfang.signalr.chat.util.OnRegisterInteractionListener;
+import net.pingfang.signalr.chat.listener.OnRegisterInteractionListener;
 
 /**
  * A simple {@link Fragment} subclass.

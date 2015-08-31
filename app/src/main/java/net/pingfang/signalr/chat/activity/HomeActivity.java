@@ -1,13 +1,11 @@
 package net.pingfang.signalr.chat.activity;
 
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.PopupMenu;
 import android.view.ContextThemeWrapper;
-import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,7 +18,7 @@ import net.pingfang.signalr.chat.adapter.CollectionPagerAdapter;
 import net.pingfang.signalr.chat.fragment.AccountFragment;
 import net.pingfang.signalr.chat.fragment.BuddyFragment;
 import net.pingfang.signalr.chat.fragment.MessageFragment;
-import net.pingfang.signalr.chat.util.OnFragmentInteractionListener;
+import net.pingfang.signalr.chat.listener.OnFragmentInteractionListener;
 
 public class HomeActivity extends AppCompatActivity implements View.OnClickListener,OnFragmentInteractionListener {
 

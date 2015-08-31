@@ -2,6 +2,9 @@ package net.pingfang.signalr.chat.util;
 
 import android.app.Application;
 
+import com.tencent.mm.sdk.openapi.IWXAPI;
+import com.tencent.mm.sdk.openapi.WXAPIFactory;
+
 import net.pingfang.signalr.chat.R;
 
 import java.util.Locale;
@@ -22,12 +25,25 @@ public class GlobalApplication extends Application {
     private Locale myLocale;
     SharedPreferencesHelper helper;
 
+    // 微信相关参数
+    public static final String APP_ID = "wx0fcc821b51b8c948";
+    // 腾讯地图webservice接口相关
+    public static final String T_MAP_KEY = "YFLBZ-6PQAR-7PPWA-WU7LO-BKKRK-YLF73";
+    public static final String T_MAP_SCHEME = "http";
+    public static final String T_MAP_HOST = "apis.map.qq.com";
+
+    public static final String T_MAP_LIST_PATH = "/ws/district/v1/list";
+    public static final String T_MAP_CHILDREN = "/ws/district/v1/getchildren";
+    public static final String T_MAP_SEARCH = "/ws/district/v1/search";
+
     @Override
     public void onCreate() {
         super.onCreate();
 
         helper = SharedPreferencesHelper.newInstance(getApplicationContext());
         loadLocale();
+
+
     }
 
     public void changeLang(String lang) {

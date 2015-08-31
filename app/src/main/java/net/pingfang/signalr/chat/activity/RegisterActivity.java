@@ -12,7 +12,7 @@ import android.widget.TextView;
 import net.pingfang.signalr.chat.R;
 import net.pingfang.signalr.chat.fragment.InfoRegFragment;
 import net.pingfang.signalr.chat.fragment.PhoneFragment;
-import net.pingfang.signalr.chat.util.OnRegisterInteractionListener;
+import net.pingfang.signalr.chat.listener.OnRegisterInteractionListener;
 
 public class RegisterActivity extends AppCompatActivity implements View.OnClickListener,OnRegisterInteractionListener{
 

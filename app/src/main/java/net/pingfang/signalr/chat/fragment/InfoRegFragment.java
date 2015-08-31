@@ -13,7 +13,7 @@ import android.widget.EditText;
 
 import net.pingfang.signalr.chat.R;
 import net.pingfang.signalr.chat.util.CommonTools;
-import net.pingfang.signalr.chat.util.OnRegisterInteractionListener;
+import net.pingfang.signalr.chat.listener.OnRegisterInteractionListener;
 
 /**
  * A simple {@link Fragment} subclass.

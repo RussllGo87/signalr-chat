@@ -14,7 +14,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import net.pingfang.signalr.chat.R;
-import net.pingfang.signalr.chat.util.OnFragmentInteractionListener;
+import net.pingfang.signalr.chat.listener.OnFragmentInteractionListener;
 
 import java.util.ArrayList;
 import java.util.List;
