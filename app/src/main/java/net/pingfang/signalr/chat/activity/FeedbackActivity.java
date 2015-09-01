@@ -66,18 +66,18 @@ public class FeedbackActivity extends AppCompatActivity implements View.OnClickL
     private void submitFeedback() {
         String keyword =  et_keyword.getText().toString().trim();
         if(TextUtils.isEmpty(keyword)) {
-            HashMap<String,String> map = new HashMap<>();
-            map.put("key",GlobalApplication.T_MAP_KEY);
-            Request request =  OkHttpCommonUtil.buildGetFormReq(GlobalApplication.T_MAP_SCHEME, GlobalApplication.T_MAP_HOST,
-                   GlobalApplication.T_MAP_LIST_PATH, map);
+            Request request =  OkHttpCommonUtil.buildGetReq("http://apis.map.qq.com/ws/district/v1/list",
+                    new OkHttpCommonUtil.Param[]{new OkHttpCommonUtil.Param("key",GlobalApplication.T_MAP_KEY)});
             okHttpCommonUtil.enqueue(request);
         } else {
             HashMap<String,String> map = new HashMap<>();
             map.put("key",GlobalApplication.T_MAP_KEY);
             map.put("keyword",keyword);
             map.put("output","json");
-            Request request =  OkHttpCommonUtil.buildGetFormReq(GlobalApplication.T_MAP_SCHEME, GlobalApplication.T_MAP_HOST,
-                    GlobalApplication.T_MAP_SEARCH, map);
+            Request request =  OkHttpCommonUtil.buildGetReq("http://apis.map.qq.com/ws/district/v1/search",
+                    new OkHttpCommonUtil.Param[]{new OkHttpCommonUtil.Param("key",GlobalApplication.T_MAP_KEY),
+                    new OkHttpCommonUtil.Param("keyword",keyword),
+                    new OkHttpCommonUtil.Param("output","json")});
             okHttpCommonUtil.enqueue(request);
         }
     }
