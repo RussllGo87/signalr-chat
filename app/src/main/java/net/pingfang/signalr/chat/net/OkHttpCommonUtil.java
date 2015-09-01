@@ -138,6 +138,42 @@ public class OkHttpCommonUtil {
     }
 
     /**
+     * 同步的Post请求
+     * @param url 请求url
+     * @param params post的参数
+     * @return 响应
+     */
+    private Response postSyncResp(String url, Param... params) throws IOException
+    {
+        Request request = buildPostReq(url, params);
+        Response response = mOkHttpClient.newCall(request).execute();
+        return response;
+    }
+
+    /**
+     * 同步的Post请求
+     * @param url 请求url
+     * @param params post的参数
+     * @return 字符串
+     */
+    private String postSyncString(String url, Param... params) throws IOException {
+        Response response = postSyncResp(url, params);
+        return response.body().string();
+    }
+
+    /**
+     * 异步的post请求
+     * @param url 请求url
+     * @param params post的参数
+     * @param callback 响应回调接口
+     */
+    private void postAsync(String url, Param[] params, Callback callback) {
+        Request request = buildPostReq(url, params);
+        mOkHttpClient.newCall(request).enqueue(callback);
+    }
+
+
+    /**
      * 开启异步线程访问网络(不关注返回的请求)
      * @param request
      */
