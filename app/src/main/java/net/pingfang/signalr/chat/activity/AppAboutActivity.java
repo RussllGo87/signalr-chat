@@ -10,10 +10,12 @@ import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import net.pingfang.signalr.chat.R;
+import net.pingfang.signalr.chat.net.OkHttpCommonUtil;
 
 import java.io.File;
 
@@ -21,11 +23,11 @@ import java.io.File;
 public class AppAboutActivity extends AppCompatActivity implements View.OnClickListener{
 
     TextView btn_activity_back;
+    ImageView iv_app_logo;
     TextView tv_app_name_version_code;
     TextView tv_about_item_suggestion;
 
     TextView tv_about_item_share_apk;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +55,11 @@ public class AppAboutActivity extends AppCompatActivity implements View.OnClickL
 
         tv_about_item_share_apk = (TextView) findViewById(R.id.tv_about_item_share_apk);
         tv_about_item_share_apk.setOnClickListener(this);
+
+        iv_app_logo = (ImageView) findViewById(R.id.iv_app_logo);
+        OkHttpCommonUtil instance = OkHttpCommonUtil.newInstance(getApplicationContext());
+        instance.display(iv_app_logo,"http://www.baidu.com/img/bd_logo1.png",R.mipmap.ic_launcher);
+
     }
 
     @Override

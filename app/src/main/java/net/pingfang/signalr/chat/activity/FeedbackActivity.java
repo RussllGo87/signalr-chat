@@ -1,23 +1,19 @@
 package net.pingfang.signalr.chat.activity;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.squareup.okhttp.Request;
-
 import net.pingfang.signalr.chat.R;
 import net.pingfang.signalr.chat.net.OkHttpCommonUtil;
 import net.pingfang.signalr.chat.util.GlobalApplication;
-
-import java.util.HashMap;
 
 public class FeedbackActivity extends AppCompatActivity implements View.OnClickListener{
 
@@ -66,19 +62,17 @@ public class FeedbackActivity extends AppCompatActivity implements View.OnClickL
     private void submitFeedback() {
         String keyword =  et_keyword.getText().toString().trim();
         if(TextUtils.isEmpty(keyword)) {
-            Request request =  OkHttpCommonUtil.buildGetReq("http://apis.map.qq.com/ws/district/v1/list",
-                    new OkHttpCommonUtil.Param[]{new OkHttpCommonUtil.Param("key",GlobalApplication.T_MAP_KEY)});
-            okHttpCommonUtil.enqueue(request);
+            OkHttpCommonUtil okHttpCommonUtil = OkHttpCommonUtil.newInstance(getApplicationContext());
+            okHttpCommonUtil.query("http://apis.map.qq.com/ws/district/v1/list", new OkHttpCommonUtil.Param[]{
+                    new OkHttpCommonUtil.Param("key", GlobalApplication.T_MAP_KEY)
+            }, tv_result);
         } else {
-            HashMap<String,String> map = new HashMap<>();
-            map.put("key",GlobalApplication.T_MAP_KEY);
-            map.put("keyword",keyword);
-            map.put("output","json");
-            Request request =  OkHttpCommonUtil.buildGetReq("http://apis.map.qq.com/ws/district/v1/search",
-                    new OkHttpCommonUtil.Param[]{new OkHttpCommonUtil.Param("key",GlobalApplication.T_MAP_KEY),
+            OkHttpCommonUtil okHttpCommonUtil = OkHttpCommonUtil.newInstance(getApplicationContext());
+            okHttpCommonUtil.query("http://apis.map.qq.com/ws/district/v1/search",new OkHttpCommonUtil.Param[] {
+                    new OkHttpCommonUtil.Param("key",GlobalApplication.T_MAP_KEY),
                     new OkHttpCommonUtil.Param("keyword",keyword),
-                    new OkHttpCommonUtil.Param("output","json")});
-            okHttpCommonUtil.enqueue(request);
+                    new OkHttpCommonUtil.Param("output","json")
+            },tv_result);
         }
     }
 
