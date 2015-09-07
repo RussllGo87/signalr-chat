@@ -59,13 +59,13 @@ public class PhoneFragment extends Fragment implements View.OnClickListener{
         switch(viewId) {
             case R.id.btn_captcha_req:
                 if(CommonTools.isPhoneNumber(phoneNo)) {
-                    mListener.loadVC(phoneNo);
+                    mListener.loadCode(phoneNo);
                 }
                 break;
             case R.id.btn_captcha_submit:
                 String vc = et_validate_code.getText().toString().trim();
                 if(CommonTools.isPhoneNumber(phoneNo) && CommonTools.isAvailableVc(vc)) {
-                    mListener.submitC(phoneNo,vc);
+                    mListener.submitCode(phoneNo,vc);
                 }
 
                 break;

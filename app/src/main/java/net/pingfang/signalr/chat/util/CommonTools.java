@@ -29,10 +29,21 @@ public class CommonTools {
         }
     }
 
-    public static boolean checkRegParams(String nick,String password,String qq) {
+    public static boolean isAvailableEmail(String email) {
+        if(!TextUtils.isEmpty(email)) {
+            String regex = "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$";
+            Pattern p = Pattern.compile(regex,Pattern.CASE_INSENSITIVE);
+            Matcher matcher = p .matcher(email);
+            return matcher.find();
+        } else {
+            return false;
+        }
+    }
+
+    public static boolean checkRegParams(String nick,String password,String qq,String email) {
         if(!TextUtils.isEmpty(nick) &&
                 !TextUtils.isEmpty(password) && !TextUtils.isEmpty(qq) &&
-                TextUtils.isDigitsOnly(qq)) {
+                TextUtils.isDigitsOnly(qq) && isAvailableEmail(email)) {
             return true;
         } else {
             return false;

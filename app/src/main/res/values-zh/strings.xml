@@ -30,6 +30,7 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="hint_et_phone_reg">电话号码</string>
     <string name="btn_captcha_req">获取验证码</string>
+    <string name="dialog_message_captcha">我们已经验证码通过短信发送到 %s 中,请注意查收</string>
     <string name="hint_et_validate_code_input">验证码</string>
     <string name="btn_captcha_submit">确认提交</string>
 
@@ -38,6 +39,7 @@
     <string name="hint_et_pwd_reg">密码</string>
     <string name="hint_et_pwd_retype_reg">确认密码</string>
     <string name="hint_et_qq_reg">QQ号</string>
+    <string name="hint_et_email_reg">邮箱</string>
     <string name="btn_info_reg_submit">确认提交</string>
 
 
@@ -60,6 +62,8 @@
     <!-- AccountFragment -->
     <string name="tv_account_item_settings">@string/title_activity_settings</string>
     <string name="tv_fragment_account">我</string>
+    <string name="tv_account_item_uploaded">我的上传</string>
+    <string name="tv_account_item_maintained">我的维护</string>
 
     <!-- 聊天页 -->
     <string name="title_activity_chat">与%s对话</string>
@@ -88,5 +92,8 @@
     <string name="title_activity_feedback">@string/tv_about_item_suggestion</string>
     <string name="btn_feedback_submit">提交</string>
 
+    <!-- 对话框 -->
+    <string name="btn_positive">确定</string>
+    <string name="btn_negative">取消</string>
 
 </resources>

@@ -8,6 +8,10 @@
     <dimen name="text_size_activity_title">20sp</dimen>
     
     <dimen name="margin_tv_label_login_pattern">32dp</dimen>
-
     <dimen name="margin_portrait">8dp</dimen>
+
+    <!-- 账户界面 -->
+    <dimen name="padding_tv_settings_item_me">16dp</dimen>
+    <dimen name="btn_qr_code_width">32dp</dimen>
+    <dimen name="btn_qr_code_height">@dimen/btn_qr_code_width</dimen>
 </resources>

@@ -20,6 +20,7 @@ import net.pingfang.signalr.chat.fragment.InfoRegFragment;
 import net.pingfang.signalr.chat.fragment.PhoneFragment;
 import net.pingfang.signalr.chat.listener.OnRegisterInteractionListener;
 import net.pingfang.signalr.chat.net.OkHttpCommonUtil;
+import net.pingfang.signalr.chat.ui.dialog.SingleButtonDialogFragment;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -33,16 +34,23 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     public static final String VC_SUBMIT_URL = "http://api.hale.com/1200";
     public static final String VC_SUBMIT_KEY_PHONE = "phone";
     public static final String VC_SUBMIT_KEY_CODE = "vcode";
+    public static final String SUBMIT_REG_INFORMATION_URL = "http://api.hale.com/1300";
+    public static final String SUBMIT_REG_INFORMATION_KEY_PHONE = "phone";
+    public static final String SUBMIT_REG_INFORMATION_KEY_NICKNAME = "nickname";
+    public static final String SUBMIT_REG_INFORMATION_KEY_PASSWORD = "password";
+    public static final String SUBMIT_REG_INFORMATION_KEY_EMAIL = "email";
+    public static final String SUBMIT_REG_INFORMATION_KEY_QQ = "qq";
 
-    public static final int REGEST_STEP_1 = 1;
-    public static final int REGEST_STEP_2 = 2;
+
+    public static final int STEP_1 = 1;
+    public static final int STEP_2 = 2;
 
     TextView btn_step_previous;
     TextView btn_step_next;
 
     FrameLayout fl_container_reg;
 
-    int requestStep = REGEST_STEP_1;
+    int requestStep = STEP_1;
 
     private Handler mDelivery;
 
@@ -67,17 +75,11 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     }
 
     private void initFragment() {
-        if(requestStep == REGEST_STEP_1) {
+        if(requestStep == STEP_1) {
             PhoneFragment phoneFragment = PhoneFragment.newInstance();
             FragmentManager fm = getSupportFragmentManager();
             FragmentTransaction ft = fm.beginTransaction();
             ft.replace(R.id.fl_container_reg, phoneFragment, "PhoneFragment");
-            ft.commit();
-        } else if(requestStep == REGEST_STEP_2) {
-            InfoRegFragment infoFragment = InfoRegFragment.newInstance();
-            FragmentManager fm = getSupportFragmentManager();
-            FragmentTransaction ft = fm.beginTransaction();
-            ft.replace(R.id.fl_container_reg,infoFragment,"InfoRegFragment");
             ft.commit();
         }
     }
@@ -92,7 +94,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
      * @param phoneNo 注册使用的手机号码
      */
     @Override
-    public void loadVC(String phoneNo) {
+    public void loadCode(String phoneNo) {
         OkHttpCommonUtil okHttpCommonUtil = OkHttpCommonUtil.newInstance(getApplicationContext());
         okHttpCommonUtil.postRequest(VC_LOAD_URL, new OkHttpCommonUtil.Param[]{
                 new OkHttpCommonUtil.Param(VC_LOAD_KEY_PHONE,phoneNo)
@@ -116,7 +118,9 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                         mDelivery.post(new Runnable() {
                             @Override
                             public void run() {
-
+                                String message = getString(R.string.dialog_message_captcha,phone);
+                                SingleButtonDialogFragment dialogFragment = SingleButtonDialogFragment.newInstance(message);
+                                dialogFragment.show(getSupportFragmentManager(),"SingleButtonDialogFragment");
                             }
                         });
                     }
@@ -134,7 +138,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
      * @param vc  通过短信获取的验证码
      */
     @Override
-    public void submitC(String phoneNo, String vc) {
+    public void submitCode(String phoneNo, String vc) {
         OkHttpCommonUtil okHttpCommonUtil = OkHttpCommonUtil.newInstance(getApplicationContext());
         okHttpCommonUtil.postRequest(VC_SUBMIT_URL, new OkHttpCommonUtil.Param[]{
                 new OkHttpCommonUtil.Param(VC_SUBMIT_KEY_PHONE,phoneNo),
@@ -159,8 +163,12 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                         mDelivery.post(new Runnable() {
                             @Override
                             public void run() {
-                                requestStep = REGEST_STEP_2;
-                                initFragment();
+                                requestStep = STEP_2;
+                                InfoRegFragment infoFragment = InfoRegFragment.newInstance(phone);
+                                FragmentManager fm = getSupportFragmentManager();
+                                FragmentTransaction ft = fm.beginTransaction();
+                                ft.replace(R.id.fl_container_reg,infoFragment,"InfoRegFragment");
+                                ft.commit();
                             }
                         });
                     }
@@ -173,13 +181,45 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     }
 
     @Override
-    public void submitInfo(String nick, String password, String qq) {
-        // 待实现
+    public void submitInfo(String phone,String nickname, String password, String qq, String email) {
+        OkHttpCommonUtil okHttpCommonUtil = OkHttpCommonUtil.newInstance(getApplicationContext());
+        okHttpCommonUtil.postRequest(SUBMIT_REG_INFORMATION_URL, new OkHttpCommonUtil.Param[]{
+                new OkHttpCommonUtil.Param(SUBMIT_REG_INFORMATION_KEY_PHONE, phone),
+                new OkHttpCommonUtil.Param(SUBMIT_REG_INFORMATION_KEY_NICKNAME, nickname),
+                new OkHttpCommonUtil.Param(SUBMIT_REG_INFORMATION_KEY_PASSWORD, password),
+                new OkHttpCommonUtil.Param(SUBMIT_REG_INFORMATION_KEY_QQ, qq),
+                new OkHttpCommonUtil.Param(SUBMIT_REG_INFORMATION_KEY_EMAIL, email)
 
-        // 跳转
-        Intent intent = new Intent();
-        intent.setClass(getApplicationContext(),LoginActivity.class);
-        startActivity(intent);
-        finish();
+        }, new Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+
+            }
+
+            @Override
+            public void onResponse(Response response) throws IOException {
+                String json = response.body().string();
+                JSONObject jsonObject = null;
+                try {
+                    jsonObject = new JSONObject(json);
+                    int status = jsonObject.getInt("status");
+                    String message = jsonObject.getString("message");
+                    if (status == 0) {
+                        mDelivery.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Intent intent = new Intent();
+                                intent.setClass(getApplicationContext(), LoginActivity.class);
+                                startActivity(intent);
+                                finish();
+                            }
+                        });
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
     }
 }

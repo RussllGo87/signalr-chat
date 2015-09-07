@@ -37,6 +37,7 @@
     <string name="hint_et_pwd_reg">password</string>
     <string name="hint_et_pwd_retype_reg">retype password</string>
     <string name="hint_et_qq_reg">QQ</string>
+    <string name="hint_et_email_reg">eMail</string>
     <string name="btn_info_reg_submit">Submit</string>
 
     <!-- Home页 -->
@@ -58,6 +59,9 @@
     <!-- AccountFragment -->
     <string name="tv_fragment_account">AccountFragment</string>
     <string name="tv_account_item_settings">@string/title_activity_settings</string>
+    <string name="tv_account_item_uploaded">My Uploaded</string>
+    <string name="tv_account_item_maintained">My Maintained</string>
+
 
 
     <!-- 聊天页 -->
@@ -88,5 +92,7 @@
     <string name="btn_feedback_submit">Submit</string>
 
 
-
+    <!-- 对话框 -->
+    <string name="btn_positive">OK</string>
+    <string name="btn_negative">Cancel</string>
 </resources>
