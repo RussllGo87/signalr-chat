@@ -452,8 +452,7 @@ public class OkHttpCommonUtil {
     private void sendExceptionCallBack(final Request request, final Exception e, final ResultCallback callback) {
         mDelivery.post(new Runnable() {
             @Override
-            public void run()
-            {
+            public void run() {
                 if (callback != null)
                     callback.onError(request, e);
             }
@@ -469,47 +468,6 @@ public class OkHttpCommonUtil {
                 }
             }
         });
-    }
-
-    public void query(String url,Param[] params, final TextView textView) {
-        getAsync(url, params, null, new Callback() {
-            @Override
-            public void onFailure(Request request, IOException e) {
-                final String message = e.getMessage();
-                mDelivery.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        textView.setText(message);
-                    }
-                });
-            }
-
-            @Override
-            public void onResponse(Response response) throws IOException {
-                long target = response.body().contentLength();
-                if (target < 256) {
-                    final String message = response.body().string();
-                    mDelivery.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            textView.setText(message);
-                        }
-                    });
-                } else {
-                    final double size = target / (1024.0 * 1024.0);
-                    mDelivery.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            textView.setText("size = " + size + "M");
-                        }
-                    });
-                }
-            }
-        });
-    }
-
-    public void display(final ImageView view, final String url, final int errorResId) {
-        displayImage(view,url,errorResId);
     }
 
 
@@ -533,6 +491,41 @@ public class OkHttpCommonUtil {
 
         String key;
         String value;
+    }
+
+
+    public void query(String url,Param[] params, final TextView textView) {
+        getAsync(url, params, null, new Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+                final String message = e.getMessage();
+                mDelivery.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        textView.setText(message);
+                    }
+                });
+            }
+
+            @Override
+            public void onResponse(Response response) throws IOException {
+                final String message = response.body().string();
+                mDelivery.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        textView.setText(message);
+                    }
+                });
+            }
+        });
+    }
+
+    public void postRequest(String url,Param[] params,Callback callback) {
+        postAsync(url,params,null,callback);
+    }
+
+    public void display(final ImageView view, final String url, final int errorResId) {
+        displayImage(view,url,errorResId);
     }
 
 }

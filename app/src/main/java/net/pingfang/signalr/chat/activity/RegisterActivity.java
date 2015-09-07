@@ -1,20 +1,38 @@
 package net.pingfang.signalr.chat.activity;
 
 import android.content.Intent;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+
+import com.squareup.okhttp.Callback;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
 
 import net.pingfang.signalr.chat.R;
 import net.pingfang.signalr.chat.fragment.InfoRegFragment;
 import net.pingfang.signalr.chat.fragment.PhoneFragment;
 import net.pingfang.signalr.chat.listener.OnRegisterInteractionListener;
+import net.pingfang.signalr.chat.net.OkHttpCommonUtil;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 
 public class RegisterActivity extends AppCompatActivity implements View.OnClickListener,OnRegisterInteractionListener{
+
+    public static final String VC_LOAD_URL = "http://api.hale.com/1100";
+    public static final String VC_LOAD_KEY_PHONE = "phone";
+    public static final String VC_SUBMIT_URL = "http://api.hale.com/1200";
+    public static final String VC_SUBMIT_KEY_PHONE = "phone";
+    public static final String VC_SUBMIT_KEY_CODE = "vcode";
 
     public static final int REGEST_STEP_1 = 1;
     public static final int REGEST_STEP_2 = 2;
@@ -26,10 +44,14 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
     int requestStep = REGEST_STEP_1;
 
+    private Handler mDelivery;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+
+        mDelivery = new Handler(Looper.getMainLooper());
 
         initView();
         initFragment();
@@ -71,7 +93,39 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
      */
     @Override
     public void loadVC(String phoneNo) {
-        // 待实现
+        OkHttpCommonUtil okHttpCommonUtil = OkHttpCommonUtil.newInstance(getApplicationContext());
+        okHttpCommonUtil.postRequest(VC_LOAD_URL, new OkHttpCommonUtil.Param[]{
+                new OkHttpCommonUtil.Param(VC_LOAD_KEY_PHONE,phoneNo)
+        }, new Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+
+            }
+
+            @Override
+            public void onResponse(Response response) throws IOException {
+                String json = response.body().string();
+                JSONObject jsonObject = null;
+                try {
+                    jsonObject = new JSONObject(json);
+                    int status = jsonObject.getInt("status");
+                    String message = jsonObject.getString("message");
+                    if (status == 0) {
+                        JSONObject result = jsonObject.getJSONObject("result");
+                        final String phone = result.getString("phone");
+                        mDelivery.post(new Runnable() {
+                            @Override
+                            public void run() {
+
+                            }
+                        });
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
     }
 
     /**
@@ -81,11 +135,41 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
      */
     @Override
     public void submitC(String phoneNo, String vc) {
-        // 待实现
+        OkHttpCommonUtil okHttpCommonUtil = OkHttpCommonUtil.newInstance(getApplicationContext());
+        okHttpCommonUtil.postRequest(VC_SUBMIT_URL, new OkHttpCommonUtil.Param[]{
+                new OkHttpCommonUtil.Param(VC_SUBMIT_KEY_PHONE,phoneNo),
+                new OkHttpCommonUtil.Param(VC_SUBMIT_KEY_CODE,vc)
+        }, new Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
 
-        // 跳转
-        requestStep = REGEST_STEP_2;
-        initFragment();
+            }
+
+            @Override
+            public void onResponse(Response response) throws IOException {
+                String json = response.body().string();
+                JSONObject jsonObject = null;
+                try {
+                    jsonObject = new JSONObject(json);
+                    int status = jsonObject.getInt("status");
+                    String message = jsonObject.getString("message");
+                    if (status == 0) {
+                        JSONObject result = jsonObject.getJSONObject("result");
+                        final String phone = result.getString("phone");
+                        mDelivery.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                requestStep = REGEST_STEP_2;
+                                initFragment();
+                            }
+                        });
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
     }
 
     @Override
