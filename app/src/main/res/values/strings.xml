@@ -29,6 +29,7 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="hint_et_phone_reg">Phone Number</string>
     <string name="btn_captcha_req">Captcha</string>
+    <string name="dialog_message_captcha">我们已经验证码通过短信发送到 %s 中,请注意查收</string>
     <string name="hint_et_validate_code_input">validate code</string>
     <string name="btn_captcha_submit">Submit</string>
 

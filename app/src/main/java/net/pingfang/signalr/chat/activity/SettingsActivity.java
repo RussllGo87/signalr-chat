@@ -1,16 +1,16 @@
 package net.pingfang.signalr.chat.activity;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
+import android.support.v4.content.IntentCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
 import net.pingfang.signalr.chat.R;
+import net.pingfang.signalr.chat.util.SharedPreferencesHelper;
 
 public class SettingsActivity extends AppCompatActivity implements View.OnClickListener{
 
@@ -18,11 +18,14 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     TextView tv_settings_item_about;
     TextView tv_settings_item_exit;
 
+    SharedPreferencesHelper sharedPreferencesHelper;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
+        sharedPreferencesHelper = SharedPreferencesHelper.newInstance(getApplicationContext());
         initView();
     }
 
@@ -48,9 +51,11 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                 startActivity(intent);
                 break;
             case R.id.tv_settings_item_exit:
+                sharedPreferencesHelper.putStringValue("uid", "");
+
                 Intent exitIntent = new Intent();
-                exitIntent.setClass(getApplicationContext(),LoginActivity.class);
-                exitIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                exitIntent.setClass(getApplicationContext(), LoginActivity.class);
+                exitIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK| IntentCompat.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(exitIntent);
                 finish();
                 break;

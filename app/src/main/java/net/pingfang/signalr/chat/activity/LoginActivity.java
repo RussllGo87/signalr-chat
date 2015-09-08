@@ -22,6 +22,7 @@ import com.squareup.okhttp.Response;
 import net.pingfang.signalr.chat.R;
 import net.pingfang.signalr.chat.net.OkHttpCommonUtil;
 import net.pingfang.signalr.chat.util.MediaFileUtils;
+import net.pingfang.signalr.chat.util.SharedPreferencesHelper;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -41,18 +42,27 @@ public class LoginActivity extends AppCompatActivity {
 
     private Handler mDelivery;
 
+    SharedPreferencesHelper sharedPreferencesHelper;
+    String savedAccount;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
         mDelivery = new Handler(Looper.getMainLooper());
+        sharedPreferencesHelper = SharedPreferencesHelper.newInstance(getApplicationContext());
+        savedAccount = sharedPreferencesHelper.getStringValue("account");
+
         initView();
     }
 
     private void initView() {
         ll_form_container = (LinearLayout) findViewById(R.id.ll_form_container);
         et_login_no = (EditText) findViewById(R.id.et_login_no);
+        if(!TextUtils.isEmpty(savedAccount)) {
+            et_login_no.setText(savedAccount);
+        }
         et_login_pwd = (EditText) findViewById(R.id.et_login_pwd);
 
         cb_show_pwd = (CheckBox) findViewById(R.id.cb_show_pwd);
@@ -91,49 +101,49 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void login(View view) {
-        String account = et_login_no.getText().toString().trim();
+        final String account = et_login_no.getText().toString().trim();
         String password = et_login_pwd.getText().toString().trim();
         if(!TextUtils.isEmpty(account) && !TextUtils.isEmpty(password)) {
             OkHttpCommonUtil okHttpCommonUtil = OkHttpCommonUtil.newInstance(getApplicationContext());
             okHttpCommonUtil.postRequest(LOGIN_URL, new OkHttpCommonUtil.Param[]{
-                    new OkHttpCommonUtil.Param(LOGIN_KEY_ACCOUNT, account),
-                    new OkHttpCommonUtil.Param(LOGIN_KEY_PASSWORD, password)
+                new OkHttpCommonUtil.Param(LOGIN_KEY_ACCOUNT, account),
+                new OkHttpCommonUtil.Param(LOGIN_KEY_PASSWORD, password)
             }, new Callback() {
-                @Override
-                public void onFailure(Request request, IOException e) {
+            @Override
+            public void onFailure(Request request, IOException e) {
 
-                }
+            }
 
-                @Override
-                public void onResponse(Response response) throws IOException {
-                    String json = response.body().string();
-                    JSONObject jsonObject = null;
-                    try {
-                        jsonObject = new JSONObject(json);
-                        int status = jsonObject.getInt("status");
-                        String message = jsonObject.getString("message");
-                        if (status == 0) {
-                            JSONObject result = jsonObject.getJSONObject("result");
-                            final String id = result.getString("id");
-                            mDelivery.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Intent intent = new Intent();
-                                    intent.setClass(getApplicationContext(), HomeActivity.class);
-                                    intent.putExtra("id", id);
-                                    startActivity(intent);
-                                    finish();
-                                }
-                            });
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+            @Override
+            public void onResponse(Response response) throws IOException {
+                String json = response.body().string();
+                JSONObject jsonObject;
+                try {
+                    jsonObject = new JSONObject(json);
+                    int status = jsonObject.getInt("status");
+                    String message = jsonObject.getString("message");
+                    if (status == 0) {
+                        JSONObject result = jsonObject.getJSONObject("result");
+                        final String id = result.getString("id");
+                        mDelivery.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                sharedPreferencesHelper.putStringValue("uid",id);
+                                sharedPreferencesHelper.putStringValue("account",account);
+                                Intent intent = new Intent();
+                                intent.setClass(getApplicationContext(), HomeActivity.class);
+                                startActivity(intent);
+                                finish();
+                            }
+                        });
                     }
-
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
+
+            }
             });
         }
-
 
     }
 
