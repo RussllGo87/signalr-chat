@@ -22,8 +22,6 @@
                   android:layout_height="wrap_content"
                   android:inputType="textPassword"
                   android:hint="@string/hint_et_login_pwd"/>
-
-
     </LinearLayout>
 
     <LinearLayout android:id="@+id/ll_pwd_config"
@@ -81,28 +79,30 @@
         android:layout_below="@+id/ll_button_container"/>
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/activity_vertical_margin"
         android:layout_below="@+id/tv_label_login_pattern"
         android:gravity="center"
         android:orientation="horizontal">
 
 
-        <Button
+        <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/btn_login_pattern_qq"/>
+            android:background="@drawable/selector_bt_qq"
+            android:contentDescription="@string/btn_login_pattern_qq"/>
 
-        <Button
+        <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/btn_login_pattern_wechat"/>
+            android:background="@drawable/selector_bt_wechat"
+            android:contentDescription="@string/btn_login_pattern_wechat"/>
 
-        <Button
+        <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/btn_login_pattern_weibo"/>
+            android:background="@drawable/selector_bt_weibo"
+            android:contentDescription="@string/btn_login_pattern_weibo"/>
 
     </LinearLayout>
 

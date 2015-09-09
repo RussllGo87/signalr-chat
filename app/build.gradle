@@ -23,13 +23,14 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile files('lib/signalr-client-sdk.jar')
     compile files('lib/signalr-client-sdk-android.jar')
-    compile files('lib/weixin_base_sdk.jar')
-    compile 'com.android.support:appcompat-v7:23.0.0'
-    compile 'com.android.support:support-v4:23.0.0'
+    compile 'com.android.support:appcompat-v7:23.0.1'
+    compile 'com.android.support:support-v4:23.0.1'
     compile 'com.google.code.gson:gson:2.3.1'
     compile 'com.squareup.okio:okio:1.6.0'
     compile 'com.squareup.okhttp:okhttp:2.5.0'
     compile 'com.squareup.picasso:picasso:2.5.2'
+    compile project(':weibosdk')
+    compile files('lib/weixin_base_sdk.jar')
 }
 
 
