@@ -86,19 +86,19 @@
         android:orientation="horizontal">
 
 
-        <ImageView
+        <ImageView android:id="@+id/btn_login_pattern_qq"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/selector_bt_qq"
             android:contentDescription="@string/btn_login_pattern_qq"/>
 
-        <ImageView
+        <ImageView android:id="@+id/btn_login_pattern_wechat"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/selector_bt_wechat"
             android:contentDescription="@string/btn_login_pattern_wechat"/>
 
-        <ImageView
+        <ImageView android:id="@+id/btn_login_pattern_weibo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/selector_bt_weibo"

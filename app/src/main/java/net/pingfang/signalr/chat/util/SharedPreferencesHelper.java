@@ -3,7 +3,10 @@ package net.pingfang.signalr.chat.util;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.sina.weibo.sdk.auth.Oauth2AccessToken;
+
 import net.pingfang.signalr.chat.R;
+import net.pingfang.signalr.chat.constant.WeiboConstants;
 
 /**
  * Created by gongguopei87@gmail.com on 2015/8/13.
@@ -17,7 +20,6 @@ public class SharedPreferencesHelper {
     private SharedPreferencesHelper(Context context) {
         String pref = context.getResources().getString(R.string.prefs_name);
         sp = context.getSharedPreferences(pref, Context.MODE_PRIVATE);
-        editor = sp.edit();
     }
 
     public static SharedPreferencesHelper newInstance(Context context) {
@@ -31,7 +33,7 @@ public class SharedPreferencesHelper {
     public void putStringValue(String key, String value) {
         editor = sp.edit();
         editor.putString(key, value);
-        editor.commit();
+        editor.apply();
     }
 
     public String getStringValue(String key) {
@@ -43,33 +45,84 @@ public class SharedPreferencesHelper {
         return sp.getString(key, defalut);
     }
 
-    public void setBooleanValue(String key,boolean value) {
+    public void setBoolean(String key,boolean value) {
         editor = sp.edit();
         editor.putBoolean(key, value);
-        editor.commit();
+        editor.apply();
     }
 
-    public boolean getBooleanValue(String key,boolean defaultValue) {
+    public boolean getBoolean(String key,boolean defaultValue) {
         return sp.getBoolean(key, defaultValue);
     }
 
-    public void putIntValue(String key, int value) {
+    public void putInt(String key, int value) {
         editor = sp.edit();
         editor.putInt(key, value);
-        editor.commit();
+        editor.apply();
     }
 
-    public int getIntValue(String key,int defaultV) {
+    public int getInt(String key,int defaultV) {
         return sp.getInt(key, defaultV);
     }
 
-    public void putFloatValue(String key,float value) {
+    public void putFloat(String key,float value) {
         editor = sp.edit();
-        editor.putFloat(key,value);
-        editor.commit();
+        editor.putFloat(key, value);
+        editor.apply();
     }
 
-    public float getFloatValue(String key,float defaultV) {
-        return sp.getFloat(key,defaultV);
+    public float getFloat(String key,float defaultV) {
+        return sp.getFloat(key, defaultV);
     }
+
+    public void putLong(String key,long value) {
+        editor = sp.edit();
+        editor.putLong(key, value);
+        editor.apply();
+    }
+
+    public long getLong(String key,long defaultV) {
+        return sp.getLong(key, defaultV);
+    }
+
+    public void clearKey(String key) {
+        editor = sp.edit();
+        editor.remove(key);
+        editor.apply();
+    }
+
+
+    /**
+     * 保存 Token 对象到 SharedPreferences。
+     *
+     * @param token   Token 对象
+     */
+    public static void writeAccessToken(Oauth2AccessToken token) {
+        if (null == token) {
+            return;
+        }
+        helper.putStringValue(WeiboConstants.KEY_UID, token.getUid());
+        helper.putStringValue(WeiboConstants.KEY_ACCESS_TOKEN, token.getToken());
+        helper.putLong(WeiboConstants.KEY_EXPIRES_IN, token.getExpiresTime());
+    }
+
+    /**
+     * 从 SharedPreferences 读取 Token 信息。
+     * @return 返回 Token 对象
+     */
+    public static Oauth2AccessToken readAccessToken() {
+        Oauth2AccessToken token = new Oauth2AccessToken();
+        token.setUid(helper.getStringValue(WeiboConstants.KEY_UID, ""));
+        token.setToken(helper.getStringValue(WeiboConstants.KEY_ACCESS_TOKEN, ""));
+        token.setExpiresTime(helper.getLong(WeiboConstants.KEY_EXPIRES_IN, 0));
+        return token;
+    }
+
+    public static void clearAccessToken() {
+        helper.clearKey(WeiboConstants.KEY_UID);
+        helper.clearKey(WeiboConstants.KEY_ACCESS_TOKEN);
+        helper.clearKey(WeiboConstants.KEY_EXPIRES_IN);
+
+    }
+
 }

@@ -16,12 +16,12 @@
 
 package com.sina.weibo.sdk.net;
 
-import java.io.ByteArrayOutputStream;
-
 import android.content.Context;
 
 import com.sina.weibo.sdk.auth.WeiboParameters;
 import com.sina.weibo.sdk.exception.WeiboException;
+
+import java.io.ByteArrayOutputStream;
 
 /**
  * 异步回调框架类。
@@ -64,6 +64,8 @@ public class AsyncWeiboRunner {
                 }
             }
         }.start();
+
+
 
     }
 

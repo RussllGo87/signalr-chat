@@ -17,6 +17,12 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/NOTICE'
+    }
 }
 
 dependencies {
@@ -31,6 +37,8 @@ dependencies {
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile project(':weibosdk')
     compile files('lib/weixin_base_sdk.jar')
+    compile files('lib/open_sdk_r5276.jar')
+    compile files('lib/mta-sdk-1.6.2.jar')
 }
 
 
