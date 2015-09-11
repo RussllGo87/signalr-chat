@@ -2,7 +2,11 @@ package net.pingfang.signalr.chat.util;
 
 import android.app.Application;
 
+import com.tencent.mm.sdk.openapi.IWXAPI;
+import com.tencent.mm.sdk.openapi.WXAPIFactory;
+
 import net.pingfang.signalr.chat.R;
+import net.pingfang.signalr.chat.constant.wechat.WechatConstants;
 
 import java.util.Locale;
 
@@ -19,13 +23,16 @@ public class GlobalApplication extends Application {
     public static final String VOICE_FILE_NAME_PREFIX = "VOICE_";
     public static final String VOICE_FILE_NAME_SUFFIX = ".3gp";
 
+    // 腾讯地图webservice接口相关
+    public static final String T_MAP_KEY = "YFLBZ-6PQAR-7PPWA-WU7LO-BKKRK-YLF73";
+
     private Locale myLocale;
     SharedPreferencesHelper helper;
 
-    // 微信相关参数
-    public static final String APP_ID = "wx0fcc821b51b8c948";
-    // 腾讯地图webservice接口相关
-    public static final String T_MAP_KEY = "YFLBZ-6PQAR-7PPWA-WU7LO-BKKRK-YLF73";
+    /**
+     * IWXAPI 是第三方app和微信通信的openapi接口
+     */
+    private IWXAPI api;
 
     @Override
     public void onCreate() {
@@ -34,7 +41,8 @@ public class GlobalApplication extends Application {
         helper = SharedPreferencesHelper.newInstance(getApplicationContext());
         loadLocale();
 
-
+        api = WXAPIFactory.createWXAPI(getApplicationContext(), WechatConstants.APP_ID,false);
+        api.registerApp(WechatConstants.APP_ID);
     }
 
     public void changeLang(String lang) {
