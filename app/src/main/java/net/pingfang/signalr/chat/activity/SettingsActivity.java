@@ -14,9 +14,11 @@ import android.widget.Toast;
 import com.sina.weibo.sdk.auth.Oauth2AccessToken;
 import com.sina.weibo.sdk.openapi.LogoutAPI;
 import com.sina.weibo.sdk.utils.LogUtil;
+import com.tencent.tauth.Tencent;
 
 import net.pingfang.signalr.chat.R;
-import net.pingfang.signalr.chat.constant.WeiboRequestListener;
+import net.pingfang.signalr.chat.constant.qq.TencentConstants;
+import net.pingfang.signalr.chat.constant.weibo.WeiboRequestListener;
 import net.pingfang.signalr.chat.util.SharedPreferencesHelper;
 
 import org.json.JSONException;
@@ -92,6 +94,12 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                         }
                     });
                 }
+                Tencent mTencent = Tencent.createInstance(TencentConstants.APP_ID, getApplicationContext());
+                if(mTencent.isSessionValid()) {
+                    SharedPreferencesHelper.clearQqAccessToken();
+                    mTencent.logout(getApplicationContext());
+                }
+
                 Intent exitIntent = new Intent();
                 exitIntent.setClass(getApplicationContext(), LoginActivity.class);
                 exitIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK| IntentCompat.FLAG_ACTIVITY_CLEAR_TASK);

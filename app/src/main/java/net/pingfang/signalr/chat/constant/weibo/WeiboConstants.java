@@ -1,4 +1,4 @@
-package net.pingfang.signalr.chat.constant;
+package net.pingfang.signalr.chat.constant.weibo;
 
 /**
  * Created by gongguopei87@gmail.com on 2015/9/10.

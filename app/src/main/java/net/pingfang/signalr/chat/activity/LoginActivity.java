@@ -25,10 +25,16 @@ import com.sina.weibo.sdk.exception.WeiboException;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
+import com.tencent.connect.common.Constants;
+import com.tencent.tauth.IUiListener;
+import com.tencent.tauth.Tencent;
+import com.tencent.tauth.UiError;
 
 import net.pingfang.signalr.chat.R;
-import net.pingfang.signalr.chat.constant.WeiboConstants;
+import net.pingfang.signalr.chat.constant.qq.TencentConstants;
+import net.pingfang.signalr.chat.constant.weibo.WeiboConstants;
 import net.pingfang.signalr.chat.net.OkHttpCommonUtil;
+import net.pingfang.signalr.chat.ui.dialog.SingleButtonDialogFragment;
 import net.pingfang.signalr.chat.util.MediaFileUtils;
 import net.pingfang.signalr.chat.util.SharedPreferencesHelper;
 
@@ -67,6 +73,10 @@ public class LoginActivity extends AppCompatActivity {
     /** 注意：SsoHandler 仅当 SDK 支持 SSO 时有效 */
     private SsoHandler mWeiboSsoHandler;
 
+    // 腾讯qq实例
+    Tencent mTencent;
+
+    int currentClickViewId = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,6 +97,9 @@ public class LoginActivity extends AppCompatActivity {
     private void initLoginConfig() {
         // 创建微博实例
         mWeiboAuth = new WeiboAuth(this, WeiboConstants.APP_KEY, WeiboConstants.REDIRECT_URL, WeiboConstants.SCOPE);
+
+        // 创建腾讯qq实例
+        mTencent = Tencent.createInstance(TencentConstants.APP_ID,getApplicationContext());
     }
 
     private void initView() {
@@ -112,11 +125,23 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         btn_login_pattern_qq = (ImageView) findViewById(R.id.btn_login_pattern_qq);
+        btn_login_pattern_qq.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                currentClickViewId = view.getId();
+                if(!mTencent.isSessionValid()) {
+                    mTencent.login(LoginActivity.this, TencentConstants.SCOPE, loginListener);
+                }
+            }
+        });
         btn_login_pattern_wechat = (ImageView) findViewById(R.id.btn_login_pattern_wechat);
         btn_login_pattern_weibo = (ImageView) findViewById(R.id.btn_login_pattern_weibo);
         btn_login_pattern_weibo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                currentClickViewId = view.getId();
+
                 mWeiboSsoHandler = new SsoHandler(LoginActivity.this, mWeiboAuth);
                 mWeiboSsoHandler.authorize(new WeiboAuthListener() {
                     @Override
@@ -162,6 +187,70 @@ public class LoginActivity extends AppCompatActivity {
     }
 
 
+    private IUiListener loginListener = new IUiListener() {
+        @Override
+        public void onComplete(Object response) {
+            if (null == response) {
+                SingleButtonDialogFragment dialogFragment = SingleButtonDialogFragment.newInstance("登录失败","返回为空");
+                dialogFragment.show(getSupportFragmentManager(),"SingleButtonDialogFragment");
+                return;
+            }
+
+            JSONObject jsonResponse = (JSONObject) response;
+            if(jsonResponse.length() == 0) {
+                SingleButtonDialogFragment dialogFragment = SingleButtonDialogFragment.newInstance("登录失败","返回为空");
+                dialogFragment.show(getSupportFragmentManager(),"SingleButtonDialogFragment");
+                return;
+            }
+
+            Toast.makeText(getApplicationContext(),getString(R.string.weibosdk_demo_toast_auth_success),Toast.LENGTH_SHORT).show();
+            doComplete(jsonResponse);
+
+            Intent intent = new Intent();
+            intent.setClass(getApplicationContext(), HomeActivity.class);
+            startActivity(intent);
+            finish();
+        }
+
+        public void doComplete(JSONObject jsonObject) {
+            try {
+                String token = jsonObject.getString(Constants.PARAM_ACCESS_TOKEN);
+                String expires = jsonObject.getString(Constants.PARAM_EXPIRES_IN);
+                String openId = jsonObject.getString(Constants.PARAM_OPEN_ID);
+                if (!TextUtils.isEmpty(token) && !TextUtils.isEmpty(expires)
+                        && !TextUtils.isEmpty(openId)) {
+
+                    SharedPreferencesHelper.writeAccessToken(token,expires,openId);
+
+                    mTencent.setAccessToken(token, expires);
+                    mTencent.setOpenId(openId);
+
+                }
+            } catch(Exception e) {
+//                Toast.makeText(getApplicationContext(),getString(R.string.weibosdk_demo_toast_auth_failed),Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        @Override
+        public void onError(UiError uiError) {
+            mDelivery.post(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(getApplicationContext(),getString(R.string.weibosdk_demo_toast_auth_failed),Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+
+        @Override
+        public void onCancel() {
+            mDelivery.post(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(getApplicationContext(),getString(R.string.weibosdk_demo_toast_auth_canceled),Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+    };
 
     /**
      * 当 SSO 授权 Activity 退出时，该函数被调用。
@@ -172,10 +261,21 @@ public class LoginActivity extends AppCompatActivity {
 
         // SSO 授权回调
         // 重要：发起 SSO 登陆的 Activity 必须重写 onActivityResult
-        if (mWeiboSsoHandler != null) {
+        if (mWeiboSsoHandler != null && currentClickViewId == btn_login_pattern_weibo.getId()) {
             mWeiboSsoHandler.authorizeCallBack(requestCode, resultCode, data);
         }
+
+        if(mTencent != null && currentClickViewId == btn_login_pattern_qq.getId()) {
+            Tencent.onActivityResultData(requestCode, resultCode, data, loginListener);
+            if (requestCode == Constants.REQUEST_API) {
+                if (resultCode == Constants.RESULT_LOGIN) {
+                    Tencent.handleResultData(data, loginListener);
+                }
+            }
+        }
     }
+
+
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {

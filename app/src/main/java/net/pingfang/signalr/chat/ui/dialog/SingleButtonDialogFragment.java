@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
+import android.text.TextUtils;
 
 import net.pingfang.signalr.chat.R;
 
@@ -15,10 +16,18 @@ import net.pingfang.signalr.chat.R;
 public class SingleButtonDialogFragment extends DialogFragment{
 
     String message;
+    String title;
 
     public static SingleButtonDialogFragment newInstance(String message) {
+        return newInstance(null,message);
+    }
+
+    public static SingleButtonDialogFragment newInstance(String title,String message) {
         SingleButtonDialogFragment dialogFragment = new SingleButtonDialogFragment();
         dialogFragment.message = message;
+        if(!TextUtils.isEmpty(title)) {
+            dialogFragment.title = title;
+        }
         return dialogFragment;
     }
 
@@ -26,6 +35,9 @@ public class SingleButtonDialogFragment extends DialogFragment{
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        if(!TextUtils.isEmpty(title)) {
+            builder.setTitle(title);
+        }
         builder.setMessage(message);
         builder.setPositiveButton(R.string.btn_positive, new DialogInterface.OnClickListener() {
             @Override

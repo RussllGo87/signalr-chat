@@ -6,7 +6,8 @@ import android.content.SharedPreferences;
 import com.sina.weibo.sdk.auth.Oauth2AccessToken;
 
 import net.pingfang.signalr.chat.R;
-import net.pingfang.signalr.chat.constant.WeiboConstants;
+import net.pingfang.signalr.chat.constant.qq.TencentConstants;
+import net.pingfang.signalr.chat.constant.weibo.WeiboConstants;
 
 /**
  * Created by gongguopei87@gmail.com on 2015/8/13.
@@ -122,7 +123,18 @@ public class SharedPreferencesHelper {
         helper.clearKey(WeiboConstants.KEY_UID);
         helper.clearKey(WeiboConstants.KEY_ACCESS_TOKEN);
         helper.clearKey(WeiboConstants.KEY_EXPIRES_IN);
+    }
 
+    public static void writeAccessToken(String token,String expires,String openId) {
+        helper.putStringValue(TencentConstants.KEY_ACCESS_TOKEN, token);
+        helper.putStringValue(TencentConstants.KEY_EXPIRES_IN, expires);
+        helper.putStringValue(TencentConstants.KEY_OPEN_ID, openId);
+    }
+
+    public static void clearQqAccessToken() {
+        helper.clearKey(TencentConstants.KEY_ACCESS_TOKEN);
+        helper.clearKey(TencentConstants.KEY_EXPIRES_IN);
+        helper.clearKey(TencentConstants.KEY_OPEN_ID);
     }
 
 }

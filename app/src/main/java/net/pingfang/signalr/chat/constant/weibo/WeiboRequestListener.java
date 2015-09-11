@@ -1,4 +1,4 @@
-package net.pingfang.signalr.chat.constant;
+package net.pingfang.signalr.chat.constant.weibo;
 
 import com.sina.weibo.sdk.exception.WeiboException;
 import com.sina.weibo.sdk.net.RequestListener;
