@@ -14,4 +14,12 @@ public abstract class TencentConstants {
     public static final String KEY_EXPIRES_IN = "expires_in";
     public static final String KEY_OPEN_ID = "openid";
 
+    // qq获取用户信息参数
+    public static final String PARAM_NICK_NAME = "nickname";
+    public static final String PARAM_QQ_PORTRAIT = "figureurl_qq_1";
+
+    // qq用户信息本地存储兼职
+    public static final String KEY_QQ_NICK_NAME = "qq_nickname";
+    public static final String KEY_QQ_PORTRAIT = "qq_portrait";
+
 }
