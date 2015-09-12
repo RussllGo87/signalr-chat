@@ -1,10 +1,14 @@
 package net.pingfang.signalr.chat.activity;
 
 import android.content.Intent;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.support.v4.content.IntentCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.PopupMenu;
+import android.text.TextUtils;
 import android.view.ContextThemeWrapper;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -12,15 +16,34 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.sina.weibo.sdk.auth.Oauth2AccessToken;
+import com.sina.weibo.sdk.openapi.LogoutAPI;
+import com.sina.weibo.sdk.utils.LogUtil;
+import com.squareup.okhttp.Callback;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
+import com.tencent.tauth.Tencent;
 
 import net.pingfang.signalr.chat.R;
 import net.pingfang.signalr.chat.adapter.CollectionPagerAdapter;
+import net.pingfang.signalr.chat.constant.qq.TencentConstants;
+import net.pingfang.signalr.chat.constant.weibo.WeiboConstants;
+import net.pingfang.signalr.chat.constant.weibo.WeiboRequestListener;
 import net.pingfang.signalr.chat.fragment.AccountFragment;
 import net.pingfang.signalr.chat.fragment.BuddyFragment;
 import net.pingfang.signalr.chat.fragment.MessageFragment;
 import net.pingfang.signalr.chat.listener.OnFragmentInteractionListener;
+import net.pingfang.signalr.chat.net.OkHttpCommonUtil;
+import net.pingfang.signalr.chat.util.SharedPreferencesHelper;
 
-public class HomeActivity extends AppCompatActivity implements View.OnClickListener,OnFragmentInteractionListener {
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+
+public class HomeActivity extends AppCompatActivity implements View.OnClickListener {
 
     TextView tv_activity_title;
     TextView tv_menu_drop_down;
@@ -31,20 +54,131 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     BuddyFragment buddyFragment;
     AccountFragment accountFragment;
 
-
     Button btn_list_chat;
     Button btn_list_friend;
     Button btn_account_management;
 
     CollectionPagerAdapter adapter;
 
+    private Handler mDelivery;
+    SharedPreferencesHelper helper;
+
+    /** 微博相关参数,封装了 "access_token"，"expires_in"，"refresh_token"，并提供了他们的管理功能  */
+    private Oauth2AccessToken mAccessToken;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+        mDelivery = new Handler(Looper.getMainLooper());
+        helper = SharedPreferencesHelper.newInstance(getApplicationContext());
+        refreshToken();
         initView();
         initAdapter();
+    }
+
+    private void refreshToken() {
+        mAccessToken = SharedPreferencesHelper.readAccessToken();
+        if(!TextUtils.isEmpty(mAccessToken.getUid()) && !mAccessToken.isSessionValid()) {
+            OkHttpCommonUtil okHttpCommonUtil = OkHttpCommonUtil.newInstance(getApplicationContext());
+            okHttpCommonUtil.postRequest("https://api.weibo.com/oauth2/access_token", new OkHttpCommonUtil.Param[]{
+                new OkHttpCommonUtil.Param(WeiboConstants.KEY_CLIENT_ID,WeiboConstants.APP_KEY),
+                new OkHttpCommonUtil.Param(WeiboConstants.KEY_CLIENT_SECRET,WeiboConstants.APP_SECRET),
+                new OkHttpCommonUtil.Param(WeiboConstants.KEY_GRANT_TYPE,"refresh_token"),
+                new OkHttpCommonUtil.Param(WeiboConstants.KEY_REDIRECT_URL,WeiboConstants.REDIRECT_URL),
+                new OkHttpCommonUtil.Param(WeiboConstants.KEY_REFRESH_TOKEN,mAccessToken.getRefreshToken())
+            }, new Callback() {
+                @Override
+                public void onFailure(Request request, IOException e) {
+
+                }
+
+                @Override
+                public void onResponse(final Response response) throws IOException {
+                    String jsonStr = response.body().string();
+                    if(!TextUtils.isEmpty(jsonStr)) {
+                        try {
+                            JSONObject jsonObject = new JSONObject(jsonStr);
+                            String accessToken = jsonObject.getString("access_token");
+                            long expiresIn = jsonObject.getLong("expires_in");
+                            mAccessToken.setToken(accessToken);
+                            mAccessToken.setExpiresTime(expiresIn);
+                            SharedPreferencesHelper.writeAccessToken(mAccessToken);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        mDelivery.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(getApplicationContext(),getString(R.string.weibo_toast_auth_expired),Toast.LENGTH_SHORT).show();
+                                logout();
+                            }
+                        });
+
+                    }
+
+                }
+            });
+        }
+
+        Tencent mTencent = Tencent.createInstance(TencentConstants.APP_ID,getApplicationContext());
+        String token = helper.getStringValue(TencentConstants.KEY_ACCESS_TOKEN);
+        String expires = helper.getStringValue(TencentConstants.KEY_EXPIRES_IN);
+        String openId = helper.getStringValue(TencentConstants.KEY_OPEN_ID);
+        if (!TextUtils.isEmpty(token) && !TextUtils.isEmpty(expires)
+                && !TextUtils.isEmpty(openId)) {
+            mTencent.setAccessToken(token, expires);
+            mTencent.setOpenId(openId);
+
+            if(!mTencent.isSessionValid()) {
+                logout();
+            }
+        }
+
+    }
+
+    private void logout() {
+        helper.putStringValue("uid", "");
+
+        mAccessToken = SharedPreferencesHelper.readAccessToken();
+        if(mAccessToken != null && mAccessToken.isSessionValid()) {
+            new LogoutAPI(mAccessToken).logout(new WeiboRequestListener() {
+                @Override
+                public void onComplete(String response) {
+                    if (!TextUtils.isEmpty(response)) {
+                        try {
+                            JSONObject obj = new JSONObject(response);
+                            String value = obj.getString("result");
+
+                            if ("true".equalsIgnoreCase(value)) {
+                                // XXX: 考虑是否需要将 AccessTokenKeeper 放到 SDK 中？？
+                                //AccessTokenKeeper.clear(getContext());
+                                // 清空当前 Token
+                                mAccessToken = null;
+                                SharedPreferencesHelper.clearAccessToken();
+                                Toast.makeText(getApplicationContext(),
+                                        R.string.weibosdk_demo_toast_auth_canceled, Toast.LENGTH_SHORT).show();
+                            }
+                        } catch (JSONException e) {
+                            LogUtil.e(SettingsActivity.class.getSimpleName(), "onComplete JSONException...");
+                        }
+                    }
+                }
+            });
+        }
+        Tencent mTencent = Tencent.createInstance(TencentConstants.APP_ID, getApplicationContext());
+        if(mTencent.isSessionValid()) {
+            SharedPreferencesHelper.clearQqAccessToken();
+            mTencent.logout(getApplicationContext());
+        }
+
+        Intent exitIntent = new Intent();
+        exitIntent.setClass(getApplicationContext(), LoginActivity.class);
+        exitIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK| IntentCompat.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(exitIntent);
+        finish();
     }
 
     private void initView() {
@@ -63,9 +197,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void initAdapter() {
-        messageFragment = MessageFragment.newInstance();
+        messageFragment = MessageFragment.newInstance(onFragmentInteractionListener);
         buddyFragment = BuddyFragment.newInstance();
-        accountFragment = AccountFragment.newInstance();
+        accountFragment = AccountFragment.newInstance(onFragmentInteractionListener);
         adapter = new CollectionPagerAdapter(getSupportFragmentManager());
         adapter.add(messageFragment);
         adapter.add(buddyFragment);
@@ -81,6 +215,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                         break;
                     case 2:
                         tv_activity_title.setText(R.string.tv_activity_title_account);
+
                         break;
                     case 0:
                         tv_activity_title.setText(R.string.tv_activity_title_message);
@@ -90,20 +225,22 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         });
     }
 
-    @Override
-    public void loadMessage() {
-        MessageFragment fragment = (MessageFragment) adapter.getItem(0);
-        fragment.updateMessage("server", "0001", "");
-    }
+    private OnFragmentInteractionListener onFragmentInteractionListener = new OnFragmentInteractionListener() {
+        @Override
+        public void loadMessage() {
+            MessageFragment fragment = (MessageFragment) adapter.getItem(0);
+            fragment.updateMessage("server", "0001", "");
+        }
 
-    @Override
-    public void onFragmentInteraction(String name, String uid) {
-        Intent intent = new Intent();
-        intent.setClass(getApplicationContext(),ChatActivity.class);
-        intent.putExtra("name",name);
-        intent.putExtra("uid",uid);
-        startActivity(intent);
-    }
+        @Override
+        public void onFragmentInteraction(String name, String uid) {
+            Intent intent = new Intent();
+            intent.setClass(getApplicationContext(),ChatActivity.class);
+            intent.putExtra("name",name);
+            intent.putExtra("uid",uid);
+            startActivity(intent);
+        }
+    };
 
     @Override
     public void onClick(View view) {

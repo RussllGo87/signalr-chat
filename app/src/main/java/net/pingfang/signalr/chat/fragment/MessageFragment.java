@@ -1,6 +1,5 @@
 package net.pingfang.signalr.chat.fragment;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -42,8 +41,9 @@ public class MessageFragment extends Fragment implements AbsListView.OnItemClick
 
     private List<MessageHolder> listMessage = new ArrayList<>();
 
-    public static MessageFragment newInstance() {
+    public static MessageFragment newInstance(OnFragmentInteractionListener mListener) {
         MessageFragment fragment = new MessageFragment();
+        fragment.mListener = mListener;
         return fragment;
     }
 
@@ -104,23 +104,6 @@ public class MessageFragment extends Fragment implements AbsListView.OnItemClick
             mListView.setAdapter(mAdapter);
         }
         mAdapter.notifyDataSetChanged();
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        try {
-            mListener = (OnFragmentInteractionListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
     }
 
     @Override

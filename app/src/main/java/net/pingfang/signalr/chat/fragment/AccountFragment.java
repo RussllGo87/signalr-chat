@@ -12,6 +12,8 @@ import android.widget.TextView;
 
 import net.pingfang.signalr.chat.R;
 import net.pingfang.signalr.chat.activity.SettingsActivity;
+import net.pingfang.signalr.chat.listener.OnFragmentInteractionListener;
+import net.pingfang.signalr.chat.util.SharedPreferencesHelper;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -20,11 +22,16 @@ import net.pingfang.signalr.chat.activity.SettingsActivity;
  */
 public class AccountFragment extends Fragment implements View.OnClickListener{
 
+    private OnFragmentInteractionListener mListener;
+
     ImageView btn_qr_code;
     TextView tv_account_item_settings;
 
-    public static AccountFragment newInstance() {
+    SharedPreferencesHelper helper;
+
+    public static AccountFragment newInstance(OnFragmentInteractionListener mListener) {
         AccountFragment fragment = new AccountFragment();
+        fragment.mListener = mListener;
         return fragment;
     }
 

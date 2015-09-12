@@ -12,7 +12,7 @@ import com.tencent.mm.sdk.openapi.IWXAPI;
 import com.tencent.mm.sdk.openapi.IWXAPIEventHandler;
 import com.tencent.mm.sdk.openapi.WXAPIFactory;
 
-import net.pingfang.signalr.chat.util.GlobalApplication;
+import net.pingfang.signalr.chat.constant.wechat.WechatConstants;
 
 /**
  * Created by gongguopei87@gmail.com on 2015/8/25.
@@ -24,7 +24,7 @@ public class IWXAPIEventProcessor extends BroadcastReceiver implements IWXAPIEve
     @Override
     public void onReceive(Context context, Intent intent) {
         this.context = context;
-        final IWXAPI api = WXAPIFactory.createWXAPI(context,GlobalApplication.APP_ID,true);
+        final IWXAPI api = WXAPIFactory.createWXAPI(context, WechatConstants.APP_ID,true);
         if(api.handleIntent(intent,this)) {
             return;
         }

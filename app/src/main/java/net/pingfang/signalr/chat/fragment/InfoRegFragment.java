@@ -1,7 +1,7 @@
 package net.pingfang.signalr.chat.fragment;
 
 
-import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
@@ -12,8 +12,8 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import net.pingfang.signalr.chat.R;
-import net.pingfang.signalr.chat.util.CommonTools;
 import net.pingfang.signalr.chat.listener.OnRegisterInteractionListener;
+import net.pingfang.signalr.chat.util.CommonTools;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -74,12 +74,12 @@ public class InfoRegFragment extends Fragment implements View.OnClickListener{
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
+    public void onAttach(Context context) {
+        super.onAttach(context);
         try {
-            mListener = (OnRegisterInteractionListener) activity;
+            mListener = (OnRegisterInteractionListener) context;
         } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
+            throw new ClassCastException(context.toString()
                     + " must implement OnFragmentInteractionListener");
         }
     }

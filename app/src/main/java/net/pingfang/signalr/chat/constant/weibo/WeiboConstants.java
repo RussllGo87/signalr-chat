@@ -8,6 +8,7 @@ public abstract class WeiboConstants {
 
     // 应用配置相关
     public static final String APP_KEY = "1632292707";
+    public static final String APP_SECRET = "ad5a4a3290dd238475f2923e76c7ebb5";
     public static final String REDIRECT_URL = "https://api.weibo.com/oauth2/default.html";
     public static final String SCOPE =
             "email,direct_messages_read,direct_messages_write,"
@@ -19,5 +20,11 @@ public abstract class WeiboConstants {
     public static final String KEY_ACCESS_TOKEN  = "wb_access_token";
     public static final String KEY_EXPIRES_IN    = "wb_expires_in";
 
+    // 授权相关请求相关KEY配置
+    public static final String KEY_CLIENT_ID = "client_id";
+    public static final String KEY_CLIENT_SECRET = "client_secret";
+    public static final String KEY_GRANT_TYPE = "grant_type";
+    public static final String KEY_REDIRECT_URL = "redirect_uri";
+    public static final String KEY_REFRESH_TOKEN = "refresh_token";
 
 }
