@@ -7,6 +7,8 @@
         <item name="android:disabledAlpha">0.5</item>
     </style>
 
+    <style name="CaptureThemeFullScreen" parent="Theme.AppCompat.Light.DarkActionBar"/>
+
     <style name="SettingItemStyle">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>

@@ -62,6 +62,13 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activity.HomeActivity" />
         </activity>
+        <activity android:name=".activity.CaptureActivityAnyOrientation"
+                  android:screenOrientation="landscape"
+                  android:stateNotNeeded="true"
+                  android:theme="@style/CaptureThemeFullScreen"
+                  android:windowSoftInputMode="stateAlwaysHidden">
+
+        </activity>
         <activity
             android:name=".activity.SettingsActivity"
             android:label="@string/title_activity_settings"

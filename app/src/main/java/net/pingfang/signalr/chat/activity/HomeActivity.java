@@ -9,6 +9,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.PopupMenu;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -18,6 +19,8 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 import com.sina.weibo.sdk.auth.Oauth2AccessToken;
 import com.sina.weibo.sdk.openapi.LogoutAPI;
 import com.sina.weibo.sdk.openapi.legacy.UsersAPI;
@@ -380,7 +383,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.action_scan:
-
+                        IntentIntegrator integrator = new IntentIntegrator(HomeActivity.this);
+                        integrator.setCaptureActivity(CaptureActivityAnyOrientation.class);
+                        integrator.setOrientationLocked(true);
+                        integrator.initiateScan();
                         break;
                     case R.id.action_resource:
 
@@ -393,5 +399,21 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
         popup.show();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+        if(result != null) {
+            if(result.getContents() == null) {
+                Toast.makeText(getApplicationContext(), "Cancelled", Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(getApplicationContext(), "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show();
+            }
+        } else {
+            Log.d("MainActivity", "Weird");
+            // This is important, otherwise the result will not be passed to the fragment
+            super.onActivityResult(requestCode, resultCode, data);
+        }
     }
 }
