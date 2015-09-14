@@ -317,7 +317,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void loadWbAccountInfo() {
-        new UsersAPI(mAccessToken).show(mAccessToken.getUid(), new WeiboRequestListener() {
+        long uid = Long.parseLong(mAccessToken.getUid());
+        new UsersAPI(mAccessToken).show(uid, new WeiboRequestListener() {
             @Override
             public void onComplete(String response) {
                 if (!TextUtils.isEmpty(response)) {
@@ -329,14 +330,19 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                         String avatarLarge = jsonObject.getString(WeiboConstants.PARAM_WB_AVATAR_LARGE);
                         String avatarHd = jsonObject.getString(WeiboConstants.PARAM_WB_AVATAR_HD);
 
-                        helper.putStringValue(WeiboConstants.KEY_WB_SCREEN_NAME,screenname);
+                        helper.putStringValue(WeiboConstants.KEY_WB_SCREEN_NAME, screenname);
                         helper.putStringValue(WeiboConstants.KEY_WB_LOCATION, location);
-                        helper.putStringValue(WeiboConstants.KEY_WB_PROFILE_IMAGE_URL,profileImageUrl);
+                        helper.putStringValue(WeiboConstants.KEY_WB_PROFILE_IMAGE_URL, profileImageUrl);
                         helper.putStringValue(WeiboConstants.KEY_WB_AVATAR_LARGE, avatarLarge);
                         helper.putStringValue(WeiboConstants.KEY_WB_AVATAR_HD, avatarHd);
+                        mDelivery.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                AccountFragment fragment = (AccountFragment) adapter.getItem(2);
+                                fragment.updateWbAccountInfo();
+                            }
+                        });
 
-                        AccountFragment fragment = (AccountFragment) adapter.getItem(2);
-                        fragment.updateWbAccountInfo();
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }

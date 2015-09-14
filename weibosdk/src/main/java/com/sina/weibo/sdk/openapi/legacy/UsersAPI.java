@@ -22,7 +22,7 @@ public class UsersAPI extends WeiboAPI {
 	public void show( long uid, RequestListener listener) {
 		WeiboParameters params = new WeiboParameters();
 		params.add("uid", uid);
-		request( SERVER_URL_PRIX + "/show.json", params, HTTPMETHOD_GET, listener);
+		request(SERVER_URL_PRIX + "/show.json", params, HTTPMETHOD_GET, listener);
 	}
 
 	/**
