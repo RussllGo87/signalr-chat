@@ -61,6 +61,12 @@
                 android:layout_weight="1"
                 android:layout_height="wrap_content"/>
 
+        <Button android:id="@+id/btn_nearby_ads"
+                android:text="@string/tv_nearby_ads"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"/>
+
         <Button android:id="@+id/btn_account_management"
                 android:text="@string/tv_account_management"
                 android:layout_width="0dp"

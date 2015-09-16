@@ -389,7 +389,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                         integrator.initiateScan();
                         break;
                     case R.id.action_resource:
-
                         break;
                     case R.id.action_maintain:
 
@@ -408,7 +407,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             if(result.getContents() == null) {
                 Toast.makeText(getApplicationContext(), "Cancelled", Toast.LENGTH_LONG).show();
             } else {
-                Toast.makeText(getApplicationContext(), "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show();
+                String content = result.getContents();
+                Toast.makeText(getApplicationContext(), "Scanned: " + content, Toast.LENGTH_LONG).show();
             }
         } else {
             Log.d("MainActivity", "Weird");

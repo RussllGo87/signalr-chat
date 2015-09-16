@@ -56,9 +56,11 @@
     <string name="title_activity_home">个人中心</string>
     <string name="tv_activity_title_message">消息</string>
     <string name="tv_activity_title_roster">好友</string>
+    <string name="tv_activity_title_nearby_ads">周边</string>
     <string name="tv_activity_title_account">我</string>
     <string name="tv_list_chat">消息</string>
     <string name="tv_list_friend">好友</string>
+    <string name="tv_nearby_ads">周边</string>
     <string name="tv_account_management">我</string>
     <string name="tv_menu_drop_down">下拉菜单</string>
     <string name="menu_action_scan">扫一扫</string>

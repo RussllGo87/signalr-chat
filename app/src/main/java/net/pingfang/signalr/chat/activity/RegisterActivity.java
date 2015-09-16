@@ -76,6 +76,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
     private void initFragment() {
         if(requestStep == STEP_1) {
+            btn_step_previous.setText(R.string.btn_activity_back);
             PhoneFragment phoneFragment = PhoneFragment.newInstance();
             FragmentManager fm = getSupportFragmentManager();
             FragmentTransaction ft = fm.beginTransaction();
@@ -85,8 +86,49 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     }
 
     @Override
-    public void onClick(View v) {
+    public void onClick(View view) {
+        int viewId = view.getId();
+        switch(viewId) {
+            case R.id.btn_step_previous:
+                navBack();
+                break;
+            case R.id.btn_step_next:
+                if(requestStep == STEP_1) {
+//                    PhoneFragment fragment = (PhoneFragment) getSupportFragmentManager().findFragmentByTag("PhoneFragment");
+//                    fragment.submitCode();
 
+                    // 以下为测试代码
+                    requestStep = STEP_2;
+                    btn_step_previous.setText(R.string.btn_step_previous);
+                    InfoRegFragment infoFragment = InfoRegFragment.newInstance("18576685313");
+                    FragmentManager fm = getSupportFragmentManager();
+                    FragmentTransaction ft = fm.beginTransaction();
+                    ft.replace(R.id.fl_container_reg,infoFragment,"InfoRegFragment");
+                    ft.commit();
+                } else {
+//                    InfoRegFragment infoFragment = (InfoRegFragment) getSupportFragmentManager().findFragmentByTag("InfoRegFragment");
+//                    infoFragment.submitInfo();
+
+                    // 以下为测试代码
+                    Intent intent = new Intent();
+                    intent.setClass(getApplicationContext(), LoginActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
+                break;
+        }
+    }
+
+    private void navBack() {
+        if(requestStep == STEP_1) {
+            Intent intent = new Intent();
+            intent.setClass(getApplicationContext(),LoginActivity.class);
+            startActivity(intent);
+            finish();
+        } else {
+            requestStep = STEP_1;
+            initFragment();
+        }
     }
 
     /**
@@ -164,6 +206,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                             @Override
                             public void run() {
                                 requestStep = STEP_2;
+                                btn_step_previous.setText(R.string.btn_step_previous);
                                 InfoRegFragment infoFragment = InfoRegFragment.newInstance(phone);
                                 FragmentManager fm = getSupportFragmentManager();
                                 FragmentTransaction ft = fm.beginTransaction();
@@ -221,5 +264,10 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             }
         });
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        navBack();
     }
 }

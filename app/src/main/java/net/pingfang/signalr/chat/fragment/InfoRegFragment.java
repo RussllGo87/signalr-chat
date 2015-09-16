@@ -73,6 +73,18 @@ public class InfoRegFragment extends Fragment implements View.OnClickListener{
         }
     }
 
+    public void submitInfo() {
+        String nickname = et_nick_name_reg.getText().toString().trim();
+        String password = et_pwd_reg.getText().toString().trim();
+        String passwordR = et_pwd_retype_reg.getText().toString().trim();
+        String qq = et_pwd_reg.getText().toString().trim();
+        String email = et_email_reg.getText().toString().trim();
+        if(!TextUtils.isEmpty(password) && password.equals(passwordR)
+                && CommonTools.checkRegParams(nickname,password,qq,email)) {
+            mListener.submitInfo(phone,nickname,password,qq,email);
+        }
+    }
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);

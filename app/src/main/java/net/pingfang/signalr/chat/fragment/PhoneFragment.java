@@ -72,6 +72,14 @@ public class PhoneFragment extends Fragment implements View.OnClickListener{
         }
     }
 
+    public void submitCode() {
+        String phoneNo = et_phone_reg.getText().toString().trim();
+        String vc = et_validate_code.getText().toString().trim();
+        if(CommonTools.isPhoneNumber(phoneNo) && CommonTools.isAvailableVc(vc)) {
+            mListener.submitCode(phoneNo,vc);
+        }
+    }
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);

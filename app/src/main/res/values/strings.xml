@@ -45,9 +45,11 @@
     <string name="title_activity_home">HomeActivity</string>
     <string name="tv_activity_title_message">Recently</string>
     <string name="tv_activity_title_roster">Buddies</string>
+    <string name="tv_activity_title_nearby_ads">Nearby</string>
     <string name="tv_activity_title_account">Account</string>
     <string name="tv_list_chat">Message</string>
     <string name="tv_list_friend">Buddies</string>
+    <string name="tv_nearby_ads">Nearby</string>
     <string name="tv_account_management">Account</string>
     <string name="tv_menu_drop_down">dropdown</string>
     <string name="menu_action_scan">Scan</string>
@@ -56,6 +58,9 @@
 
     <!-- BuddyFragment -->
     <string name="tv_fragment_buddy">BuddyFragment</string>
+
+    <!-- -->
+
 
     <!-- AccountFragment -->
     <string name="tv_fragment_account">AccountFragment</string>
