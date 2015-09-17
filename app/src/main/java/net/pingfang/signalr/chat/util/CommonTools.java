@@ -40,10 +40,10 @@ public class CommonTools {
         }
     }
 
-    public static boolean checkRegParams(String nick,String password,String qq,String email) {
-        if(!TextUtils.isEmpty(nick) &&
-                !TextUtils.isEmpty(password) && !TextUtils.isEmpty(qq) &&
-                TextUtils.isDigitsOnly(qq) && isAvailableEmail(email)) {
+    public static boolean checkRegParams(String... args) {
+        String nick = args[0];
+        String password = args[1];
+        if(!TextUtils.isEmpty(nick) && !TextUtils.isEmpty(password)) {
             return true;
         } else {
             return false;

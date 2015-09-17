@@ -4,6 +4,12 @@
     <string name="action_settings">设置</string>
     <string name="btn_activity_back">返回</string>
 
+    <!-- 对话框 -->
+    <string name="btn_submit">提交</string>
+    <string name="btn_sure">好的</string>
+    <string name="btn_positive">确定</string>
+    <string name="btn_negative">取消</string>
+
     <!-- 引导页 -->
     <string name="title_activity_main">哈乐 %s</string>
     <string name="btn_login">登录</string>
@@ -12,7 +18,7 @@
 
     <!-- 登录页 -->
     <string name="title_activity_login">登录</string>
-    <string name="hint_et_login_no">手机号码/QQ/微信</string>
+    <string name="hint_et_login_no">手机号码</string>
     <string name="hint_et_login_pwd">密码</string>
     <string name="cb_show_pwd">显示密码</string>
     <string name="tv_pwd_forget">忘记密码</string>
@@ -41,6 +47,7 @@
     <string name="btn_captcha_req">获取验证码</string>
     <string name="dialog_message_captcha">我们已经验证码通过短信发送到 %s 中,请注意查收</string>
     <string name="hint_et_validate_code_input">验证码</string>
+    <string name="btn_validate_phone">验证号码</string>
     <string name="btn_captcha_submit">确认提交</string>
 
     <!-- 注册值个人资料填写 InfoRegFragment -->
@@ -49,8 +56,16 @@
     <string name="hint_et_pwd_retype_reg">确认密码</string>
     <string name="hint_et_qq_reg">QQ号</string>
     <string name="hint_et_email_reg">邮箱</string>
+    <string name="tv_label_address">住址</string>
+    <string name="tv_label_gender">性别</string>
+    <string name="rb_gender_male">男</string>
+    <string name="rb_gender_female">女</string>
     <string name="btn_info_reg_submit">确认提交</string>
 
+    <!-- 地址填写选择对话框 -->
+    <string name="dialog_title_address_picker">请选择地址</string>
+    <string name="et_detail_address">详细地址</string>
+    <string name="btn_submit_address">@string/btn_positive</string>
 
     <!-- Home页 -->
     <string name="title_activity_home">个人中心</string>
@@ -105,8 +120,6 @@
     <string name="title_activity_feedback">@string/tv_about_item_suggestion</string>
     <string name="btn_feedback_submit">提交</string>
 
-    <!-- 对话框 -->
-    <string name="btn_positive">确定</string>
-    <string name="btn_negative">取消</string>
+
 
 </resources>

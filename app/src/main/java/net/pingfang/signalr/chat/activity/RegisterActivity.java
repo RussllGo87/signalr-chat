@@ -34,12 +34,20 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     public static final String VC_SUBMIT_URL = "http://api.hale.com/1200";
     public static final String VC_SUBMIT_KEY_PHONE = "phone";
     public static final String VC_SUBMIT_KEY_CODE = "vcode";
+
+    public static final String VALIDATE_PHONE_URL = "http://api.hale.com/1100";
+    public static final String VALIDATE_PHONE_KEY_PHONE_NO = "phone";
     public static final String SUBMIT_REG_INFORMATION_URL = "http://api.hale.com/1300";
     public static final String SUBMIT_REG_INFORMATION_KEY_PHONE = "phone";
     public static final String SUBMIT_REG_INFORMATION_KEY_NICKNAME = "nickname";
     public static final String SUBMIT_REG_INFORMATION_KEY_PASSWORD = "password";
     public static final String SUBMIT_REG_INFORMATION_KEY_EMAIL = "email";
     public static final String SUBMIT_REG_INFORMATION_KEY_QQ = "qq";
+    public static final String SUBMIT_REG_INFORMATION_KEY_GENDER = "gender";
+    public static final String SUBMIT_REG_INFORMATION_KEY_PROVINCE = "province";
+    public static final String SUBMIT_REG_INFORMATION_KEY_CITY = "city";
+    public static final String SUBMIT_REG_INFORMATION_KEY_AREA = "area";
+    public static final String SUBMIT_REG_INFORMATION_KEY_DETAIL = "detail";
 
 
     public static final int STEP_1 = 1;
@@ -94,26 +102,12 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 break;
             case R.id.btn_step_next:
                 if(requestStep == STEP_1) {
-//                    PhoneFragment fragment = (PhoneFragment) getSupportFragmentManager().findFragmentByTag("PhoneFragment");
+                    PhoneFragment fragment = (PhoneFragment) getSupportFragmentManager().findFragmentByTag("PhoneFragment");
 //                    fragment.submitCode();
-
-                    // 以下为测试代码
-                    requestStep = STEP_2;
-                    btn_step_previous.setText(R.string.btn_step_previous);
-                    InfoRegFragment infoFragment = InfoRegFragment.newInstance("18576685313");
-                    FragmentManager fm = getSupportFragmentManager();
-                    FragmentTransaction ft = fm.beginTransaction();
-                    ft.replace(R.id.fl_container_reg,infoFragment,"InfoRegFragment");
-                    ft.commit();
+                    fragment.validatePhone();
                 } else {
-//                    InfoRegFragment infoFragment = (InfoRegFragment) getSupportFragmentManager().findFragmentByTag("InfoRegFragment");
-//                    infoFragment.submitInfo();
-
-                    // 以下为测试代码
-                    Intent intent = new Intent();
-                    intent.setClass(getApplicationContext(), LoginActivity.class);
-                    startActivity(intent);
-                    finish();
+                    InfoRegFragment infoFragment = (InfoRegFragment) getSupportFragmentManager().findFragmentByTag("InfoRegFragment");
+                    infoFragment.submitInfo();
                 }
                 break;
         }
@@ -129,6 +123,48 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             requestStep = STEP_1;
             initFragment();
         }
+    }
+
+    public void validate(String phoneNo) {
+        OkHttpCommonUtil okHttpCommonUtil = OkHttpCommonUtil.newInstance(getApplicationContext());
+        okHttpCommonUtil.postRequest(VALIDATE_PHONE_URL, new OkHttpCommonUtil.Param[]{
+                new OkHttpCommonUtil.Param(VALIDATE_PHONE_KEY_PHONE_NO, phoneNo)
+        }, new Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+
+            }
+
+            @Override
+            public void onResponse(Response response) throws IOException {
+                String json = response.body().string();
+                JSONObject jsonObject = null;
+                try {
+                    jsonObject = new JSONObject(json);
+                    int status = jsonObject.getInt("status");
+                    String message = jsonObject.getString("message");
+                    if (status == 0) {
+                        JSONObject result = jsonObject.getJSONObject("result");
+                        final String phone = result.getString("phone");
+                        mDelivery.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                requestStep = STEP_2;
+                                btn_step_previous.setText(R.string.btn_step_previous);
+                                InfoRegFragment infoFragment = InfoRegFragment.newInstance(phone);
+                                FragmentManager fm = getSupportFragmentManager();
+                                FragmentTransaction ft = fm.beginTransaction();
+                                ft.replace(R.id.fl_container_reg,infoFragment,"InfoRegFragment");
+                                ft.commit();
+                            }
+                        });
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
     }
 
     /**
@@ -160,9 +196,9 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                         mDelivery.post(new Runnable() {
                             @Override
                             public void run() {
-                                String message = getString(R.string.dialog_message_captcha,phone);
+                                String message = getString(R.string.dialog_message_captcha, phone);
                                 SingleButtonDialogFragment dialogFragment = SingleButtonDialogFragment.newInstance(message);
-                                dialogFragment.show(getSupportFragmentManager(),"SingleButtonDialogFragment");
+                                dialogFragment.show(getSupportFragmentManager(), "SingleButtonDialogFragment");
                             }
                         });
                     }
@@ -210,7 +246,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                                 InfoRegFragment infoFragment = InfoRegFragment.newInstance(phone);
                                 FragmentManager fm = getSupportFragmentManager();
                                 FragmentTransaction ft = fm.beginTransaction();
-                                ft.replace(R.id.fl_container_reg,infoFragment,"InfoRegFragment");
+                                ft.replace(R.id.fl_container_reg, infoFragment, "InfoRegFragment");
                                 ft.commit();
                             }
                         });
@@ -224,14 +260,25 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     }
 
     @Override
-    public void submitInfo(String phone,String nickname, String password, String qq, String email) {
+    public void submitInfo(String... args) {
+        String phone = args[0];
+        String nickname = args[1];
+        String password = args[2];
+        String gender = args[3];
+        String province = args[4];
+        String city = args[5];
+        String area = args[6];
+        String detail = args[7];
         OkHttpCommonUtil okHttpCommonUtil = OkHttpCommonUtil.newInstance(getApplicationContext());
         okHttpCommonUtil.postRequest(SUBMIT_REG_INFORMATION_URL, new OkHttpCommonUtil.Param[]{
                 new OkHttpCommonUtil.Param(SUBMIT_REG_INFORMATION_KEY_PHONE, phone),
                 new OkHttpCommonUtil.Param(SUBMIT_REG_INFORMATION_KEY_NICKNAME, nickname),
                 new OkHttpCommonUtil.Param(SUBMIT_REG_INFORMATION_KEY_PASSWORD, password),
-                new OkHttpCommonUtil.Param(SUBMIT_REG_INFORMATION_KEY_QQ, qq),
-                new OkHttpCommonUtil.Param(SUBMIT_REG_INFORMATION_KEY_EMAIL, email)
+                new OkHttpCommonUtil.Param(SUBMIT_REG_INFORMATION_KEY_GENDER, gender),
+                new OkHttpCommonUtil.Param(SUBMIT_REG_INFORMATION_KEY_PROVINCE, province),
+                new OkHttpCommonUtil.Param(SUBMIT_REG_INFORMATION_KEY_CITY, city),
+                new OkHttpCommonUtil.Param(SUBMIT_REG_INFORMATION_KEY_AREA, area),
+                new OkHttpCommonUtil.Param(SUBMIT_REG_INFORMATION_KEY_DETAIL, detail),
 
         }, new Callback() {
             @Override
@@ -270,4 +317,5 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     public void onBackPressed() {
         navBack();
     }
+
 }

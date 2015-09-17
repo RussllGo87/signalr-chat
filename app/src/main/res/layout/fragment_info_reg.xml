@@ -5,6 +5,12 @@
              android:orientation="vertical"
              tools:context="net.pingfang.signalr.chat.fragment.InfoRegFragment">
 
+    <EditText android:id="@+id/et_phone_reg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="phone"
+        android:enabled="false"/>
+
     <EditText android:id="@+id/et_nick_name_reg"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
@@ -19,7 +25,7 @@
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:hint="@string/hint_et_pwd_retype_reg"/>
-
+    <!--
     <EditText android:id="@+id/et_qq_reg"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
@@ -29,7 +35,68 @@
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:inputType="textEmailAddress"
-              android:hint="@string/hint_et_email_reg"/>
+              android:hint="@string/hint_et_email_reg"
+              android:selectAllOnFocus="false"/>
+    -->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:paddingLeft="4dp"
+            android:gravity="center_vertical"
+            android:text="@string/tv_label_address"
+            android:textSize="18sp"/>
+
+        <Button android:id="@+id/btn_address"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:text="@string/tv_label_address"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:paddingLeft="4dp"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:text="@string/tv_label_gender"
+            android:textSize="18sp"/>
+
+        <RadioGroup
+            android:id="@+id/rg_gender"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="4"
+            android:orientation="horizontal" >
+
+            <RadioButton
+                android:id="@+id/rb_gender_male"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:checked="true"
+                android:text="@string/rb_gender_male" />
+
+            <RadioButton
+                android:id="@+id/rb_gender_female"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/rb_gender_female" />
+        </RadioGroup>
+    </LinearLayout>
 
     <Button android:id="@+id/btn_info_reg_submit"
             android:layout_width="match_parent"

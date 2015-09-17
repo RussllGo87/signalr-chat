@@ -3,6 +3,12 @@
     <string name="action_settings">Settings</string>
     <string name="btn_activity_back">Back</string>
 
+    <!-- 对话框 -->
+    <string name="btn_submit">Submit</string>
+    <string name="btn_sure">Sure</string>
+    <string name="btn_positive">OK</string>
+    <string name="btn_negative">Cancel</string>
+
     <!-- 引导页 -->
     <string name="title_activity_main">Hale</string>
     <string name="btn_login">Sign in</string>
@@ -11,7 +17,7 @@
 
     <!-- 登录页 -->
     <string name="title_activity_login">LoginActivity</string>
-    <string name="hint_et_login_no">Phone Number/QQ/WeChat</string>
+    <string name="hint_et_login_no">Phone Number</string>
     <string name="hint_et_login_pwd">Password</string>
     <string name="cb_show_pwd">show password</string>
     <string name="tv_pwd_forget">forget password</string>
@@ -32,6 +38,7 @@
     <string name="dialog_message_captcha">我们已经验证码通过短信发送到 %s 中,请注意查收</string>
     <string name="hint_et_validate_code_input">validate code</string>
     <string name="btn_captcha_submit">Submit</string>
+    <string name="btn_validate_phone">Validate Phone</string>
 
     <!-- 注册值个人资料填写 InfoRegFragment -->
     <string name="hint_et_nick_name_reg">nick name</string>
@@ -39,7 +46,16 @@
     <string name="hint_et_pwd_retype_reg">retype password</string>
     <string name="hint_et_qq_reg">QQ</string>
     <string name="hint_et_email_reg">eMail</string>
+    <string name="tv_label_address">Address</string>
+    <string name="tv_label_gender">Gender</string>
+    <string name="rb_gender_male">Male</string>
+    <string name="rb_gender_female">Female</string>
     <string name="btn_info_reg_submit">Submit</string>
+
+    <!-- 地址填写选择对话框 -->
+    <string name="dialog_title_address_picker">Address Picker</string>
+    <string name="et_detail_address">Detail Address</string>
+    <string name="btn_submit_address">@string/btn_positive</string>
 
     <!-- Home页 -->
     <string name="title_activity_home">HomeActivity</string>
@@ -97,8 +113,4 @@
     <string name="title_activity_feedback">FeedbackActivity</string>
     <string name="btn_feedback_submit">Submit</string>
 
-
-    <!-- 对话框 -->
-    <string name="btn_positive">OK</string>
-    <string name="btn_negative">Cancel</string>
 </resources>

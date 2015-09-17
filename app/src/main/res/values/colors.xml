@@ -6,4 +6,8 @@
     <color name="settings_item_default_selected">#ffebebeb</color>
     <color name="settings_item_default_edge">#ffcccccc</color>
     <color name="settings_item_default">@android:color/white</color>
+
+    <!-- 地址选择对话框 -->
+    <color name="bg_color_dialog_title_address_picker">#87ceeb</color>
+    <color name="text_color_dialog_title_address_picker">@android:color/white</color>
 </resources>

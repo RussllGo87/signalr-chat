@@ -50,6 +50,9 @@
             android:name=".activity.RegisterActivity"
             android:label="@string/title_activity_register" >
         </activity>
+        <activity android:name=".activity.SelectCitiesDialogActivity"
+                  android:windowSoftInputMode="stateHidden"
+                  android:theme="@style/Theme.AppCompat.Dialog.Alert"/>
         <activity
             android:name=".activity.HomeActivity"
             android:label="@string/title_activity_home" >

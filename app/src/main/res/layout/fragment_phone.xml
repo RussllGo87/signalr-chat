@@ -19,16 +19,26 @@
                   android:minWidth="200dp"
                   android:hint="@string/hint_et_phone_reg"/>
 
+        <Button android:id="@+id/btn_validate_phone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:text="@string/btn_validate_phone"/>
+
+
+        <!--
         <Button android:id="@+id/btn_captcha_req"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
             android:text="@string/btn_captcha_req"/>
+        -->
 
     </RelativeLayout>
 
-
+    <!--
     <EditText android:id="@+id/et_validate_code"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -38,5 +48,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/btn_captcha_submit"/>
+    -->
 
 </LinearLayout>

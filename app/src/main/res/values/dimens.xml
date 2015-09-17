@@ -14,4 +14,7 @@
     <dimen name="padding_tv_settings_item_me">16dp</dimen>
     <dimen name="btn_qr_code_width">32dp</dimen>
     <dimen name="btn_qr_code_height">@dimen/btn_qr_code_width</dimen>
+
+    <!-- 地址选择对话框 -->
+    <dimen name="text_size_dialog_title_address_picker">20sp</dimen>
 </resources>
