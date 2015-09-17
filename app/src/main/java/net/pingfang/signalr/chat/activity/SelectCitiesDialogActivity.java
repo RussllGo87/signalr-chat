@@ -118,7 +118,6 @@ public class SelectCitiesDialogActivity extends Activity {
             @Override
             public void onItemSelected(AdapterView<?> arg0, View arg1,
                                        int arg2, long arg3) {
-                // TODO Auto-generated method stub
                 mCurrentProviceName=arg0.getSelectedItem()+"";
                 if(isFirstLord){
                     if(mAddress!=null&&!mAddress.equals("")&&mAddressList.length>1&&mAddressList.length<3){
@@ -135,7 +134,6 @@ public class SelectCitiesDialogActivity extends Activity {
 
             @Override
             public void onNothingSelected(AdapterView<?> arg0) {
-                // TODO Auto-generated method stub
 
             }
         });
@@ -144,7 +142,6 @@ public class SelectCitiesDialogActivity extends Activity {
             @Override
             public void onItemSelected(AdapterView<?> arg0, View arg1,
                                        int arg2, long arg3) {
-                // TODO Auto-generated method stub
                 if(!isFirstLord){
                     updateAreas(arg0.getSelectedItem(),null);
                 }else{
@@ -157,7 +154,6 @@ public class SelectCitiesDialogActivity extends Activity {
 
             @Override
             public void onNothingSelected(AdapterView<?> arg0) {
-                // TODO Auto-generated method stub
 
             }
         });

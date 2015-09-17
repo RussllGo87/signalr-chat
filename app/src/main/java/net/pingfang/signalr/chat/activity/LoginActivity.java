@@ -22,9 +22,12 @@ import com.sina.weibo.sdk.auth.WeiboAuth;
 import com.sina.weibo.sdk.auth.WeiboAuthListener;
 import com.sina.weibo.sdk.auth.sso.SsoHandler;
 import com.sina.weibo.sdk.exception.WeiboException;
+import com.sina.weibo.sdk.openapi.legacy.UsersAPI;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
+import com.tencent.connect.UserInfo;
+import com.tencent.connect.auth.QQAuth;
 import com.tencent.connect.common.Constants;
 import com.tencent.tauth.IUiListener;
 import com.tencent.tauth.Tencent;
@@ -33,6 +36,7 @@ import com.tencent.tauth.UiError;
 import net.pingfang.signalr.chat.R;
 import net.pingfang.signalr.chat.constant.qq.TencentConstants;
 import net.pingfang.signalr.chat.constant.weibo.WeiboConstants;
+import net.pingfang.signalr.chat.constant.weibo.WeiboRequestListener;
 import net.pingfang.signalr.chat.net.OkHttpCommonUtil;
 import net.pingfang.signalr.chat.ui.dialog.SingleButtonDialogFragment;
 import net.pingfang.signalr.chat.util.MediaFileUtils;
@@ -45,9 +49,21 @@ import java.io.IOException;
 
 public class LoginActivity extends AppCompatActivity {
 
-    public static final String LOGIN_URL = "http://api.hale.com/1400";
+    public static final String LOGIN_URL = "http://api.hale.com/1410";
     public static final String LOGIN_KEY_ACCOUNT = "account";
     public static final String LOGIN_KEY_PASSWORD = "password";
+
+    public static final String NEW_LOGIN_URL = "http://api.hale.com/1420";
+    public static final String NEW_LOGIN_KEY_TID = "tid";
+    public static final String NEW_LOGIN_KEY_WID = "wid";
+    public static final String NEW_LOGIN_KEY_WXID = "wxid";
+    public static final String NEW_LOGIN_KEY_NICK_NAME = "nickname";
+    public static final String NEW_LOGIN_KEY_PORTRAIT = "portrait";
+
+    public static final String NEW_LGOIN_PARAM_PLATFROM_QQ = "qq";
+    public static final String NEW_LGOIN_PARAM_PLATFROM_WEIBO = "weibo";
+    public static final String NEW_LGOIN_PARAM_PLATFROM_WECHAT = "wechat";
+
 
     LinearLayout ll_form_container;
     EditText et_login_no;
@@ -149,11 +165,13 @@ public class LoginActivity extends AppCompatActivity {
                         // 从 Bundle 中解析 Token
                         mAccessToken = Oauth2AccessToken.parseAccessToken(bundle);
                         if (mAccessToken.isSessionValid()) {
-
                             // 保存 Token 到 SharedPreferences
                             SharedPreferencesHelper.writeAccessToken(mAccessToken);
                             Toast.makeText(getApplicationContext(),
                                     R.string.weibosdk_demo_toast_auth_success, Toast.LENGTH_SHORT).show();
+
+                            loadWbAccountInfo();
+
                             Intent intent = new Intent();
                             intent.setClass(getApplicationContext(), HomeActivity.class);
                             startActivity(intent);
@@ -186,6 +204,34 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
+    private void loadWbAccountInfo() {
+        long uid = Long.parseLong(mAccessToken.getUid());
+        new UsersAPI(mAccessToken).show(uid, new WeiboRequestListener() {
+            @Override
+            public void onComplete(String response) {
+                if (!TextUtils.isEmpty(response)) {
+                    try {
+                        JSONObject jsonObject = new JSONObject(response);
+                        String screenname = jsonObject.getString(WeiboConstants.PARAM_WB_SCREEN_NAME);
+                        String profileImageUrl = jsonObject.getString(WeiboConstants.PARAM_WB_PROFILE_IMAGE_URL);
+
+                        sharedPreferencesHelper.putStringValue(WeiboConstants.KEY_WB_SCREEN_NAME, screenname);
+                        sharedPreferencesHelper.putStringValue(WeiboConstants.KEY_WB_PROFILE_IMAGE_URL, profileImageUrl);
+
+                        mDelivery.post(new Runnable() {
+                            @Override
+                            public void run() {
+
+                            }
+                        });
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+    }
 
     private IUiListener loginListener = new IUiListener() {
         @Override
@@ -220,10 +266,12 @@ public class LoginActivity extends AppCompatActivity {
                 if (!TextUtils.isEmpty(token) && !TextUtils.isEmpty(expires)
                         && !TextUtils.isEmpty(openId)) {
 
-                    SharedPreferencesHelper.writeAccessToken(token,expires,openId);
+                    SharedPreferencesHelper.writeAccessToken(token, expires, openId);
 
                     mTencent.setAccessToken(token, expires);
                     mTencent.setOpenId(openId);
+
+                    loadQQAccountInfo();
 
                 }
             } catch(Exception e) {
@@ -251,6 +299,133 @@ public class LoginActivity extends AppCompatActivity {
             });
         }
     };
+
+    private void loadQQAccountInfo() {
+        UserInfo userInfo = new UserInfo(getApplicationContext(),
+                QQAuth.createInstance(TencentConstants.APP_ID, getApplicationContext()),
+                mTencent.getQQToken());
+
+        userInfo.getUserInfo(new IUiListener() {
+            @Override
+            public void onComplete(Object response) {
+                if (null == response) {
+                    Toast.makeText(getApplicationContext(), getString(R.string.resp_return_empty), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                JSONObject jsonResponse = (JSONObject) response;
+                if (jsonResponse.length() == 0) {
+                    Toast.makeText(getApplicationContext(), getString(R.string.resp_return_empty), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                doComplete(jsonResponse);
+            }
+
+            public void doComplete(JSONObject jsonObject) {
+                try {
+                    String nickname = jsonObject.getString(TencentConstants.PARAM_NICK_NAME);
+                    String figureurl_qq_1 = jsonObject.getString(TencentConstants.PARAM_QQ_PORTRAIT);
+                    sharedPreferencesHelper.putStringValue(TencentConstants.KEY_QQ_NICK_NAME, nickname);
+                    sharedPreferencesHelper.putStringValue(TencentConstants.KEY_QQ_PORTRAIT, figureurl_qq_1);
+                    mDelivery.post(new Runnable() {
+                        @Override
+                        public void run() {
+
+                        }
+                    });
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onError(UiError uiError) {
+
+            }
+
+            @Override
+            public void onCancel() {
+
+            }
+        });
+    }
+
+    private void login(String platform) {
+
+        OkHttpCommonUtil.Param[] params = new OkHttpCommonUtil.Param[0];
+        if(!TextUtils.isEmpty(platform)) {
+            if(platform.equals(NEW_LGOIN_PARAM_PLATFROM_QQ)) {
+                if(mTencent.isSessionValid()) {
+                    params = new OkHttpCommonUtil.Param[] {
+                            new OkHttpCommonUtil.Param(NEW_LOGIN_KEY_TID,mTencent.getOpenId()),
+                            new OkHttpCommonUtil.Param(NEW_LOGIN_KEY_NICK_NAME,
+                                    sharedPreferencesHelper.getStringValue(TencentConstants.KEY_QQ_NICK_NAME)),
+                            new OkHttpCommonUtil.Param(NEW_LOGIN_KEY_PORTRAIT,
+                                    sharedPreferencesHelper.getStringValue(TencentConstants.KEY_QQ_PORTRAIT))
+                    };
+                }
+
+            } else if(platform.equals(NEW_LGOIN_PARAM_PLATFROM_WEIBO)) {
+                if(mAccessToken.isSessionValid()) {
+                    params = new OkHttpCommonUtil.Param[]{
+                            new OkHttpCommonUtil.Param(NEW_LOGIN_KEY_WID,mAccessToken.getUid()),
+                            new OkHttpCommonUtil.Param(NEW_LOGIN_KEY_NICK_NAME,
+                                    sharedPreferencesHelper.getStringValue(WeiboConstants.KEY_WB_SCREEN_NAME)),
+                            new OkHttpCommonUtil.Param(NEW_LOGIN_KEY_WID,
+                                    sharedPreferencesHelper.getStringValue(WeiboConstants.KEY_WB_PROFILE_IMAGE_URL))
+                    };
+                } else {
+                    return;
+                }
+
+            } else if(platform.equals(NEW_LGOIN_PARAM_PLATFROM_WECHAT)) {
+                params = new OkHttpCommonUtil.Param[]{};
+            } else {
+                return;
+            }
+        }
+
+        OkHttpCommonUtil okHttpCommonUtil = OkHttpCommonUtil.newInstance(getApplicationContext());
+        okHttpCommonUtil.postRequest(NEW_LOGIN_URL, params, new Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+
+            }
+
+            @Override
+            public void onResponse(Response response) throws IOException {
+                String json = response.body().string();
+                JSONObject jsonObject;
+                try {
+                    jsonObject = new JSONObject(json);
+                    int status = jsonObject.getInt("status");
+                    String message = jsonObject.getString("message");
+                    if (status == 0) {
+                        JSONObject result = jsonObject.getJSONObject("result");
+                        final String id = result.getString("id");
+                        final String nickname = result.getString("nickname");
+                        final String portrait = result.getString("portrait");
+                        mDelivery.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                sharedPreferencesHelper.putStringValue("uid",id);
+                                sharedPreferencesHelper.putStringValue("nickname",nickname);
+                                sharedPreferencesHelper.putStringValue("portrait",portrait);
+                                Intent intent = new Intent();
+                                intent.setClass(getApplicationContext(), HomeActivity.class);
+                                startActivity(intent);
+                                finish();
+                            }
+                        });
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
 
     /**
      * 当 SSO 授权 Activity 退出时，该函数被调用。
@@ -322,11 +497,16 @@ public class LoginActivity extends AppCompatActivity {
                     if (status == 0) {
                         JSONObject result = jsonObject.getJSONObject("result");
                         final String id = result.getString("id");
+                        final String nickname = result.getString("nickname");
+                        final String portrait = result.getString("portrait");
                         mDelivery.post(new Runnable() {
                             @Override
                             public void run() {
                                 sharedPreferencesHelper.putStringValue("uid",id);
-                                sharedPreferencesHelper.putStringValue("account",account);
+                                sharedPreferencesHelper.putStringValue("nickname",nickname);
+                                if(TextUtils.isEmpty(portrait)) {
+                                    sharedPreferencesHelper.putStringValue("portrait",portrait);
+                                }
                                 Intent intent = new Intent();
                                 intent.setClass(getApplicationContext(), HomeActivity.class);
                                 startActivity(intent);
