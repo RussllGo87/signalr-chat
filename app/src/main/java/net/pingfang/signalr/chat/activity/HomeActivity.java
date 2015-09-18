@@ -25,8 +25,6 @@ import com.sina.weibo.sdk.auth.Oauth2AccessToken;
 import com.sina.weibo.sdk.openapi.LogoutAPI;
 import com.sina.weibo.sdk.openapi.legacy.UsersAPI;
 import com.sina.weibo.sdk.utils.LogUtil;
-import com.squareup.okhttp.Callback;
-import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 import com.tencent.connect.UserInfo;
 import com.tencent.connect.auth.QQAuth;
@@ -43,6 +41,7 @@ import net.pingfang.signalr.chat.fragment.AccountFragment;
 import net.pingfang.signalr.chat.fragment.BuddyFragment;
 import net.pingfang.signalr.chat.fragment.MessageFragment;
 import net.pingfang.signalr.chat.listener.OnFragmentInteractionListener;
+import net.pingfang.signalr.chat.net.HttpBaseCallback;
 import net.pingfang.signalr.chat.net.OkHttpCommonUtil;
 import net.pingfang.signalr.chat.util.SharedPreferencesHelper;
 
@@ -99,12 +98,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 new OkHttpCommonUtil.Param(WeiboConstants.PARAM_WB_GRANT_TYPE,"refresh_token"),
                 new OkHttpCommonUtil.Param(WeiboConstants.PARAM_WB_REDIRECT_URL,WeiboConstants.REDIRECT_URL),
                 new OkHttpCommonUtil.Param(WeiboConstants.PARAM_WB_REFRESH_TOKEN,mAccessToken.getRefreshToken())
-            }, new Callback() {
-                @Override
-                public void onFailure(Request request, IOException e) {
-
-                }
-
+            }, new HttpBaseCallback() {
                 @Override
                 public void onResponse(final Response response) throws IOException {
                     String jsonStr = response.body().string();

@@ -30,7 +30,7 @@ public abstract class WeiboConstants {
     // 用户信息相关参数
     public static final String PARAM_WB_SCREEN_NAME = "screen_name";
     public static final String PARAM_WB_PROFILE_IMAGE_URL = "profile_image_url";
-//    public static final String PARAM_WB_PROFILE_URL = "profile_url";
+    public static final String PARAM_WB_PROFILE_URL = "profile_url";
     public static final String PARAM_WB_LOCATION = "screen_name";
     public static final String PARAM_WB_AVATAR_LARGE = "avatar_large";
     public static final String PARAM_WB_AVATAR_HD = "avatar_hd";

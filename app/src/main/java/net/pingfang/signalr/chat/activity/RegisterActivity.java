@@ -19,6 +19,7 @@ import net.pingfang.signalr.chat.R;
 import net.pingfang.signalr.chat.fragment.InfoRegFragment;
 import net.pingfang.signalr.chat.fragment.PhoneFragment;
 import net.pingfang.signalr.chat.listener.OnRegisterInteractionListener;
+import net.pingfang.signalr.chat.net.HttpBaseCallback;
 import net.pingfang.signalr.chat.net.OkHttpCommonUtil;
 import net.pingfang.signalr.chat.ui.dialog.SingleButtonDialogFragment;
 
@@ -129,11 +130,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         OkHttpCommonUtil okHttpCommonUtil = OkHttpCommonUtil.newInstance(getApplicationContext());
         okHttpCommonUtil.postRequest(VALIDATE_PHONE_URL, new OkHttpCommonUtil.Param[]{
                 new OkHttpCommonUtil.Param(VALIDATE_PHONE_KEY_PHONE_NO, phoneNo)
-        }, new Callback() {
-            @Override
-            public void onFailure(Request request, IOException e) {
-
-            }
+        }, new HttpBaseCallback() {
 
             @Override
             public void onResponse(Response response) throws IOException {
@@ -221,11 +218,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         okHttpCommonUtil.postRequest(VC_SUBMIT_URL, new OkHttpCommonUtil.Param[]{
                 new OkHttpCommonUtil.Param(VC_SUBMIT_KEY_PHONE,phoneNo),
                 new OkHttpCommonUtil.Param(VC_SUBMIT_KEY_CODE,vc)
-        }, new Callback() {
-            @Override
-            public void onFailure(Request request, IOException e) {
-
-            }
+        }, new HttpBaseCallback() {
 
             @Override
             public void onResponse(Response response) throws IOException {
@@ -280,12 +273,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 new OkHttpCommonUtil.Param(SUBMIT_REG_INFORMATION_KEY_AREA, area),
                 new OkHttpCommonUtil.Param(SUBMIT_REG_INFORMATION_KEY_DETAIL, detail),
 
-        }, new Callback() {
-            @Override
-            public void onFailure(Request request, IOException e) {
-
-            }
-
+        }, new HttpBaseCallback() {
             @Override
             public void onResponse(Response response) throws IOException {
                 String json = response.body().string();

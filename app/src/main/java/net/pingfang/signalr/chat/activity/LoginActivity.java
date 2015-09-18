@@ -23,7 +23,6 @@ import com.sina.weibo.sdk.auth.WeiboAuthListener;
 import com.sina.weibo.sdk.auth.sso.SsoHandler;
 import com.sina.weibo.sdk.exception.WeiboException;
 import com.sina.weibo.sdk.openapi.legacy.UsersAPI;
-import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 import com.tencent.connect.UserInfo;
@@ -37,6 +36,8 @@ import net.pingfang.signalr.chat.R;
 import net.pingfang.signalr.chat.constant.qq.TencentConstants;
 import net.pingfang.signalr.chat.constant.weibo.WeiboConstants;
 import net.pingfang.signalr.chat.constant.weibo.WeiboRequestListener;
+import net.pingfang.signalr.chat.database.UserManager;
+import net.pingfang.signalr.chat.net.HttpBaseCallback;
 import net.pingfang.signalr.chat.net.OkHttpCommonUtil;
 import net.pingfang.signalr.chat.ui.dialog.SingleButtonDialogFragment;
 import net.pingfang.signalr.chat.util.MediaFileUtils;
@@ -172,10 +173,10 @@ public class LoginActivity extends AppCompatActivity {
 
                             loadWbAccountInfo();
 
-                            Intent intent = new Intent();
-                            intent.setClass(getApplicationContext(), HomeActivity.class);
-                            startActivity(intent);
-                            finish();
+//                            Intent intent = new Intent();
+//                            intent.setClass(getApplicationContext(), HomeActivity.class);
+//                            startActivity(intent);
+//                            finish();
                         } else {
                             // 当您注册的应用程序签名不正确时，就会收到 Code，请确保签名正确
                             String code = bundle.getString("code");
@@ -214,14 +215,16 @@ public class LoginActivity extends AppCompatActivity {
                         JSONObject jsonObject = new JSONObject(response);
                         String screenname = jsonObject.getString(WeiboConstants.PARAM_WB_SCREEN_NAME);
                         String profileImageUrl = jsonObject.getString(WeiboConstants.PARAM_WB_PROFILE_IMAGE_URL);
-
+                        if (TextUtils.isEmpty(profileImageUrl)) {
+                            profileImageUrl = jsonObject.getString(WeiboConstants.PARAM_WB_PROFILE_URL);
+                        }
                         sharedPreferencesHelper.putStringValue(WeiboConstants.KEY_WB_SCREEN_NAME, screenname);
                         sharedPreferencesHelper.putStringValue(WeiboConstants.KEY_WB_PROFILE_IMAGE_URL, profileImageUrl);
 
                         mDelivery.post(new Runnable() {
                             @Override
                             public void run() {
-
+                                login(NEW_LGOIN_PARAM_PLATFROM_WEIBO);
                             }
                         });
 
@@ -252,10 +255,10 @@ public class LoginActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(),getString(R.string.weibosdk_demo_toast_auth_success),Toast.LENGTH_SHORT).show();
             doComplete(jsonResponse);
 
-            Intent intent = new Intent();
-            intent.setClass(getApplicationContext(), HomeActivity.class);
-            startActivity(intent);
-            finish();
+//            Intent intent = new Intent();
+//            intent.setClass(getApplicationContext(), HomeActivity.class);
+//            startActivity(intent);
+//            finish();
         }
 
         public void doComplete(JSONObject jsonObject) {
@@ -331,7 +334,7 @@ public class LoginActivity extends AppCompatActivity {
                     mDelivery.post(new Runnable() {
                         @Override
                         public void run() {
-
+                            login(NEW_LGOIN_PARAM_PLATFROM_QQ);
                         }
                     });
 
@@ -388,7 +391,7 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         OkHttpCommonUtil okHttpCommonUtil = OkHttpCommonUtil.newInstance(getApplicationContext());
-        okHttpCommonUtil.postRequest(NEW_LOGIN_URL, params, new Callback() {
+        okHttpCommonUtil.postRequest(NEW_LOGIN_URL, params, new HttpBaseCallback() {
             @Override
             public void onFailure(Request request, IOException e) {
 
@@ -407,12 +410,17 @@ public class LoginActivity extends AppCompatActivity {
                         final String id = result.getString("id");
                         final String nickname = result.getString("nickname");
                         final String portrait = result.getString("portrait");
+
+                        UserManager userManager = new UserManager(getApplicationContext());
+                        userManager.insert(id,nickname,portrait);
+
                         mDelivery.post(new Runnable() {
                             @Override
                             public void run() {
                                 sharedPreferencesHelper.putStringValue("uid",id);
                                 sharedPreferencesHelper.putStringValue("nickname",nickname);
-                                sharedPreferencesHelper.putStringValue("portrait",portrait);
+                                sharedPreferencesHelper.putStringValue("portrait", portrait);
+
                                 Intent intent = new Intent();
                                 intent.setClass(getApplicationContext(), HomeActivity.class);
                                 startActivity(intent);
@@ -480,12 +488,7 @@ public class LoginActivity extends AppCompatActivity {
             okHttpCommonUtil.postRequest(LOGIN_URL, new OkHttpCommonUtil.Param[]{
                 new OkHttpCommonUtil.Param(LOGIN_KEY_ACCOUNT, account),
                 new OkHttpCommonUtil.Param(LOGIN_KEY_PASSWORD, password)
-            }, new Callback() {
-            @Override
-            public void onFailure(Request request, IOException e) {
-
-            }
-
+            }, new HttpBaseCallback() {
             @Override
             public void onResponse(Response response) throws IOException {
                 String json = response.body().string();
@@ -507,6 +510,9 @@ public class LoginActivity extends AppCompatActivity {
                                 if(TextUtils.isEmpty(portrait)) {
                                     sharedPreferencesHelper.putStringValue("portrait",portrait);
                                 }
+
+
+
                                 Intent intent = new Intent();
                                 intent.setClass(getApplicationContext(), HomeActivity.class);
                                 startActivity(intent);
