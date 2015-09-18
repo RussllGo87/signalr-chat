@@ -2,7 +2,6 @@ package net.pingfang.signalr.chat.fragment;
 
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
@@ -15,7 +14,6 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 import net.pingfang.signalr.chat.R;
-import net.pingfang.signalr.chat.activity.SelectCitiesDialogActivity;
 import net.pingfang.signalr.chat.listener.OnRegisterInteractionListener;
 import net.pingfang.signalr.chat.util.CommonTools;
 
@@ -70,8 +68,8 @@ public class InfoRegFragment extends Fragment implements View.OnClickListener{
         et_pwd_retype_reg = (EditText) view.findViewById(R.id.et_pwd_retype_reg);
 //        et_qq_reg = (EditText) view.findViewById(R.id.et_qq_reg);
 //        et_email_reg = (EditText) view.findViewById(R.id.et_email_reg);
-        btn_address = (Button) view.findViewById(R.id.btn_address);
-        btn_address.setOnClickListener(this);
+//        btn_address = (Button) view.findViewById(R.id.btn_address);
+//        btn_address.setOnClickListener(this);
         rg_gender = (RadioGroup) view.findViewById(R.id.rg_gender);
         rb_gender_male = (RadioButton) view.findViewById(R.id.rb_gender_male);
         rb_gender_female = (RadioButton) view.findViewById(R.id.rb_gender_female);
@@ -104,10 +102,10 @@ public class InfoRegFragment extends Fragment implements View.OnClickListener{
                     mListener.submitInfo(phone,nickname,password,gender);
                 }
                 break;
-            case R.id.btn_address:
-                Intent intent = new Intent(getContext(),SelectCitiesDialogActivity.class);
-                startActivityForResult(intent, REQ_ADDRESS_PICKER);
-                break;
+//            case R.id.btn_address:
+//                Intent intent = new Intent(getContext(),SelectCitiesDialogActivity.class);
+//                startActivityForResult(intent, REQ_ADDRESS_PICKER);
+//                break;
         }
     }
 

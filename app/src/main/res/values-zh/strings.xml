@@ -26,6 +26,7 @@
     <string name="btn_login_pattern_qq">QQ</string>
     <string name="btn_login_pattern_wechat">微信</string>
     <string name="btn_login_pattern_weibo">微博</string>
+
     <!-- 授权相关  -->
     <string name="weibosdk_demo_toast_auth_success">授权成功</string>
     <string name="weibosdk_demo_toast_auth_failed">授权失败</string>
@@ -82,6 +83,9 @@
     <string name="menu_action_resource">资源上传</string>
     <string name="menu_action_maintain">广告维护</string>
     <string name="resp_return_empty">返回为空</string>
+
+    <!-- 菜单项 之 扫码 -->
+    <string name="dialog_message_url">是否用浏览器打开链接?</string>
 
     <!-- BuddyFragment -->
     <string name="tv_fragment_buddy">好友</string>

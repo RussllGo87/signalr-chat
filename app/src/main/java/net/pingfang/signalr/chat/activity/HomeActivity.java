@@ -1,6 +1,7 @@
 package net.pingfang.signalr.chat.activity;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -39,6 +40,8 @@ import net.pingfang.signalr.chat.fragment.MessageFragment;
 import net.pingfang.signalr.chat.listener.OnFragmentInteractionListener;
 import net.pingfang.signalr.chat.net.HttpBaseCallback;
 import net.pingfang.signalr.chat.net.OkHttpCommonUtil;
+import net.pingfang.signalr.chat.ui.dialog.DoubleButtonDialogFragment;
+import net.pingfang.signalr.chat.util.CommonTools;
 import net.pingfang.signalr.chat.util.SharedPreferencesHelper;
 
 import org.json.JSONException;
@@ -304,8 +307,24 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             if(result.getContents() == null) {
                 Toast.makeText(getApplicationContext(), "Cancelled", Toast.LENGTH_LONG).show();
             } else {
-                String content = result.getContents();
+                final String content = result.getContents();
                 Toast.makeText(getApplicationContext(), "Scanned: " + content, Toast.LENGTH_LONG).show();
+                if(CommonTools.checkUrl(content)) {
+                    DoubleButtonDialogFragment dialogFragment =
+                            DoubleButtonDialogFragment.newInstance(getApplicationContext(), R.string.dialog_message_url,
+                                    new DoubleButtonDialogFragment.DoubleButtonDialogClick() {
+                                        @Override
+                                        public void onPositiveButtonClick() {
+                                            Intent intent = new Intent();
+                                            intent.setAction(Intent.ACTION_VIEW);
+                                            intent.setData(Uri.parse(content));
+                                            if (intent.resolveActivity(getPackageManager()) != null) {
+                                                startActivity(intent);
+                                            }
+                                        }
+                                    });
+                }
+
             }
         } else {
             Log.d("MainActivity", "Weird");

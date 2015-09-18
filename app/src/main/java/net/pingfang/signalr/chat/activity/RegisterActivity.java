@@ -7,6 +7,7 @@ import android.os.Looper;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
@@ -29,6 +30,8 @@ import org.json.JSONObject;
 import java.io.IOException;
 
 public class RegisterActivity extends AppCompatActivity implements View.OnClickListener,OnRegisterInteractionListener{
+
+    public static final String TAG = RegisterActivity.class.getSimpleName();
 
     public static final String VC_LOAD_URL = "http://api.hale.com/1100";
     public static final String VC_LOAD_KEY_PHONE = "phone";
@@ -101,7 +104,16 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 if(requestStep == STEP_1) {
                     PhoneFragment fragment = (PhoneFragment) getSupportFragmentManager().findFragmentByTag("PhoneFragment");
 //                    fragment.submitCode();
-                    fragment.validatePhone();
+//                    fragment.validatePhone();
+
+                    requestStep = STEP_2;
+                    btn_step_previous.setText(R.string.btn_step_previous);
+                    InfoRegFragment infoFragment = InfoRegFragment.newInstance("18576685313");
+                    FragmentManager fm = getSupportFragmentManager();
+                    FragmentTransaction ft = fm.beginTransaction();
+                    ft.replace(R.id.fl_container_reg,infoFragment,"InfoRegFragment");
+                    ft.commit();
+
                 } else {
                     InfoRegFragment infoFragment = (InfoRegFragment) getSupportFragmentManager().findFragmentByTag("InfoRegFragment");
                     infoFragment.submitInfo();
@@ -131,10 +143,11 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             @Override
             public void onResponse(Response response) throws IOException {
                 String json = response.body().string();
+                Log.d(TAG,"VALIDATE_PHONE_URL return " + json);
                 JSONObject jsonObject = null;
                 try {
                     jsonObject = new JSONObject(json);
-                    int status = jsonObject.getInt("code");
+                    int status = jsonObject.getInt("status");
                     String message = jsonObject.getString("message");
                     if (status == 0) {
                         JSONObject result = jsonObject.getJSONObject("result");
@@ -265,6 +278,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             @Override
             public void onResponse(Response response) throws IOException {
                 String json = response.body().string();
+                Log.d(TAG,"SUBMIT_REG_INFORMATION_URL return " + json);
                 JSONObject jsonObject = null;
                 try {
                     jsonObject = new JSONObject(json);

@@ -49,4 +49,10 @@ public class CommonTools {
             return false;
         }
     }
+
+    public static boolean checkUrl(String url) {
+        Pattern p = Pattern.compile("^(\\w+)://([^/:]+)(:\\d*)?([^#\\s]*)$");
+        Matcher m = p.matcher(url);
+        return m.matches();
+    }
 }
