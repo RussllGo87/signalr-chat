@@ -1,7 +1,6 @@
 package net.pingfang.signalr.chat.fragment;
 
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -47,11 +46,6 @@ public class InfoRegFragment extends Fragment implements View.OnClickListener{
     EditText et_pwd_retype_reg;
 //    EditText et_qq_reg;
 //    EditText et_email_reg;
-
-    String province;
-    String city;
-    String area;
-    String detail;
 
     Button btn_address;
     RadioGroup rg_gender;
@@ -106,11 +100,8 @@ public class InfoRegFragment extends Fragment implements View.OnClickListener{
 //                String qq = et_pwd_reg.getText().toString().trim();
 //                String email = et_email_reg.getText().toString().trim();
                 if(!TextUtils.isEmpty(password) && password.equals(passwordR)
-                        && CommonTools.checkRegParams(nickname,password)
-                        && !TextUtils.isEmpty(province)
-                        && !TextUtils.isEmpty(city)
-                        && !TextUtils.isEmpty(detail)) {
-                    mListener.submitInfo(phone,nickname,password,gender,province,city,area,detail);
+                        && CommonTools.checkRegParams(nickname,password)) {
+                    mListener.submitInfo(phone,nickname,password,gender);
                 }
                 break;
             case R.id.btn_address:
@@ -127,11 +118,8 @@ public class InfoRegFragment extends Fragment implements View.OnClickListener{
 //        String qq = et_pwd_reg.getText().toString().trim();
 //        String email = et_email_reg.getText().toString().trim();
         if(!TextUtils.isEmpty(password) && password.equals(passwordR)
-                && CommonTools.checkRegParams(nickname,password)
-                && !TextUtils.isEmpty(province)
-                && !TextUtils.isEmpty(city)
-                && !TextUtils.isEmpty(detail)) {
-            mListener.submitInfo(phone,nickname,password,gender,province,city,area,detail);
+                && CommonTools.checkRegParams(nickname,password)) {
+            mListener.submitInfo(phone,nickname,password,gender);
         }
     }
 
@@ -152,16 +140,4 @@ public class InfoRegFragment extends Fragment implements View.OnClickListener{
         mListener = null;
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(resultCode == Activity.RESULT_OK) {
-            if(requestCode == REQ_ADDRESS_PICKER) {
-                Bundle bundle = data.getExtras();
-                province = bundle.getString("province");
-                city = bundle.getString("City");
-                area = bundle.getString("AreaName");
-                detail = bundle.getString("Addre");
-            }
-        }
-    }
 }

@@ -36,19 +36,15 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     public static final String VC_SUBMIT_KEY_PHONE = "phone";
     public static final String VC_SUBMIT_KEY_CODE = "vcode";
 
-    public static final String VALIDATE_PHONE_URL = "http://api.hale.com/1100";
+    public static final String VALIDATE_PHONE_URL = "http://192.168.0.152:8090/api/WebAPI/User/CheckPhone";
     public static final String VALIDATE_PHONE_KEY_PHONE_NO = "phone";
-    public static final String SUBMIT_REG_INFORMATION_URL = "http://api.hale.com/1300";
+    public static final String SUBMIT_REG_INFORMATION_URL = "http://192.168.0.152:8090/api/WebAPI/User/Register";
     public static final String SUBMIT_REG_INFORMATION_KEY_PHONE = "phone";
     public static final String SUBMIT_REG_INFORMATION_KEY_NICKNAME = "nickname";
     public static final String SUBMIT_REG_INFORMATION_KEY_PASSWORD = "password";
     public static final String SUBMIT_REG_INFORMATION_KEY_EMAIL = "email";
     public static final String SUBMIT_REG_INFORMATION_KEY_QQ = "qq";
     public static final String SUBMIT_REG_INFORMATION_KEY_GENDER = "gender";
-    public static final String SUBMIT_REG_INFORMATION_KEY_PROVINCE = "province";
-    public static final String SUBMIT_REG_INFORMATION_KEY_CITY = "city";
-    public static final String SUBMIT_REG_INFORMATION_KEY_AREA = "area";
-    public static final String SUBMIT_REG_INFORMATION_KEY_DETAIL = "detail";
 
 
     public static final int STEP_1 = 1;
@@ -138,7 +134,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 JSONObject jsonObject = null;
                 try {
                     jsonObject = new JSONObject(json);
-                    int status = jsonObject.getInt("status");
+                    int status = jsonObject.getInt("code");
                     String message = jsonObject.getString("message");
                     if (status == 0) {
                         JSONObject result = jsonObject.getJSONObject("result");
@@ -258,20 +254,12 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         String nickname = args[1];
         String password = args[2];
         String gender = args[3];
-        String province = args[4];
-        String city = args[5];
-        String area = args[6];
-        String detail = args[7];
         OkHttpCommonUtil okHttpCommonUtil = OkHttpCommonUtil.newInstance(getApplicationContext());
         okHttpCommonUtil.postRequest(SUBMIT_REG_INFORMATION_URL, new OkHttpCommonUtil.Param[]{
                 new OkHttpCommonUtil.Param(SUBMIT_REG_INFORMATION_KEY_PHONE, phone),
                 new OkHttpCommonUtil.Param(SUBMIT_REG_INFORMATION_KEY_NICKNAME, nickname),
                 new OkHttpCommonUtil.Param(SUBMIT_REG_INFORMATION_KEY_PASSWORD, password),
-                new OkHttpCommonUtil.Param(SUBMIT_REG_INFORMATION_KEY_GENDER, gender),
-                new OkHttpCommonUtil.Param(SUBMIT_REG_INFORMATION_KEY_PROVINCE, province),
-                new OkHttpCommonUtil.Param(SUBMIT_REG_INFORMATION_KEY_CITY, city),
-                new OkHttpCommonUtil.Param(SUBMIT_REG_INFORMATION_KEY_AREA, area),
-                new OkHttpCommonUtil.Param(SUBMIT_REG_INFORMATION_KEY_DETAIL, detail),
+                new OkHttpCommonUtil.Param(SUBMIT_REG_INFORMATION_KEY_GENDER, gender)
 
         }, new HttpBaseCallback() {
             @Override

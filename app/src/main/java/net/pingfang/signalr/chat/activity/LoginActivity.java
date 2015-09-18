@@ -33,6 +33,7 @@ import com.tencent.tauth.Tencent;
 import com.tencent.tauth.UiError;
 
 import net.pingfang.signalr.chat.R;
+import net.pingfang.signalr.chat.constant.app.AppConstants;
 import net.pingfang.signalr.chat.constant.qq.TencentConstants;
 import net.pingfang.signalr.chat.constant.weibo.WeiboConstants;
 import net.pingfang.signalr.chat.constant.weibo.WeiboRequestListener;
@@ -50,11 +51,11 @@ import java.io.IOException;
 
 public class LoginActivity extends AppCompatActivity {
 
-    public static final String LOGIN_URL = "http://api.hale.com/1410";
+    public static final String LOGIN_URL = "http://192.168.0.152:8090/api/WebAPI/User/Login";
     public static final String LOGIN_KEY_ACCOUNT = "account";
     public static final String LOGIN_KEY_PASSWORD = "password";
 
-    public static final String NEW_LOGIN_URL = "http://api.hale.com/1420";
+    public static final String NEW_LOGIN_URL = "http://192.168.0.152:8090/api/WebAPI/User/GetUser";
     public static final String NEW_LOGIN_KEY_TID = "tid";
     public static final String NEW_LOGIN_KEY_WID = "wid";
     public static final String NEW_LOGIN_KEY_WXID = "wxid";
@@ -412,14 +413,14 @@ public class LoginActivity extends AppCompatActivity {
                         final String portrait = result.getString("portrait");
 
                         UserManager userManager = new UserManager(getApplicationContext());
-                        userManager.insert(id,nickname,portrait);
+                        userManager.addRecord(id, nickname, portrait);
 
                         mDelivery.post(new Runnable() {
                             @Override
                             public void run() {
-                                sharedPreferencesHelper.putStringValue("uid",id);
-                                sharedPreferencesHelper.putStringValue("nickname",nickname);
-                                sharedPreferencesHelper.putStringValue("portrait", portrait);
+                                sharedPreferencesHelper.putStringValue(AppConstants.KEY_SYS_CURRENT_UID,id);
+                                sharedPreferencesHelper.putStringValue(AppConstants.KEY_SYS_CURRENT_NICKNAME,nickname);
+                                sharedPreferencesHelper.putStringValue(AppConstants.KEY_SYS_CURRENT_PORTRAIT, portrait);
 
                                 Intent intent = new Intent();
                                 intent.setClass(getApplicationContext(), HomeActivity.class);
@@ -502,16 +503,16 @@ public class LoginActivity extends AppCompatActivity {
                         final String id = result.getString("id");
                         final String nickname = result.getString("nickname");
                         final String portrait = result.getString("portrait");
+
+                        UserManager userManager = new UserManager(getApplicationContext());
+                        userManager.addRecord(id,nickname,portrait);
+
                         mDelivery.post(new Runnable() {
                             @Override
                             public void run() {
-                                sharedPreferencesHelper.putStringValue("uid",id);
-                                sharedPreferencesHelper.putStringValue("nickname",nickname);
-                                if(TextUtils.isEmpty(portrait)) {
-                                    sharedPreferencesHelper.putStringValue("portrait",portrait);
-                                }
-
-
+                                sharedPreferencesHelper.putStringValue(AppConstants.KEY_SYS_CURRENT_UID,id);
+                                sharedPreferencesHelper.putStringValue(AppConstants.KEY_SYS_CURRENT_NICKNAME,nickname);
+                                sharedPreferencesHelper.putStringValue(AppConstants.KEY_SYS_CURRENT_PORTRAIT, portrait);
 
                                 Intent intent = new Intent();
                                 intent.setClass(getApplicationContext(), HomeActivity.class);

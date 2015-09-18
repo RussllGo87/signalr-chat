@@ -17,6 +17,7 @@ import com.sina.weibo.sdk.utils.LogUtil;
 import com.tencent.tauth.Tencent;
 
 import net.pingfang.signalr.chat.R;
+import net.pingfang.signalr.chat.constant.app.AppConstants;
 import net.pingfang.signalr.chat.constant.qq.TencentConstants;
 import net.pingfang.signalr.chat.constant.weibo.WeiboRequestListener;
 import net.pingfang.signalr.chat.util.SharedPreferencesHelper;
@@ -66,7 +67,9 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                 startActivity(intent);
                 break;
             case R.id.tv_settings_item_exit:
-                sharedPreferencesHelper.putStringValue("uid", "");
+                sharedPreferencesHelper.clearKey(AppConstants.KEY_SYS_CURRENT_UID);
+                sharedPreferencesHelper.clearKey(AppConstants.KEY_SYS_CURRENT_NICKNAME);
+                sharedPreferencesHelper.clearKey(AppConstants.KEY_SYS_CURRENT_PORTRAIT);
 
                 wbAccessToken = SharedPreferencesHelper.readAccessToken();
                 if(wbAccessToken != null && wbAccessToken.isSessionValid()) {

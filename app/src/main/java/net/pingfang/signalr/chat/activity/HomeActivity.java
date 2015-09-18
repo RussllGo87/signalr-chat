@@ -23,17 +23,13 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.sina.weibo.sdk.auth.Oauth2AccessToken;
 import com.sina.weibo.sdk.openapi.LogoutAPI;
-import com.sina.weibo.sdk.openapi.legacy.UsersAPI;
 import com.sina.weibo.sdk.utils.LogUtil;
 import com.squareup.okhttp.Response;
-import com.tencent.connect.UserInfo;
-import com.tencent.connect.auth.QQAuth;
-import com.tencent.tauth.IUiListener;
 import com.tencent.tauth.Tencent;
-import com.tencent.tauth.UiError;
 
 import net.pingfang.signalr.chat.R;
 import net.pingfang.signalr.chat.adapter.CollectionPagerAdapter;
+import net.pingfang.signalr.chat.constant.app.AppConstants;
 import net.pingfang.signalr.chat.constant.qq.TencentConstants;
 import net.pingfang.signalr.chat.constant.weibo.WeiboConstants;
 import net.pingfang.signalr.chat.constant.weibo.WeiboRequestListener;
@@ -93,16 +89,16 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         if(!TextUtils.isEmpty(mAccessToken.getUid()) && !mAccessToken.isSessionValid()) {
             OkHttpCommonUtil okHttpCommonUtil = OkHttpCommonUtil.newInstance(getApplicationContext());
             okHttpCommonUtil.postRequest("https://api.weibo.com/oauth2/access_token", new OkHttpCommonUtil.Param[]{
-                new OkHttpCommonUtil.Param(WeiboConstants.PARAM_WB_CLIENT_ID,WeiboConstants.APP_KEY),
-                new OkHttpCommonUtil.Param(WeiboConstants.PARAM_WB_CLIENT_SECRET,WeiboConstants.APP_SECRET),
-                new OkHttpCommonUtil.Param(WeiboConstants.PARAM_WB_GRANT_TYPE,"refresh_token"),
-                new OkHttpCommonUtil.Param(WeiboConstants.PARAM_WB_REDIRECT_URL,WeiboConstants.REDIRECT_URL),
-                new OkHttpCommonUtil.Param(WeiboConstants.PARAM_WB_REFRESH_TOKEN,mAccessToken.getRefreshToken())
+                    new OkHttpCommonUtil.Param(WeiboConstants.PARAM_WB_CLIENT_ID, WeiboConstants.APP_KEY),
+                    new OkHttpCommonUtil.Param(WeiboConstants.PARAM_WB_CLIENT_SECRET, WeiboConstants.APP_SECRET),
+                    new OkHttpCommonUtil.Param(WeiboConstants.PARAM_WB_GRANT_TYPE, "refresh_token"),
+                    new OkHttpCommonUtil.Param(WeiboConstants.PARAM_WB_REDIRECT_URL, WeiboConstants.REDIRECT_URL),
+                    new OkHttpCommonUtil.Param(WeiboConstants.PARAM_WB_REFRESH_TOKEN, mAccessToken.getRefreshToken())
             }, new HttpBaseCallback() {
                 @Override
                 public void onResponse(final Response response) throws IOException {
                     String jsonStr = response.body().string();
-                    if(!TextUtils.isEmpty(jsonStr)) {
+                    if (!TextUtils.isEmpty(jsonStr)) {
                         try {
                             JSONObject jsonObject = new JSONObject(jsonStr);
                             String accessToken = jsonObject.getString("access_token");
@@ -117,7 +113,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                         mDelivery.post(new Runnable() {
                             @Override
                             public void run() {
-                                Toast.makeText(getApplicationContext(),getString(R.string.weibo_toast_auth_expired),Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getApplicationContext(), getString(R.string.weibo_toast_auth_expired), Toast.LENGTH_SHORT).show();
                                 logout();
                             }
                         });
@@ -145,7 +141,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void logout() {
-        helper.putStringValue("uid", "");
+        helper.clearKey(AppConstants.KEY_SYS_CURRENT_UID);
+        helper.clearKey(AppConstants.KEY_SYS_CURRENT_NICKNAME);
+        helper.clearKey(AppConstants.KEY_SYS_CURRENT_PORTRAIT);
 
         mAccessToken = SharedPreferencesHelper.readAccessToken();
         if(mAccessToken != null && mAccessToken.isSessionValid()) {
@@ -173,7 +171,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 }
             });
         }
-        Tencent mTencent = Tencent.createInstance(TencentConstants.APP_ID, getApplicationContext());
+
         if(mTencent.isSessionValid()) {
             SharedPreferencesHelper.clearQqAccessToken();
             mTencent.logout(getApplicationContext());
@@ -234,14 +232,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
         @Override
         public void loadAccountInfo() {
-            if(mTencent.isSessionValid()) {
-                loadQQAccountInfo();
-                return;
-            }
 
-            if(mAccessToken.isSessionValid()) {
-                loadWbAccountInfo();
-            }
         }
 
         @Override
@@ -259,94 +250,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             startActivity(intent);
         }
     };
-
-    private void loadQQAccountInfo() {
-        UserInfo userInfo = new UserInfo(getApplicationContext(),
-                QQAuth.createInstance(TencentConstants.APP_ID, getApplicationContext()),
-                mTencent.getQQToken());
-
-        userInfo.getUserInfo(new IUiListener() {
-            @Override
-            public void onComplete(Object response) {
-                if (null == response ) {
-                    Toast.makeText(getApplicationContext(),getString(R.string.resp_return_empty),Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                JSONObject jsonResponse = (JSONObject) response;
-                if(jsonResponse.length() == 0) {
-                    Toast.makeText(getApplicationContext(),getString(R.string.resp_return_empty),Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                doComplete(jsonResponse);
-            }
-
-            public void doComplete(JSONObject jsonObject) {
-                try {
-                    String nickname = jsonObject.getString(TencentConstants.PARAM_NICK_NAME);
-                    String figureurl_qq_1 = jsonObject.getString(TencentConstants.PARAM_QQ_PORTRAIT);
-                    helper.putStringValue(TencentConstants.KEY_QQ_NICK_NAME,nickname);
-                    helper.putStringValue(TencentConstants.KEY_QQ_PORTRAIT, figureurl_qq_1);
-                    mDelivery.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            AccountFragment fragment = (AccountFragment) adapter.getItem(2);
-                            fragment.updateQqAccountInfo();
-                        }
-                    });
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onError(UiError uiError) {
-
-            }
-
-            @Override
-            public void onCancel() {
-
-            }
-        });
-    }
-
-    private void loadWbAccountInfo() {
-        long uid = Long.parseLong(mAccessToken.getUid());
-        new UsersAPI(mAccessToken).show(uid, new WeiboRequestListener() {
-            @Override
-            public void onComplete(String response) {
-                if (!TextUtils.isEmpty(response)) {
-                    try {
-                        JSONObject jsonObject = new JSONObject(response);
-                        String screenname = jsonObject.getString(WeiboConstants.PARAM_WB_SCREEN_NAME);
-                        String location = jsonObject.getString(WeiboConstants.PARAM_WB_LOCATION);
-                        String profileImageUrl = jsonObject.getString(WeiboConstants.PARAM_WB_PROFILE_IMAGE_URL);
-                        String avatarLarge = jsonObject.getString(WeiboConstants.PARAM_WB_AVATAR_LARGE);
-                        String avatarHd = jsonObject.getString(WeiboConstants.PARAM_WB_AVATAR_HD);
-
-                        helper.putStringValue(WeiboConstants.KEY_WB_SCREEN_NAME, screenname);
-                        helper.putStringValue(WeiboConstants.KEY_WB_LOCATION, location);
-                        helper.putStringValue(WeiboConstants.KEY_WB_PROFILE_IMAGE_URL, profileImageUrl);
-                        helper.putStringValue(WeiboConstants.KEY_WB_AVATAR_LARGE, avatarLarge);
-                        helper.putStringValue(WeiboConstants.KEY_WB_AVATAR_HD, avatarHd);
-                        mDelivery.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                AccountFragment fragment = (AccountFragment) adapter.getItem(2);
-                                fragment.updateWbAccountInfo();
-                            }
-                        });
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        });
-    }
 
     @Override
     public void onClick(View view) {

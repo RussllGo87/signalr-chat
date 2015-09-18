@@ -19,7 +19,7 @@ public abstract class TencentConstants {
     public static final String PARAM_QQ_PORTRAIT = "figureurl_qq_1";
 
     // qq用户信息本地存储兼职
-    public static final String KEY_QQ_NICK_NAME = "qq_nickname";
-    public static final String KEY_QQ_PORTRAIT = "qq_portrait";
+    public static final String KEY_QQ_NICK_NAME = "KEY_QQ_NICK_NAME";
+    public static final String KEY_QQ_PORTRAIT = "KEY_QQ_PORTRAIT";
 
 }
