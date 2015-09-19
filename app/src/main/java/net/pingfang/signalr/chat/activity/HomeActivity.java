@@ -5,9 +5,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.IntentCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.PopupMenu;
 import android.text.TextUtils;
 import android.util.Log;
@@ -37,6 +37,7 @@ import net.pingfang.signalr.chat.constant.weibo.WeiboRequestListener;
 import net.pingfang.signalr.chat.fragment.AccountFragment;
 import net.pingfang.signalr.chat.fragment.BuddyFragment;
 import net.pingfang.signalr.chat.fragment.MessageFragment;
+import net.pingfang.signalr.chat.fragment.NearbyFragment;
 import net.pingfang.signalr.chat.listener.OnFragmentInteractionListener;
 import net.pingfang.signalr.chat.net.HttpBaseCallback;
 import net.pingfang.signalr.chat.net.OkHttpCommonUtil;
@@ -49,7 +50,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 
-public class HomeActivity extends FragmentActivity implements View.OnClickListener {
+public class HomeActivity extends AppCompatActivity implements View.OnClickListener {
 
     public static final String TAG = HomeActivity.class.getSimpleName();
 
@@ -60,10 +61,12 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
 
     MessageFragment messageFragment;
     BuddyFragment buddyFragment;
+    NearbyFragment nearbyFragment;
     AccountFragment accountFragment;
 
     Button btn_list_chat;
     Button btn_list_friend;
+    Button btn_nearby_ads;
     Button btn_account_management;
 
     CollectionPagerAdapter adapter;
@@ -202,6 +205,8 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
         btn_list_chat.setOnClickListener(this);
         btn_list_friend = (Button) findViewById(R.id.btn_list_friend);
         btn_list_friend.setOnClickListener(this);
+        btn_nearby_ads = (Button) findViewById(R.id.btn_nearby_ads);
+        btn_nearby_ads.setOnClickListener(this);
         btn_account_management = (Button) findViewById(R.id.btn_account_management);
         btn_account_management.setOnClickListener(this);
     }
@@ -209,10 +214,12 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
     private void initAdapter() {
         messageFragment = MessageFragment.newInstance(onFragmentInteractionListener);
         buddyFragment = BuddyFragment.newInstance();
+        nearbyFragment = NearbyFragment.newInstance();
         accountFragment = AccountFragment.newInstance(onFragmentInteractionListener);
         adapter = new CollectionPagerAdapter(getSupportFragmentManager());
         adapter.add(messageFragment);
         adapter.add(buddyFragment);
+        adapter.add(nearbyFragment);
         adapter.add(accountFragment);
         pager.setAdapter(adapter);
 
@@ -224,8 +231,10 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
                         tv_activity_title.setText(R.string.tv_activity_title_roster);
                         break;
                     case 2:
+                        tv_activity_title.setText(R.string.tv_activity_title_nearby_ads);
+                        break;
+                    case 3:
                         tv_activity_title.setText(R.string.tv_activity_title_account);
-
                         break;
                     case 0:
                         tv_activity_title.setText(R.string.tv_activity_title_message);
@@ -271,8 +280,11 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
             case R.id.btn_list_friend:
                 pager.setCurrentItem(1);
                 break;
-            case R.id.btn_account_management:
+            case R.id.btn_nearby_ads:
                 pager.setCurrentItem(2);
+                break;
+            case R.id.btn_account_management:
+                pager.setCurrentItem(3);
                 break;
         }
     }
@@ -280,7 +292,7 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
     private void popupMenu(View view) {
         ContextThemeWrapper wrapper = new ContextThemeWrapper(getApplicationContext(), R.style.AppTheme);
         PopupMenu popup = new PopupMenu(wrapper, view);
-        MenuInflater inflater = popup.getMenuInflater();
+        final MenuInflater inflater = popup.getMenuInflater();
         inflater.inflate(R.menu.menu_home, popup.getMenu());
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
@@ -293,9 +305,14 @@ public class HomeActivity extends FragmentActivity implements View.OnClickListen
                         integrator.initiateScan();
                         break;
                     case R.id.action_resource:
+                        Intent resourceAddIntent = new Intent();
+                        resourceAddIntent.setClass(getApplicationContext(),ResourceAddActivity.class);
+                        startActivity(resourceAddIntent);
                         break;
                     case R.id.action_maintain:
-
+                        Intent adMaintainIntent = new Intent();
+                        adMaintainIntent.setClass(getApplicationContext(),AdMaintainActivity.class);
+                        startActivity(adMaintainIntent);
                         break;
                 }
                 return true;

@@ -29,6 +29,10 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile files('lib/signalr-client-sdk.jar')
     compile files('lib/signalr-client-sdk-android.jar')
+    compile project(':weibosdk')
+    compile files('lib/weixin_base_sdk.jar')
+    compile files('lib/open_sdk_r5276.jar')
+    compile files('lib/mta-sdk-1.6.2.jar')
     compile 'com.android.support:appcompat-v7:23.0.1'
     compile 'com.android.support:support-v4:23.0.1'
     compile 'com.google.code.gson:gson:2.3.1'
@@ -37,11 +41,8 @@ dependencies {
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.google.zxing:core:3.2.0'
     compile 'com.journeyapps:zxing-android-embedded:3.0.2@aar'
-    compile project(':weibosdk')
-    compile files('lib/weixin_base_sdk.jar')
-    compile files('lib/open_sdk_r5276.jar')
-    compile files('lib/mta-sdk-1.6.2.jar')
 }
+
 
 
 

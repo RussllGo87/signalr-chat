@@ -75,8 +75,8 @@
     <!-- BuddyFragment -->
     <string name="tv_fragment_buddy">BuddyFragment</string>
 
-    <!-- -->
-
+    <!-- NearbyFragment -->
+    <string name="tv_fragment_nearby">NearbyFragment</string>
 
     <!-- AccountFragment -->
     <string name="tv_fragment_account">AccountFragment</string>
@@ -84,7 +84,17 @@
     <string name="tv_account_item_uploaded">My Uploaded</string>
     <string name="tv_account_item_maintained">My Maintained</string>
 
+    <!-- 资源上传 -->
+    <string name="title_activity_resource_add">ResourceAdd</string>
+    <string name="hint_et_resource_width">Width</string>
+    <string name="hint_et_resource_height">Height</string>
+    <string name="tv_location">Location</string>
+    <string name="hint_et_location">Location</string>
+    <string name="hint_et_description">Description</string>
+    <string name="tv_photos">Photos</string>
 
+    <!-- 广告维护 -->
+    <string name="title_activity_ad_maintain">AdMaintain</string>
 
     <!-- 聊天页 -->
     <string name="title_activity_chat">Chat with %s</string>
@@ -112,5 +122,6 @@
     <!-- 意见反馈 -->
     <string name="title_activity_feedback">FeedbackActivity</string>
     <string name="btn_feedback_submit">Submit</string>
+
 
 </resources>

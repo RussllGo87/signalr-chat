@@ -96,6 +96,19 @@
     <string name="tv_account_item_uploaded">我的上传</string>
     <string name="tv_account_item_maintained">我的维护</string>
 
+    <!-- 资源上传 -->
+    <string name="title_activity_resource_add">资源上传</string>
+    <string name="hint_et_resource_width">宽度(米)</string>
+    <string name="hint_et_resource_height">高度(米)</string>
+    <string name="tv_location">位置</string>
+    <string name="hint_et_location">所在位置</string>
+    <string name="hint_et_description">描述说明</string>
+    <string name="hint_et_contact">联系人</string>
+    <string name="hint_et_contact_phone">联系电话</string>
+    <string name="tv_photos">相关照片</string>
+
+    <!-- 广告维护 -->
+    <string name="title_activity_ad_maintain">广告维护</string>
 
     <!-- 聊天页 -->
     <string name="title_activity_chat">与%s对话</string>
