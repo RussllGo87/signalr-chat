@@ -136,14 +136,14 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
     public void validate(String phoneNo) {
         OkHttpCommonUtil okHttpCommonUtil = OkHttpCommonUtil.newInstance(getApplicationContext());
-        okHttpCommonUtil.postRequest(VALIDATE_PHONE_URL, new OkHttpCommonUtil.Param[]{
+        okHttpCommonUtil.getRequest(VALIDATE_PHONE_URL, new OkHttpCommonUtil.Param[]{
                 new OkHttpCommonUtil.Param(VALIDATE_PHONE_KEY_PHONE_NO, phoneNo)
         }, new HttpBaseCallback() {
 
             @Override
             public void onResponse(Response response) throws IOException {
                 String json = response.body().string();
-                Log.d(TAG,"VALIDATE_PHONE_URL return " + json);
+                Log.d(TAG, "VALIDATE_PHONE_URL return " + json);
                 JSONObject jsonObject = null;
                 try {
                     jsonObject = new JSONObject(json);
@@ -160,7 +160,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                                 InfoRegFragment infoFragment = InfoRegFragment.newInstance(phone);
                                 FragmentManager fm = getSupportFragmentManager();
                                 FragmentTransaction ft = fm.beginTransaction();
-                                ft.replace(R.id.fl_container_reg,infoFragment,"InfoRegFragment");
+                                ft.replace(R.id.fl_container_reg, infoFragment, "InfoRegFragment");
                                 ft.commit();
                             }
                         });
@@ -224,9 +224,9 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     @Override
     public void submitCode(String phoneNo, String vc) {
         OkHttpCommonUtil okHttpCommonUtil = OkHttpCommonUtil.newInstance(getApplicationContext());
-        okHttpCommonUtil.postRequest(VC_SUBMIT_URL, new OkHttpCommonUtil.Param[]{
-                new OkHttpCommonUtil.Param(VC_SUBMIT_KEY_PHONE,phoneNo),
-                new OkHttpCommonUtil.Param(VC_SUBMIT_KEY_CODE,vc)
+        okHttpCommonUtil.getRequest(VC_SUBMIT_URL, new OkHttpCommonUtil.Param[]{
+                new OkHttpCommonUtil.Param(VC_SUBMIT_KEY_PHONE, phoneNo),
+                new OkHttpCommonUtil.Param(VC_SUBMIT_KEY_CODE, vc)
         }, new HttpBaseCallback() {
 
             @Override
@@ -268,7 +268,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         String password = args[2];
         String gender = args[3];
         OkHttpCommonUtil okHttpCommonUtil = OkHttpCommonUtil.newInstance(getApplicationContext());
-        okHttpCommonUtil.postRequest(SUBMIT_REG_INFORMATION_URL, new OkHttpCommonUtil.Param[]{
+        okHttpCommonUtil.getRequest(SUBMIT_REG_INFORMATION_URL, new OkHttpCommonUtil.Param[]{
                 new OkHttpCommonUtil.Param(SUBMIT_REG_INFORMATION_KEY_PHONE, phone),
                 new OkHttpCommonUtil.Param(SUBMIT_REG_INFORMATION_KEY_NICKNAME, nickname),
                 new OkHttpCommonUtil.Param(SUBMIT_REG_INFORMATION_KEY_PASSWORD, password),

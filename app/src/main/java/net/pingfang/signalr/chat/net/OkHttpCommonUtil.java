@@ -521,7 +521,11 @@ public class OkHttpCommonUtil {
     }
 
     public void postRequest(String url,Param[] params,Callback callback) {
-        postAsync(url,params,null,callback);
+        postAsync(url, params, null, callback);
+    }
+
+    public void getRequest(String url,Param[] params,Callback callback) {
+        getAsync(url,params,null,callback);
     }
 
     public void display(final ImageView view, final String url, final int errorResId) {

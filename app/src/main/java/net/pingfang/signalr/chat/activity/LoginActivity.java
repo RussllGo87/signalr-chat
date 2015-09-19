@@ -225,6 +225,12 @@ public class LoginActivity extends AppCompatActivity {
                         mDelivery.post(new Runnable() {
                             @Override
                             public void run() {
+
+//                                Intent intent = new Intent();
+//                                intent.setClass(getApplicationContext(), HomeActivity.class);
+//                                startActivity(intent);
+//                                finish();
+
                                 login(NEW_LGOIN_PARAM_PLATFROM_WEIBO);
                             }
                         });
@@ -335,6 +341,12 @@ public class LoginActivity extends AppCompatActivity {
                     mDelivery.post(new Runnable() {
                         @Override
                         public void run() {
+
+//                            Intent intent = new Intent();
+//                            intent.setClass(getApplicationContext(), HomeActivity.class);
+//                            startActivity(intent);
+//                            finish();
+
                             login(NEW_LGOIN_PARAM_PLATFROM_QQ);
                         }
                     });
@@ -392,7 +404,7 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         OkHttpCommonUtil okHttpCommonUtil = OkHttpCommonUtil.newInstance(getApplicationContext());
-        okHttpCommonUtil.postRequest(NEW_LOGIN_URL, params, new HttpBaseCallback() {
+        okHttpCommonUtil.getRequest(NEW_LOGIN_URL, params, new HttpBaseCallback() {
             @Override
             public void onFailure(Request request, IOException e) {
 
@@ -418,8 +430,8 @@ public class LoginActivity extends AppCompatActivity {
                         mDelivery.post(new Runnable() {
                             @Override
                             public void run() {
-                                sharedPreferencesHelper.putStringValue(AppConstants.KEY_SYS_CURRENT_UID,id);
-                                sharedPreferencesHelper.putStringValue(AppConstants.KEY_SYS_CURRENT_NICKNAME,nickname);
+                                sharedPreferencesHelper.putStringValue(AppConstants.KEY_SYS_CURRENT_UID, id);
+                                sharedPreferencesHelper.putStringValue(AppConstants.KEY_SYS_CURRENT_NICKNAME, nickname);
                                 sharedPreferencesHelper.putStringValue(AppConstants.KEY_SYS_CURRENT_PORTRAIT, portrait);
 
                                 Intent intent = new Intent();
@@ -459,8 +471,6 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-
-
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
@@ -486,7 +496,7 @@ public class LoginActivity extends AppCompatActivity {
         String password = et_login_pwd.getText().toString().trim();
         if(!TextUtils.isEmpty(account) && !TextUtils.isEmpty(password)) {
             OkHttpCommonUtil okHttpCommonUtil = OkHttpCommonUtil.newInstance(getApplicationContext());
-            okHttpCommonUtil.postRequest(LOGIN_URL, new OkHttpCommonUtil.Param[]{
+            okHttpCommonUtil.getRequest(LOGIN_URL, new OkHttpCommonUtil.Param[]{
                 new OkHttpCommonUtil.Param(LOGIN_KEY_ACCOUNT, account),
                 new OkHttpCommonUtil.Param(LOGIN_KEY_PASSWORD, password)
             }, new HttpBaseCallback() {
