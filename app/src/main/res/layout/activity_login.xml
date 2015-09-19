@@ -23,6 +23,7 @@
         <EditText android:id="@+id/et_login_no"
                   android:layout_width="match_parent"
                   android:layout_height="wrap_content"
+                  android:inputType="phone"
                   android:hint="@string/hint_et_login_no"/>
 
         <EditText android:id="@+id/et_login_pwd"

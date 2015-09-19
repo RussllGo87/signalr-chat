@@ -1,7 +1,6 @@
 package net.pingfang.signalr.chat.ui.dialog;
 
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -23,10 +22,6 @@ public class DoubleButtonDialogFragment extends DialogFragment {
 
     public interface DoubleButtonDialogClick {
         public void onPositiveButtonClick();
-    }
-
-    public static DoubleButtonDialogFragment newInstance(Context context, int resId,DoubleButtonDialogClick mListener) {
-        return newInstance(context.getString(resId),mListener);
     }
 
     public static DoubleButtonDialogFragment newInstance(String message,DoubleButtonDialogClick mListener) {
@@ -66,4 +61,5 @@ public class DoubleButtonDialogFragment extends DialogFragment {
         });
         return builder.create();
     }
+
 }

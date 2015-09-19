@@ -5,9 +5,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.IntentCompat;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.PopupMenu;
 import android.text.TextUtils;
 import android.util.Log;
@@ -49,7 +49,9 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 
-public class HomeActivity extends AppCompatActivity implements View.OnClickListener {
+public class HomeActivity extends FragmentActivity implements View.OnClickListener {
+
+    public static final String TAG = HomeActivity.class.getSimpleName();
 
     TextView tv_activity_title;
     TextView tv_menu_drop_down;
@@ -68,6 +70,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     private Handler mDelivery;
     SharedPreferencesHelper helper;
+
+    private boolean mReturningWithResult = false;
 
     /** 微博相关参数,封装了 "access_token"，"expires_in"，"refresh_token"，并提供了他们的管理功能  */
     private Oauth2AccessToken mAccessToken;
@@ -302,6 +306,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
         if(result != null) {
             if(result.getContents() == null) {
@@ -310,26 +315,26 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 final String content = result.getContents();
                 Toast.makeText(getApplicationContext(), "Scanned: " + content, Toast.LENGTH_LONG).show();
                 if(CommonTools.checkUrl(content)) {
-                    DoubleButtonDialogFragment dialogFragment =
-                            DoubleButtonDialogFragment.newInstance(getApplicationContext(), R.string.dialog_message_url,
-                                    new DoubleButtonDialogFragment.DoubleButtonDialogClick() {
-                                        @Override
-                                        public void onPositiveButtonClick() {
-                                            Intent intent = new Intent();
-                                            intent.setAction(Intent.ACTION_VIEW);
-                                            intent.setData(Uri.parse(content));
-                                            if (intent.resolveActivity(getPackageManager()) != null) {
-                                                startActivity(intent);
-                                            }
-                                        }
-                                    });
+                    Log.d(TAG, "CommonTools.checkUrl(content) == " + true);
+                    DoubleButtonDialogFragment dialogFragment = DoubleButtonDialogFragment.newInstance(
+                            getApplicationContext().getString(R.string.dialog_message_url),
+                            new DoubleButtonDialogFragment.DoubleButtonDialogClick() {
+                                @Override
+                                public void onPositiveButtonClick() {
+                                    Intent intent = new Intent();
+                                    intent.setAction(Intent.ACTION_VIEW);
+                                    intent.setData(Uri.parse(content));
+                                    if (intent.resolveActivity(getPackageManager()) != null) {
+                                        startActivity(intent);
+                                    }
+                                }
+                            });
+                    dialogFragment.show(getSupportFragmentManager(), "DoubleButtonDialogFragment");
                 }
 
             }
         } else {
             Log.d("MainActivity", "Weird");
-            // This is important, otherwise the result will not be passed to the fragment
-            super.onActivityResult(requestCode, resultCode, data);
         }
     }
 }
