@@ -18,6 +18,8 @@ import net.pingfang.signalr.chat.util.CommonTools;
 
 public class GreyBitmapActivity extends AppCompatActivity implements View.OnClickListener{
 
+    // svn提交测试
+
     TextView btn_activity_back;
 
     ImageView iv_primary_pic;
