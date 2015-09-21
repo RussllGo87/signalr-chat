@@ -34,6 +34,7 @@ import net.pingfang.signalr.chat.constant.app.AppConstants;
 import net.pingfang.signalr.chat.constant.qq.TencentConstants;
 import net.pingfang.signalr.chat.constant.weibo.WeiboConstants;
 import net.pingfang.signalr.chat.constant.weibo.WeiboRequestListener;
+import net.pingfang.signalr.chat.demo.GreyBitmapActivity;
 import net.pingfang.signalr.chat.fragment.AccountFragment;
 import net.pingfang.signalr.chat.fragment.BuddyFragment;
 import net.pingfang.signalr.chat.fragment.MessageFragment;
@@ -248,7 +249,11 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
         @Override
         public void loadAccountInfo() {
+            String nickname = helper.getStringValue(AppConstants.KEY_SYS_CURRENT_NICKNAME);
+            String portrait = helper.getStringValue(AppConstants.KEY_SYS_CURRENT_PORTRAIT);
 
+//            AccountFragment fragment = (AccountFragment) adapter.getItem(3);
+//            fragment.updateAccountInfo(nickname,portrait);
         }
 
         @Override
@@ -311,8 +316,13 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                         break;
                     case R.id.action_maintain:
                         Intent adMaintainIntent = new Intent();
-                        adMaintainIntent.setClass(getApplicationContext(),AdMaintainActivity.class);
+                        adMaintainIntent.setClass(getApplicationContext(), AdMaintainActivity.class);
                         startActivity(adMaintainIntent);
+                        break;
+                    case R.id.action_convert:
+                        Intent convertGrayIntent = new Intent();
+                        convertGrayIntent.setClass(getApplicationContext(), GreyBitmapActivity.class);
+                        startActivity(convertGrayIntent);
                         break;
                 }
                 return true;

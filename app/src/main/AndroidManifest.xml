@@ -116,6 +116,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="net.pingfang.signalr.chat.activity.HomeActivity" />
         </activity>
+        <activity
+            android:name=".demo.GreyBitmapActivity"
+            android:label="@string/title_activity_grey_bitmap"
+            android:parentActivityName=".activity.HomeActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="net.pingfang.signalr.chat.activity.HomeActivity" />
+        </activity>
     </application>
 
 </manifest>

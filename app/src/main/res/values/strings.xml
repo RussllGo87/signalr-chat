@@ -122,6 +122,7 @@
     <!-- 意见反馈 -->
     <string name="title_activity_feedback">FeedbackActivity</string>
     <string name="btn_feedback_submit">Submit</string>
+    <string name="title_activity_grey_bitmap">GreyBitmapActivity</string>
 
 
 </resources>

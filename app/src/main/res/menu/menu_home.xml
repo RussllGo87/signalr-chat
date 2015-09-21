@@ -15,4 +15,8 @@
           android:title="@string/menu_action_maintain"
           android:orderInCategory="102"
           app:showAsAction="never"/>
+    <item android:id="@+id/action_convert"
+          android:title="图片转色"
+          android:orderInCategory="103"
+          app:showAsAction="never"/>
 </menu>

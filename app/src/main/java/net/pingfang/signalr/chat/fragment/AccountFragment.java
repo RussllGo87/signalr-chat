@@ -13,8 +13,6 @@ import android.widget.TextView;
 
 import net.pingfang.signalr.chat.R;
 import net.pingfang.signalr.chat.activity.SettingsActivity;
-import net.pingfang.signalr.chat.constant.qq.TencentConstants;
-import net.pingfang.signalr.chat.constant.weibo.WeiboConstants;
 import net.pingfang.signalr.chat.listener.OnFragmentInteractionListener;
 import net.pingfang.signalr.chat.net.OkHttpCommonUtil;
 import net.pingfang.signalr.chat.util.SharedPreferencesHelper;
@@ -62,23 +60,7 @@ public class AccountFragment extends Fragment implements View.OnClickListener{
         mListener.loadAccountInfo();
     }
 
-    public void updateQqAccountInfo() {
-        String nickname = helper.getStringValue(TencentConstants.KEY_QQ_NICK_NAME);
-        String portrait = helper.getStringValue(TencentConstants.KEY_QQ_PORTRAIT);
-        if (!TextUtils.isEmpty(nickname)) {
-            tv_settings_item_me.setText(nickname);
-        }
-
-        if(!TextUtils.isEmpty(portrait)) {
-            OkHttpCommonUtil okHttpCommonUtil = OkHttpCommonUtil.newInstance(getContext());
-            okHttpCommonUtil.display(iv_account_portrait,portrait,R.mipmap.ic_launcher);
-        }
-    }
-
-    public void updateWbAccountInfo() {
-
-        String nickname = helper.getStringValue(WeiboConstants.KEY_WB_SCREEN_NAME);
-        String portrait = helper.getStringValue(WeiboConstants.KEY_WB_PROFILE_IMAGE_URL);
+    public void updateAccountInfo(String nickname,String portrait) {
         if (!TextUtils.isEmpty(nickname)) {
             tv_settings_item_me.setText(nickname);
         }

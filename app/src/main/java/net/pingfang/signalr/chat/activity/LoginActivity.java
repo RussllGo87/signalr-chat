@@ -8,6 +8,7 @@ import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -50,6 +51,8 @@ import org.json.JSONObject;
 import java.io.IOException;
 
 public class LoginActivity extends AppCompatActivity {
+
+    public static final String TAG = LoginActivity.class.getSimpleName();
 
     public static final String LOGIN_URL = "http://192.168.0.152:8090/api/WebAPI/User/Login";
     public static final String LOGIN_KEY_ACCOUNT = "account";
@@ -413,6 +416,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onResponse(Response response) throws IOException {
                 String json = response.body().string();
+                Log.d(TAG, "NEW_LOGIN_URL return " + json);
                 JSONObject jsonObject;
                 try {
                     jsonObject = new JSONObject(json);
@@ -503,6 +507,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onResponse(Response response) throws IOException {
                 String json = response.body().string();
+                Log.d(TAG, "LOGIN_URL return " + json);
                 JSONObject jsonObject;
                 try {
                     jsonObject = new JSONObject(json);

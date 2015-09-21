@@ -1,5 +1,10 @@
 package net.pingfang.signalr.chat.util;
 
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
+import android.graphics.Paint;
 import android.text.TextUtils;
 
 import java.util.regex.Matcher;
@@ -60,5 +65,31 @@ public class CommonTools {
         Pattern p = Pattern.compile(reg);
         Matcher m = p.matcher(url);
         return m.matches();
+    }
+
+    public static Bitmap convertToGrayscale(Bitmap bitmap) {
+        int imageHeight = bitmap.getHeight();
+        int imageWidth = bitmap.getWidth();
+
+        float[] arrayForColorMatrix = new float[] {0, 0, 1, 0, 0,
+                0, 0, 1, 0, 0,
+                0, 0, 1, 0, 0,
+                0, 0, 0, 1, 0};
+
+        Bitmap.Config config = bitmap.getConfig();
+        Bitmap grayScaleBitmap = Bitmap.createBitmap(imageHeight, imageWidth, config);
+
+        Canvas c = new Canvas(grayScaleBitmap);
+        Paint paint = new Paint();
+
+        ColorMatrix matrix = new ColorMatrix(arrayForColorMatrix);
+        matrix.setSaturation(0);
+
+        ColorMatrixColorFilter filter = new ColorMatrixColorFilter(matrix);
+        paint.setColorFilter(filter);
+
+        c.drawBitmap(bitmap, 0, 0, paint);
+
+        return grayScaleBitmap;
     }
 }
