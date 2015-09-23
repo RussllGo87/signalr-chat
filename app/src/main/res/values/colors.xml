@@ -10,4 +10,7 @@
     <!-- 地址选择对话框 -->
     <color name="bg_color_dialog_title_address_picker">#87ceeb</color>
     <color name="text_color_dialog_title_address_picker">@android:color/white</color>
+
+    <!-- 进度条 -->
+    <color name="bg_progress_bar_container">#44000000</color>
 </resources>

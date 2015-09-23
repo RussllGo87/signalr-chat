@@ -7,6 +7,8 @@ import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
 import android.text.TextUtils;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -91,5 +93,49 @@ public class CommonTools {
         c.drawBitmap(bitmap, 0, 0, paint);
 
         return grayScaleBitmap;
+    }
+
+    public static String TimeConvertString() {
+        long currentTimeMillis = System.currentTimeMillis();
+        Date date = new Date();
+        date.setTime(currentTimeMillis);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+
+        StringBuffer stringBuffer = new StringBuffer();
+        stringBuffer.append(calendar.get(Calendar.YEAR));
+        stringBuffer.append("-");
+        int month = calendar.get(Calendar.MONTH);
+        if(month < 10) {
+            stringBuffer.append("0");
+        }
+        stringBuffer.append(month);
+        stringBuffer.append("-");
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+        if(day < 10) {
+            stringBuffer.append("0");
+        }
+        stringBuffer.append(day);
+        stringBuffer.append(" ");
+
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        if(hour < 10) {
+            stringBuffer.append("0");
+        }
+        stringBuffer.append(hour);
+        stringBuffer.append(":");
+        int minute = calendar.get(Calendar.MINUTE);
+        if(minute < 10) {
+            stringBuffer.append("0");
+        }
+        stringBuffer.append(minute);
+        stringBuffer.append(":");
+        int second = calendar.get(Calendar.SECOND);
+        if(second < 10) {
+            stringBuffer.append("0");
+        }
+        stringBuffer.append(second);
+
+        return stringBuffer.toString();
     }
 }

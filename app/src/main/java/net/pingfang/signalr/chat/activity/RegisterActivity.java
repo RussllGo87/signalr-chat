@@ -10,7 +10,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.Request;
@@ -58,6 +61,10 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
     FrameLayout fl_container_reg;
 
+    LinearLayout ll_progress_bar_container;
+    ProgressBar pb_operation;
+    TextView tv_pb_operation;
+
     int requestStep = STEP_1;
 
     private Handler mDelivery;
@@ -80,6 +87,10 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         btn_step_next.setOnClickListener(this);
 
         fl_container_reg = (FrameLayout) findViewById(R.id.fl_container_reg);
+        ll_progress_bar_container = (LinearLayout) findViewById(R.id.ll_progress_bar_container);
+        pb_operation = (ProgressBar) findViewById(R.id.pb_operation);
+        tv_pb_operation = (TextView) findViewById(R.id.tv_pb_operation);
+
     }
 
     private void initFragment() {
@@ -135,10 +146,24 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     }
 
     public void validate(String phoneNo) {
+        ll_progress_bar_container.setVisibility(View.VISIBLE);
+        tv_pb_operation.setText(R.string.pb_messsage_validate_phone);
         OkHttpCommonUtil okHttpCommonUtil = OkHttpCommonUtil.newInstance(getApplicationContext());
         okHttpCommonUtil.getRequest(VALIDATE_PHONE_URL, new OkHttpCommonUtil.Param[]{
                 new OkHttpCommonUtil.Param(VALIDATE_PHONE_KEY_PHONE_NO, phoneNo)
         }, new HttpBaseCallback() {
+
+            @Override
+            public void onFailure(Request request, IOException e) {
+                super.onFailure(request, e);
+                mDelivery.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getApplicationContext(), R.string.pb_message_validate_phone_failure, Toast.LENGTH_SHORT).show();
+                        ll_progress_bar_container.setVisibility(View.GONE);
+                    }
+                });
+            }
 
             @Override
             public void onResponse(Response response) throws IOException {
@@ -155,6 +180,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                         mDelivery.post(new Runnable() {
                             @Override
                             public void run() {
+                                Toast.makeText(getApplicationContext(), R.string.pb_message_validate_phone_ok, Toast.LENGTH_SHORT).show();
+                                ll_progress_bar_container.setVisibility(View.GONE);
                                 requestStep = STEP_2;
                                 btn_step_previous.setText(R.string.btn_step_previous);
                                 InfoRegFragment infoFragment = InfoRegFragment.newInstance(phone);
@@ -164,9 +191,18 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                                 ft.commit();
                             }
                         });
+                    } else {
+                        mDelivery.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(getApplicationContext(), R.string.pb_message_validate_phone_failure, Toast.LENGTH_SHORT).show();
+                                ll_progress_bar_container.setVisibility(View.GONE);
+                            }
+                        });
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
+                    Log.d(TAG, "SUBMIT_REG_INFORMATION_URL return " + e.getMessage());
                 }
             }
         });
@@ -267,6 +303,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         String nickname = args[1];
         String password = args[2];
         String gender = args[3];
+        ll_progress_bar_container.setVisibility(View.VISIBLE);
+        tv_pb_operation.setText(R.string.pb_message_submit_infor);
         OkHttpCommonUtil okHttpCommonUtil = OkHttpCommonUtil.newInstance(getApplicationContext());
         okHttpCommonUtil.getRequest(SUBMIT_REG_INFORMATION_URL, new OkHttpCommonUtil.Param[]{
                 new OkHttpCommonUtil.Param(SUBMIT_REG_INFORMATION_KEY_PHONE, phone),
@@ -275,6 +313,20 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 new OkHttpCommonUtil.Param(SUBMIT_REG_INFORMATION_KEY_GENDER, gender)
 
         }, new HttpBaseCallback() {
+
+            @Override
+            public void onFailure(Request request, IOException e) {
+                super.onFailure(request, e);
+
+                mDelivery.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getApplicationContext(), R.string.pb_message_submit_infor_failure, Toast.LENGTH_SHORT).show();
+                        ll_progress_bar_container.setVisibility(View.GONE);
+                    }
+                });
+            }
+
             @Override
             public void onResponse(Response response) throws IOException {
                 String json = response.body().string();
@@ -288,15 +340,28 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                         mDelivery.post(new Runnable() {
                             @Override
                             public void run() {
+                                ll_progress_bar_container.setVisibility(View.GONE);
+                                Toast.makeText(getApplicationContext(), R.string.pb_message_submit_infor_ok, Toast.LENGTH_SHORT).show();
+
                                 Intent intent = new Intent();
                                 intent.setClass(getApplicationContext(), LoginActivity.class);
                                 startActivity(intent);
                                 finish();
                             }
                         });
+                    } else {
+                        mDelivery.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(getApplicationContext(), R.string.pb_message_submit_infor_failure, Toast.LENGTH_SHORT).show();
+                                ll_progress_bar_container.setVisibility(View.GONE);
+                            }
+                        });
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
+
+                    Log.d(TAG, "SUBMIT_REG_INFORMATION_URL return " + e.getMessage());
                 }
             }
         });

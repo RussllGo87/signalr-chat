@@ -42,6 +42,7 @@ import net.pingfang.signalr.chat.fragment.NearbyFragment;
 import net.pingfang.signalr.chat.listener.OnFragmentInteractionListener;
 import net.pingfang.signalr.chat.net.HttpBaseCallback;
 import net.pingfang.signalr.chat.net.OkHttpCommonUtil;
+import net.pingfang.signalr.chat.service.NewChatService;
 import net.pingfang.signalr.chat.ui.dialog.DoubleButtonDialogFragment;
 import net.pingfang.signalr.chat.util.CommonTools;
 import net.pingfang.signalr.chat.util.SharedPreferencesHelper;
@@ -83,6 +84,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     // qq 登录配置
     Tencent mTencent;
 
+//    ChatService chatService;
+    NewChatService newChatService;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,6 +97,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         refreshToken();
         initView();
         initAdapter();
+
+        initCommunicate();
     }
 
     private void refreshToken() {
@@ -245,6 +251,14 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         });
     }
 
+    private void initCommunicate() {
+//        chatService = ChatService.newInstance(getApplicationContext());
+        Intent intent = new Intent(getApplicationContext(),NewChatService.class);
+        intent.putExtra(NewChatService.FLAG_SERVICE_CMD,NewChatService.FLAF_INIT_CONNECTION);
+        startService(intent);
+
+    }
+
     private OnFragmentInteractionListener onFragmentInteractionListener = new OnFragmentInteractionListener() {
 
         @Override
@@ -259,7 +273,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         @Override
         public void loadMessage() {
             MessageFragment fragment = (MessageFragment) adapter.getItem(0);
-            fragment.updateMessage("server", "0001", "");
+            fragment.updateMessage("server", "2", "");
         }
 
         @Override

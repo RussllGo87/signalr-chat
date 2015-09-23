@@ -2,18 +2,21 @@ package net.pingfang.signalr.chat.activity;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.net.Uri;
+import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.PopupMenu;
 import android.text.TextUtils;
 import android.util.Log;
@@ -34,9 +37,12 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import net.pingfang.signalr.chat.R;
-import net.pingfang.signalr.chat.service.ChatService;
+import net.pingfang.signalr.chat.constant.app.AppConstants;
+import net.pingfang.signalr.chat.service.NewChatService;
+import net.pingfang.signalr.chat.util.CommonTools;
 import net.pingfang.signalr.chat.util.GlobalApplication;
 import net.pingfang.signalr.chat.util.MediaFileUtils;
+import net.pingfang.signalr.chat.util.SharedPreferencesHelper;
 
 import java.io.IOException;
 
@@ -54,25 +60,34 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     MessageReceiver receiver;
 
     String name = "server";
-    String uid = "001";
-    ChatService chatService;
+    String buddyUid;
+
 
     MediaRecorder mRecorder;
     String mFileName;
     boolean mStartRecording = false;
     MediaPlayer mPlayer;
 
+//    ChatService chatService;
+    NewChatService mService;
+    boolean mBound = false;
+
+    SharedPreferencesHelper helper;
+    String uid;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
-        chatService = ChatService.newInstance(getApplicationContext());
+        helper = SharedPreferencesHelper.newInstance(getApplicationContext());
+        uid = helper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID);
         Intent intent = getIntent();
         name = intent.getStringExtra("name");
-        uid = intent.getStringExtra("uid");
+        buddyUid = intent.getStringExtra("uid");
 
         initView();
+        initCommunicate();
     }
 
     private void initView() {
@@ -90,7 +105,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 boolean handled = false;
                 if (actionId == EditorInfo.IME_ACTION_SEND) {
-                    sendMessage(name);
+                    sendMessage();
                     handled = true;
                 }
                 return handled;
@@ -124,6 +139,13 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                 return true;
             }
         });
+    }
+
+    private void initCommunicate() {
+        //        chatService = ChatService.newInstance(getApplicationContext());
+
+        Intent intent = new Intent(this, NewChatService.class);
+        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
     }
 
     private void popupMenu(View view) {
@@ -169,6 +191,24 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         registerReceiver(receiver, filter);
     }
 
+    /** Defines callbacks for service binding, passed to bindService() */
+    private ServiceConnection mConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName className,
+                                       IBinder service) {
+            // We've bound to LocalService, cast the IBinder and get LocalService instance
+            NewChatService.ChatBinder binder = (NewChatService.ChatBinder) service;
+            mService = (NewChatService) binder.getService();
+            mBound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName className) {
+            mBound = false;
+        }
+    };
+
     @Override
     public void onClick(View view) {
         int viewId = view.getId();
@@ -177,7 +217,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                 navigateUp();
                 break;
             case R.id.btn_send:
-                sendMessage(name);
+                sendMessage();
                 break;
         }
     }
@@ -195,12 +235,35 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     protected void onDestroy() {
         super.onDestroy();
 
-        chatService.destroy();
+        if (mBound) {
+            unbindService(mConnection);
+            mBound = false;
+        }
     }
 
-    private void sendMessage(String name) {
+    private void sendMessage() {
         if(!TextUtils.isEmpty(et_message.getText().toString().trim())) {
-            chatService.sendMessage(name, et_message.getText().toString().trim());
+            StringBuffer stringBuffer = new StringBuffer();
+            stringBuffer.append("{");
+            stringBuffer.append("fromUid");
+            stringBuffer.append(uid);
+            stringBuffer.append(",");
+            stringBuffer.append("toUid");
+            stringBuffer.append(buddyUid);
+            stringBuffer.append(",");
+            stringBuffer.append("messageType");
+            stringBuffer.append("text");
+            stringBuffer.append(",");
+            stringBuffer.append("content");
+            stringBuffer.append("\"");
+            stringBuffer.append(et_message.getText().toString().trim());
+            stringBuffer.append("\"");
+            stringBuffer.append(",");
+            stringBuffer.append("time:");
+            stringBuffer.append(CommonTools.TimeConvertString());
+            stringBuffer.append("}");
+
+            mService.sendMessage(stringBuffer.toString());
 
             LinearLayout ll = new LinearLayout(getApplicationContext());
             ll.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));

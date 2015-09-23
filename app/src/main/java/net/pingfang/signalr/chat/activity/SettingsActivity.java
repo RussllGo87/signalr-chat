@@ -1,7 +1,11 @@
 package net.pingfang.signalr.chat.activity;
 
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.content.IntentCompat;
@@ -20,6 +24,7 @@ import net.pingfang.signalr.chat.R;
 import net.pingfang.signalr.chat.constant.app.AppConstants;
 import net.pingfang.signalr.chat.constant.qq.TencentConstants;
 import net.pingfang.signalr.chat.constant.weibo.WeiboRequestListener;
+import net.pingfang.signalr.chat.service.NewChatService;
 import net.pingfang.signalr.chat.util.SharedPreferencesHelper;
 
 import org.json.JSONException;
@@ -36,6 +41,10 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     /** Access Token 实例  */
     private Oauth2AccessToken wbAccessToken;
 
+//    ChatService chatService;
+    NewChatService mService;
+    boolean mBound = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,6 +52,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
 
         sharedPreferencesHelper = SharedPreferencesHelper.newInstance(getApplicationContext());
         initView();
+        initCommunicate();
     }
 
     private void initView() {
@@ -53,6 +63,42 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         tv_settings_item_exit = (TextView) findViewById(R.id.tv_settings_item_exit);
         tv_settings_item_exit.setOnClickListener(this);
     }
+
+    private void initCommunicate() {
+//        chatService = ChatService.newInstance(getApplicationContext());
+        if(!mBound) {
+            Intent intent = new Intent(this, NewChatService.class);
+            bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        if (mBound) {
+            unbindService(mConnection);
+            mBound = false;
+        }
+    }
+
+    /** Defines callbacks for service binding, passed to bindService() */
+    private ServiceConnection mConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName className,
+                                       IBinder service) {
+            // We've bound to LocalService, cast the IBinder and get LocalService instance
+            NewChatService.ChatBinder binder = (NewChatService.ChatBinder) service;
+            mService = (NewChatService) binder.getService();
+            mBound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName className) {
+            mBound = false;
+        }
+    };
 
     @Override
     public void onClick(View view) {
@@ -102,6 +148,13 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                     SharedPreferencesHelper.clearQqAccessToken();
                     mTencent.logout(getApplicationContext());
                 }
+
+                mService.destroy();
+                if (mBound) {
+                    unbindService(mConnection);
+                    mBound = false;
+                }
+                stopService(new Intent(getApplicationContext(),NewChatService.class));
 
                 Intent exitIntent = new Intent();
                 exitIntent.setClass(getApplicationContext(), LoginActivity.class);

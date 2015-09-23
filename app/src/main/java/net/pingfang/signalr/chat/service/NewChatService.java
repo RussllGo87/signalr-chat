@@ -1,7 +1,10 @@
 package net.pingfang.signalr.chat.service;
 
-import android.content.Context;
+import android.app.Service;
+import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Binder;
+import android.os.IBinder;
 import android.util.Log;
 
 import microsoft.aspnet.signalr.client.ConnectionState;
@@ -14,37 +17,63 @@ import microsoft.aspnet.signalr.client.hubs.HubConnection;
 import microsoft.aspnet.signalr.client.hubs.HubProxy;
 import microsoft.aspnet.signalr.client.hubs.SubscriptionHandler2;
 
-/**
- * Created by gongguopei87@gmail.com on 2015/8/13.
- */
-public class ChatService {
+public class NewChatService extends Service {
 
-    public static final String TAG = ChatService.class.getSimpleName();
+    public static final String TAG = NewChatService.class.getSimpleName();
+
+    public static final String FLAG_SERVICE_CMD = "FLAG_SERVICE_CMD";
+    public static final int FLAF_INIT_CONNECTION = 0x01;
 
     public static final String URL = "http://192.168.0.254/signalr/hubs/";
     HubConnection connection;
     HubProxy hub;
     SignalRFuture<Void> awaitConnection;
 
-    private Context context;
+    // Binder given to clients
+    private final IBinder mBinder = new ChatBinder();
 
-    private static ChatService chatService;
-
-    private ChatService(Context context) {
-        this.context = context;
-
-        initConnection();
+    /**
+     * Class used for the client Binder.  Because we know this service always
+     * runs in the same process as its clients, we don't need to deal with IPC.
+     */
+    public class ChatBinder extends Binder {
+        public NewChatService getService() {
+            return NewChatService.this;
+        }
     }
 
-    public static ChatService newInstance(Context context) {
-        if(chatService == null) {
-            chatService = new ChatService(context);
+    @Override
+    public void onCreate() {
+        super.onCreate();
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        int requestFlag = intent.getIntExtra(FLAG_SERVICE_CMD,FLAF_INIT_CONNECTION);
+        switch(requestFlag) {
+            case FLAF_INIT_CONNECTION:
+                initConnection();
+                break;
         }
-        return chatService;
+
+        return super.onStartCommand(intent, flags, startId);
+    }
+
+    @Override
+    public IBinder onBind(Intent intent) {
+        return mBinder;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        destroy();
     }
 
     private void initConnection() {
         Platform.loadPlatformComponent(new AndroidPlatformComponent());
+
         StringBuffer stringBuffer = new StringBuffer();
         stringBuffer.append("{");
         stringBuffer.append("UserId:");
@@ -64,19 +93,12 @@ public class ChatService {
             }
         });
 
-
         hub = connection.createHubProxy("communicationHub");
         hub.on("broadcastMessage",
                 new SubscriptionHandler2<String,String>() {
                     @Override
                     public void run(String msgType, String msg) {
-//                        Intent intent = new Intent();
-//                        intent.setAction(GlobalApplication.ACTION_INTENT_TEXT_MESSAGE_INCOMING);
-//                        intent.putExtra("name","server");
-//                        intent.putExtra("body", msg);
-//                        context.sendBroadcast(intent);
-                        Log.d(TAG,msg);
-//                        Toast.makeText(context,msg,Toast.LENGTH_SHORT).show();
+                        Log.d(TAG, msg);
                     }
                 },
                 String.class,String.class);
@@ -85,26 +107,21 @@ public class ChatService {
         awaitConnection = connection.start();
     }
 
-    public void destroy() {
-
-        if(connection != null && connection.getState() == ConnectionState.Connected) {
-            connection.stop();
-            if(chatService != null) {
-                chatService = null;
-            }
-        }
+    public void sendMessage(String message) {
+        new MessageSendTask().execute(message);
     }
 
-    public void sendMessage(String buddy,String message) {
-        new MessageSendTask().execute(buddy,message);
+    public void destroy() {
+        if(connection != null && connection.getState() == ConnectionState.Connected) {
+            connection.stop();
+        }
     }
 
     private class MessageSendTask extends AsyncTask<String,String,String> {
         @Override
         protected String doInBackground(String... params) {
-            hub.invoke("send","directory",params[1]);
+            hub.invoke("send","directory",params[0]);
             return "ok";
         }
     }
-
 }

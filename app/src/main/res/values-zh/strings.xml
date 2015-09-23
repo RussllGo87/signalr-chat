@@ -26,6 +26,9 @@
     <string name="btn_login_pattern_qq">QQ</string>
     <string name="btn_login_pattern_wechat">微信</string>
     <string name="btn_login_pattern_weibo">微博</string>
+    <string name="pb_message_login_now">登录校验中</string>
+    <string name="pb_message_login_ok">登录成功</string>
+    <string name="pb_message_login_failure">登录失败</string>
 
     <!-- 授权相关  -->
     <string name="weibosdk_demo_toast_auth_success">授权成功</string>
@@ -50,6 +53,9 @@
     <string name="hint_et_validate_code_input">验证码</string>
     <string name="btn_validate_phone">验证号码</string>
     <string name="btn_captcha_submit">确认提交</string>
+    <string name="pb_messsage_validate_phone">正在对你的电话号码进行校验</string>
+    <string name="pb_message_validate_phone_ok">号码校验成功</string>
+    <string name="pb_message_validate_phone_failure">号码校验失败</string>
 
     <!-- 注册值个人资料填写 InfoRegFragment -->
     <string name="hint_et_nick_name_reg">昵称</string>
@@ -62,6 +68,9 @@
     <string name="rb_gender_male">男</string>
     <string name="rb_gender_female">女</string>
     <string name="btn_info_reg_submit">确认提交</string>
+    <string name="pb_message_submit_infor">正在提交你的注册信息</string>
+    <string name="pb_message_submit_infor_ok">注册成功</string>
+    <string name="pb_message_submit_infor_failure">注册出错</string>
 
     <!-- 地址填写选择对话框 -->
     <string name="dialog_title_address_picker">请选择地址</string>
