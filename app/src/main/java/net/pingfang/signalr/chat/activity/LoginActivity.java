@@ -40,6 +40,7 @@ import net.pingfang.signalr.chat.constant.app.AppConstants;
 import net.pingfang.signalr.chat.constant.qq.TencentConstants;
 import net.pingfang.signalr.chat.constant.weibo.WeiboConstants;
 import net.pingfang.signalr.chat.constant.weibo.WeiboRequestListener;
+import net.pingfang.signalr.chat.database.UserManager;
 import net.pingfang.signalr.chat.net.HttpBaseCallback;
 import net.pingfang.signalr.chat.net.OkHttpCommonUtil;
 import net.pingfang.signalr.chat.ui.dialog.SingleButtonDialogFragment;
@@ -435,8 +436,8 @@ public class LoginActivity extends AppCompatActivity {
                         final String nickname = result.getString("nickname");
                         final String portrait = result.getString("portrait");
 
-//                        UserManager userManager = new UserManager(getApplicationContext());
-//                        userManager.addRecord(id, nickname, portrait);
+                        UserManager userManager = new UserManager(getApplicationContext());
+                        userManager.addRecord(id, nickname, portrait);
 
                         mDelivery.post(new Runnable() {
                             @Override

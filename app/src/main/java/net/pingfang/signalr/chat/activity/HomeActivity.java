@@ -254,7 +254,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private void initCommunicate() {
 //        chatService = ChatService.newInstance(getApplicationContext());
         Intent intent = new Intent(getApplicationContext(),NewChatService.class);
-        intent.putExtra(NewChatService.FLAG_SERVICE_CMD,NewChatService.FLAF_INIT_CONNECTION);
+        intent.putExtra(NewChatService.FLAG_SERVICE_CMD, NewChatService.FLAF_INIT_CONNECTION);
+        String qs = constructLogin(helper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID));
+        intent.putExtra(newChatService.FLAG_INIT_CONNECTION_QS,qs);
         startService(intent);
 
     }
@@ -377,5 +379,25 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         } else {
             Log.d("MainActivity", "Weird");
         }
+    }
+
+    private String constructLogin(String uid) {
+        StringBuffer stringBuffer = new StringBuffer();
+        if(!TextUtils.isEmpty(uid)) {
+            stringBuffer.append("Android=");
+            stringBuffer.append("{");
+            stringBuffer.append("\"UserId\":");
+            stringBuffer.append(uid);
+            stringBuffer.append(",");
+            stringBuffer.append("\"Longitude\":");
+            stringBuffer.append(100.55);
+            stringBuffer.append(",");
+            stringBuffer.append("\"Latitude\":");
+            stringBuffer.append(99.99);
+            stringBuffer.append("}");
+
+        }
+
+        return stringBuffer.toString();
     }
 }

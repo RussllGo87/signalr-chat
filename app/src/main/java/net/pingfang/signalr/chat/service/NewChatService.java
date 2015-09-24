@@ -22,7 +22,9 @@ public class NewChatService extends Service {
     public static final String TAG = NewChatService.class.getSimpleName();
 
     public static final String FLAG_SERVICE_CMD = "FLAG_SERVICE_CMD";
+
     public static final int FLAF_INIT_CONNECTION = 0x01;
+    public static final String FLAG_INIT_CONNECTION_QS = "FLAG_INIT_CONNECTION";
 
     public static final String URL = "http://192.168.0.254/signalr/hubs/";
     HubConnection connection;
@@ -52,7 +54,8 @@ public class NewChatService extends Service {
         int requestFlag = intent.getIntExtra(FLAG_SERVICE_CMD,FLAF_INIT_CONNECTION);
         switch(requestFlag) {
             case FLAF_INIT_CONNECTION:
-                initConnection();
+                String qs = intent.getStringExtra(FLAG_INIT_CONNECTION_QS);
+                initConnection(qs);
                 break;
         }
 
@@ -71,34 +74,27 @@ public class NewChatService extends Service {
         destroy();
     }
 
-    private void initConnection() {
+    private void initConnection(String qs) {
         Platform.loadPlatformComponent(new AndroidPlatformComponent());
 
-        StringBuffer stringBuffer = new StringBuffer();
-        stringBuffer.append("{");
-        stringBuffer.append("UserId:");
-        stringBuffer.append(999);
-        stringBuffer.append(",");
-        stringBuffer.append("Longitude:");
-        stringBuffer.append(100.55);
-        stringBuffer.append(",");
-        stringBuffer.append("Latitude:");
-        stringBuffer.append(99.99);
-        stringBuffer.append("}");
+        Log.d(TAG, "qs == " + qs);
 
-        connection = new HubConnection(URL,stringBuffer.toString(), true, new Logger() {
+        connection = new HubConnection(URL,qs, false, new Logger() {
             @Override
             public void log(String s, LogLevel logLevel) {
 
             }
         });
+        String newQs = connection.getQueryString();
+        Log.d(TAG,"newQs == " + newQs);
 
         hub = connection.createHubProxy("communicationHub");
         hub.on("broadcastMessage",
                 new SubscriptionHandler2<String,String>() {
                     @Override
                     public void run(String msgType, String msg) {
-                        Log.d(TAG, msg);
+                        Log.d(TAG,"msgType == " + msgType);
+                        Log.d(TAG, "msg == " + msg);
                     }
                 },
                 String.class,String.class);
