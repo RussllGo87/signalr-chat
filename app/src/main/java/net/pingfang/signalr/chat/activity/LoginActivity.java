@@ -47,6 +47,7 @@ import net.pingfang.signalr.chat.ui.dialog.SingleButtonDialogFragment;
 import net.pingfang.signalr.chat.util.MediaFileUtils;
 import net.pingfang.signalr.chat.util.SharedPreferencesHelper;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -154,7 +155,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 currentClickViewId = view.getId();
-                if(!mTencent.isSessionValid()) {
+                if (!mTencent.isSessionValid()) {
                     mTencent.login(LoginActivity.this, TencentConstants.SCOPE, loginListener);
                 }
             }
@@ -438,6 +439,16 @@ public class LoginActivity extends AppCompatActivity {
 
                         UserManager userManager = new UserManager(getApplicationContext());
                         userManager.addRecord(id, nickname, portrait);
+
+                        JSONArray jsonArray = jsonObject.getJSONArray("list");
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            JSONObject user = jsonArray.getJSONObject(i);
+                            String fuid = user.getString("uid");
+                            String fnickname = user.getString("nickname");
+                            String fportrait = user.getString("portrait");
+
+                            userManager.addRecord(fuid, fnickname, fportrait);
+                        }
 
                         mDelivery.post(new Runnable() {
                             @Override

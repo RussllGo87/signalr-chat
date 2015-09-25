@@ -17,4 +17,8 @@
 
     <!-- 地址选择对话框 -->
     <dimen name="text_size_dialog_title_address_picker">20sp</dimen>
+
+    <!-- 聊天用户列表 -->
+    <dimen name="padding_left_list_item_buddy_container">12dp</dimen>
+
 </resources>

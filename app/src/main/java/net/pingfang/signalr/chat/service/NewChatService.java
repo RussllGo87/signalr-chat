@@ -4,8 +4,13 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Binder;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.util.Log;
+
+import net.pingfang.signalr.chat.chat.ChatMessageListener;
+import net.pingfang.signalr.chat.chat.ChatMessageProcessor;
 
 import microsoft.aspnet.signalr.client.ConnectionState;
 import microsoft.aspnet.signalr.client.LogLevel;
@@ -44,9 +49,13 @@ public class NewChatService extends Service {
         }
     }
 
+    ChatMessageListener messageListener;
+    Handler handler;
+
     @Override
     public void onCreate() {
         super.onCreate();
+        handler = new Handler(Looper.getMainLooper());
     }
 
     @Override
@@ -77,16 +86,14 @@ public class NewChatService extends Service {
     private void initConnection(String qs) {
         Platform.loadPlatformComponent(new AndroidPlatformComponent());
 
-        Log.d(TAG, "qs == " + qs);
-
         connection = new HubConnection(URL,qs, false, new Logger() {
             @Override
             public void log(String s, LogLevel logLevel) {
 
             }
         });
-        String newQs = connection.getQueryString();
-        Log.d(TAG,"newQs == " + newQs);
+
+        messageListener = new ChatMessageProcessor(getApplicationContext(),handler);
 
         hub = connection.createHubProxy("communicationHub");
         hub.on("broadcastMessage",
@@ -95,12 +102,14 @@ public class NewChatService extends Service {
                     public void run(String msgType, String msg) {
                         Log.d(TAG,"msgType == " + msgType);
                         Log.d(TAG, "msg == " + msg);
+
+                        messageListener.onMessageReceive(msgType,msg);
                     }
                 },
                 String.class,String.class);
 
-
         awaitConnection = connection.start();
+
     }
 
     public void sendMessage(String message) {

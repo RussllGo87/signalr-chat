@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 
 import net.pingfang.signalr.chat.R;
 
@@ -16,6 +17,7 @@ import net.pingfang.signalr.chat.R;
  */
 public class BuddyFragment extends Fragment {
 
+    ListView list_user;
 
     public static BuddyFragment newInstance() {
         BuddyFragment fragment = new BuddyFragment();
@@ -25,6 +27,10 @@ public class BuddyFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        View view = inflater.inflate(R.layout.fragment_buddy, container, false);
+        list_user = (ListView) view.findViewById(R.id.list_user);
+
         return inflater.inflate(R.layout.fragment_buddy, container, false);
     }
 

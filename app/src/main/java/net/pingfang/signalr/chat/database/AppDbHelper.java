@@ -26,7 +26,7 @@ public class AppDbHelper extends SQLiteOpenHelper {
             AppContract.UserEntry._ID + INTERER_TYPE + PRIMARY_KEY + COMMA_SEP +
             AppContract.UserEntry.COLUMN_NAME_ENTRY_UID + TEXT_TYPE + NOT_NULL + UNIQUE + COMMA_SEP +
             AppContract.UserEntry.COLUMN_NAME_NICK_NAME + TEXT_TYPE + NOT_NULL + COMMA_SEP +
-            AppContract.UserEntry.COLUMN_NAME_PORTRAIT + TEXT_TYPE + NOT_NULL +
+            AppContract.UserEntry.COLUMN_NAME_PORTRAIT + TEXT_TYPE +
             " )";
     private static final String SQL_DELETE_ENTRY_USER =
             "DROP TABLE IF EXISTS " + AppContract.UserEntry.TABLE_NAME;

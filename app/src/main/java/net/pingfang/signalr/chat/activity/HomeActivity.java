@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Message;
 import android.support.v4.content.IntentCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -86,6 +87,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
 //    ChatService chatService;
     NewChatService newChatService;
+    Handler handler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -259,6 +261,12 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         intent.putExtra(newChatService.FLAG_INIT_CONNECTION_QS,qs);
         startService(intent);
 
+        handler = new Handler(Looper.getMainLooper(), new Handler.Callback() {
+            @Override
+            public boolean handleMessage(Message msg) {
+                return false;
+            }
+        });
     }
 
     private OnFragmentInteractionListener onFragmentInteractionListener = new OnFragmentInteractionListener() {
