@@ -146,6 +146,7 @@
     <string name="title_activity_feedback">@string/tv_about_item_suggestion</string>
     <string name="btn_feedback_submit">提交</string>
 
-
+    <!-- provider 相关 -->
+    <string name="illegal_uri_exception">错误的 URI</string>
 
 </resources>

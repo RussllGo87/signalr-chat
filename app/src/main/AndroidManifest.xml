@@ -130,6 +130,11 @@
             android:enabled="true"
             android:exported="false" >
         </service>
+
+        <provider
+            android:authorities="net.pingfang.signalr.chat.provider"
+            android:name=".provider.ChatAppContentProvider"/>
+
     </application>
 
 </manifest>

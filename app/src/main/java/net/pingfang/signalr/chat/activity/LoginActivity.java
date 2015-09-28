@@ -555,8 +555,25 @@ public class LoginActivity extends AppCompatActivity {
                             final String nickname = result.getString("nickname");
                             final String portrait = result.getString("portrait");
 
-//                            UserManager userManager = new UserManager(getApplicationContext());
-//                            userManager.addRecord(id,nickname,portrait);
+                            JSONArray list = jsonObject.getJSONArray("list");
+                            if(list != null && list.length() > 0) {
+                                for(int i = 0; i < list.length(); i++) {
+                                    JSONObject tmpJson = list.getJSONObject(i);
+                                    String item_uid = tmpJson.getString("id");
+                                    String item_nickname = tmpJson.getString("nickname");
+                                    String item_portrait = tmpJson.getString("portrait");
+                                    UserManager userManager = new UserManager(getApplicationContext());
+                                    if(item_portrait != null && !TextUtils.isEmpty(item_portrait)) {
+                                        userManager.addRecord(item_uid,item_nickname,item_portrait);
+                                    } else {
+                                        userManager.addRecord(item_uid,item_nickname,"");
+                                    }
+
+                                }
+                            }
+
+
+
 
                             mDelivery.post(new Runnable() {
                                 @Override

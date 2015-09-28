@@ -222,7 +222,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     private void initAdapter() {
         messageFragment = MessageFragment.newInstance(onFragmentInteractionListener);
-        buddyFragment = BuddyFragment.newInstance();
+        buddyFragment = BuddyFragment.newInstance(onFragmentInteractionListener);
         nearbyFragment = NearbyFragment.newInstance();
         accountFragment = AccountFragment.newInstance(onFragmentInteractionListener);
         adapter = new CollectionPagerAdapter(getSupportFragmentManager());
@@ -281,9 +281,15 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         @Override
-        public void loadMessage() {
+        public void updateMessageList(String name, String uid) {
             MessageFragment fragment = (MessageFragment) adapter.getItem(0);
-            fragment.updateMessage("server", "2", "");
+            fragment.updateMessage(name, uid, "");
+        }
+
+        @Override
+        public void loadMessage() {
+//            MessageFragment fragment = (MessageFragment) adapter.getItem(0);
+//            fragment.updateMessage("server", "2", "");
         }
 
         @Override

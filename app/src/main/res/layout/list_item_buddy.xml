@@ -18,9 +18,4 @@
         android:layout_weight="1"
         android:paddingLeft="@dimen/padding_tv_settings_item_me"
         android:text="朋友昵称"/>
-
-    <ImageView android:id="@+id/iv_user_status"
-        android:layout_width="@dimen/btn_qr_code_width"
-        android:layout_height="@dimen/btn_qr_code_height"
-        android:src="@drawable/selector_qr_code"/>
 </LinearLayout>

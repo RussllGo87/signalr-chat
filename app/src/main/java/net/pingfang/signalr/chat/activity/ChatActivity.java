@@ -82,6 +82,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
         helper = SharedPreferencesHelper.newInstance(getApplicationContext());
         uid = helper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID);
+
         Intent intent = getIntent();
         name = intent.getStringExtra("name");
         buddyUid = intent.getStringExtra("uid");

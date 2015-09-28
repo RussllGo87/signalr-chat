@@ -6,6 +6,7 @@ package net.pingfang.signalr.chat.listener;
 public interface OnFragmentInteractionListener {
 
     void loadMessage();
+    void updateMessageList(String name,String uid);
     void loadAccountInfo();
     void onFragmentInteraction(String name,String uid);
 }
