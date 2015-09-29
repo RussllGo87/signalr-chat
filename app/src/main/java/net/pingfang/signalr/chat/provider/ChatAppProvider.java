@@ -19,7 +19,7 @@ import java.util.HashMap;
 /**
  * Created by gongguopei87@gmail.com on 2015/9/28.
  */
-public class ChatAppContentProvider extends ContentProvider{
+public class ChatAppProvider extends ContentProvider{
 
     AppDbHelper dbHelper;
 
@@ -45,6 +45,7 @@ public class ChatAppContentProvider extends ContentProvider{
         userProjectionMap.put(AppContract.UserEntry.COLUMN_NAME_ENTRY_UID, AppContract.UserEntry.COLUMN_NAME_ENTRY_UID);
         userProjectionMap.put(AppContract.UserEntry.COLUMN_NAME_NICK_NAME, AppContract.UserEntry.COLUMN_NAME_NICK_NAME);
         userProjectionMap.put(AppContract.UserEntry.COLUMN_NAME_PORTRAIT, AppContract.UserEntry.COLUMN_NAME_PORTRAIT);
+        userProjectionMap.put(AppContract.UserEntry.COLUMN_NAME_STATUS,AppContract.UserEntry.COLUMN_NAME_STATUS);
     }
 
     @Override

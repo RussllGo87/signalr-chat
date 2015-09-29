@@ -98,6 +98,8 @@
 
     <!-- BuddyFragment -->
     <string name="tv_fragment_buddy">好友</string>
+    <string name="tv_user_status_online">在线</string>
+    <string name="tv_user_status_offline">离线</string>
 
     <!-- AccountFragment -->
     <string name="tv_account_item_settings">@string/title_activity_settings</string>

@@ -12,10 +12,27 @@
         android:layout_height="@dimen/btn_qr_code_width"
         android:src="@mipmap/ic_launcher"/>
 
-    <TextView android:id="@+id/tv_user_nickname"
-        style="@style/SettingItemStyle"
-        android:layout_width="0dp"
-        android:layout_weight="1"
-        android:paddingLeft="@dimen/padding_tv_settings_item_me"
-        android:text="朋友昵称"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView android:id="@+id/tv_user_nickname"
+            style="@style/SettingItemStyle"
+            android:layout_width="match_parent"
+            android:minHeight="18dp"
+            android:paddingLeft="@dimen/padding_tv_settings_item_me"
+            android:text="朋友昵称"
+            android:textSize="@dimen/text_size_activity_title"/>
+
+        <TextView android:id="@+id/tv_user_status"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/padding_tv_settings_item_me"
+            android:text="在线"/>
+
+
+    </LinearLayout>
+
+
 </LinearLayout>

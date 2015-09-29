@@ -246,25 +246,41 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         if(!TextUtils.isEmpty(et_message.getText().toString().trim())) {
             StringBuffer stringBuffer = new StringBuffer();
             stringBuffer.append("{");
-            stringBuffer.append("fromUid");
+            stringBuffer.append("\"");
+            stringBuffer.append("Sender");
+            stringBuffer.append("\"");
+            stringBuffer.append(":");
             stringBuffer.append(uid);
             stringBuffer.append(",");
-            stringBuffer.append("toUid");
+            stringBuffer.append("\"");
+            stringBuffer.append("Receiver");
+            stringBuffer.append("\"");
+            stringBuffer.append(":");
             stringBuffer.append(buddyUid);
             stringBuffer.append(",");
-            stringBuffer.append("messageType");
+            stringBuffer.append("\"");
+            stringBuffer.append("MessageType");
+            stringBuffer.append("\"");
+            stringBuffer.append(":");
+            stringBuffer.append("\"");
             stringBuffer.append("text");
+            stringBuffer.append("\"");
             stringBuffer.append(",");
-            stringBuffer.append("content");
+            stringBuffer.append("\"");
+            stringBuffer.append("Contents");
+            stringBuffer.append("\"");
+            stringBuffer.append(":");
             stringBuffer.append("\"");
             stringBuffer.append(et_message.getText().toString().trim());
             stringBuffer.append("\"");
             stringBuffer.append(",");
-            stringBuffer.append("time:");
+            stringBuffer.append("\"");
+            stringBuffer.append("SendTime");
+            stringBuffer.append("\"");
             stringBuffer.append(CommonTools.TimeConvertString());
             stringBuffer.append("}");
 
-            mService.sendMessage(stringBuffer.toString());
+            mService.sendMessage("OnlineMsg",stringBuffer.toString());
 
             LinearLayout ll = new LinearLayout(getApplicationContext());
             ll.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));

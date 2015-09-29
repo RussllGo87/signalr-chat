@@ -133,7 +133,7 @@
 
         <provider
             android:authorities="net.pingfang.signalr.chat.provider"
-            android:name=".provider.ChatAppContentProvider"/>
+            android:name=".provider.ChatAppProvider"/>
 
     </application>
 

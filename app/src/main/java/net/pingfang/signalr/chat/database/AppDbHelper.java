@@ -15,7 +15,7 @@ public class AppDbHelper extends SQLiteOpenHelper {
 
     private static final String PRIMARY_KEY = " PRIMARY KEY";
     private static final String NOT_NULL = " NOT NULL";
-    private static final String INTERER_TYPE = " INTEGER";
+    private static final String INTEGER_TYPE = " INTEGER";
     private static final String TEXT_TYPE = " TEXT";
     private static final String UNIQUE = " UNIQUE";
     private static final String COMMA_SEP = ",";
@@ -23,10 +23,11 @@ public class AppDbHelper extends SQLiteOpenHelper {
 
     private static final String SQL_CREATE_ENTRY_USER =
             "CREATE TABLE " + AppContract.UserEntry.TABLE_NAME + " (" +
-            AppContract.UserEntry._ID + INTERER_TYPE + PRIMARY_KEY + COMMA_SEP +
+            AppContract.UserEntry._ID + INTEGER_TYPE + PRIMARY_KEY + COMMA_SEP +
             AppContract.UserEntry.COLUMN_NAME_ENTRY_UID + TEXT_TYPE + NOT_NULL + UNIQUE + COMMA_SEP +
             AppContract.UserEntry.COLUMN_NAME_NICK_NAME + TEXT_TYPE + NOT_NULL + COMMA_SEP +
-            AppContract.UserEntry.COLUMN_NAME_PORTRAIT + TEXT_TYPE +
+            AppContract.UserEntry.COLUMN_NAME_PORTRAIT + TEXT_TYPE + COMMA_SEP +
+            AppContract.UserEntry.COLUMN_NAME_STATUS + INTEGER_TYPE +
             " )";
     private static final String SQL_DELETE_ENTRY_USER =
             "DROP TABLE IF EXISTS " + AppContract.UserEntry.TABLE_NAME;

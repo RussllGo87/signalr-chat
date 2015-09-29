@@ -30,7 +30,10 @@ public class UserManager {
     }
 
     public void insert(String uid, String nickname, String portrait) {
+        insert(uid,nickname,portrait,0);
+    }
 
+    public void insert(String uid, String nickname, String portrait, int status) {
         database = openWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -38,6 +41,7 @@ public class UserManager {
         values.put(AppContract.UserEntry.COLUMN_NAME_ENTRY_UID,uid);
         values.put(AppContract.UserEntry.COLUMN_NAME_NICK_NAME,nickname);
         values.put(AppContract.UserEntry.COLUMN_NAME_PORTRAIT,portrait);
+        values.put(AppContract.UserEntry.COLUMN_NAME_STATUS,status);
 
         database.insert(AppContract.UserEntry.TABLE_NAME,null,values);
     }
@@ -72,6 +76,18 @@ public class UserManager {
         ContentValues values = new ContentValues();
         values.put(AppContract.UserEntry.COLUMN_NAME_NICK_NAME,nickname);
         values.put(AppContract.UserEntry.COLUMN_NAME_PORTRAIT,portrait);
+
+        String selection = AppContract.UserEntry.COLUMN_NAME_ENTRY_UID + " = ?";
+        String[] selectionArgs = new String[]{uid};
+
+        return database.update(AppContract.UserEntry.TABLE_NAME,values,selection,selectionArgs);
+    }
+
+    public int updateStatus(String uid, int status) {
+        database = openWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(AppContract.UserEntry.COLUMN_NAME_STATUS,status);
 
         String selection = AppContract.UserEntry.COLUMN_NAME_ENTRY_UID + " = ?";
         String[] selectionArgs = new String[]{uid};

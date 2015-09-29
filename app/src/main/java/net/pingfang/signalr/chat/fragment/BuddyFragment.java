@@ -1,6 +1,5 @@
 package net.pingfang.signalr.chat.fragment;
 
-
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;

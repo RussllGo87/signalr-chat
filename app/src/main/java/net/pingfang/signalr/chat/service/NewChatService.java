@@ -112,11 +112,16 @@ public class NewChatService extends Service {
 
     }
 
-    public void sendMessage(String message) {
-        new MessageSendTask().execute(message);
+    public void sendMessage(String messageType, String message) {
+        new MessageSendTask().execute(messageType, message);
     }
 
     public void destroy() {
+
+        if(messageListener != null) {
+            messageListener.onMessageReceive("exitApp","");
+        }
+
         if(connection != null && connection.getState() == ConnectionState.Connected) {
             connection.stop();
         }
@@ -125,7 +130,7 @@ public class NewChatService extends Service {
     private class MessageSendTask extends AsyncTask<String,String,String> {
         @Override
         protected String doInBackground(String... params) {
-            hub.invoke("send","directory",params[0]);
+            hub.invoke("send",params[0],params[1]);
             return "ok";
         }
     }

@@ -46,6 +46,14 @@ public class ListCursorAdapter extends CursorAdapter {
         TextView tv_user_nickname = (TextView) view.findViewById(R.id.tv_user_nickname);
         tv_user_nickname.setText(cursor.getString(cursor.getColumnIndex(AppContract.UserEntry.COLUMN_NAME_NICK_NAME)));
 
+        TextView tv_user_status = (TextView) view.findViewById(R.id.tv_user_status);
+        int status = cursor.getInt(cursor.getColumnIndex(AppContract.UserEntry.COLUMN_NAME_STATUS));
+        if(status == 1) {
+            tv_user_status.setText(R.string.tv_user_status_online);
+        } else {
+            tv_user_status.setText(R.string.tv_user_status_offline);
+        }
+
         String uid = cursor.getString(cursor.getColumnIndex(AppContract.UserEntry.COLUMN_NAME_ENTRY_UID));
 
         UserHolder userHolder = new UserHolder();

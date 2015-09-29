@@ -29,5 +29,6 @@ public final class AppContract {
         public static final String COLUMN_NAME_ENTRY_UID = "uid";
         public static final String COLUMN_NAME_NICK_NAME = "nickname";
         public static final String COLUMN_NAME_PORTRAIT = "portrait";
+        public static final String COLUMN_NAME_STATUS = "status";
     }
 }
