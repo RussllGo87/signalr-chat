@@ -97,16 +97,21 @@ public class ChatMessageProcessor implements ChatMessageListener {
                             selection,
                             new String[]{uid});
                 } else {
-                    String nickname = object.getString("NickName");
-                    String portrait = object.getString("HeadPortrait");
-                    values.put(AppContract.UserEntry.COLUMN_NAME_ENTRY_UID,uid);
-                    values.put(AppContract.UserEntry.COLUMN_NAME_NICK_NAME,nickname);
-                    if(portrait != null && !TextUtils.isEmpty(portrait) && !"null".equals(portrait)) {
-                        values.put(AppContract.UserEntry.COLUMN_NAME_PORTRAIT,portrait);
-                    } else {
-                        values.put(AppContract.UserEntry.COLUMN_NAME_PORTRAIT,"");
+                    if(status == 1) {
+                        String nickname = object.getString("NickName");
+                        String portrait = object.getString("HeadPortrait");
+                        values.put(AppContract.UserEntry.COLUMN_NAME_ENTRY_UID,uid);
+                        values.put(AppContract.UserEntry.COLUMN_NAME_NICK_NAME,nickname);
+
+                        if(portrait != null && !TextUtils.isEmpty(portrait) && !"null".equals(portrait)) {
+                            values.put(AppContract.UserEntry.COLUMN_NAME_PORTRAIT,portrait);
+                        } else {
+                            values.put(AppContract.UserEntry.COLUMN_NAME_PORTRAIT, "");
+                        }
+                        context.getContentResolver().insert(AppContract.UserEntry.CONTENT_URI, values);
                     }
-                    context.getContentResolver().insert(AppContract.UserEntry.CONTENT_URI,values);
+
+
                 }
             }
         } catch (JSONException e) {
