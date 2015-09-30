@@ -106,6 +106,7 @@ public class CommonTools {
         stringBuffer.append(calendar.get(Calendar.YEAR));
         stringBuffer.append("-");
         int month = calendar.get(Calendar.MONTH);
+        month = month + 1;
         if(month < 10) {
             stringBuffer.append("0");
         }

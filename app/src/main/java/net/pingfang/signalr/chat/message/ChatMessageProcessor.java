@@ -1,13 +1,16 @@
-package net.pingfang.signalr.chat.chat;
+package net.pingfang.signalr.chat.message;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
+import android.database.Cursor;
 import android.os.AsyncTask;
-import android.os.Handler;
+import android.os.Bundle;
 import android.text.TextUtils;
 
 import net.pingfang.signalr.chat.database.AppContract;
 import net.pingfang.signalr.chat.database.UserManager;
+import net.pingfang.signalr.chat.util.GlobalApplication;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -19,11 +22,9 @@ import org.json.JSONObject;
 public class ChatMessageProcessor implements ChatMessageListener {
 
     Context context;
-    Handler handler;
 
-    public ChatMessageProcessor(Context context, Handler handler) {
+    public ChatMessageProcessor(Context context) {
         this.context = context;
-        this.handler = handler;
     }
 
     @Override
@@ -80,6 +81,10 @@ public class ChatMessageProcessor implements ChatMessageListener {
         }
     }
 
+    /** 用户上下线相关状态更新
+     * @param message 用户相关信息封装
+     * @param  status 用户上下线状态标志
+     * **/
     private void updateUserStatus(String message,int status) {
         String selection = AppContract.UserEntry.COLUMN_NAME_ENTRY_UID + " = ?";
         JSONObject object;
@@ -119,10 +124,45 @@ public class ChatMessageProcessor implements ChatMessageListener {
         }
     }
 
+    /** 用户退出应用状态更新 **/
     private void exitApp() {
         ContentValues values = new ContentValues();
         values.put(AppContract.UserEntry.COLUMN_NAME_STATUS,0);
         context.getContentResolver().update(AppContract.UserEntry.CONTENT_URI, values, null, null);
+    }
+
+    private void processOnlineMessage(String message) {
+        JSONObject object;
+        try {
+            object = new JSONObject(message);
+            String from = object.getString("Sender");
+            String content = object.getString("Contents");
+            String datetime = object.getString("SendTime");
+
+            String selection = AppContract.UserEntry.COLUMN_NAME_ENTRY_UID + " = ?";
+            String[] selectionArgs = new String[]{from};
+            Cursor cursor = context.getContentResolver().query(AppContract.UserEntry.CONTENT_URI,null,selection,selectionArgs,null);
+            if(cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {
+                String nameFrom = cursor.getString(cursor.getColumnIndex(AppContract.UserEntry.COLUMN_NAME_NICK_NAME));
+//                String portrait = cursor.getString(cursor.getColumnIndex(AppContract.UserEntry.COLUMN_NAME_PORTRAIT));
+                cursor.close();
+
+
+                Bundle args =  new Bundle();
+                args.putString("nameFrom", nameFrom);
+                args.putString("content", content);
+                args.putString("datetime", datetime);
+
+                Intent intent = new Intent();
+                intent.setAction(GlobalApplication.ACTION_INTENT_TEXT_MESSAGE_INCOMING);
+                intent.putExtra("message", args);
+                context.sendBroadcast(intent);
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
     }
 
     private void processOfflineMsgShort(String message) {
@@ -143,6 +183,8 @@ public class ChatMessageProcessor implements ChatMessageListener {
                 updateUserStatus(message, 0);
             } else if(messageType.equals("exitApp")) {
                 exitApp();
+            } else if(messageType.equals("OnlineMsg")) {
+                processOnlineMessage(message);
             }
 
             return "ok";

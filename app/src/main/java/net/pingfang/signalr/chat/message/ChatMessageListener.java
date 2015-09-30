@@ -1,4 +1,4 @@
-package net.pingfang.signalr.chat.chat;
+package net.pingfang.signalr.chat.message;
 
 /**
  * Created by gongguopei87@gmail.com on 2015/9/25.

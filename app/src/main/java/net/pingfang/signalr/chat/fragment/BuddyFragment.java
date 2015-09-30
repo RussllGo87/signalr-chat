@@ -18,8 +18,10 @@ import android.widget.ListView;
 import net.pingfang.signalr.chat.R;
 import net.pingfang.signalr.chat.activity.ChatActivity;
 import net.pingfang.signalr.chat.adapter.ListCursorAdapter;
+import net.pingfang.signalr.chat.constant.app.AppConstants;
 import net.pingfang.signalr.chat.database.AppContract;
 import net.pingfang.signalr.chat.listener.OnFragmentInteractionListener;
+import net.pingfang.signalr.chat.util.SharedPreferencesHelper;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -32,14 +34,23 @@ public class BuddyFragment extends Fragment implements LoaderManager.LoaderCallb
 
     private ListView list_user;
 
-    private ListCursorAdapter listCusorAdapter;
+    private ListCursorAdapter listCursorAdapter;
 
     private OnFragmentInteractionListener mListener;
+
+    SharedPreferencesHelper sharedPreferencesHelper;
 
     public static BuddyFragment newInstance(OnFragmentInteractionListener mListener) {
         BuddyFragment fragment = new BuddyFragment();
         fragment.mListener = mListener;
         return fragment;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        sharedPreferencesHelper = SharedPreferencesHelper.newInstance(getContext());
     }
 
     @Override
@@ -56,41 +67,50 @@ public class BuddyFragment extends Fragment implements LoaderManager.LoaderCallb
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        listCusorAdapter = new ListCursorAdapter(getContext(),null, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
-        list_user.setAdapter(listCusorAdapter);
+        listCursorAdapter = new ListCursorAdapter(getContext(),null, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+        list_user.setAdapter(listCursorAdapter);
         list_user.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 ListCursorAdapter.UserHolder userHolder = (ListCursorAdapter.UserHolder) view.getTag();
 
-                mListener.updateMessageList(userHolder.getNickname(),userHolder.getUid());
+                mListener.updateMessageList(userHolder.getNickname(), userHolder.getUid());
 
                 Intent intent = new Intent();
-                intent.setClass(getContext(),ChatActivity.class);
+                intent.setClass(getContext(), ChatActivity.class);
                 intent.putExtra("name", userHolder.getNickname());
                 intent.putExtra("uid", userHolder.getUid());
                 startActivity(intent);
             }
         });
 
-        getLoaderManager().initLoader(LOADER_ID,null,this);
+        String uid = sharedPreferencesHelper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID);
+        Bundle args = new Bundle();
+        args.putString(AppConstants.KEY_SYS_CURRENT_UID,uid);
+
+        getLoaderManager().initLoader(LOADER_ID,args,this);
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 
+        String uid = args.getString(AppConstants.KEY_SYS_CURRENT_UID);
+
         Uri baseUri = AppContract.UserEntry.CONTENT_URI;
 
-        return new CursorLoader(getContext(),baseUri,null,null,null,null);
+        String selection = AppContract.UserEntry.COLUMN_NAME_ENTRY_UID + " != ?";
+        String[] selectionArgs = new String[]{uid};
+
+        return new CursorLoader(getContext(),baseUri,null,selection,selectionArgs,null);
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        listCusorAdapter.swapCursor(data);
+        listCursorAdapter.swapCursor(data);
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        listCusorAdapter.swapCursor(null);
+        listCursorAdapter.swapCursor(null);
     }
 }
