@@ -12,6 +12,7 @@ import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.NavUtils;
@@ -192,6 +193,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         receiver = new MessageReceiver();
         IntentFilter filter = new IntentFilter();
         filter.addAction(GlobalApplication.ACTION_INTENT_TEXT_MESSAGE_INCOMING);
+        filter.addAction(GlobalApplication.ACTION_INTENT_IMAGE_MESSAGE_INCOMING);
         registerReceiver(receiver, filter);
     }
 
@@ -310,7 +312,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         stringBuffer.append("\"");
         stringBuffer.append(":");
         stringBuffer.append("\"");
-        stringBuffer.append("text");
+        stringBuffer.append("Text");
         stringBuffer.append("\"");
         stringBuffer.append(",");
         stringBuffer.append("\"");
@@ -397,12 +399,19 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                 if(requestCode == REQUEST_IMAGE_GET) {
                     Uri uri = data.getData();
                     if(uri != null) {
-                        String filePath = MediaFileUtils.getRealPathFromURI(getApplicationContext(),uri);
+                        String filePath = MediaFileUtils.getRealPathFromURI(getApplicationContext(), uri);
                         Bitmap bitmap = MediaFileUtils.decodeBitmapFromPath(filePath,
-                                MediaFileUtils.dpToPx(getApplicationContext(),150),
-                                MediaFileUtils.dpToPx(getApplicationContext(),150));
+                                MediaFileUtils.dpToPx(getApplicationContext(), 150),
+                                MediaFileUtils.dpToPx(getApplicationContext(), 150));
                         inflaterImgMessage(bitmap,uri,true,name);
-
+                        String fileExtension = MediaFileUtils.getFileExtension(filePath);
+                        String fileBody = CommonTools.bitmapToBase64(bitmap);
+//                        String fileBody = "hiuwhojhoj09u70204iujgvpoaju04";
+                        if(!TextUtils.isEmpty(fileExtension) && !TextUtils.isEmpty(fileBody)) {
+                            String messageBody = constructImgMessage(fileExtension,fileBody);
+                            Log.d("ChatActivity","messageBody = " + messageBody);
+                            mService.sendMessage("OnlineMsg", messageBody);
+                        }
 //                        chatService.sendImage(jid,filePath);
                     } else {
                         Log.d("ChatActivity", "no data");
@@ -410,6 +419,53 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                 }
             }
         }
+    }
+
+    private String constructImgMessage(String fileExtension, String fileBody) {
+        StringBuilder stringBuffer = new StringBuilder();
+        stringBuffer.append("{");
+        stringBuffer.append("\"");
+        stringBuffer.append("Sender");
+        stringBuffer.append("\"");
+        stringBuffer.append(":");
+        stringBuffer.append(uid);
+        stringBuffer.append(",");
+        stringBuffer.append("\"");
+        stringBuffer.append("Receiver");
+        stringBuffer.append("\"");
+        stringBuffer.append(":");
+        stringBuffer.append(buddyUid);
+        stringBuffer.append(",");
+        stringBuffer.append("\"");
+        stringBuffer.append("MessageType");
+        stringBuffer.append("\"");
+        stringBuffer.append(":");
+        stringBuffer.append("\"");
+        stringBuffer.append("Picture");
+        stringBuffer.append("\"");
+        stringBuffer.append(",");
+
+        stringBuffer.append("\"");
+        stringBuffer.append("Contents");
+        stringBuffer.append("\"");
+        stringBuffer.append(":");
+        stringBuffer.append("\"");
+        stringBuffer.append(fileBody);
+        stringBuffer.append("\"");
+
+        stringBuffer.append(",");
+
+        stringBuffer.append("\"");
+        stringBuffer.append("SendTime");
+        stringBuffer.append("\"");
+        stringBuffer.append(":");
+        stringBuffer.append("\"");
+        stringBuffer.append(CommonTools.TimeConvertString());
+        stringBuffer.append("\"");
+
+        stringBuffer.append("}");
+
+        return stringBuffer.toString();
     }
 
     private void inflaterImgMessage(Bitmap bitmap,Uri uri,boolean direction,String from) {
@@ -584,6 +640,52 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                     inflaterTxtMessage(nameFrom, content, datetime);
                 } else {
 
+                }
+            } else if(action.equals(GlobalApplication.ACTION_INTENT_IMAGE_MESSAGE_INCOMING)) {
+                Bundle args = intent.getBundleExtra("message");
+                String nameFrom = args.getString("nameFrom");
+                String content = args.getString("content");
+                String datetime = args.getString("datetime");
+
+                if(nameFrom.equals(name)) {
+                    new ProcessReceiveFileTask(nameFrom, datetime, "IMAGE").execute(content,"IMAGE");
+                    inflaterTxtMessage(nameFrom, content, datetime);
+                }
+            }
+        }
+    }
+
+    private class ProcessReceiveFileTask extends AsyncTask<String,String,String> {
+
+        String nameFrom;
+        String datetime;
+        String fileType;
+
+        public ProcessReceiveFileTask(String nameFrom, String datetime, String fileType) {
+            this.datetime = datetime;
+            this.nameFrom = nameFrom;
+            this.fileType = fileType;
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            String json = params[0];
+            String fileType = params[1];
+            String filePath = MediaFileUtils.processReceiveFile(getApplicationContext(),json,fileType);
+            return filePath;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+
+            if(!TextUtils.isEmpty(fileType)) {
+                if(fileType.equals("IMAGE")) {
+                    Bitmap bitmap = MediaFileUtils.decodeBitmapFromPath(s,
+                            MediaFileUtils.dpToPx(getApplicationContext(),150),
+                            MediaFileUtils.dpToPx(getApplicationContext(),150));
+
+                    Uri uri = Uri.parse(s);
+                    inflaterImgMessage(bitmap,uri,false,nameFrom);
                 }
             }
         }

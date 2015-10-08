@@ -7,9 +7,16 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.text.TextUtils;
+import android.util.Base64;
 import android.util.Log;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Calendar;
 
@@ -17,6 +24,8 @@ import java.util.Calendar;
  * Created by gongguopei87@gmail.com on 2015/8/5.
  */
 public class MediaFileUtils {
+
+
 
     public static File getAlbumStorageDir(Context context, String type, String albumName) {
         // Get the directory for the app's private pictures directory.
@@ -68,6 +77,66 @@ public class MediaFileUtils {
             }
         }
     }
+
+    public static String getFileExtension(String filePath) {
+        if(!TextUtils.isEmpty(filePath)) {
+            int lastIndex = filePath.lastIndexOf(".");
+            String extension = filePath.substring(lastIndex + 1);
+            return extension;
+        }
+        return null;
+    }
+
+
+    public static String processReceiveFile(Context context, String json, String fileType) {
+        try {
+            JSONObject jsonObject = new JSONObject(json);
+            String fileExtension = jsonObject.getString("fileExtension");
+            String fileBody = jsonObject.getString("fileBody");
+            StringBuffer buffer = new StringBuffer();
+
+            if(!TextUtils.isEmpty(fileType)) {
+                if(fileType.equals("IMAGE")) {
+                    buffer.append("IMAGE");
+                }
+                buffer.append(CommonTools.generateTimestamp());
+                buffer.append(".");
+                buffer.append(fileExtension);
+                String fileName = buffer.toString();
+
+                File path = getAlbumStorageDir(context, Environment.DIRECTORY_PICTURES, "RecievePic");
+                File filePath = new File(path,fileName);
+                if(!filePath.exists()) {
+                    filePath.createNewFile();
+                }
+
+                byte[] bitmapArray = Base64.decode(fileBody, Base64.DEFAULT);
+
+                FileOutputStream fileOutputStream = new FileOutputStream(filePath);
+                fileOutputStream.write(bitmapArray);
+                fileOutputStream.close();
+
+                return filePath.getAbsolutePath();
+            } else {
+                Log.e("MediaFileUtils", "file type error");
+                return null;
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.e("MediaFileUtils", "json errors");
+            return null;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            Log.e("MediaFileUtils", "file not found errors");
+            return null;
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.e("MediaFileUtils", "io error");
+            return null;
+        }
+    }
+
 
 
     public static Bitmap decodeBitmapFromPath(String filePath,int reqWidth, int reqHeight) {

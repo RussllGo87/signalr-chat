@@ -138,6 +138,7 @@ public class ChatMessageProcessor implements ChatMessageListener {
             String from = object.getString("Sender");
             String content = object.getString("Contents");
             String datetime = object.getString("SendTime");
+            String messageType = object.getString("MessageType");
 
             String selection = AppContract.UserEntry.COLUMN_NAME_ENTRY_UID + " = ?";
             String[] selectionArgs = new String[]{from};
@@ -147,14 +148,20 @@ public class ChatMessageProcessor implements ChatMessageListener {
 //                String portrait = cursor.getString(cursor.getColumnIndex(AppContract.UserEntry.COLUMN_NAME_PORTRAIT));
                 cursor.close();
 
-
                 Bundle args =  new Bundle();
                 args.putString("nameFrom", nameFrom);
                 args.putString("content", content);
                 args.putString("datetime", datetime);
+                args.putString("messageType", messageType);
 
                 Intent intent = new Intent();
-                intent.setAction(GlobalApplication.ACTION_INTENT_TEXT_MESSAGE_INCOMING);
+                if(!TextUtils.isEmpty(messageType)) {
+                    if(messageType.equals("Text")) {
+                        intent.setAction(GlobalApplication.ACTION_INTENT_TEXT_MESSAGE_INCOMING);
+                    } else if(messageType.equals("Picture")){
+                        intent.setAction(GlobalApplication.ACTION_INTENT_IMAGE_MESSAGE_INCOMING);
+                    }
+                }
                 intent.putExtra("message", args);
                 context.sendBroadcast(intent);
             }

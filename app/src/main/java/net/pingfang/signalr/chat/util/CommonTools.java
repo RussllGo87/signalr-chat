@@ -6,7 +6,10 @@ import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
 import android.text.TextUtils;
+import android.util.Base64;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.regex.Matcher;
@@ -139,4 +142,83 @@ public class CommonTools {
 
         return stringBuffer.toString();
     }
+
+    public static String generateTimestamp() {
+        long currentTimeMillis = System.currentTimeMillis();
+        Date date = new Date();
+        date.setTime(currentTimeMillis);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+
+        StringBuffer stringBuffer = new StringBuffer();
+        stringBuffer.append(calendar.get(Calendar.YEAR));
+        int month = calendar.get(Calendar.MONTH);
+        month = month + 1;
+        if(month < 10) {
+            stringBuffer.append("0");
+        }
+        stringBuffer.append(month);
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+        if(day < 10) {
+            stringBuffer.append("0");
+        }
+        stringBuffer.append(day);
+
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        if(hour < 10) {
+            stringBuffer.append("0");
+        }
+        stringBuffer.append(hour);
+        int minute = calendar.get(Calendar.MINUTE);
+        if(minute < 10) {
+            stringBuffer.append("0");
+        }
+        stringBuffer.append(minute);
+        int second = calendar.get(Calendar.SECOND);
+        if(second < 10) {
+            stringBuffer.append("0");
+        }
+        stringBuffer.append(second);
+
+        return stringBuffer.toString();
+    }
+
+    /**
+     * 将bitmap转换成Base64格式字符串
+     * 格式化byte
+     *
+     * @param bitmap
+     * @return
+     */
+    public static String bitmapToBase64(Bitmap bitmap) {
+
+        String result = null;
+        ByteArrayOutputStream baos = null;
+        try {
+            if (bitmap != null) {
+                baos = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 5, baos);
+
+                baos.flush();
+                baos.close();
+
+                byte[] bitmapBytes = baos.toByteArray();
+                result = Base64.encodeToString(bitmapBytes, Base64.DEFAULT);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (baos != null) {
+                    baos.flush();
+                    baos.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return result;
+    }
+
+
 }
