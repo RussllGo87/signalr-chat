@@ -7,8 +7,12 @@ import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
 import android.text.TextUtils;
 import android.util.Base64;
+import android.util.Log;
+
+import org.apache.commons.io.FileUtils;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
@@ -197,7 +201,7 @@ public class CommonTools {
         try {
             if (bitmap != null) {
                 baos = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 5, baos);
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 80, baos);
 
                 baos.flush();
                 baos.close();
@@ -220,5 +224,27 @@ public class CommonTools {
         return result;
     }
 
+    public static String fileToBase64(String filePath) {
 
+        String result = null;
+
+        if(TextUtils.isEmpty(filePath)) {
+            return result;
+        }
+
+        File file = new File(filePath);
+        if(!file.exists()) {
+            return result;
+        }
+
+        try {
+            byte[] fileToByteArray = FileUtils.readFileToByteArray(file);
+            result = Base64.encodeToString(fileToByteArray,Base64.DEFAULT);
+        } catch (IOException e) {
+            Log.e("CommonTools", "IOException");
+            e.printStackTrace();
+        }
+
+        return result;
+    }
 }

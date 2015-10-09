@@ -14,6 +14,7 @@ import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.IBinder;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
@@ -194,6 +195,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         IntentFilter filter = new IntentFilter();
         filter.addAction(GlobalApplication.ACTION_INTENT_TEXT_MESSAGE_INCOMING);
         filter.addAction(GlobalApplication.ACTION_INTENT_IMAGE_MESSAGE_INCOMING);
+        filter.addAction(GlobalApplication.ACTION_INTENT_VOICE_MESSAGE_INCOMING);
         registerReceiver(receiver, filter);
     }
 
@@ -254,7 +256,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     private void sendMessage() {
         if(!TextUtils.isEmpty(et_message.getText().toString().trim())) {
 
-            mService.sendMessage("OnlineMsg",constructTxtMessage());
+            mService.sendMessage("OnlineMsg", constructTxtMessage());
 
             LinearLayout ll = new LinearLayout(getApplicationContext());
             ll.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
@@ -269,7 +271,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
             TextView textView = new TextView(getApplicationContext());
             textView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-            textView.setText("me");
+            textView.setText(helper.getStringValue(AppConstants.KEY_SYS_CURRENT_NICKNAME));
             textView.setTextColor(Color.RED);
 
             TextView tv_msg = new TextView(getApplicationContext());
@@ -370,8 +372,6 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             ll_message_container.addView(ll);
 
             sv_message_container.fullScroll(View.FOCUS_DOWN);
-        } else {
-
         }
     }
 
@@ -403,16 +403,14 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                         Bitmap bitmap = MediaFileUtils.decodeBitmapFromPath(filePath,
                                 MediaFileUtils.dpToPx(getApplicationContext(), 150),
                                 MediaFileUtils.dpToPx(getApplicationContext(), 150));
-                        inflaterImgMessage(bitmap,uri,true,name);
+                        inflaterImgMessage(bitmap,uri,true,helper.getStringValue(AppConstants.KEY_SYS_CURRENT_NICKNAME));
                         String fileExtension = MediaFileUtils.getFileExtension(filePath);
                         String fileBody = CommonTools.bitmapToBase64(bitmap);
-//                        String fileBody = "hiuwhojhoj09u70204iujgvpoaju04";
                         if(!TextUtils.isEmpty(fileExtension) && !TextUtils.isEmpty(fileBody)) {
-                            String messageBody = constructImgMessage(fileExtension,fileBody);
+                            String messageBody = constructFileMessage("Picture",fileExtension,fileBody);
                             Log.d("ChatActivity","messageBody = " + messageBody);
                             mService.sendMessage("OnlineMsg", messageBody);
                         }
-//                        chatService.sendImage(jid,filePath);
                     } else {
                         Log.d("ChatActivity", "no data");
                     }
@@ -421,7 +419,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private String constructImgMessage(String fileExtension, String fileBody) {
+    private String constructFileMessage(String messageType,String fileExtension, String fileBody) {
         StringBuilder stringBuffer = new StringBuilder();
         stringBuffer.append("{");
         stringBuffer.append("\"");
@@ -441,7 +439,16 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         stringBuffer.append("\"");
         stringBuffer.append(":");
         stringBuffer.append("\"");
-        stringBuffer.append("Picture");
+        stringBuffer.append(messageType);
+        stringBuffer.append("\"");
+        stringBuffer.append(",");
+
+        stringBuffer.append("\"");
+        stringBuffer.append("fileExtension");
+        stringBuffer.append("\"");
+        stringBuffer.append(":");
+        stringBuffer.append("\"");
+        stringBuffer.append(fileExtension);
         stringBuffer.append("\"");
         stringBuffer.append(",");
 
@@ -525,7 +532,8 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
     private void startRecording() {
 
-        mFileName = MediaFileUtils.getVoiceFilePath(getApplicationContext(),"voice");
+        mFileName = MediaFileUtils.genarateFilePath(getApplicationContext(),
+                Environment.DIRECTORY_MUSIC, "voice", GlobalApplication.VOICE_FILE_NAME_SUFFIX);
 
         if(!TextUtils.isEmpty(mFileName) && !mStartRecording) {
             mRecorder = new MediaRecorder();
@@ -561,7 +569,17 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             Uri uri = Uri.parse(mFileName);
             inflaterVoiceMessage(uri, true, "me");
 
-//            chatService.sendVoice(jid,mFileName);
+            String fileExtension = MediaFileUtils.getFileExtension(mFileName);
+            Log.d("ChatActivity","mFileName = " + mFileName);
+            Log.d("ChatActivity","fileExtension = " + fileExtension);
+            String fileBody = CommonTools.fileToBase64(mFileName);
+            Log.d("ChatActivity","fileBody = " + fileBody);
+
+            if(!TextUtils.isEmpty(fileExtension) && !TextUtils.isEmpty(fileBody)) {
+                String messageBody = constructFileMessage("Audio",fileExtension,fileBody);
+                Log.d("ChatActivity","messageBody = " + messageBody);
+                mService.sendMessage("OnlineMsg", messageBody);
+            }
         }
 
     }
@@ -646,10 +664,20 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                 String nameFrom = args.getString("nameFrom");
                 String content = args.getString("content");
                 String datetime = args.getString("datetime");
+                String fileExtension = args.getString("fileExtension");
 
                 if(nameFrom.equals(name)) {
-                    new ProcessReceiveFileTask(nameFrom, datetime, "IMAGE").execute(content,"IMAGE");
-                    inflaterTxtMessage(nameFrom, content, datetime);
+                    new ProcessReceiveFileTask(nameFrom, datetime, "IMAGE").execute(content,"IMAGE",fileExtension);
+                }
+            } else if(action.equals(GlobalApplication.ACTION_INTENT_VOICE_MESSAGE_INCOMING)) {
+                Bundle args = intent.getBundleExtra("message");
+                String nameFrom = args.getString("nameFrom");
+                String content = args.getString("content");
+                String datetime = args.getString("datetime");
+                String fileExtension = args.getString("fileExtension");
+
+                if(nameFrom.equals(name)) {
+                    new ProcessReceiveFileTask(nameFrom, datetime, "AUDIO").execute(content,"AUDIO",fileExtension);
                 }
             }
         }
@@ -669,9 +697,10 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
         @Override
         protected String doInBackground(String... params) {
-            String json = params[0];
+            String content = params[0];
             String fileType = params[1];
-            String filePath = MediaFileUtils.processReceiveFile(getApplicationContext(),json,fileType);
+            String fileExtension = params[2];
+            String filePath = MediaFileUtils.processReceiveFile(getApplicationContext(),content,fileType,fileExtension);
             return filePath;
         }
 
@@ -686,6 +715,9 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
                     Uri uri = Uri.parse(s);
                     inflaterImgMessage(bitmap,uri,false,nameFrom);
+                } else if(fileType.equals("AUDIO")) {
+                    Uri uri = Uri.parse(s);
+                    inflaterVoiceMessage(uri,false,nameFrom);
                 }
             }
         }

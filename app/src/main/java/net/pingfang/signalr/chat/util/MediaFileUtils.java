@@ -11,9 +11,6 @@ import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -38,29 +35,46 @@ public class MediaFileUtils {
         return file;
     }
 
-    public static String getVoiceFilePath(Context context, String albumName) {
+    public static String genarateFilePath(Context context, String type, String albumName, String fileExtension) {
         Calendar c = Calendar.getInstance();
-        File fileDir = getAlbumStorageDir(context, Environment.DIRECTORY_MUSIC, albumName);
-        String fileName = new StringBuilder().append(GlobalApplication.VOICE_FILE_NAME_PREFIX)
-                .append(c.get(Calendar.YEAR))
-                .append(c.get(Calendar.MONTH))
-                .append(c.get(Calendar.DAY_OF_MONTH))
-                .append(c.get(Calendar.HOUR_OF_DAY))
-                .append(c.get(Calendar.MINUTE))
-                .append(c.get(Calendar.SECOND))
-                .append(c.get(Calendar.MILLISECOND))
-                .append(GlobalApplication.VOICE_FILE_NAME_SUFFIX)
-                .toString();
-        File file = new File(fileDir,fileName);
-        if(!file.exists()) {
-            try {
-                file.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-                return null;
+        File fileDir = getAlbumStorageDir(context, type, albumName);
+        StringBuilder stringBuilder = new StringBuilder();
+        if(!TextUtils.isEmpty(type)) {
+            if(type.equals(Environment.DIRECTORY_PICTURES)) {
+                stringBuilder.append(GlobalApplication.IMAGE_TITLE_NAME_PREFIX);
+            } else if(type.equals(Environment.DIRECTORY_MUSIC)) {
+                stringBuilder.append(GlobalApplication.VOICE_FILE_NAME_PREFIX);
             }
+
+            stringBuilder.append(c.get(Calendar.YEAR));
+            stringBuilder.append(c.get(Calendar.MONTH));
+            stringBuilder.append(c.get(Calendar.DAY_OF_MONTH));
+            stringBuilder.append(c.get(Calendar.HOUR_OF_DAY));
+            stringBuilder.append(c.get(Calendar.MINUTE));
+            stringBuilder.append(c.get(Calendar.MILLISECOND));
+
+            if(type.equals(Environment.DIRECTORY_PICTURES)) {
+                stringBuilder.append(".");
+                stringBuilder.append(fileExtension);
+            } else if(type.equals(Environment.DIRECTORY_MUSIC)) {
+                stringBuilder.append(GlobalApplication.VOICE_FILE_NAME_SUFFIX);
+            }
+
+            String fileName = stringBuilder.toString();
+
+            File file = new File(fileDir,fileName);
+            if(!file.exists()) {
+                try {
+                    file.createNewFile();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            }
+            return file.toString();
         }
-        return file.toString();
+
+        return  null;
     }
 
     public static String getRealPathFromURI(Context context, Uri contentUri) {
@@ -88,44 +102,38 @@ public class MediaFileUtils {
     }
 
 
-    public static String processReceiveFile(Context context, String json, String fileType) {
+    public static String processReceiveFile(Context context, String fileBody, String fileType,String fileExtension) {
         try {
-            JSONObject jsonObject = new JSONObject(json);
-            String fileExtension = jsonObject.getString("fileExtension");
-            String fileBody = jsonObject.getString("fileBody");
             StringBuffer buffer = new StringBuffer();
-
-            if(!TextUtils.isEmpty(fileType)) {
+            String filePath = null;
+            if(!TextUtils.isEmpty(fileType) && !TextUtils.isEmpty(fileExtension)) {
                 if(fileType.equals("IMAGE")) {
-                    buffer.append("IMAGE");
-                }
-                buffer.append(CommonTools.generateTimestamp());
-                buffer.append(".");
-                buffer.append(fileExtension);
-                String fileName = buffer.toString();
-
-                File path = getAlbumStorageDir(context, Environment.DIRECTORY_PICTURES, "RecievePic");
-                File filePath = new File(path,fileName);
-                if(!filePath.exists()) {
-                    filePath.createNewFile();
+                    filePath = genarateFilePath(context, Environment.DIRECTORY_PICTURES, "pic", fileExtension);
+                } else if(fileType.equals("AUDIO")) {
+                    filePath = genarateFilePath(context, Environment.DIRECTORY_MUSIC, "voice", GlobalApplication.VOICE_FILE_NAME_SUFFIX);
                 }
 
-                byte[] bitmapArray = Base64.decode(fileBody, Base64.DEFAULT);
+                if(filePath != null && !TextUtils.isEmpty(filePath)) {
+                    File file = new File(filePath);
+                    if(!file.exists()) {
+                        file.createNewFile();
+                    }
 
-                FileOutputStream fileOutputStream = new FileOutputStream(filePath);
-                fileOutputStream.write(bitmapArray);
-                fileOutputStream.close();
+                    byte[] bitmapArray = Base64.decode(fileBody, Base64.DEFAULT);
 
-                return filePath.getAbsolutePath();
+                    FileOutputStream fileOutputStream = new FileOutputStream(filePath);
+                    fileOutputStream.write(bitmapArray);
+                    fileOutputStream.close();
+                } else {
+                    Log.e("MediaFileUtils", "file path error");
+                }
+
+                return filePath;
             } else {
                 Log.e("MediaFileUtils", "file type error");
                 return null;
             }
 
-        } catch (JSONException e) {
-            e.printStackTrace();
-            Log.e("MediaFileUtils", "json errors");
-            return null;
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             Log.e("MediaFileUtils", "file not found errors");

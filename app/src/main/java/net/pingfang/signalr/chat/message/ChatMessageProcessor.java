@@ -160,6 +160,12 @@ public class ChatMessageProcessor implements ChatMessageListener {
                         intent.setAction(GlobalApplication.ACTION_INTENT_TEXT_MESSAGE_INCOMING);
                     } else if(messageType.equals("Picture")){
                         intent.setAction(GlobalApplication.ACTION_INTENT_IMAGE_MESSAGE_INCOMING);
+                        String fileExtension = object.getString("fileExtension");
+                        args.putString("fileExtension", fileExtension);
+                    } else if(messageType.equals("Audio")) {
+                        intent.setAction(GlobalApplication.ACTION_INTENT_VOICE_MESSAGE_INCOMING);
+                        String fileExtension = object.getString("fileExtension");
+                        args.putString("fileExtension", fileExtension);
                     }
                 }
                 intent.putExtra("message", args);
