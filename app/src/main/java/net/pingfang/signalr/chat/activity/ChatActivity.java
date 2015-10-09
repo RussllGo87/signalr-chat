@@ -42,6 +42,7 @@ import android.widget.TextView;
 
 import net.pingfang.signalr.chat.R;
 import net.pingfang.signalr.chat.constant.app.AppConstants;
+import net.pingfang.signalr.chat.message.MessageConstructor;
 import net.pingfang.signalr.chat.service.NewChatService;
 import net.pingfang.signalr.chat.util.CommonTools;
 import net.pingfang.signalr.chat.util.GlobalApplication;
@@ -254,9 +255,11 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void sendMessage() {
-        if(!TextUtils.isEmpty(et_message.getText().toString().trim())) {
+        String content = et_message.getText().toString().trim();
+        et_message.setText("");
+        if(!TextUtils.isEmpty(content)) {
 
-            mService.sendMessage("OnlineMsg", constructTxtMessage());
+            mService.sendMessage("OnlineMsg", MessageConstructor.constructTxtMessage(uid, buddyUid, content));
 
             LinearLayout ll = new LinearLayout(getApplicationContext());
             ll.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
@@ -271,7 +274,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
             TextView textView = new TextView(getApplicationContext());
             textView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-            textView.setText(helper.getStringValue(AppConstants.KEY_SYS_CURRENT_NICKNAME));
+            textView.setText(getString(R.string.tv_nickname_user));
             textView.setTextColor(Color.RED);
 
             TextView tv_msg = new TextView(getApplicationContext());
@@ -279,7 +282,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             tv_msg.setTextColor(Color.RED);
             tv_msg.setPadding(20, 0, 0, 0);
             tv_msg.setGravity(Gravity.CENTER_VERTICAL);
-            tv_msg.setText(et_message.getText().toString().trim());
+            tv_msg.setText(content);
             tv_msg.setBackgroundResource(R.drawable.msg_me);
 
 
@@ -288,57 +291,12 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             ll.addView(tv_msg);
 
             ll_message_container.addView(ll);
-            et_message.setText("");
 
             sv_message_container.fullScroll(View.FOCUS_DOWN);
         }
     }
 
-    private String constructTxtMessage() {
-        StringBuffer stringBuffer = new StringBuffer();
-        stringBuffer.append("{");
-        stringBuffer.append("\"");
-        stringBuffer.append("Sender");
-        stringBuffer.append("\"");
-        stringBuffer.append(":");
-        stringBuffer.append(uid);
-        stringBuffer.append(",");
-        stringBuffer.append("\"");
-        stringBuffer.append("Receiver");
-        stringBuffer.append("\"");
-        stringBuffer.append(":");
-        stringBuffer.append(buddyUid);
-        stringBuffer.append(",");
-        stringBuffer.append("\"");
-        stringBuffer.append("MessageType");
-        stringBuffer.append("\"");
-        stringBuffer.append(":");
-        stringBuffer.append("\"");
-        stringBuffer.append("Text");
-        stringBuffer.append("\"");
-        stringBuffer.append(",");
-        stringBuffer.append("\"");
-        stringBuffer.append("Contents");
-        stringBuffer.append("\"");
-        stringBuffer.append(":");
-        stringBuffer.append("\"");
-        stringBuffer.append(et_message.getText().toString().trim());
-        stringBuffer.append("\"");
-        stringBuffer.append(",");
-        stringBuffer.append("\"");
-        stringBuffer.append("SendTime");
-        stringBuffer.append("\"");
-        stringBuffer.append(":");
-        stringBuffer.append("\"");
-        stringBuffer.append(CommonTools.TimeConvertString());
-        stringBuffer.append("\"");
-        stringBuffer.append("}");
-
-        return stringBuffer.toString();
-    }
-
     private void inflaterTxtMessage(String nameFrom, String content, String datetime) {
-
         if(nameFrom.equals(name)) {
             LinearLayout ll = new LinearLayout(getApplicationContext());
             ll.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
@@ -403,11 +361,11 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                         Bitmap bitmap = MediaFileUtils.decodeBitmapFromPath(filePath,
                                 MediaFileUtils.dpToPx(getApplicationContext(), 150),
                                 MediaFileUtils.dpToPx(getApplicationContext(), 150));
-                        inflaterImgMessage(bitmap,uri,true,helper.getStringValue(AppConstants.KEY_SYS_CURRENT_NICKNAME));
+                        inflaterImgMessage(bitmap,uri, true, getString(R.string.tv_nickname_user), CommonTools.TimeConvertString());
                         String fileExtension = MediaFileUtils.getFileExtension(filePath);
                         String fileBody = CommonTools.bitmapToBase64(bitmap);
                         if(!TextUtils.isEmpty(fileExtension) && !TextUtils.isEmpty(fileBody)) {
-                            String messageBody = constructFileMessage("Picture",fileExtension,fileBody);
+                            String messageBody = MessageConstructor.constructFileMessage(uid, buddyUid,"Picture", fileExtension, fileBody);
                             Log.d("ChatActivity","messageBody = " + messageBody);
                             mService.sendMessage("OnlineMsg", messageBody);
                         }
@@ -419,67 +377,18 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private String constructFileMessage(String messageType,String fileExtension, String fileBody) {
-        StringBuilder stringBuffer = new StringBuilder();
-        stringBuffer.append("{");
-        stringBuffer.append("\"");
-        stringBuffer.append("Sender");
-        stringBuffer.append("\"");
-        stringBuffer.append(":");
-        stringBuffer.append(uid);
-        stringBuffer.append(",");
-        stringBuffer.append("\"");
-        stringBuffer.append("Receiver");
-        stringBuffer.append("\"");
-        stringBuffer.append(":");
-        stringBuffer.append(buddyUid);
-        stringBuffer.append(",");
-        stringBuffer.append("\"");
-        stringBuffer.append("MessageType");
-        stringBuffer.append("\"");
-        stringBuffer.append(":");
-        stringBuffer.append("\"");
-        stringBuffer.append(messageType);
-        stringBuffer.append("\"");
-        stringBuffer.append(",");
 
-        stringBuffer.append("\"");
-        stringBuffer.append("fileExtension");
-        stringBuffer.append("\"");
-        stringBuffer.append(":");
-        stringBuffer.append("\"");
-        stringBuffer.append(fileExtension);
-        stringBuffer.append("\"");
-        stringBuffer.append(",");
-
-        stringBuffer.append("\"");
-        stringBuffer.append("Contents");
-        stringBuffer.append("\"");
-        stringBuffer.append(":");
-        stringBuffer.append("\"");
-        stringBuffer.append(fileBody);
-        stringBuffer.append("\"");
-
-        stringBuffer.append(",");
-
-        stringBuffer.append("\"");
-        stringBuffer.append("SendTime");
-        stringBuffer.append("\"");
-        stringBuffer.append(":");
-        stringBuffer.append("\"");
-        stringBuffer.append(CommonTools.TimeConvertString());
-        stringBuffer.append("\"");
-
-        stringBuffer.append("}");
-
-        return stringBuffer.toString();
-    }
-
-    private void inflaterImgMessage(Bitmap bitmap,Uri uri,boolean direction,String from) {
+    private void inflaterImgMessage(Bitmap bitmap,Uri uri,boolean direction,String from,String datetime) {
 
         LinearLayout ll = new LinearLayout(getApplicationContext());
         ll.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         ll.setOrientation(LinearLayout.VERTICAL);
+
+        TextView tv_datetime = new TextView(getApplicationContext());
+        tv_datetime.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        tv_datetime.setGravity(Gravity.CENTER_HORIZONTAL);
+        tv_datetime.setText(datetime);
+        tv_datetime.setTextColor(Color.BLACK);
 
         TextView textView = new TextView(getApplicationContext());
         textView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
@@ -522,6 +431,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
 
+        ll.addView(tv_datetime);
         ll.addView(textView);
         ll.addView(imageView);
 
@@ -567,16 +477,13 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             btn_voice_record.setText(R.string.btn_voice_record);
 
             Uri uri = Uri.parse(mFileName);
-            inflaterVoiceMessage(uri, true, "me");
+            inflaterVoiceMessage(uri, true, getString(R.string.tv_nickname_user),CommonTools.TimeConvertString());
 
             String fileExtension = MediaFileUtils.getFileExtension(mFileName);
-            Log.d("ChatActivity","mFileName = " + mFileName);
-            Log.d("ChatActivity","fileExtension = " + fileExtension);
             String fileBody = CommonTools.fileToBase64(mFileName);
-            Log.d("ChatActivity","fileBody = " + fileBody);
 
             if(!TextUtils.isEmpty(fileExtension) && !TextUtils.isEmpty(fileBody)) {
-                String messageBody = constructFileMessage("Audio",fileExtension,fileBody);
+                String messageBody = MessageConstructor.constructFileMessage(uid, buddyUid, "Audio", fileExtension, fileBody);
                 Log.d("ChatActivity","messageBody = " + messageBody);
                 mService.sendMessage("OnlineMsg", messageBody);
             }
@@ -584,14 +491,20 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-    private void inflaterVoiceMessage(Uri uri,boolean direction,String from) {
+    private void inflaterVoiceMessage(Uri uri,boolean direction,String from, String datetime) {
 
         LinearLayout ll = new LinearLayout(getApplicationContext());
         ll.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         ll.setOrientation(LinearLayout.VERTICAL);
 
+        TextView tv_datetime = new TextView(getApplicationContext());
+        tv_datetime.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        tv_datetime.setGravity(Gravity.CENTER_HORIZONTAL);
+        tv_datetime.setText(datetime);
+        tv_datetime.setTextColor(Color.BLACK);
+
         TextView textView = new TextView(getApplicationContext());
-        textView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        textView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         textView.setText(from);
         if(direction) {
             textView.setTextColor(Color.RED);
@@ -635,6 +548,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
 
+        ll.addView(tv_datetime);
         ll.addView(textView);
         ll.addView(imageView);
 
@@ -667,7 +581,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                 String fileExtension = args.getString("fileExtension");
 
                 if(nameFrom.equals(name)) {
-                    new ProcessReceiveFileTask(nameFrom, datetime, "IMAGE").execute(content,"IMAGE",fileExtension);
+                    new ProcessReceiveFileTask(nameFrom, datetime, "IMAGE", datetime).execute(content,"IMAGE",fileExtension);
                 }
             } else if(action.equals(GlobalApplication.ACTION_INTENT_VOICE_MESSAGE_INCOMING)) {
                 Bundle args = intent.getBundleExtra("message");
@@ -677,7 +591,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                 String fileExtension = args.getString("fileExtension");
 
                 if(nameFrom.equals(name)) {
-                    new ProcessReceiveFileTask(nameFrom, datetime, "AUDIO").execute(content,"AUDIO",fileExtension);
+                    new ProcessReceiveFileTask(nameFrom, datetime, "AUDIO", datetime).execute(content,"AUDIO",fileExtension);
                 }
             }
         }
@@ -688,11 +602,13 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         String nameFrom;
         String datetime;
         String fileType;
+        String newDatetime;
 
-        public ProcessReceiveFileTask(String nameFrom, String datetime, String fileType) {
+        public ProcessReceiveFileTask(String nameFrom, String datetime, String fileType, String newDatetime) {
             this.datetime = datetime;
             this.nameFrom = nameFrom;
             this.fileType = fileType;
+            this.newDatetime = newDatetime;
         }
 
         @Override
@@ -714,10 +630,10 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                             MediaFileUtils.dpToPx(getApplicationContext(),150));
 
                     Uri uri = Uri.parse(s);
-                    inflaterImgMessage(bitmap,uri,false,nameFrom);
+                    inflaterImgMessage(bitmap,uri,false,nameFrom,newDatetime);
                 } else if(fileType.equals("AUDIO")) {
                     Uri uri = Uri.parse(s);
-                    inflaterVoiceMessage(uri,false,nameFrom);
+                    inflaterVoiceMessage(uri,false,nameFrom,newDatetime);
                 }
             }
         }

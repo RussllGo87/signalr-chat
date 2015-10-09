@@ -130,6 +130,7 @@
     <string name="action_select_image">选择图片</string>
     <string name="btn_voice_record">长按录音</string>
     <string name="btn_voice_record_up">发送语音</string>
+    <string name="tv_nickname_user">我</string>
 
     <!-- 设置页 -->
     <string name="title_activity_settings">@string/action_settings</string>
