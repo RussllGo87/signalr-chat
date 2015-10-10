@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 
 import net.pingfang.signalr.chat.database.AppContract;
+import net.pingfang.signalr.chat.database.NewUserManager;
 import net.pingfang.signalr.chat.database.UserManager;
 import net.pingfang.signalr.chat.util.GlobalApplication;
 
@@ -136,41 +137,44 @@ public class ChatMessageProcessor implements ChatMessageListener {
         try {
             object = new JSONObject(message);
             String from = object.getString("Sender");
+            String fromNickname = object.getString("SenderName");
+            String fromPortrait = object.getString("SenderPortrait");
             String content = object.getString("Contents");
             String datetime = object.getString("SendTime");
             String messageType = object.getString("MessageType");
 
-            String selection = AppContract.UserEntry.COLUMN_NAME_ENTRY_UID + " = ?";
-            String[] selectionArgs = new String[]{from};
-            Cursor cursor = context.getContentResolver().query(AppContract.UserEntry.CONTENT_URI,null,selection,selectionArgs,null);
+            NewUserManager userManager = new NewUserManager(context);
+            Cursor cursor = userManager.queryByUid(from);
             if(cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {
-                String nameFrom = cursor.getString(cursor.getColumnIndex(AppContract.UserEntry.COLUMN_NAME_NICK_NAME));
-//                String portrait = cursor.getString(cursor.getColumnIndex(AppContract.UserEntry.COLUMN_NAME_PORTRAIT));
+                fromNickname = cursor.getString(cursor.getColumnIndex(AppContract.UserEntry.COLUMN_NAME_NICK_NAME));
+                fromPortrait = cursor.getString(cursor.getColumnIndex(AppContract.UserEntry.COLUMN_NAME_PORTRAIT));
                 cursor.close();
-
-                Bundle args =  new Bundle();
-                args.putString("nameFrom", nameFrom);
-                args.putString("content", content);
-                args.putString("datetime", datetime);
-                args.putString("messageType", messageType);
-
-                Intent intent = new Intent();
-                if(!TextUtils.isEmpty(messageType)) {
-                    if(messageType.equals("Text")) {
-                        intent.setAction(GlobalApplication.ACTION_INTENT_TEXT_MESSAGE_INCOMING);
-                    } else if(messageType.equals("Picture")){
-                        intent.setAction(GlobalApplication.ACTION_INTENT_IMAGE_MESSAGE_INCOMING);
-                        String fileExtension = object.getString("fileExtension");
-                        args.putString("fileExtension", fileExtension);
-                    } else if(messageType.equals("Audio")) {
-                        intent.setAction(GlobalApplication.ACTION_INTENT_VOICE_MESSAGE_INCOMING);
-                        String fileExtension = object.getString("fileExtension");
-                        args.putString("fileExtension", fileExtension);
-                    }
-                }
-                intent.putExtra("message", args);
-                context.sendBroadcast(intent);
+            } else {
+                userManager.addRecord(from,fromNickname,fromPortrait);
             }
+
+            Bundle args =  new Bundle();
+            args.putString("nameFrom", fromNickname);
+            args.putString("content", content);
+            args.putString("datetime", datetime);
+            args.putString("messageType", messageType);
+
+            Intent intent = new Intent();
+            if(!TextUtils.isEmpty(messageType)) {
+                if(messageType.equals("Text")) {
+                    intent.setAction(GlobalApplication.ACTION_INTENT_TEXT_MESSAGE_INCOMING);
+                } else if(messageType.equals("Picture")){
+                    intent.setAction(GlobalApplication.ACTION_INTENT_IMAGE_MESSAGE_INCOMING);
+                    String fileExtension = object.getString("fileExtension");
+                    args.putString("fileExtension", fileExtension);
+                } else if(messageType.equals("Audio")) {
+                    intent.setAction(GlobalApplication.ACTION_INTENT_VOICE_MESSAGE_INCOMING);
+                    String fileExtension = object.getString("fileExtension");
+                    args.putString("fileExtension", fileExtension);
+                }
+            }
+            intent.putExtra("message", args);
+            context.sendBroadcast(intent);
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -179,7 +183,10 @@ public class ChatMessageProcessor implements ChatMessageListener {
     }
 
     private void processOfflineMsgShort(String message) {
-
+        Intent intent = new Intent();
+        intent.setAction(GlobalApplication.ACTION_INTENT_OFFLINE_MESSAGE_LIST);
+        intent.putExtra("message", message);
+        context.sendBroadcast(intent);
     }
 
 
@@ -198,6 +205,8 @@ public class ChatMessageProcessor implements ChatMessageListener {
                 exitApp();
             } else if(messageType.equals("OnlineMsg")) {
                 processOnlineMessage(message);
+            } else if(messageType.equals("OfflineMsgShort")) {
+                processOfflineMsgShort(message);
             }
 
             return "ok";

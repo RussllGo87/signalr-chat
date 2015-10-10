@@ -22,6 +22,15 @@
             android:text="@string/title_activity_chat"
             android:textSize="@dimen/text_size_activity_title" />
 
+        <TextView android:id="@+id/tv_offline_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:padding="@dimen/padding_activity_title"
+            android:text="@string/tv_offline_message"
+            android:visibility="gone"/>
+
     </RelativeLayout>
 
     <ScrollView android:id="@+id/sv_message_container"

@@ -105,6 +105,8 @@
     <string name="action_voice">Voice</string>
     <string name="btn_voice_record">Hold and Speak loudly</string>
     <string name="btn_voice_record_up">Release and Send voice </string>
+    <string name="tv_offline_message">Offline Message</string>
+    <string name="tv_load_offline_message">Offline Message(%s)</string>
 
     <!-- 设置页 -->
     <string name="title_activity_settings">@string/action_settings</string>

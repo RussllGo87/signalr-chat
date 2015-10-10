@@ -32,6 +32,19 @@ public class AppDbHelper extends SQLiteOpenHelper {
     private static final String SQL_DELETE_ENTRY_USER =
             "DROP TABLE IF EXISTS " + AppContract.UserEntry.TABLE_NAME;
 
+    private static final String SQL_CREATE_ENTRY_MESSAGE =
+            "CREATE TABLE " + AppContract.ChatMessageEntry.TABLE_NAME + " (" +
+            AppContract.ChatMessageEntry._ID + INTEGER_TYPE + PRIMARY_KEY + COMMA_SEP +
+            AppContract.UserEntry.COLUMN_NAME_ENTRY_UID + TEXT_TYPE + NOT_NULL + UNIQUE + COMMA_SEP +
+            AppContract.UserEntry.COLUMN_NAME_NICK_NAME + TEXT_TYPE + NOT_NULL + COMMA_SEP +
+            AppContract.UserEntry.COLUMN_NAME_PORTRAIT + TEXT_TYPE + COMMA_SEP +
+            AppContract.UserEntry.COLUMN_NAME_STATUS + INTEGER_TYPE +
+            " )";
+
+    private static final String SQL_DELETE_ENTRY_MESSAGE =
+            "DROP TABLE IF EXISTS " + AppContract.UserEntry.TABLE_NAME;
+
+
     public AppDbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }

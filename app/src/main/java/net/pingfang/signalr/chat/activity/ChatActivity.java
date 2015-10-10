@@ -57,6 +57,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
     TextView btn_activity_back;
     TextView tv_activity_title;
+    TextView tv_offline_message;
     ScrollView sv_message_container;
     LinearLayout ll_message_container;
     EditText et_message;
@@ -80,6 +81,8 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
     SharedPreferencesHelper helper;
     String uid;
+    String nickname;
+    String portrait;
 
     MessageReceiver messageReceiver;
 
@@ -90,6 +93,8 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
         helper = SharedPreferencesHelper.newInstance(getApplicationContext());
         uid = helper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID);
+        nickname = helper.getStringValue(AppConstants.KEY_SYS_CURRENT_NICKNAME);
+        portrait = helper.getStringValue(AppConstants.KEY_SYS_CURRENT_PORTRAIT);
 
         Intent intent = getIntent();
         name = intent.getStringExtra("name");
@@ -105,6 +110,8 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
         tv_activity_title = (TextView) findViewById(R.id.tv_activity_title);
         tv_activity_title.setText(getString(R.string.title_activity_chat, name));
+
+        tv_offline_message = (TextView) findViewById(R.id.tv_offline_message);
 
         sv_message_container = (ScrollView) findViewById(R.id.sv_message_container);
         ll_message_container = (LinearLayout) findViewById(R.id.ll_message_container);
@@ -210,6 +217,11 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             NewChatService.ChatBinder binder = (NewChatService.ChatBinder) service;
             mService = (NewChatService) binder.getService();
             mBound = true;
+
+            String offlineMessageReq = MessageConstructor.constructOfflineMsgReq(uid, buddyUid);
+            Log.d("ChatActivity",offlineMessageReq);
+
+            mService.sendMessage("RequestOfflineMsg",offlineMessageReq);
         }
 
         @Override
@@ -259,7 +271,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         et_message.setText("");
         if(!TextUtils.isEmpty(content)) {
 
-            mService.sendMessage("OnlineMsg", MessageConstructor.constructTxtMessage(uid, buddyUid, content));
+            mService.sendMessage("OnlineMsg", MessageConstructor.constructTxtMessage(uid,nickname,portrait, buddyUid, content));
 
             LinearLayout ll = new LinearLayout(getApplicationContext());
             ll.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
@@ -274,7 +286,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
             TextView textView = new TextView(getApplicationContext());
             textView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-            textView.setText(getString(R.string.tv_nickname_user));
+            textView.setText(helper.getStringValue(AppConstants.KEY_SYS_CURRENT_NICKNAME));
             textView.setTextColor(Color.RED);
 
             TextView tv_msg = new TextView(getApplicationContext());
@@ -361,11 +373,11 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                         Bitmap bitmap = MediaFileUtils.decodeBitmapFromPath(filePath,
                                 MediaFileUtils.dpToPx(getApplicationContext(), 150),
                                 MediaFileUtils.dpToPx(getApplicationContext(), 150));
-                        inflaterImgMessage(bitmap,uri, true, getString(R.string.tv_nickname_user), CommonTools.TimeConvertString());
+                        inflaterImgMessage(bitmap,uri, true, helper.getStringValue(AppConstants.KEY_SYS_CURRENT_NICKNAME), CommonTools.TimeConvertString());
                         String fileExtension = MediaFileUtils.getFileExtension(filePath);
                         String fileBody = CommonTools.bitmapToBase64(bitmap);
                         if(!TextUtils.isEmpty(fileExtension) && !TextUtils.isEmpty(fileBody)) {
-                            String messageBody = MessageConstructor.constructFileMessage(uid, buddyUid,"Picture", fileExtension, fileBody);
+                            String messageBody = MessageConstructor.constructFileMessage(uid,nickname,portrait, buddyUid,"Picture", fileExtension, fileBody);
                             Log.d("ChatActivity","messageBody = " + messageBody);
                             mService.sendMessage("OnlineMsg", messageBody);
                         }
@@ -477,13 +489,13 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             btn_voice_record.setText(R.string.btn_voice_record);
 
             Uri uri = Uri.parse(mFileName);
-            inflaterVoiceMessage(uri, true, getString(R.string.tv_nickname_user),CommonTools.TimeConvertString());
+            inflaterVoiceMessage(uri, true, helper.getStringValue(AppConstants.KEY_SYS_CURRENT_NICKNAME),CommonTools.TimeConvertString());
 
             String fileExtension = MediaFileUtils.getFileExtension(mFileName);
             String fileBody = CommonTools.fileToBase64(mFileName);
 
             if(!TextUtils.isEmpty(fileExtension) && !TextUtils.isEmpty(fileBody)) {
-                String messageBody = MessageConstructor.constructFileMessage(uid, buddyUid, "Audio", fileExtension, fileBody);
+                String messageBody = MessageConstructor.constructFileMessage(uid,nickname,portrait, buddyUid, "Audio", fileExtension, fileBody);
                 Log.d("ChatActivity","messageBody = " + messageBody);
                 mService.sendMessage("OnlineMsg", messageBody);
             }

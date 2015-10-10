@@ -74,7 +74,7 @@ public class BuddyFragment extends Fragment implements LoaderManager.LoaderCallb
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 ListCursorAdapter.UserHolder userHolder = (ListCursorAdapter.UserHolder) view.getTag();
 
-                mListener.updateMessageList(userHolder.getNickname(), userHolder.getUid());
+                mListener.updateMessageList(userHolder.getNickname(), userHolder.getUid(),"");
 
                 Intent intent = new Intent();
                 intent.setClass(getContext(), ChatActivity.class);

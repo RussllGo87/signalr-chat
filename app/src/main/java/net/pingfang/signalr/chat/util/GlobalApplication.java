@@ -24,6 +24,8 @@ public class GlobalApplication extends Application {
     public static final String VOICE_FILE_NAME_PREFIX = "VOICE_";
     public static final String VOICE_FILE_NAME_SUFFIX = ".3gp";
 
+    public static final String ACTION_INTENT_OFFLINE_MESSAGE_LIST = "ACTION_INTENT_OFFLINE_MESSAGE_LIST";
+
     // 腾讯地图webservice接口相关
     public static final String T_MAP_KEY = "YFLBZ-6PQAR-7PPWA-WU7LO-BKKRK-YLF73";
 

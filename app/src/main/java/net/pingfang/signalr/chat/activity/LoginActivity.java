@@ -2,6 +2,7 @@ package net.pingfang.signalr.chat.activity;
 
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -40,6 +41,8 @@ import net.pingfang.signalr.chat.constant.app.AppConstants;
 import net.pingfang.signalr.chat.constant.qq.TencentConstants;
 import net.pingfang.signalr.chat.constant.weibo.WeiboConstants;
 import net.pingfang.signalr.chat.constant.weibo.WeiboRequestListener;
+import net.pingfang.signalr.chat.database.AppContract;
+import net.pingfang.signalr.chat.database.NewUserManager;
 import net.pingfang.signalr.chat.database.UserManager;
 import net.pingfang.signalr.chat.net.HttpBaseCallback;
 import net.pingfang.signalr.chat.net.OkHttpCommonUtil;
@@ -552,9 +555,10 @@ public class LoginActivity extends AppCompatActivity {
                         if (status == 0) {
                             JSONObject result = jsonObject.getJSONObject("result");
                             final String id = result.getString("id");
-                            final String nickname = result.getString("nickname");
-                            final String portrait = result.getString("portrait");
+//                            final String nickname = result.getString("nickname");
+//                            final String portrait = result.getString("portrait");
 
+                            NewUserManager userManager = new NewUserManager(getApplicationContext());
                             JSONArray list = jsonObject.getJSONArray("list");
                             if(list != null && list.length() > 0) {
                                 for(int i = 0; i < list.length(); i++) {
@@ -562,37 +566,48 @@ public class LoginActivity extends AppCompatActivity {
                                     String item_uid = tmpJson.getString("id");
                                     String item_nickname = tmpJson.getString("nickname");
                                     String item_portrait = tmpJson.getString("portrait");
-                                    UserManager userManager = new UserManager(getApplicationContext());
+//                                    UserManager userManager = new UserManager(getApplicationContext());
                                     if(item_portrait != null && !TextUtils.isEmpty(item_portrait) && !"null".equals(item_portrait)) {
+
                                         userManager.addRecord(item_uid,item_nickname,item_portrait);
                                     } else {
                                         userManager.addRecord(item_uid,item_nickname,"");
                                     }
-
                                 }
                             }
 
+                            Cursor cursor = userManager.queryByUid(id);
 
+                            if(cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {
+                                final String nickname = cursor.getString(cursor.getColumnIndex(AppContract.UserEntry.COLUMN_NAME_NICK_NAME));
+                                final String portrait = cursor.getString(cursor.getColumnIndex(AppContract.UserEntry.COLUMN_NAME_PORTRAIT));
+                                mDelivery.post(new Runnable() {
+                                    @Override
+                                    public void run() {
 
+                                        Toast.makeText(getApplicationContext(), R.string.pb_message_login_ok, Toast.LENGTH_SHORT).show();
+                                        ll_progress_bar_container.setVisibility(View.GONE);
 
-                            mDelivery.post(new Runnable() {
-                                @Override
-                                public void run() {
+                                        sharedPreferencesHelper.putStringValue(AppConstants.KEY_SYS_CURRENT_UID,id);
+                                        sharedPreferencesHelper.putStringValue(AppConstants.KEY_SYS_CURRENT_NICKNAME, nickname);
+                                        sharedPreferencesHelper.putStringValue(AppConstants.KEY_SYS_CURRENT_PORTRAIT, portrait);
 
-                                    Toast.makeText(getApplicationContext(), R.string.pb_message_login_ok, Toast.LENGTH_SHORT).show();
-                                    ll_progress_bar_container.setVisibility(View.GONE);
+                                        Intent intent = new Intent();
+                                        intent.setClass(getApplicationContext(), HomeActivity.class);
+                                        startActivity(intent);
+                                        finish();
 
-                                    sharedPreferencesHelper.putStringValue(AppConstants.KEY_SYS_CURRENT_UID,id);
-                                    sharedPreferencesHelper.putStringValue(AppConstants.KEY_SYS_CURRENT_NICKNAME, nickname);
-                                    sharedPreferencesHelper.putStringValue(AppConstants.KEY_SYS_CURRENT_PORTRAIT, portrait);
-
-                                    Intent intent = new Intent();
-                                    intent.setClass(getApplicationContext(), HomeActivity.class);
-                                    startActivity(intent);
-                                    finish();
-
-                                }
-                            });
+                                    }
+                                });
+                            } else {
+                                mDelivery.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(getApplicationContext(), R.string.pb_message_login_failure, Toast.LENGTH_SHORT).show();
+                                        ll_progress_bar_container.setVisibility(View.GONE);
+                                    }
+                                });
+                            }
                         } else {
                             mDelivery.post(new Runnable() {
                                 @Override

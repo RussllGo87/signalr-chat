@@ -7,7 +7,7 @@ import net.pingfang.signalr.chat.util.CommonTools;
  */
 public class MessageConstructor {
 
-    public static String constructTxtMessage(String uid, String buddyUid, String content) {
+    public static String constructTxtMessage(String uid, String nickname, String portrait, String buddyUid, String content) {
         StringBuffer stringBuffer = new StringBuffer();
         stringBuffer.append("{");
         stringBuffer.append("\"");
@@ -15,6 +15,22 @@ public class MessageConstructor {
         stringBuffer.append("\"");
         stringBuffer.append(":");
         stringBuffer.append(uid);
+        stringBuffer.append(",");
+        stringBuffer.append("\"");
+        stringBuffer.append("SenderName");
+        stringBuffer.append("\"");
+        stringBuffer.append(":");
+        stringBuffer.append("\"");
+        stringBuffer.append(nickname);
+        stringBuffer.append("\"");
+        stringBuffer.append(",");
+        stringBuffer.append("\"");
+        stringBuffer.append("SenderPortrait");
+        stringBuffer.append("\"");
+        stringBuffer.append(":");
+        stringBuffer.append("\"");
+        stringBuffer.append(portrait);
+        stringBuffer.append("\"");
         stringBuffer.append(",");
         stringBuffer.append("\"");
         stringBuffer.append("Receiver");
@@ -50,7 +66,7 @@ public class MessageConstructor {
         return stringBuffer.toString();
     }
 
-    public static String constructFileMessage(String uid, String buddyUid, String messageType,String fileExtension, String fileBody) {
+    public static String constructFileMessage(String uid, String nickname, String portrait, String buddyUid, String messageType,String fileExtension, String fileBody) {
         StringBuilder stringBuffer = new StringBuilder();
         stringBuffer.append("{");
         stringBuffer.append("\"");
@@ -58,6 +74,22 @@ public class MessageConstructor {
         stringBuffer.append("\"");
         stringBuffer.append(":");
         stringBuffer.append(uid);
+        stringBuffer.append(",");
+        stringBuffer.append("\"");
+        stringBuffer.append("SenderName");
+        stringBuffer.append("\"");
+        stringBuffer.append(":");
+        stringBuffer.append("\"");
+        stringBuffer.append(nickname);
+        stringBuffer.append("\"");
+        stringBuffer.append(",");
+        stringBuffer.append("\"");
+        stringBuffer.append("SenderPortrait");
+        stringBuffer.append("\"");
+        stringBuffer.append(":");
+        stringBuffer.append("\"");
+        stringBuffer.append(portrait);
+        stringBuffer.append("\"");
         stringBuffer.append(",");
         stringBuffer.append("\"");
         stringBuffer.append("Receiver");
@@ -100,6 +132,55 @@ public class MessageConstructor {
         stringBuffer.append("\"");
         stringBuffer.append(CommonTools.TimeConvertString());
         stringBuffer.append("\"");
+
+        stringBuffer.append("}");
+
+        return stringBuffer.toString();
+    }
+
+    public static String constructOfflineMsgReq(String from, String to) {
+        return constructOfflineMsgReq(from,to,0,0);
+    }
+
+    public static String constructOfflineMsgReq(String from, String to, int pageNo, int rows) {
+        StringBuffer stringBuffer = new StringBuffer();
+        stringBuffer.append("{");
+        stringBuffer.append("\"");
+        stringBuffer.append("Sender");
+        stringBuffer.append("\"");
+        stringBuffer.append(":");
+        stringBuffer.append("\"");
+        stringBuffer.append(from);
+        stringBuffer.append("\"");
+        stringBuffer.append(",");
+        stringBuffer.append("\"");
+        stringBuffer.append("Receiver");
+        stringBuffer.append("\"");
+        stringBuffer.append(":");
+        stringBuffer.append("\"");
+        stringBuffer.append(to);
+        stringBuffer.append("\"");
+        if(pageNo != 0) {
+            stringBuffer.append(",");
+            stringBuffer.append("\"");
+            stringBuffer.append("Page");
+            stringBuffer.append("\"");
+            stringBuffer.append(":");
+            stringBuffer.append("\"");
+            stringBuffer.append(pageNo);
+            stringBuffer.append("\"");
+        }
+
+        if(rows != 0) {
+            stringBuffer.append(",");
+            stringBuffer.append("\"");
+            stringBuffer.append("Rows");
+            stringBuffer.append("\"");
+            stringBuffer.append(":");
+            stringBuffer.append("\"");
+            stringBuffer.append(rows);
+            stringBuffer.append("\"");
+        }
 
         stringBuffer.append("}");
 
