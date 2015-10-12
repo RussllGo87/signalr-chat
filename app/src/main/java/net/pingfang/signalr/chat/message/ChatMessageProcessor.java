@@ -4,14 +4,17 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
 
 import net.pingfang.signalr.chat.database.AppContract;
+import net.pingfang.signalr.chat.database.ChatMessageManager;
 import net.pingfang.signalr.chat.database.NewUserManager;
 import net.pingfang.signalr.chat.database.UserManager;
 import net.pingfang.signalr.chat.util.GlobalApplication;
+import net.pingfang.signalr.chat.util.MediaFileUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -137,11 +140,12 @@ public class ChatMessageProcessor implements ChatMessageListener {
         try {
             object = new JSONObject(message);
             String from = object.getString("Sender");
+            String to = object.getString("Receiver");
             String fromNickname = object.getString("SenderName");
             String fromPortrait = object.getString("SenderPortrait");
             String content = object.getString("Contents");
             String datetime = object.getString("SendTime");
-            String messageType = object.getString("MessageType");
+            String contentType = object.getString("MessageType");
 
             NewUserManager userManager = new NewUserManager(context);
             Cursor cursor = userManager.queryByUid(from);
@@ -153,28 +157,60 @@ public class ChatMessageProcessor implements ChatMessageListener {
                 userManager.addRecord(from,fromNickname,fromPortrait);
             }
 
-            Bundle args =  new Bundle();
-            args.putString("nameFrom", fromNickname);
-            args.putString("content", content);
-            args.putString("datetime", datetime);
-            args.putString("messageType", messageType);
-
-            Intent intent = new Intent();
-            if(!TextUtils.isEmpty(messageType)) {
-                if(messageType.equals("Text")) {
-                    intent.setAction(GlobalApplication.ACTION_INTENT_TEXT_MESSAGE_INCOMING);
-                } else if(messageType.equals("Picture")){
-                    intent.setAction(GlobalApplication.ACTION_INTENT_IMAGE_MESSAGE_INCOMING);
+            ChatMessageManager chatMessageManager = new ChatMessageManager(context);
+            Uri messageUri = null;
+            if(!TextUtils.isEmpty(contentType)) {
+                if(contentType.equals("Text")) {
+                   messageUri = chatMessageManager.insert(from, to, MessageConstant.MESSAGE_TYPE_ON_LINE,
+                            contentType, content, datetime, MessageConstant.MESSAGE_STATUS_NOT_READ);
+                } else if(contentType.equals("Picture")){
                     String fileExtension = object.getString("fileExtension");
-                    args.putString("fileExtension", fileExtension);
-                } else if(messageType.equals("Audio")) {
-                    intent.setAction(GlobalApplication.ACTION_INTENT_VOICE_MESSAGE_INCOMING);
+                    String filePath = MediaFileUtils.processReceiveFile(context, content,
+                            MessageConstant.MESSAGE_FILE_TYPE_IMG, fileExtension);
+                    messageUri = chatMessageManager.insert(from, to, MessageConstant.MESSAGE_TYPE_ON_LINE,
+                            contentType, filePath, datetime, MessageConstant.MESSAGE_STATUS_NOT_READ);
+                } else if(contentType.equals("Audio")) {
                     String fileExtension = object.getString("fileExtension");
-                    args.putString("fileExtension", fileExtension);
+                    String filePath = MediaFileUtils.processReceiveFile(context, content,
+                            MessageConstant.MESSAGE_FILE_TYPE_AUDIO, fileExtension);
+                    messageUri = chatMessageManager.insert(from, to, MessageConstant.MESSAGE_TYPE_ON_LINE,
+                            contentType, filePath, datetime, MessageConstant.MESSAGE_STATUS_NOT_READ);
                 }
+
+                if(messageUri != null) {
+                    Bundle args =  new Bundle();
+                    args.putParcelable("messageUri", messageUri);
+                    args.putString("fromUid",from);
+
+                    Intent intent = new Intent();
+                    intent.setAction(GlobalApplication.ACTION_INTENT_ONLINE_MESSAGE_INCOMING);
+                    intent.putExtra("message", args);
+                    context.sendBroadcast(intent);
+                }
+
             }
-            intent.putExtra("message", args);
-            context.sendBroadcast(intent);
+//            args.putString("fromUid",from);
+//            args.putString("nameFrom", fromNickname);
+//            args.putString("content", content);
+//            args.putString("datetime", datetime);
+//            args.putString("messageType", contentType);
+
+//            Intent intent = new Intent();
+//            if(!TextUtils.isEmpty(contentType)) {
+//                if(contentType.equals("Text")) {
+//                    intent.setAction(GlobalApplication.ACTION_INTENT_TEXT_MESSAGE_INCOMING);
+//                } else if(contentType.equals("Picture")){
+//                    intent.setAction(GlobalApplication.ACTION_INTENT_IMAGE_MESSAGE_INCOMING);
+//                    String fileExtension = object.getString("fileExtension");
+//                    args.putString("fileExtension", fileExtension);
+//                } else if(contentType.equals("Audio")) {
+//                    intent.setAction(GlobalApplication.ACTION_INTENT_VOICE_MESSAGE_INCOMING);
+//                    String fileExtension = object.getString("fileExtension");
+//                    args.putString("fileExtension", fileExtension);
+//                }
+//            }
+//            intent.putExtra("message", args);
+//            context.sendBroadcast(intent);
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -184,7 +220,14 @@ public class ChatMessageProcessor implements ChatMessageListener {
 
     private void processOfflineMsgShort(String message) {
         Intent intent = new Intent();
-        intent.setAction(GlobalApplication.ACTION_INTENT_OFFLINE_MESSAGE_LIST);
+        intent.setAction(GlobalApplication.ACTION_INTENT_OFFLINE_USER_LIST_INCOMING);
+        intent.putExtra("message", message);
+        context.sendBroadcast(intent);
+    }
+
+    private void processOfflineMesssgeList(String message) {
+        Intent intent = new Intent();
+        intent.setAction(GlobalApplication.ACTION_INTENT_OFFLINE_MESSAGE_LIST_INCOMING);
         intent.putExtra("message", message);
         context.sendBroadcast(intent);
     }
@@ -207,6 +250,8 @@ public class ChatMessageProcessor implements ChatMessageListener {
                 processOnlineMessage(message);
             } else if(messageType.equals("OfflineMsgShort")) {
                 processOfflineMsgShort(message);
+            } else if(messageType.equals("OfflineMsg")) {
+                processOfflineMesssgeList(message);
             }
 
             return "ok";

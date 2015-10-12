@@ -19,7 +19,7 @@ import java.util.HashMap;
 /**
  * Created by gongguopei87@gmail.com on 2015/9/28.
  */
-public class ChatAppProvider extends ContentProvider{
+public class ChatAppProvider extends ContentProvider {
 
     AppDbHelper dbHelper;
 
@@ -28,15 +28,20 @@ public class ChatAppProvider extends ContentProvider{
     // 查询、更新条件
     private static final int USER = 1;
     private static final int USER_COLUMN_ID = 2;
+    private static final int MESSAGE = 3;
+    private static final int MESSAGE_COLUMN_ID = 4;
 
     // 查询列集合
     private static HashMap<String, String> userProjectionMap;
+    private static HashMap<String, String> messageProjectionMap;
 
     static {
         // Uri匹配工具类
         sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
         sUriMatcher.addURI(AppContract.AUTHORITY, "user", USER);
         sUriMatcher.addURI(AppContract.AUTHORITY, "user/#", USER_COLUMN_ID);
+        sUriMatcher.addURI(AppContract.AUTHORITY, "message", MESSAGE);
+        sUriMatcher.addURI(AppContract.AUTHORITY, "message/#", MESSAGE_COLUMN_ID);
 
         // 实例化查询列集合
         userProjectionMap = new HashMap<String, String>();
@@ -46,6 +51,16 @@ public class ChatAppProvider extends ContentProvider{
         userProjectionMap.put(AppContract.UserEntry.COLUMN_NAME_NICK_NAME, AppContract.UserEntry.COLUMN_NAME_NICK_NAME);
         userProjectionMap.put(AppContract.UserEntry.COLUMN_NAME_PORTRAIT, AppContract.UserEntry.COLUMN_NAME_PORTRAIT);
         userProjectionMap.put(AppContract.UserEntry.COLUMN_NAME_STATUS,AppContract.UserEntry.COLUMN_NAME_STATUS);
+
+        messageProjectionMap = new HashMap<String, String>();
+        messageProjectionMap.put(AppContract.ChatMessageEntry._ID, AppContract.ChatMessageEntry._ID);
+        messageProjectionMap.put(AppContract.ChatMessageEntry.COLUMN_NAME_ENTRY_M_FROM, AppContract.ChatMessageEntry.COLUMN_NAME_ENTRY_M_FROM);
+        messageProjectionMap.put(AppContract.ChatMessageEntry.COLUMN_NAME_NICK_M_TO, AppContract.ChatMessageEntry.COLUMN_NAME_NICK_M_TO);
+        messageProjectionMap.put(AppContract.ChatMessageEntry.COLUMN_NAME_M_TYPE, AppContract.ChatMessageEntry.COLUMN_NAME_M_TYPE);
+        messageProjectionMap.put(AppContract.ChatMessageEntry.COLUMN_NAME_M_CONTENT_TYPE, AppContract.ChatMessageEntry.COLUMN_NAME_M_CONTENT_TYPE);
+        messageProjectionMap.put(AppContract.ChatMessageEntry.COLUMN_NAME_M_CONTENT, AppContract.ChatMessageEntry.COLUMN_NAME_M_CONTENT);
+        messageProjectionMap.put(AppContract.ChatMessageEntry.COLUMN_NAME_M_DATETIME, AppContract.ChatMessageEntry.COLUMN_NAME_M_DATETIME);
+        messageProjectionMap.put(AppContract.ChatMessageEntry.COLUMN_NAME_M_STATUS, AppContract.ChatMessageEntry.COLUMN_NAME_M_STATUS);
     }
 
     @Override
@@ -67,6 +82,15 @@ public class ChatAppProvider extends ContentProvider{
                 qb.setTables(AppContract.UserEntry.TABLE_NAME);
                 qb.setProjectionMap(userProjectionMap);
                 qb.appendWhere(AppContract.UserEntry._ID + "=" + uri.getPathSegments().get(1));
+                break;
+            case MESSAGE:
+                qb.setTables(AppContract.ChatMessageEntry.TABLE_NAME);
+                qb.setProjectionMap(messageProjectionMap);
+                break;
+            case MESSAGE_COLUMN_ID:
+                qb.setTables(AppContract.ChatMessageEntry.TABLE_NAME);
+                qb.setProjectionMap(messageProjectionMap);
+                qb.appendWhere(AppContract.ChatMessageEntry._ID + "=" + uri.getPathSegments().get(1));
                 break;
             default:
                 throw new IllegalArgumentException(getContext().getString(R.string.illegal_uri_exception)  + " = " + uri);
@@ -97,13 +121,24 @@ public class ChatAppProvider extends ContentProvider{
     public Uri insert(Uri uri, ContentValues values) {
         // 获得数据库实例
         SQLiteDatabase db = dbHelper.getWritableDatabase();
-
-        long rowId = db.insert(AppContract.UserEntry.TABLE_NAME, AppContract.UserEntry.COLUMN_NAME_ENTRY_UID, values);
-
-        if(rowId > 0) {
-            Uri userUri = ContentUris.withAppendedId(AppContract.UserEntry.CONTENT_URI,rowId);
-            getContext().getContentResolver().notifyChange(userUri, null);
-            return userUri;
+        long rowId = -1;
+        switch (sUriMatcher.match(uri)) {
+            case USER:
+                rowId = db.insert(AppContract.UserEntry.TABLE_NAME, AppContract.UserEntry.COLUMN_NAME_ENTRY_UID, values);
+                if(rowId > 0) {
+                    Uri userUri = ContentUris.withAppendedId(AppContract.UserEntry.CONTENT_URI,rowId);
+                    getContext().getContentResolver().notifyChange(userUri, null);
+                    return userUri;
+                }
+                break;
+            case MESSAGE:
+                rowId = db.insert(AppContract.ChatMessageEntry.TABLE_NAME, AppContract.ChatMessageEntry.COLUMN_NAME_ENTRY_M_FROM, values);
+                if(rowId > 0) {
+                    Uri userUri = ContentUris.withAppendedId(AppContract.ChatMessageEntry.CONTENT_URI,rowId);
+                    getContext().getContentResolver().notifyChange(userUri, null);
+                    return userUri;
+                }
+                break;
         }
         return null;
     }
@@ -121,11 +156,18 @@ public class ChatAppProvider extends ContentProvider{
                 break;
             // 根据指定条件和ID删除
             case USER_COLUMN_ID:
-                String noteId = uri.getPathSegments().get(1);
-                count = db.delete(AppContract.UserEntry.TABLE_NAME, AppContract.UserEntry._ID + "=" + noteId
+                String userColumnId = uri.getPathSegments().get(1);
+                count = db.delete(AppContract.UserEntry.TABLE_NAME, AppContract.UserEntry._ID + "=" + userColumnId
                         + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ')' : ""), selectionArgs);
                 break;
-
+            case MESSAGE:
+                count = db.delete(AppContract.ChatMessageEntry.TABLE_NAME, selection, selectionArgs);
+                break;
+            case MESSAGE_COLUMN_ID:
+                String messageColumnId = uri.getPathSegments().get(1);
+                count = db.delete(AppContract.ChatMessageEntry.TABLE_NAME, AppContract.ChatMessageEntry._ID + "=" + messageColumnId
+                        + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ')' : ""), selectionArgs);
+                break;
             default:
                 throw new IllegalArgumentException(getContext().getString(R.string.illegal_uri_exception)  + " = " + uri);
         }
@@ -145,8 +187,16 @@ public class ChatAppProvider extends ContentProvider{
                 break;
             // 根据指定条件和ID更新
             case USER_COLUMN_ID:
-                String noteId = uri.getPathSegments().get(1);
-                count = db.update(AppContract.UserEntry.TABLE_NAME, values, AppContract.UserEntry._ID + "=" + noteId
+                String userColumnId = uri.getPathSegments().get(1);
+                count = db.update(AppContract.UserEntry.TABLE_NAME, values, AppContract.UserEntry._ID + "=" + userColumnId
+                        + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ')' : ""), selectionArgs);
+                break;
+            case MESSAGE:
+                count = db.update(AppContract.ChatMessageEntry.TABLE_NAME, values, selection, selectionArgs);
+                break;
+            case MESSAGE_COLUMN_ID:
+                String messageColumnId = uri.getPathSegments().get(1);
+                count = db.update(AppContract.ChatMessageEntry.TABLE_NAME, values, AppContract.ChatMessageEntry._ID + "=" + messageColumnId
                         + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ')' : ""), selectionArgs);
                 break;
             default:

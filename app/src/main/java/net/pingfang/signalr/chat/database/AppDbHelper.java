@@ -35,14 +35,17 @@ public class AppDbHelper extends SQLiteOpenHelper {
     private static final String SQL_CREATE_ENTRY_MESSAGE =
             "CREATE TABLE " + AppContract.ChatMessageEntry.TABLE_NAME + " (" +
             AppContract.ChatMessageEntry._ID + INTEGER_TYPE + PRIMARY_KEY + COMMA_SEP +
-            AppContract.UserEntry.COLUMN_NAME_ENTRY_UID + TEXT_TYPE + NOT_NULL + UNIQUE + COMMA_SEP +
-            AppContract.UserEntry.COLUMN_NAME_NICK_NAME + TEXT_TYPE + NOT_NULL + COMMA_SEP +
-            AppContract.UserEntry.COLUMN_NAME_PORTRAIT + TEXT_TYPE + COMMA_SEP +
-            AppContract.UserEntry.COLUMN_NAME_STATUS + INTEGER_TYPE +
+            AppContract.ChatMessageEntry.COLUMN_NAME_ENTRY_M_FROM + TEXT_TYPE + NOT_NULL + COMMA_SEP +
+            AppContract.ChatMessageEntry.COLUMN_NAME_NICK_M_TO + TEXT_TYPE + NOT_NULL + COMMA_SEP +
+            AppContract.ChatMessageEntry.COLUMN_NAME_M_TYPE + INTEGER_TYPE + NOT_NULL + COMMA_SEP +
+            AppContract.ChatMessageEntry.COLUMN_NAME_M_CONTENT_TYPE + TEXT_TYPE + NOT_NULL +COMMA_SEP +
+            AppContract.ChatMessageEntry.COLUMN_NAME_M_CONTENT + TEXT_TYPE + NOT_NULL + COMMA_SEP +
+            AppContract.ChatMessageEntry.COLUMN_NAME_M_DATETIME + TEXT_TYPE + NOT_NULL + COMMA_SEP +
+            AppContract.ChatMessageEntry.COLUMN_NAME_M_STATUS + TEXT_TYPE + NOT_NULL +
             " )";
 
     private static final String SQL_DELETE_ENTRY_MESSAGE =
-            "DROP TABLE IF EXISTS " + AppContract.UserEntry.TABLE_NAME;
+            "DROP TABLE IF EXISTS " + AppContract.ChatMessageEntry.TABLE_NAME;
 
 
     public AppDbHelper(Context context) {
@@ -52,10 +55,12 @@ public class AppDbHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(SQL_CREATE_ENTRY_USER);
+        db.execSQL(SQL_CREATE_ENTRY_MESSAGE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        db.execSQL(SQL_DELETE_ENTRY_MESSAGE);
         db.execSQL(SQL_DELETE_ENTRY_USER);
         onCreate(db);
     }

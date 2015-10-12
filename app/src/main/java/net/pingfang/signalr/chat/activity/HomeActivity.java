@@ -265,7 +265,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private void initCommunicate() {
 
         IntentFilter filter = new IntentFilter();
-        filter.addAction(GlobalApplication.ACTION_INTENT_OFFLINE_MESSAGE_LIST);
+        filter.addAction(GlobalApplication.ACTION_INTENT_OFFLINE_USER_LIST_INCOMING);
         registerReceiver(receiver,filter);
 
 //        chatService = ChatService.newInstance(getApplicationContext());
@@ -436,11 +436,11 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         return stringBuffer.toString();
     }
 
-    private  BroadcastReceiver receiver = new BroadcastReceiver() {
+    private BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
-            if(action.equals(GlobalApplication.ACTION_INTENT_OFFLINE_MESSAGE_LIST)) {
+            if(action.equals(GlobalApplication.ACTION_INTENT_OFFLINE_USER_LIST_INCOMING)) {
                 String message = intent.getStringExtra("message");
                 new ProcessMessageTask().execute(message);
             }
