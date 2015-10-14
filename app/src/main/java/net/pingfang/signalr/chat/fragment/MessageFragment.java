@@ -3,17 +3,21 @@ package net.pingfang.signalr.chat.fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import net.pingfang.signalr.chat.R;
+import net.pingfang.signalr.chat.constant.app.AppConstants;
 import net.pingfang.signalr.chat.listener.OnFragmentInteractionListener;
+import net.pingfang.signalr.chat.net.OkHttpCommonUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -80,7 +84,7 @@ public class MessageFragment extends Fragment implements AbsListView.OnItemClick
         mListener.loadMessage();
     }
 
-    public void updateMessage(String name,String uid, String body) {
+    public void updateMessage(String name,String uid, String portrait,String body) {
         MessageHolder holder = null;
         for(int i = 0; i < listMessage.size(); i++) {
             MessageHolder tmp = listMessage.get(i);
@@ -95,6 +99,7 @@ public class MessageFragment extends Fragment implements AbsListView.OnItemClick
             holder = new MessageHolder();
             holder.name = name;
             holder.uid = uid;
+            holder.portrait = AppConstants.PORTRAIT_URL_PREFIX + portrait;
             holder.body = body;
             listMessage.add(holder);
         }
@@ -152,6 +157,11 @@ public class MessageFragment extends Fragment implements AbsListView.OnItemClick
                 LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 View view = inflater.inflate(R.layout.list_item_message, null);
                 MessageHolder holder = listMessage.get(position);
+                if(!TextUtils.isEmpty(holder.portrait)) {
+                    ImageView iv_account_portrait = (ImageView) view.findViewById(R.id.iv_account_portrait);
+                    OkHttpCommonUtil okHttpCommonUtil = OkHttpCommonUtil.newInstance(getContext());
+                    okHttpCommonUtil.display(iv_account_portrait,holder.portrait,R.mipmap.ic_launcher);
+                }
                 TextView tv_friends_name = (TextView) view.findViewById(R.id.tv_friends_name);
                 tv_friends_name.setText(holder.name);
                 TextView tv_message_update = (TextView) view.findViewById(R.id.tv_message_update);
@@ -160,6 +170,11 @@ public class MessageFragment extends Fragment implements AbsListView.OnItemClick
                 convertView = view;
             } else {
                 MessageHolder holder = listMessage.get(position);
+                if(!TextUtils.isEmpty(holder.portrait)) {
+                    ImageView iv_account_portrait = (ImageView) convertView.findViewById(R.id.iv_account_portrait);
+                    OkHttpCommonUtil okHttpCommonUtil = OkHttpCommonUtil.newInstance(getContext());
+                    okHttpCommonUtil.display(iv_account_portrait,holder.portrait,R.mipmap.ic_launcher);
+                }
                 TextView tv_friends_name = (TextView) convertView.findViewById(R.id.tv_friends_name);
                 tv_friends_name.setText(holder.name);
                 TextView tv_message_update = (TextView) convertView.findViewById(R.id.tv_message_update);
@@ -173,6 +188,7 @@ public class MessageFragment extends Fragment implements AbsListView.OnItemClick
     public static class MessageHolder {
         private String name;
         private String uid;
+        private String portrait;
         private String body;
     }
 

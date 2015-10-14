@@ -23,7 +23,7 @@ public final class AppContract {
         public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/net.pingfang.signalr.chat.user";
 
         // 默认排序常量
-        public static final String DEFAULT_SORT_ORDER = "uid DESC";// 按姓名排序
+        public static final String DEFAULT_SORT_ORDER = "uid DESC";
 
         public static final String TABLE_NAME = "t_user";
         public static final String COLUMN_NAME_ENTRY_UID = "uid";
@@ -40,6 +40,9 @@ public final class AppContract {
         // 内容类型
         public static final String CONTENT_TYPE = "vnd.android.cursor.dir/net.pingfang.signalr.chat.message";
         public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/net.pingfang.signalr.chat.message";
+
+        // 默认排序常量
+        public static final String DEFAULT_SORT_ORDER = "_id DESC";
 
         public static final String TABLE_NAME = "t_message";
         public static final String COLUMN_NAME_ENTRY_M_FROM = "m_from";

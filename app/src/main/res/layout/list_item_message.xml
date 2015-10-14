@@ -5,7 +5,8 @@
     android:layout_height="wrap_content"
     android:padding="16dp">
 
-    <ImageView android:layout_width="wrap_content"
+    <ImageView android:id="@+id/iv_account_portrait"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@mipmap/ic_launcher"
         android:padding="@dimen/margin_portrait"/>

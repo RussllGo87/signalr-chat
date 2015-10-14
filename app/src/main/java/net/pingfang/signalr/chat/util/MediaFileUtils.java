@@ -11,9 +11,10 @@ import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
 
+import org.apache.commons.io.FileUtils;
+
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Calendar;
 
@@ -113,17 +114,21 @@ public class MediaFileUtils {
                     filePath = genarateFilePath(context, Environment.DIRECTORY_MUSIC, "voice", GlobalApplication.VOICE_FILE_NAME_SUFFIX);
                 }
 
+                File file = null;
                 if(filePath != null && !TextUtils.isEmpty(filePath)) {
-                    File file = new File(filePath);
+                    file = new File(filePath);
                     if(!file.exists()) {
                         file.createNewFile();
                     }
 
                     byte[] bitmapArray = Base64.decode(fileBody, Base64.DEFAULT);
 
-                    FileOutputStream fileOutputStream = new FileOutputStream(filePath);
-                    fileOutputStream.write(bitmapArray);
-                    fileOutputStream.close();
+                    if(file != null) {
+                        FileUtils.writeByteArrayToFile(file, bitmapArray);
+                    } else {
+                        Log.e("MediaFileUtils", "file not created!");
+                    }
+
                 } else {
                     Log.e("MediaFileUtils", "file path error");
                 }

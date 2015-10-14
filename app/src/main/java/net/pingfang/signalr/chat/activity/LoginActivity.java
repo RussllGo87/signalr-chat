@@ -568,7 +568,6 @@ public class LoginActivity extends AppCompatActivity {
                                     String item_portrait = tmpJson.getString("portrait");
 //                                    UserManager userManager = new UserManager(getApplicationContext());
                                     if(item_portrait != null && !TextUtils.isEmpty(item_portrait) && !"null".equals(item_portrait)) {
-
                                         userManager.addRecord(item_uid,item_nickname,item_portrait);
                                     } else {
                                         userManager.addRecord(item_uid,item_nickname,"");

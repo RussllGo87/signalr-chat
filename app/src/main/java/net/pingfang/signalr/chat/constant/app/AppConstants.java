@@ -9,4 +9,6 @@ public class AppConstants {
     public static final String KEY_SYS_CURRENT_UID = "KEY_SYS_CURRENT_UID";
     public static final String KEY_SYS_CURRENT_NICKNAME = "KEY_SYS_CURRENT_NICKNAME";
     public static final String KEY_SYS_CURRENT_PORTRAIT = "KEY_SYS_CURRENT_PORTRAIT";
+
+    public static final String PORTRAIT_URL_PREFIX = "http://192.168.0.152:8090/UpLoad/Head/";
 }

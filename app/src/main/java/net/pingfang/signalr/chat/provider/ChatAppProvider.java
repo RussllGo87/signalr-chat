@@ -72,20 +72,36 @@ public class ChatAppProvider extends ContentProvider {
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
+        String orderBy = null;
         switch (sUriMatcher.match(uri)) {
             case USER:
                 qb.setTables(AppContract.UserEntry.TABLE_NAME);
                 qb.setProjectionMap(userProjectionMap);
+                if (TextUtils.isEmpty(sortOrder)) {
+                    orderBy = AppContract.UserEntry.DEFAULT_SORT_ORDER;
+                } else {
+                    orderBy = sortOrder;
+                }
                 break;
             // 根据ID查询
             case USER_COLUMN_ID:
                 qb.setTables(AppContract.UserEntry.TABLE_NAME);
                 qb.setProjectionMap(userProjectionMap);
                 qb.appendWhere(AppContract.UserEntry._ID + "=" + uri.getPathSegments().get(1));
+                if (TextUtils.isEmpty(sortOrder)) {
+                    orderBy = AppContract.UserEntry.DEFAULT_SORT_ORDER;
+                } else {
+                    orderBy = sortOrder;
+                }
                 break;
             case MESSAGE:
                 qb.setTables(AppContract.ChatMessageEntry.TABLE_NAME);
                 qb.setProjectionMap(messageProjectionMap);
+                if (TextUtils.isEmpty(sortOrder)) {
+                    orderBy = AppContract.ChatMessageEntry.DEFAULT_SORT_ORDER;
+                } else {
+                    orderBy = sortOrder;
+                }
                 break;
             case MESSAGE_COLUMN_ID:
                 qb.setTables(AppContract.ChatMessageEntry.TABLE_NAME);
@@ -94,14 +110,6 @@ public class ChatAppProvider extends ContentProvider {
                 break;
             default:
                 throw new IllegalArgumentException(getContext().getString(R.string.illegal_uri_exception)  + " = " + uri);
-        }
-
-        // 使用默认排序
-        String orderBy;
-        if (TextUtils.isEmpty(sortOrder)) {
-            orderBy = AppContract.UserEntry.DEFAULT_SORT_ORDER;
-        } else {
-            orderBy = sortOrder;
         }
 
         // 获得数据库实例
@@ -124,7 +132,7 @@ public class ChatAppProvider extends ContentProvider {
         long rowId = -1;
         switch (sUriMatcher.match(uri)) {
             case USER:
-                rowId = db.insert(AppContract.UserEntry.TABLE_NAME, AppContract.UserEntry.COLUMN_NAME_ENTRY_UID, values);
+                rowId = db.insert(AppContract.UserEntry.TABLE_NAME, null, values);
                 if(rowId > 0) {
                     Uri userUri = ContentUris.withAppendedId(AppContract.UserEntry.CONTENT_URI,rowId);
                     getContext().getContentResolver().notifyChange(userUri, null);
@@ -132,7 +140,7 @@ public class ChatAppProvider extends ContentProvider {
                 }
                 break;
             case MESSAGE:
-                rowId = db.insert(AppContract.ChatMessageEntry.TABLE_NAME, AppContract.ChatMessageEntry.COLUMN_NAME_ENTRY_M_FROM, values);
+                rowId = db.insert(AppContract.ChatMessageEntry.TABLE_NAME, null, values);
                 if(rowId > 0) {
                     Uri userUri = ContentUris.withAppendedId(AppContract.ChatMessageEntry.CONTENT_URI,rowId);
                     getContext().getContentResolver().notifyChange(userUri, null);

@@ -302,9 +302,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         @Override
-        public void updateMessageList(String name, String uid, String body) {
+        public void updateMessageList(String name, String uid, String portrait, String body) {
             MessageFragment fragment = (MessageFragment) adapter.getItem(0);
-            fragment.updateMessage(name, uid, body);
+            fragment.updateMessage(name, uid, portrait, body);
         }
 
         @Override
@@ -483,7 +483,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             String portrait = values[2];
             String count = values[3];
 
-            onFragmentInteractionListener.updateMessageList(nickname,uid,count);
+            onFragmentInteractionListener.updateMessageList(nickname,uid,portrait,count);
         }
     }
 }
