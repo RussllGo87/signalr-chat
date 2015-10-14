@@ -42,7 +42,6 @@ import net.pingfang.signalr.chat.constant.qq.TencentConstants;
 import net.pingfang.signalr.chat.constant.weibo.WeiboConstants;
 import net.pingfang.signalr.chat.constant.weibo.WeiboRequestListener;
 import net.pingfang.signalr.chat.database.AppContract;
-import net.pingfang.signalr.chat.database.NewUserManager;
 import net.pingfang.signalr.chat.database.UserManager;
 import net.pingfang.signalr.chat.net.HttpBaseCallback;
 import net.pingfang.signalr.chat.net.OkHttpCommonUtil;
@@ -558,7 +557,7 @@ public class LoginActivity extends AppCompatActivity {
 //                            final String nickname = result.getString("nickname");
 //                            final String portrait = result.getString("portrait");
 
-                            NewUserManager userManager = new NewUserManager(getApplicationContext());
+                            UserManager userManager = new UserManager(getApplicationContext());
                             JSONArray list = jsonObject.getJSONArray("list");
                             if(list != null && list.length() > 0) {
                                 for(int i = 0; i < list.length(); i++) {

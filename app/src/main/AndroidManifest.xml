@@ -126,7 +126,7 @@
         </activity>
 
         <service
-            android:name=".service.NewChatService"
+            android:name=".service.ChatService"
             android:enabled="true"
             android:exported="false" >
         </service>

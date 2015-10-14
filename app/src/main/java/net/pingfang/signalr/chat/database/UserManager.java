@@ -1,77 +1,52 @@
 package net.pingfang.signalr.chat.database;
 
+import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 
 /**
- * Created by gongguopei87@gmail.com on 2015/9/16.
+ * Created by gongguopei87@gmail.com on 2015/10/10.
  */
 public class UserManager {
 
-    private final AppDbHelper dbHelper;
-    private SQLiteDatabase database;
+    Context context;
 
     public UserManager(Context context) {
-        dbHelper = new AppDbHelper(context);
+        this.context = context;
     }
 
-    public SQLiteDatabase openWritableDatabase(){
-        synchronized (dbHelper) {
-            if(database == null) {
-                return dbHelper.getWritableDatabase();
-            } else if(!database.isOpen()) {
-                return dbHelper.getWritableDatabase();
-            } else {
-                return database;
-            }
-        }
+    public Uri insert(String uid, String nickname, String portrait) {
+        return insert(uid,nickname,portrait,0);
     }
 
-    public void insert(String uid, String nickname, String portrait) {
-        insert(uid,nickname,portrait,0);
-    }
-
-    public void insert(String uid, String nickname, String portrait, int status) {
-        database = openWritableDatabase();
+    public Uri insert(String uid, String nickname, String portrait, int status) {
+        ContentResolver contentResolver = context.getContentResolver();
 
         ContentValues values = new ContentValues();
 
         values.put(AppContract.UserEntry.COLUMN_NAME_ENTRY_UID,uid);
         values.put(AppContract.UserEntry.COLUMN_NAME_NICK_NAME,nickname);
         values.put(AppContract.UserEntry.COLUMN_NAME_PORTRAIT,portrait);
-        values.put(AppContract.UserEntry.COLUMN_NAME_STATUS,status);
+        values.put(AppContract.UserEntry.COLUMN_NAME_STATUS, status);
 
-        database.insert(AppContract.UserEntry.TABLE_NAME,null,values);
+        Uri uri = contentResolver.insert(AppContract.UserEntry.CONTENT_URI, values);
+        return uri;
     }
 
-    public Cursor query(String uid) {
+    public Cursor queryByUid(String uid) {
+        String selection = AppContract.UserEntry.COLUMN_NAME_ENTRY_UID + " = ?";
+        String[] selectionArgs = new String[]{uid};
 
-        database = openWritableDatabase();
+        ContentResolver contentResolver = context.getContentResolver();
 
-        String[] projection = {
-                AppContract.UserEntry._ID,
-                AppContract.UserEntry.COLUMN_NAME_ENTRY_UID,
-                AppContract.UserEntry.COLUMN_NAME_NICK_NAME,
-                AppContract.UserEntry.COLUMN_NAME_PORTRAIT
-        };
+        Cursor cursor = context.getContentResolver().query(AppContract.UserEntry.CONTENT_URI, null, selection, selectionArgs, null);
 
-        Cursor c = database.query(
-                AppContract.UserEntry.TABLE_NAME,
-                projection,
-                AppContract.UserEntry.COLUMN_NAME_ENTRY_UID + " = ?" ,
-                new String[]{uid},
-                null,
-                null,
-                null
-        );
-
-        return c;
+        return cursor;
     }
 
     public int update(String uid, String nickname, String portrait) {
-        database = openWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(AppContract.UserEntry.COLUMN_NAME_NICK_NAME,nickname);
@@ -80,11 +55,14 @@ public class UserManager {
         String selection = AppContract.UserEntry.COLUMN_NAME_ENTRY_UID + " = ?";
         String[] selectionArgs = new String[]{uid};
 
-        return database.update(AppContract.UserEntry.TABLE_NAME,values,selection,selectionArgs);
+        ContentResolver contentResolver = context.getContentResolver();
+
+        int count = contentResolver.update(AppContract.UserEntry.CONTENT_URI, values, selection, selectionArgs);
+
+        return count;
     }
 
     public int updateStatus(String uid, int status) {
-        database = openWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(AppContract.UserEntry.COLUMN_NAME_STATUS,status);
@@ -92,11 +70,15 @@ public class UserManager {
         String selection = AppContract.UserEntry.COLUMN_NAME_ENTRY_UID + " = ?";
         String[] selectionArgs = new String[]{uid};
 
-        return database.update(AppContract.UserEntry.TABLE_NAME,values,selection,selectionArgs);
+        ContentResolver contentResolver = context.getContentResolver();
+
+        int count = contentResolver.update(AppContract.UserEntry.CONTENT_URI, values, selection, selectionArgs);
+
+        return count;
     }
 
     public boolean isExist(String uid) {
-        Cursor cursor = query(uid);
+        Cursor cursor = queryByUid(uid);
         if(cursor != null && cursor.getCount() > 0) {
             return true;
         }
@@ -111,5 +93,4 @@ public class UserManager {
             insert(uid,nickname,portrait);
         }
     }
-
 }

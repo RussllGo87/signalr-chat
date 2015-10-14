@@ -47,7 +47,7 @@ import net.pingfang.signalr.chat.database.AppContract;
 import net.pingfang.signalr.chat.database.ChatMessageManager;
 import net.pingfang.signalr.chat.message.MessageConstant;
 import net.pingfang.signalr.chat.message.MessageConstructor;
-import net.pingfang.signalr.chat.service.NewChatService;
+import net.pingfang.signalr.chat.service.ChatService;
 import net.pingfang.signalr.chat.util.CommonTools;
 import net.pingfang.signalr.chat.util.GlobalApplication;
 import net.pingfang.signalr.chat.util.MediaFileUtils;
@@ -85,7 +85,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     MediaPlayer mPlayer;
 
 //    ChatService chatService;
-    NewChatService mService;
+    ChatService mService;
     boolean mBound = false;
 
     SharedPreferencesHelper helper;
@@ -170,7 +170,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
         registerReceiver();
 
-        Intent intent = new Intent(this, NewChatService.class);
+        Intent intent = new Intent(this, ChatService.class);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
 
     }
@@ -220,8 +220,8 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         public void onServiceConnected(ComponentName className,
                                        IBinder service) {
             // We've bound to LocalService, cast the IBinder and get LocalService instance
-            NewChatService.ChatBinder binder = (NewChatService.ChatBinder) service;
-            mService = (NewChatService) binder.getService();
+            ChatService.ChatBinder binder = (ChatService.ChatBinder) service;
+            mService = (ChatService) binder.getService();
             mBound = true;
 
             String offlineMessageReq = MessageConstructor.constructOfflineMsgReq(buddyUid,uid , 1, 5);

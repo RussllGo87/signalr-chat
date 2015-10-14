@@ -11,7 +11,6 @@ import android.text.TextUtils;
 
 import net.pingfang.signalr.chat.database.AppContract;
 import net.pingfang.signalr.chat.database.ChatMessageManager;
-import net.pingfang.signalr.chat.database.NewUserManager;
 import net.pingfang.signalr.chat.database.UserManager;
 import net.pingfang.signalr.chat.util.GlobalApplication;
 import net.pingfang.signalr.chat.util.MediaFileUtils;
@@ -147,7 +146,7 @@ public class ChatMessageProcessor implements ChatMessageListener {
             String datetime = object.getString("SendTime");
             String contentType = object.getString("MessageType");
 
-            NewUserManager userManager = new NewUserManager(context);
+            UserManager userManager = new UserManager(context);
             Cursor cursor = userManager.queryByUid(from);
             if(cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {
                 fromNickname = cursor.getString(cursor.getColumnIndex(AppContract.UserEntry.COLUMN_NAME_NICK_NAME));

@@ -24,7 +24,7 @@ import net.pingfang.signalr.chat.R;
 import net.pingfang.signalr.chat.constant.app.AppConstants;
 import net.pingfang.signalr.chat.constant.qq.TencentConstants;
 import net.pingfang.signalr.chat.constant.weibo.WeiboRequestListener;
-import net.pingfang.signalr.chat.service.NewChatService;
+import net.pingfang.signalr.chat.service.ChatService;
 import net.pingfang.signalr.chat.util.SharedPreferencesHelper;
 
 import org.json.JSONException;
@@ -42,7 +42,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     private Oauth2AccessToken wbAccessToken;
 
 //    ChatService chatService;
-    NewChatService mService;
+    ChatService mService;
     boolean mBound = false;
 
     @Override
@@ -67,7 +67,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     private void initCommunicate() {
 //        chatService = ChatService.newInstance(getApplicationContext());
         if(!mBound) {
-            Intent intent = new Intent(this, NewChatService.class);
+            Intent intent = new Intent(this, ChatService.class);
             bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
         }
     }
@@ -89,8 +89,8 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         public void onServiceConnected(ComponentName className,
                                        IBinder service) {
             // We've bound to LocalService, cast the IBinder and get LocalService instance
-            NewChatService.ChatBinder binder = (NewChatService.ChatBinder) service;
-            mService = (NewChatService) binder.getService();
+            ChatService.ChatBinder binder = (ChatService.ChatBinder) service;
+            mService = (ChatService) binder.getService();
             mBound = true;
         }
 
@@ -154,7 +154,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                     unbindService(mConnection);
                     mBound = false;
                 }
-                stopService(new Intent(getApplicationContext(),NewChatService.class));
+                stopService(new Intent(getApplicationContext(),ChatService.class));
 
                 Intent exitIntent = new Intent();
                 exitIntent.setClass(getApplicationContext(), LoginActivity.class);

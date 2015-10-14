@@ -41,7 +41,7 @@ import net.pingfang.signalr.chat.constant.qq.TencentConstants;
 import net.pingfang.signalr.chat.constant.weibo.WeiboConstants;
 import net.pingfang.signalr.chat.constant.weibo.WeiboRequestListener;
 import net.pingfang.signalr.chat.database.AppContract;
-import net.pingfang.signalr.chat.database.NewUserManager;
+import net.pingfang.signalr.chat.database.UserManager;
 import net.pingfang.signalr.chat.demo.GreyBitmapActivity;
 import net.pingfang.signalr.chat.fragment.AccountFragment;
 import net.pingfang.signalr.chat.fragment.BuddyFragment;
@@ -50,7 +50,7 @@ import net.pingfang.signalr.chat.fragment.NearbyFragment;
 import net.pingfang.signalr.chat.listener.OnFragmentInteractionListener;
 import net.pingfang.signalr.chat.net.HttpBaseCallback;
 import net.pingfang.signalr.chat.net.OkHttpCommonUtil;
-import net.pingfang.signalr.chat.service.NewChatService;
+import net.pingfang.signalr.chat.service.ChatService;
 import net.pingfang.signalr.chat.ui.dialog.DoubleButtonDialogFragment;
 import net.pingfang.signalr.chat.util.CommonTools;
 import net.pingfang.signalr.chat.util.GlobalApplication;
@@ -95,7 +95,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     Tencent mTencent;
 
 //    ChatService chatService;
-    NewChatService newChatService;
+    ChatService newChatService;
     Handler handler;
 
     @Override
@@ -269,8 +269,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         registerReceiver(receiver,filter);
 
 //        chatService = ChatService.newInstance(getApplicationContext());
-        Intent intent = new Intent(getApplicationContext(),NewChatService.class);
-        intent.putExtra(NewChatService.FLAG_SERVICE_CMD, NewChatService.FLAF_INIT_CONNECTION);
+        Intent intent = new Intent(getApplicationContext(),ChatService.class);
+        intent.putExtra(ChatService.FLAG_SERVICE_CMD, ChatService.FLAF_INIT_CONNECTION);
         String qs = constructLogin(helper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID));
         intent.putExtra(newChatService.FLAG_INIT_CONNECTION_QS,qs);
         startService(intent);
@@ -311,6 +311,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         public void loadMessage() {
 //            MessageFragment fragment = (MessageFragment) adapter.getItem(0);
 //            fragment.updateMessage("server", "2", "");
+
+
         }
 
         @Override
@@ -453,7 +455,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             String message = params[0];
             try {
                 JSONArray jsonArray = new JSONArray(message);
-                NewUserManager userManager = new NewUserManager(getApplicationContext());
+                UserManager userManager = new UserManager(getApplicationContext());
                 for(int i = 0; i < jsonArray.length(); i++) {
                     JSONObject jsonObject = jsonArray.getJSONObject(i);
                     String uid = jsonObject.getString("Sender");

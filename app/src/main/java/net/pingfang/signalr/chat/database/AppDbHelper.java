@@ -17,6 +17,7 @@ public class AppDbHelper extends SQLiteOpenHelper {
     private static final String NOT_NULL = " NOT NULL";
     private static final String INTEGER_TYPE = " INTEGER";
     private static final String TEXT_TYPE = " TEXT";
+    private static final String DATETIME_TYPE = " DATETIME DEFAULT CURRENT_TIMESTAMP";
     private static final String UNIQUE = " UNIQUE";
     private static final String COMMA_SEP = ",";
 
@@ -47,6 +48,15 @@ public class AppDbHelper extends SQLiteOpenHelper {
     private static final String SQL_DELETE_ENTRY_MESSAGE =
             "DROP TABLE IF EXISTS " + AppContract.ChatMessageEntry.TABLE_NAME;
 
+    private static final String SQL_CREATE_ENTRY_RECENT =
+            "CREATE TABLE " + AppContract.RecentContactEntry.TABLE_NAME + " (" +
+            AppContract.RecentContactEntry._ID + INTEGER_TYPE + PRIMARY_KEY + COMMA_SEP +
+            AppContract.RecentContactEntry.COLUMN_NAME_UID + TEXT_TYPE + NOT_NULL + COMMA_SEP +
+            AppContract.RecentContactEntry.COLUMN_NAME_UPDATE_TIME + DATETIME_TYPE + NOT_NULL +
+            " )";
+
+    private static final String SQL_DELETE_ENTRY_RECENT =
+            "DROP TABLE IF EXISTS " + AppContract.RecentContactEntry.TABLE_NAME;
 
     public AppDbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -56,10 +66,14 @@ public class AppDbHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(SQL_CREATE_ENTRY_USER);
         db.execSQL(SQL_CREATE_ENTRY_MESSAGE);
+        db.execSQL(SQL_CREATE_ENTRY_RECENT);
+
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+
+        db.execSQL(SQL_DELETE_ENTRY_RECENT);
         db.execSQL(SQL_DELETE_ENTRY_MESSAGE);
         db.execSQL(SQL_DELETE_ENTRY_USER);
         onCreate(db);
