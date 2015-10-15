@@ -20,6 +20,7 @@ import net.pingfang.signalr.chat.activity.ChatActivity;
 import net.pingfang.signalr.chat.adapter.ListCursorAdapter;
 import net.pingfang.signalr.chat.constant.app.AppConstants;
 import net.pingfang.signalr.chat.database.AppContract;
+import net.pingfang.signalr.chat.database.User;
 import net.pingfang.signalr.chat.listener.OnFragmentInteractionListener;
 import net.pingfang.signalr.chat.util.SharedPreferencesHelper;
 
@@ -59,7 +60,6 @@ public class BuddyFragment extends Fragment implements LoaderManager.LoaderCallb
 
         View view = inflater.inflate(R.layout.fragment_buddy, container, false);
         list_user = (ListView) view.findViewById(R.id.list_user);
-
         return view;
     }
 
@@ -72,14 +72,11 @@ public class BuddyFragment extends Fragment implements LoaderManager.LoaderCallb
         list_user.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                ListCursorAdapter.UserHolder userHolder = (ListCursorAdapter.UserHolder) view.getTag();
-
-                mListener.updateMessageList(userHolder.getNickname(), userHolder.getUid(),userHolder.getPortrait(), "");
+                User user = (User) view.getTag();
 
                 Intent intent = new Intent();
                 intent.setClass(getContext(), ChatActivity.class);
-                intent.putExtra("name", userHolder.getNickname());
-                intent.putExtra("uid", userHolder.getUid());
+                intent.putExtra("user", user);
                 startActivity(intent);
             }
         });
@@ -89,6 +86,16 @@ public class BuddyFragment extends Fragment implements LoaderManager.LoaderCallb
         args.putString(AppConstants.KEY_SYS_CURRENT_UID,uid);
 
         getLoaderManager().initLoader(LOADER_ID,args,this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        String uid = sharedPreferencesHelper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID);
+        Bundle args = new Bundle();
+        args.putString(AppConstants.KEY_SYS_CURRENT_UID, uid);
+        getLoaderManager().restartLoader(LOADER_ID, args, this);
     }
 
     @Override

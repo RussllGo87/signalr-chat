@@ -122,7 +122,7 @@
     <string name="title_activity_ad_maintain">广告维护</string>
 
     <!-- 聊天页 -->
-    <string name="title_activity_chat">与%s对话</string>
+    <string name="title_activity_chat">%s</string>
     <string name="btn_send">发送</string>
     <string name="action_text">文字</string>
     <string name="action_image">图片</string>
@@ -133,6 +133,8 @@
     <string name="tv_nickname_user">我</string>
     <string name="tv_offline_message">离线消息</string>
     <string name="tv_load_offline_message">离线消息(%s)</string>
+    <string name="content_type_pic">[图片]</string>
+    <string name="content_type_voice">[声音]</string>
 
     <!-- 设置页 -->
     <string name="title_activity_settings">@string/action_settings</string>

@@ -21,6 +21,7 @@ public class GlobalApplication extends Application {
     public static final String ACTION_INTENT_VIDEO_MESSAGE_INCOMING = "ACTION_INTENT_VIDEO_MESSAGE_INCOMING";
 
     public static final String ACTION_INTENT_ONLINE_MESSAGE_INCOMING = "ACTION_INTENT_ONLINE_MESSAGE_INCOMING";
+    public static final String ACTION_INTENT_ONLINE_MESSAGE_SEND = "ACTION_INTENT_ONLINE_MESSAGE_SEND";
 
     public static final String IMAGE_TITLE_NAME_PREFIX = "IMAAGE_";
     public static final String VOICE_FILE_NAME_PREFIX = "VOICE_";

@@ -3,13 +3,12 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="16dp">
+    android:padding="4dp">
 
     <ImageView android:id="@+id/iv_account_portrait"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@mipmap/ic_launcher"
-        android:padding="@dimen/margin_portrait"/>
+        android:src="@mipmap/ic_launcher"/>
 
     <LinearLayout
         android:layout_width="0dp"
@@ -27,6 +26,24 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="最近怎样"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView android:id="@+id/tv_msg_update_time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="19:28"/>
+
+        <TextView android:id="@+id/tv_msg_not_read"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="5"/>
 
     </LinearLayout>
 

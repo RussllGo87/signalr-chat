@@ -30,10 +30,16 @@ public class ChatAppProvider extends ContentProvider {
     private static final int USER_COLUMN_ID = 2;
     private static final int MESSAGE = 3;
     private static final int MESSAGE_COLUMN_ID = 4;
+    private static final int RECENT = 5;
+    private static final int RECENT_COLUMN_ID = 6;
+    private static final int RECENT_VIEW = 7;
+    private static final int RECENT_VIEW_COLUMN_ID = 8;
 
     // 查询列集合
     private static HashMap<String, String> userProjectionMap;
     private static HashMap<String, String> messageProjectionMap;
+    private static HashMap<String, String> recentProjectionMap;
+    private static HashMap<String, String> vRecentProjectionMap;
 
     static {
         // Uri匹配工具类
@@ -42,6 +48,11 @@ public class ChatAppProvider extends ContentProvider {
         sUriMatcher.addURI(AppContract.AUTHORITY, "user/#", USER_COLUMN_ID);
         sUriMatcher.addURI(AppContract.AUTHORITY, "message", MESSAGE);
         sUriMatcher.addURI(AppContract.AUTHORITY, "message/#", MESSAGE_COLUMN_ID);
+        sUriMatcher.addURI(AppContract.AUTHORITY, "recent", RECENT);
+        sUriMatcher.addURI(AppContract.AUTHORITY, "recent/#", RECENT_COLUMN_ID);
+        sUriMatcher.addURI(AppContract.AUTHORITY, "v_recent", RECENT_VIEW);
+        sUriMatcher.addURI(AppContract.AUTHORITY, "v_recent/#", RECENT_VIEW_COLUMN_ID);
+
 
         // 实例化查询列集合
         userProjectionMap = new HashMap<String, String>();
@@ -61,6 +72,22 @@ public class ChatAppProvider extends ContentProvider {
         messageProjectionMap.put(AppContract.ChatMessageEntry.COLUMN_NAME_M_CONTENT, AppContract.ChatMessageEntry.COLUMN_NAME_M_CONTENT);
         messageProjectionMap.put(AppContract.ChatMessageEntry.COLUMN_NAME_M_DATETIME, AppContract.ChatMessageEntry.COLUMN_NAME_M_DATETIME);
         messageProjectionMap.put(AppContract.ChatMessageEntry.COLUMN_NAME_M_STATUS, AppContract.ChatMessageEntry.COLUMN_NAME_M_STATUS);
+
+        recentProjectionMap = new HashMap<String, String>();
+        recentProjectionMap.put(AppContract.RecentContactEntry._ID, AppContract.RecentContactEntry._ID);
+        recentProjectionMap.put(AppContract.RecentContactEntry.COLUMN_NAME_UID, AppContract.RecentContactEntry.COLUMN_NAME_UID);
+        recentProjectionMap.put(AppContract.RecentContactEntry.COLUMN_NAME_CONTENT, AppContract.RecentContactEntry.COLUMN_NAME_CONTENT);
+        recentProjectionMap.put(AppContract.RecentContactEntry.COLUMN_NAME_UPDATE_TIME, AppContract.RecentContactEntry.COLUMN_NAME_UPDATE_TIME);
+
+        vRecentProjectionMap = new HashMap<String, String>();
+        vRecentProjectionMap.put(AppContract.RecentContactView._ID, AppContract.RecentContactView._ID);
+        vRecentProjectionMap.put(AppContract.RecentContactView.COLUMN_NAME_UID, AppContract.RecentContactView.COLUMN_NAME_UID);
+        vRecentProjectionMap.put(AppContract.RecentContactView.COLUMN_NAME_NICKNAME, AppContract.RecentContactView.COLUMN_NAME_NICKNAME);
+        vRecentProjectionMap.put(AppContract.RecentContactView.COLUMN_NAME_PORTRAIT, AppContract.RecentContactView.COLUMN_NAME_PORTRAIT);
+        vRecentProjectionMap.put(AppContract.RecentContactView.COLUMN_NAME_STATUS, AppContract.RecentContactView.COLUMN_NAME_STATUS);
+        vRecentProjectionMap.put(AppContract.RecentContactView.COLUMN_NAME_CONTENT, AppContract.RecentContactView.COLUMN_NAME_CONTENT);
+        vRecentProjectionMap.put(AppContract.RecentContactView.COLUMN_NAME_UPDATE_TIME, AppContract.RecentContactView.COLUMN_NAME_UPDATE_TIME);
+        vRecentProjectionMap.put(AppContract.RecentContactView.COLUMN_NAME_OWNER, AppContract.RecentContactView.COLUMN_NAME_OWNER);
     }
 
     @Override
@@ -108,6 +135,34 @@ public class ChatAppProvider extends ContentProvider {
                 qb.setProjectionMap(messageProjectionMap);
                 qb.appendWhere(AppContract.ChatMessageEntry._ID + "=" + uri.getPathSegments().get(1));
                 break;
+            case RECENT:
+                qb.setTables(AppContract.RecentContactEntry.TABLE_NAME);
+                qb.setProjectionMap(recentProjectionMap);
+                if (TextUtils.isEmpty(sortOrder)) {
+                    orderBy = AppContract.RecentContactEntry.DEFAULT_SORT_ORDER;
+                } else {
+                    orderBy = sortOrder;
+                }
+                break;
+            case RECENT_COLUMN_ID:
+                qb.setTables(AppContract.RecentContactEntry.TABLE_NAME);
+                qb.setProjectionMap(recentProjectionMap);
+                qb.appendWhere(AppContract.RecentContactEntry._ID + "=" + uri.getPathSegments().get(1));
+                break;
+            case RECENT_VIEW:
+                qb.setTables(AppContract.RecentContactView.VIEW_NAME);
+                qb.setProjectionMap(vRecentProjectionMap);
+                if (TextUtils.isEmpty(sortOrder)) {
+                    orderBy = AppContract.RecentContactView.DEFAULT_SORT_ORDER;
+                } else {
+                    orderBy = sortOrder;
+                }
+                break;
+            case RECENT_VIEW_COLUMN_ID:
+                qb.setTables(AppContract.RecentContactView.VIEW_NAME);
+                qb.setProjectionMap(vRecentProjectionMap);
+                qb.appendWhere(AppContract.RecentContactView._ID + "=" + uri.getPathSegments().get(1));
+                break;
             default:
                 throw new IllegalArgumentException(getContext().getString(R.string.illegal_uri_exception)  + " = " + uri);
         }
@@ -142,9 +197,17 @@ public class ChatAppProvider extends ContentProvider {
             case MESSAGE:
                 rowId = db.insert(AppContract.ChatMessageEntry.TABLE_NAME, null, values);
                 if(rowId > 0) {
-                    Uri userUri = ContentUris.withAppendedId(AppContract.ChatMessageEntry.CONTENT_URI,rowId);
-                    getContext().getContentResolver().notifyChange(userUri, null);
-                    return userUri;
+                    Uri messageUri = ContentUris.withAppendedId(AppContract.ChatMessageEntry.CONTENT_URI,rowId);
+                    getContext().getContentResolver().notifyChange(messageUri, null);
+                    return messageUri;
+                }
+                break;
+            case RECENT:
+                rowId = db.insert(AppContract.RecentContactEntry.TABLE_NAME, null, values);
+                if(rowId > 0) {
+                    Uri recentUri = ContentUris.withAppendedId(AppContract.RecentContactEntry.CONTENT_URI,rowId);
+                    getContext().getContentResolver().notifyChange(recentUri, null);
+                    return recentUri;
                 }
                 break;
         }
@@ -176,6 +239,14 @@ public class ChatAppProvider extends ContentProvider {
                 count = db.delete(AppContract.ChatMessageEntry.TABLE_NAME, AppContract.ChatMessageEntry._ID + "=" + messageColumnId
                         + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ')' : ""), selectionArgs);
                 break;
+            case RECENT:
+                count = db.delete(AppContract.RecentContactEntry.TABLE_NAME, selection, selectionArgs);
+                break;
+            case RECENT_COLUMN_ID:
+                String recentColumnId = uri.getPathSegments().get(1);
+                count = db.delete(AppContract.RecentContactEntry.TABLE_NAME, AppContract.RecentContactEntry._ID + "=" + recentColumnId
+                        + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ')' : ""), selectionArgs);
+                break;
             default:
                 throw new IllegalArgumentException(getContext().getString(R.string.illegal_uri_exception)  + " = " + uri);
         }
@@ -205,6 +276,14 @@ public class ChatAppProvider extends ContentProvider {
             case MESSAGE_COLUMN_ID:
                 String messageColumnId = uri.getPathSegments().get(1);
                 count = db.update(AppContract.ChatMessageEntry.TABLE_NAME, values, AppContract.ChatMessageEntry._ID + "=" + messageColumnId
+                        + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ')' : ""), selectionArgs);
+                break;
+            case RECENT:
+                count = db.update(AppContract.RecentContactEntry.TABLE_NAME, values, selection, selectionArgs);
+                break;
+            case RECENT_COLUMN_ID:
+                String recentColumnId = uri.getPathSegments().get(1);
+                count = db.update(AppContract.RecentContactEntry.TABLE_NAME, values, AppContract.RecentContactEntry._ID + "=" + recentColumnId
                         + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ')' : ""), selectionArgs);
                 break;
             default:

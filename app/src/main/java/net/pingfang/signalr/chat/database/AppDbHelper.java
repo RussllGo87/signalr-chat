@@ -52,11 +52,35 @@ public class AppDbHelper extends SQLiteOpenHelper {
             "CREATE TABLE " + AppContract.RecentContactEntry.TABLE_NAME + " (" +
             AppContract.RecentContactEntry._ID + INTEGER_TYPE + PRIMARY_KEY + COMMA_SEP +
             AppContract.RecentContactEntry.COLUMN_NAME_UID + TEXT_TYPE + NOT_NULL + COMMA_SEP +
+            AppContract.RecentContactEntry.COLUMN_NAME_OWNER + TEXT_TYPE + NOT_NULL + COMMA_SEP +
+            AppContract.RecentContactEntry.COLUMN_NAME_CONTENT + TEXT_TYPE + NOT_NULL + COMMA_SEP +
             AppContract.RecentContactEntry.COLUMN_NAME_UPDATE_TIME + DATETIME_TYPE + NOT_NULL +
             " )";
 
     private static final String SQL_DELETE_ENTRY_RECENT =
             "DROP TABLE IF EXISTS " + AppContract.RecentContactEntry.TABLE_NAME;
+
+    private static final String SQL_CREATE_VIEW_RECENT =
+            "CREATE VIEW IF NOT EXISTS " + AppContract.RecentContactView.VIEW_NAME + " AS " +
+            "SELECT " +
+            "recent." + AppContract.RecentContactEntry._ID + " AS " + AppContract.RecentContactView._ID + COMMA_SEP +
+            "user." + AppContract.UserEntry.COLUMN_NAME_ENTRY_UID + " AS " + AppContract.RecentContactView.COLUMN_NAME_UID + COMMA_SEP +
+            "user." + AppContract.UserEntry.COLUMN_NAME_NICK_NAME + " AS " + AppContract.RecentContactView.COLUMN_NAME_NICKNAME + COMMA_SEP +
+            "user." + AppContract.UserEntry.COLUMN_NAME_PORTRAIT + " AS " + AppContract.RecentContactView.COLUMN_NAME_PORTRAIT + COMMA_SEP +
+            "user." + AppContract.UserEntry.COLUMN_NAME_STATUS + " AS " + AppContract.RecentContactView.COLUMN_NAME_STATUS + COMMA_SEP +
+            "recent." + AppContract.RecentContactEntry.COLUMN_NAME_CONTENT + " AS " + AppContract.RecentContactView.COLUMN_NAME_CONTENT + COMMA_SEP +
+            "recent." + AppContract.RecentContactEntry.COLUMN_NAME_UPDATE_TIME + " AS " + AppContract.RecentContactView.COLUMN_NAME_UPDATE_TIME + COMMA_SEP +
+            "recent." + AppContract.RecentContactEntry.COLUMN_NAME_OWNER + " AS " + AppContract.RecentContactView.COLUMN_NAME_OWNER + " " +
+            "FROM " +
+            AppContract.UserEntry.TABLE_NAME + " AS user, " +
+            AppContract.RecentContactEntry.TABLE_NAME + " AS recent " +
+            "WHERE " +
+            "user." + AppContract.UserEntry.COLUMN_NAME_ENTRY_UID + " = " +
+            "recent." + AppContract.RecentContactEntry.COLUMN_NAME_UID;
+
+    private static final String SQL_DELETE_VIEW_RECENT =
+            "DROP VIEW IF EXISTS " + AppContract.RecentContactView.VIEW_NAME;
+
 
     public AppDbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -68,10 +92,12 @@ public class AppDbHelper extends SQLiteOpenHelper {
         db.execSQL(SQL_CREATE_ENTRY_MESSAGE);
         db.execSQL(SQL_CREATE_ENTRY_RECENT);
 
+        db.execSQL(SQL_CREATE_VIEW_RECENT);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        db.execSQL(SQL_DELETE_VIEW_RECENT);
 
         db.execSQL(SQL_DELETE_ENTRY_RECENT);
         db.execSQL(SQL_DELETE_ENTRY_MESSAGE);

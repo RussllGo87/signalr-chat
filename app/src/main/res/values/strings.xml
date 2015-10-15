@@ -97,7 +97,7 @@
     <string name="title_activity_ad_maintain">AdMaintain</string>
 
     <!-- 聊天页 -->
-    <string name="title_activity_chat">Chat with %s</string>
+    <string name="title_activity_chat">%s</string>
     <string name="btn_send">Send</string>
     <string name="action_text">Text</string>
     <string name="action_image">Image</string>

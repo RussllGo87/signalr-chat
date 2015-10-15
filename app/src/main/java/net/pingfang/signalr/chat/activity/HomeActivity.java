@@ -303,8 +303,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
         @Override
         public void updateMessageList(String name, String uid, String portrait, String body) {
-            MessageFragment fragment = (MessageFragment) adapter.getItem(0);
-            fragment.updateMessage(name, uid, portrait, body);
+
         }
 
         @Override

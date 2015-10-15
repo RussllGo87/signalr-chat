@@ -13,6 +13,7 @@ import android.widget.TextView;
 import net.pingfang.signalr.chat.R;
 import net.pingfang.signalr.chat.constant.app.AppConstants;
 import net.pingfang.signalr.chat.database.AppContract;
+import net.pingfang.signalr.chat.database.User;
 import net.pingfang.signalr.chat.net.OkHttpCommonUtil;
 
 /**
@@ -57,29 +58,10 @@ public class ListCursorAdapter extends CursorAdapter {
         }
 
         String uid = cursor.getString(cursor.getColumnIndex(AppContract.UserEntry.COLUMN_NAME_ENTRY_UID));
+        String nickname = cursor.getString(cursor.getColumnIndex(AppContract.UserEntry.COLUMN_NAME_NICK_NAME));
 
-        UserHolder userHolder = new UserHolder();
-        userHolder.uid = uid;
-        userHolder.nickname = cursor.getString(cursor.getColumnIndex(AppContract.UserEntry.COLUMN_NAME_NICK_NAME));
-        userHolder.portrait = cursor.getString(cursor.getColumnIndex(AppContract.UserEntry.COLUMN_NAME_PORTRAIT));
-        view.setTag(userHolder);
+        User user = new User(uid,nickname,portraitUrl,status);
+        view.setTag(user);
     }
 
-    public static class UserHolder {
-        private String uid;
-        private String nickname;
-        private String portrait;
-
-        public String getUid() {
-            return uid;
-        }
-
-        public String getNickname() {
-            return nickname;
-        }
-
-        public String getPortrait() {
-            return portrait;
-        }
-    }
 }

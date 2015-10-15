@@ -3,6 +3,7 @@ package net.pingfang.signalr.chat.activity;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -45,6 +46,7 @@ import net.pingfang.signalr.chat.R;
 import net.pingfang.signalr.chat.constant.app.AppConstants;
 import net.pingfang.signalr.chat.database.AppContract;
 import net.pingfang.signalr.chat.database.ChatMessageManager;
+import net.pingfang.signalr.chat.database.User;
 import net.pingfang.signalr.chat.message.MessageConstant;
 import net.pingfang.signalr.chat.message.MessageConstructor;
 import net.pingfang.signalr.chat.service.ChatService;
@@ -78,7 +80,6 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     String buddyName = "server";
     String buddyUid;
 
-
     MediaRecorder mRecorder;
     String mFileName;
     boolean mStartRecording = false;
@@ -104,8 +105,9 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         portrait = helper.getStringValue(AppConstants.KEY_SYS_CURRENT_PORTRAIT);
 
         Intent intent = getIntent();
-        buddyName = intent.getStringExtra("name");
-        buddyUid = intent.getStringExtra("uid");
+        User buddy = intent.getParcelableExtra("user");
+        buddyName = buddy.getNickname();
+        buddyUid = buddy.getUid();
 
         initView();
         initCommunicate();
@@ -278,6 +280,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         if(!TextUtils.isEmpty(content)) {
 
             mService.sendMessage("OnlineMsg", MessageConstructor.constructTxtMessage(uid,nickname,portrait, buddyUid, content));
+            new UpdateRecentMessageTask().execute(buddyUid,content,CommonTools.TimeConvertString(),uid);
 
             LinearLayout ll = new LinearLayout(getApplicationContext());
             ll.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
@@ -386,6 +389,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                             String messageBody = MessageConstructor.constructFileMessage(uid,nickname,portrait, buddyUid,"Picture", fileExtension, fileBody);
                             Log.d("ChatActivity","messageBody = " + messageBody);
                             mService.sendMessage("OnlineMsg", messageBody);
+                            new UpdateRecentMessageTask().execute(buddyUid, getString(R.string.content_type_pic), CommonTools.TimeConvertString(),uid);
                         }
                     } else {
                         Log.d("ChatActivity", "no data");
@@ -504,6 +508,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                 String messageBody = MessageConstructor.constructFileMessage(uid,nickname,portrait, buddyUid, "Audio", fileExtension, fileBody);
                 Log.d("ChatActivity","messageBody = " + messageBody);
                 mService.sendMessage("OnlineMsg", messageBody);
+                new UpdateRecentMessageTask().execute(buddyUid, getString(R.string.content_type_voice), CommonTools.TimeConvertString(),uid);
             }
         }
 
@@ -648,6 +653,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                 String fromUid = args.getString("fromUid");
                 if(buddyUid.equals(fromUid)) {
                     new ProcessOnlineMessageTask().execute(messageUri);
+
                 } else {
                     // build an notification on status bar when new online message is coming
 
@@ -807,6 +813,48 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                     inflaterTxtMessage(buddyName, content, newDatetime);
                 }
             }
+        }
+    }
+
+    private class UpdateRecentMessageTask extends AsyncTask<String,String,String> {
+        @Override
+        protected String doInBackground(String... params) {
+            String buddyId = params[0];
+            String content = params[1];
+            String datetime = params[2];
+            String owner = params[3];
+
+            String selection = AppContract.RecentContactEntry.COLUMN_NAME_UID + " = ?";
+            Cursor cursor = getApplicationContext().getContentResolver().query(AppContract.RecentContactEntry.CONTENT_URI,
+                    null, selection, new String[]{buddyId}, null);
+
+            if(cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()){
+                int rowId = cursor.getInt(cursor.getColumnIndex(AppContract.RecentContactEntry._ID));
+                Uri appendUri = Uri.withAppendedPath(AppContract.RecentContactEntry.CONTENT_URI, Integer.toString(rowId));
+
+                ContentValues values = new ContentValues();
+                values.put(AppContract.RecentContactEntry.COLUMN_NAME_CONTENT, content);
+                values.put(AppContract.RecentContactEntry.COLUMN_NAME_UPDATE_TIME, datetime);
+                values.put(AppContract.RecentContactEntry.COLUMN_NAME_OWNER,owner);
+                getApplicationContext().getContentResolver().update(appendUri, values, null, null);
+            } else {
+                ContentValues values = new ContentValues();
+                values.put(AppContract.RecentContactEntry.COLUMN_NAME_UID,buddyId);
+                values.put(AppContract.RecentContactEntry.COLUMN_NAME_CONTENT, content);
+                values.put(AppContract.RecentContactEntry.COLUMN_NAME_UPDATE_TIME, datetime);
+                values.put(AppContract.RecentContactEntry.COLUMN_NAME_OWNER,owner);
+                getApplicationContext().getContentResolver().insert(AppContract.RecentContactEntry.CONTENT_URI,values);
+            }
+
+            return "ok";
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+
+            Intent intent = new Intent();
+            intent.setAction(GlobalApplication.ACTION_INTENT_ONLINE_MESSAGE_SEND);
+            getApplicationContext().sendBroadcast(intent);
         }
     }
 

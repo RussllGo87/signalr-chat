@@ -1,49 +1,46 @@
 package net.pingfang.signalr.chat.fragment;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.text.TextUtils;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import net.pingfang.signalr.chat.R;
+import net.pingfang.signalr.chat.activity.ChatActivity;
+import net.pingfang.signalr.chat.adapter.ChatListCursorAdapter;
 import net.pingfang.signalr.chat.constant.app.AppConstants;
+import net.pingfang.signalr.chat.database.AppContract;
+import net.pingfang.signalr.chat.database.User;
 import net.pingfang.signalr.chat.listener.OnFragmentInteractionListener;
-import net.pingfang.signalr.chat.net.OkHttpCommonUtil;
-
-import java.util.ArrayList;
-import java.util.List;
+import net.pingfang.signalr.chat.util.GlobalApplication;
+import net.pingfang.signalr.chat.util.SharedPreferencesHelper;
 
 
-/**
- * A fragment representing a list of Items.
- * Activities containing this fragment MUST implement the {@link OnFragmentInteractionListener}
- * interface.
- */
-public class MessageFragment extends Fragment implements AbsListView.OnItemClickListener {
+public class MessageFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
+
+    private static final int LOADER_ID = 0x02;
 
     private OnFragmentInteractionListener mListener;
 
-    /**
-     * The fragment's ListView/GridView.
-     */
     private ListView mListView;
+    private ChatListCursorAdapter chatListCursorAdapter;
 
-    /**
-     * The Adapter which will be used to populate the ListView/GridView with
-     * Views.
-     */
-    private ChatListAdapter mAdapter;
+    SharedPreferencesHelper sharedPreferencesHelper;
 
-    private List<MessageHolder> listMessage = new ArrayList<>();
+    MessageReceiver receiver;
 
     public static MessageFragment newInstance(OnFragmentInteractionListener mListener) {
         MessageFragment fragment = new MessageFragment();
@@ -51,71 +48,60 @@ public class MessageFragment extends Fragment implements AbsListView.OnItemClick
         return fragment;
     }
 
-    /**
-     * Mandatory empty constructor for the fragment manager to instantiate the
-     * fragment (e.g. upon screen orientation changes).
-     */
-    public MessageFragment() {
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mAdapter = new ChatListAdapter(getActivity());
+
+        sharedPreferencesHelper = SharedPreferencesHelper.newInstance(getContext());
+        registerReceiver();
+    }
+
+    public void registerReceiver() {
+        receiver = new MessageReceiver();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(GlobalApplication.ACTION_INTENT_ONLINE_MESSAGE_INCOMING);
+        filter.addAction(GlobalApplication.ACTION_INTENT_ONLINE_MESSAGE_SEND);
+        getContext().registerReceiver(receiver, filter);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_list_message, container, false);
-
         mListView = (ListView) view.findViewById(android.R.id.list);
-
-        mListView.setAdapter(mAdapter);
-        mListView.setOnItemClickListener(this);
-
         return view;
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
 
-        mListener.loadMessage();
-    }
+        chatListCursorAdapter = new ChatListCursorAdapter(getContext(),null, android.widget.CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+        mListView.setAdapter(chatListCursorAdapter);
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                User user = (User) view.getTag();
 
-    public void updateMessage(String name,String uid, String portrait,String body) {
-        MessageHolder holder = null;
-        for(int i = 0; i < listMessage.size(); i++) {
-            MessageHolder tmp = listMessage.get(i);
-            if(tmp.uid.equals(uid)) {
-                holder = tmp;
-                holder.body = body;
-                break;
+                Intent intent = new Intent();
+                intent.setClass(getContext(), ChatActivity.class);
+                intent.putExtra("user", user);
+                startActivity(intent);
             }
-        }
+        });
 
-        if(holder == null) {
-            holder = new MessageHolder();
-            holder.name = name;
-            holder.uid = uid;
-            holder.portrait = AppConstants.PORTRAIT_URL_PREFIX + portrait;
-            holder.body = body;
-            listMessage.add(holder);
-        }
-
-        if(mAdapter == null) {
-            mAdapter = new ChatListAdapter(getActivity());
-            mListView.setAdapter(mAdapter);
-        }
-        mAdapter.notifyDataSetChanged();
+        String uid = sharedPreferencesHelper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID);
+        Bundle args = new Bundle();
+        args.putString(AppConstants.KEY_SYS_CURRENT_UID, uid);
+        getLoaderManager().initLoader(LOADER_ID, args, this);
     }
 
     @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        if (null != mListener) {
-            MessageHolder holder = listMessage.get(position);
-            mListener.onFragmentInteraction(holder.name,holder.uid);
+    public void onDestroy() {
+        super.onDestroy();
+
+        if(receiver != null) {
+            getContext().unregisterReceiver(receiver);
         }
     }
 
@@ -127,69 +113,36 @@ public class MessageFragment extends Fragment implements AbsListView.OnItemClick
         }
     }
 
-    private class ChatListAdapter extends BaseAdapter {
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 
-        Context context;
+        String uid = args.getString(AppConstants.KEY_SYS_CURRENT_UID);
 
-        public ChatListAdapter(Context context) {
-            this.context = context;
-        }
+        Uri baseUri = AppContract.RecentContactView.CONTENT_URI;
 
-        @Override
-        public int getCount() {
-            return listMessage.size();
-        }
+        String selection = AppContract.RecentContactView.COLUMN_NAME_OWNER + " = ?";
+        String[] selectionArgs = new String[]{uid};
 
-        @Override
-        public Object getItem(int position) {
-            return listMessage.get(position);
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return position;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-
-            if(convertView == null) {
-                LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                View view = inflater.inflate(R.layout.list_item_message, null);
-                MessageHolder holder = listMessage.get(position);
-                if(!TextUtils.isEmpty(holder.portrait)) {
-                    ImageView iv_account_portrait = (ImageView) view.findViewById(R.id.iv_account_portrait);
-                    OkHttpCommonUtil okHttpCommonUtil = OkHttpCommonUtil.newInstance(getContext());
-                    okHttpCommonUtil.display(iv_account_portrait,holder.portrait,R.mipmap.ic_launcher);
-                }
-                TextView tv_friends_name = (TextView) view.findViewById(R.id.tv_friends_name);
-                tv_friends_name.setText(holder.name);
-                TextView tv_message_update = (TextView) view.findViewById(R.id.tv_message_update);
-                tv_message_update.setText(holder.body);
-                view.setTag(holder.uid);
-                convertView = view;
-            } else {
-                MessageHolder holder = listMessage.get(position);
-                if(!TextUtils.isEmpty(holder.portrait)) {
-                    ImageView iv_account_portrait = (ImageView) convertView.findViewById(R.id.iv_account_portrait);
-                    OkHttpCommonUtil okHttpCommonUtil = OkHttpCommonUtil.newInstance(getContext());
-                    okHttpCommonUtil.display(iv_account_portrait,holder.portrait,R.mipmap.ic_launcher);
-                }
-                TextView tv_friends_name = (TextView) convertView.findViewById(R.id.tv_friends_name);
-                tv_friends_name.setText(holder.name);
-                TextView tv_message_update = (TextView) convertView.findViewById(R.id.tv_message_update);
-                tv_message_update.setText(holder.body);
-                convertView.setTag(holder.uid);
-            }
-            return convertView;
-        }
+        return new CursorLoader(getContext(),baseUri,null,selection,selectionArgs,null);
     }
 
-    public static class MessageHolder {
-        private String name;
-        private String uid;
-        private String portrait;
-        private String body;
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        chatListCursorAdapter.swapCursor(data);
     }
 
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        chatListCursorAdapter.swapCursor(null);
+    }
+
+    private class MessageReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String uid = sharedPreferencesHelper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID);
+            Bundle args = new Bundle();
+            args.putString(AppConstants.KEY_SYS_CURRENT_UID, uid);
+            getLoaderManager().restartLoader(LOADER_ID, args, MessageFragment.this);
+        }
+    }
 }

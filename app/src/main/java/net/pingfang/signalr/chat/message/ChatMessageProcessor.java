@@ -9,6 +9,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
 
+import net.pingfang.signalr.chat.R;
 import net.pingfang.signalr.chat.database.AppContract;
 import net.pingfang.signalr.chat.database.ChatMessageManager;
 import net.pingfang.signalr.chat.database.UserManager;
@@ -159,24 +160,49 @@ public class ChatMessageProcessor implements ChatMessageListener {
             ChatMessageManager chatMessageManager = new ChatMessageManager(context);
             Uri messageUri = null;
             if(!TextUtils.isEmpty(contentType)) {
+                ContentValues values = new ContentValues();
                 if(contentType.equals("Text")) {
                    messageUri = chatMessageManager.insert(from, to, MessageConstant.MESSAGE_TYPE_ON_LINE,
                             contentType, content, datetime, MessageConstant.MESSAGE_STATUS_NOT_READ);
+                    values.put(AppContract.RecentContactEntry.COLUMN_NAME_CONTENT, content);
                 } else if(contentType.equals("Picture")){
                     String fileExtension = object.getString("fileExtension");
                     String filePath = MediaFileUtils.processReceiveFile(context, content,
                             MessageConstant.MESSAGE_FILE_TYPE_IMG, fileExtension);
                     messageUri = chatMessageManager.insert(from, to, MessageConstant.MESSAGE_TYPE_ON_LINE,
                             contentType, filePath, datetime, MessageConstant.MESSAGE_STATUS_NOT_READ);
+                    values.put(AppContract.RecentContactEntry.COLUMN_NAME_CONTENT, context.getResources().getString(R.string.content_type_pic));
                 } else if(contentType.equals("Audio")) {
                     String fileExtension = object.getString("fileExtension");
                     String filePath = MediaFileUtils.processReceiveFile(context, content,
                             MessageConstant.MESSAGE_FILE_TYPE_AUDIO, fileExtension);
                     messageUri = chatMessageManager.insert(from, to, MessageConstant.MESSAGE_TYPE_ON_LINE,
                             contentType, filePath, datetime, MessageConstant.MESSAGE_STATUS_NOT_READ);
+                    values.put(AppContract.RecentContactEntry.COLUMN_NAME_CONTENT, context.getResources().getString(R.string.content_type_voice));
                 }
 
                 if(messageUri != null) {
+                    String selection = AppContract.RecentContactEntry.COLUMN_NAME_UID + " = ?";
+                    Cursor newCursor = context.getContentResolver().query(AppContract.RecentContactEntry.CONTENT_URI,
+                            null, selection, new String[]{from}, null);
+
+                    if(newCursor != null && newCursor.getCount() > 0 && newCursor.moveToFirst()){
+                        int rowId = newCursor.getInt(newCursor.getColumnIndex(AppContract.RecentContactEntry._ID));
+                        Uri appendUri = Uri.withAppendedPath(AppContract.RecentContactEntry.CONTENT_URI, Integer.toString(rowId));
+
+                        values.put(AppContract.RecentContactEntry.COLUMN_NAME_UID,from);
+                        values.put(AppContract.RecentContactEntry.COLUMN_NAME_UPDATE_TIME, datetime);
+                        values.put(AppContract.RecentContactEntry.COLUMN_NAME_OWNER,to);
+                        context.getContentResolver().update(appendUri, values, null, null);
+
+                        newCursor.close();
+                    } else {
+                        values.put(AppContract.RecentContactEntry.COLUMN_NAME_UID,from);
+                        values.put(AppContract.RecentContactEntry.COLUMN_NAME_UPDATE_TIME, datetime);
+                        values.put(AppContract.RecentContactEntry.COLUMN_NAME_OWNER,to);
+                        context.getContentResolver().insert(AppContract.RecentContactEntry.CONTENT_URI,values);
+                    }
+
                     Bundle args =  new Bundle();
                     args.putParcelable("messageUri", messageUri);
                     args.putString("fromUid",from);
