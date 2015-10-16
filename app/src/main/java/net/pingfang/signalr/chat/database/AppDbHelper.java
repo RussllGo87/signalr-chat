@@ -54,7 +54,8 @@ public class AppDbHelper extends SQLiteOpenHelper {
             AppContract.RecentContactEntry.COLUMN_NAME_UID + TEXT_TYPE + NOT_NULL + COMMA_SEP +
             AppContract.RecentContactEntry.COLUMN_NAME_OWNER + TEXT_TYPE + NOT_NULL + COMMA_SEP +
             AppContract.RecentContactEntry.COLUMN_NAME_CONTENT + TEXT_TYPE + NOT_NULL + COMMA_SEP +
-            AppContract.RecentContactEntry.COLUMN_NAME_UPDATE_TIME + DATETIME_TYPE + NOT_NULL +
+            AppContract.RecentContactEntry.COLUMN_NAME_UPDATE_TIME + DATETIME_TYPE + NOT_NULL + COMMA_SEP +
+            AppContract.RecentContactEntry.COLUMN_NAME_COUNT + INTEGER_TYPE + NOT_NULL +
             " )";
 
     private static final String SQL_DELETE_ENTRY_RECENT =
@@ -70,6 +71,7 @@ public class AppDbHelper extends SQLiteOpenHelper {
             "user." + AppContract.UserEntry.COLUMN_NAME_STATUS + " AS " + AppContract.RecentContactView.COLUMN_NAME_STATUS + COMMA_SEP +
             "recent." + AppContract.RecentContactEntry.COLUMN_NAME_CONTENT + " AS " + AppContract.RecentContactView.COLUMN_NAME_CONTENT + COMMA_SEP +
             "recent." + AppContract.RecentContactEntry.COLUMN_NAME_UPDATE_TIME + " AS " + AppContract.RecentContactView.COLUMN_NAME_UPDATE_TIME + COMMA_SEP +
+            "recent." + AppContract.RecentContactEntry.COLUMN_NAME_COUNT + " AS " + AppContract.RecentContactView.COLUMN_NAME_COUNT + COMMA_SEP +
             "recent." + AppContract.RecentContactEntry.COLUMN_NAME_OWNER + " AS " + AppContract.RecentContactView.COLUMN_NAME_OWNER + " " +
             "FROM " +
             AppContract.UserEntry.TABLE_NAME + " AS user, " +

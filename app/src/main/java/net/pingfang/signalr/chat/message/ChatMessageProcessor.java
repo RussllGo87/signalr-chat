@@ -8,17 +8,23 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 
 import net.pingfang.signalr.chat.R;
+import net.pingfang.signalr.chat.constant.app.AppConstants;
 import net.pingfang.signalr.chat.database.AppContract;
 import net.pingfang.signalr.chat.database.ChatMessageManager;
 import net.pingfang.signalr.chat.database.UserManager;
+import net.pingfang.signalr.chat.util.CommonTools;
 import net.pingfang.signalr.chat.util.GlobalApplication;
 import net.pingfang.signalr.chat.util.MediaFileUtils;
+import net.pingfang.signalr.chat.util.SharedPreferencesHelper;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 /**
  * Created by gongguopei87@gmail.com on 2015/9/25.
@@ -78,8 +84,9 @@ public class ChatMessageProcessor implements ChatMessageListener {
                         selection,
                         new String[]{uid});
             }
-
-
+            Intent intent = new Intent();
+            intent.setAction(GlobalApplication.ACTION_INTENT_UPDATE_ONLINE_LIST);
+            context.sendBroadcast(intent);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -119,9 +126,11 @@ public class ChatMessageProcessor implements ChatMessageListener {
                         }
                         context.getContentResolver().insert(AppContract.UserEntry.CONTENT_URI, values);
                     }
-
-
                 }
+
+                Intent intent = new Intent();
+                intent.setAction(GlobalApplication.ACTION_INTENT_UPDATE_ONLINE_LIST);
+                context.sendBroadcast(intent);
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -182,17 +191,19 @@ public class ChatMessageProcessor implements ChatMessageListener {
                 }
 
                 if(messageUri != null) {
-                    String selection = AppContract.RecentContactEntry.COLUMN_NAME_UID + " = ?";
+
+                    String selection =
+                            AppContract.RecentContactEntry.COLUMN_NAME_UID + " = ? " +
+                                    "AND " +
+                                    AppContract.RecentContactEntry.COLUMN_NAME_OWNER + " = ?";
                     Cursor newCursor = context.getContentResolver().query(AppContract.RecentContactEntry.CONTENT_URI,
-                            null, selection, new String[]{from}, null);
+                            null, selection, new String[]{from,to}, null);
 
                     if(newCursor != null && newCursor.getCount() > 0 && newCursor.moveToFirst()){
                         int rowId = newCursor.getInt(newCursor.getColumnIndex(AppContract.RecentContactEntry._ID));
                         Uri appendUri = Uri.withAppendedPath(AppContract.RecentContactEntry.CONTENT_URI, Integer.toString(rowId));
 
-                        values.put(AppContract.RecentContactEntry.COLUMN_NAME_UID,from);
                         values.put(AppContract.RecentContactEntry.COLUMN_NAME_UPDATE_TIME, datetime);
-                        values.put(AppContract.RecentContactEntry.COLUMN_NAME_OWNER,to);
                         context.getContentResolver().update(appendUri, values, null, null);
 
                         newCursor.close();
@@ -200,6 +211,7 @@ public class ChatMessageProcessor implements ChatMessageListener {
                         values.put(AppContract.RecentContactEntry.COLUMN_NAME_UID,from);
                         values.put(AppContract.RecentContactEntry.COLUMN_NAME_UPDATE_TIME, datetime);
                         values.put(AppContract.RecentContactEntry.COLUMN_NAME_OWNER,to);
+                        values.put(AppContract.RecentContactEntry.COLUMN_NAME_COUNT,0);
                         context.getContentResolver().insert(AppContract.RecentContactEntry.CONTENT_URI,values);
                     }
 
@@ -244,17 +256,138 @@ public class ChatMessageProcessor implements ChatMessageListener {
     }
 
     private void processOfflineMsgShort(String message) {
-        Intent intent = new Intent();
-        intent.setAction(GlobalApplication.ACTION_INTENT_OFFLINE_USER_LIST_INCOMING);
-        intent.putExtra("message", message);
-        context.sendBroadcast(intent);
+        SharedPreferencesHelper sharedPreferencesHelper = SharedPreferencesHelper.newInstance(context);
+        JSONArray jsonArray;
+        try {
+            jsonArray = new JSONArray(message);
+            for(int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                String fromUid = jsonObject.getString("Sender");
+                int count = jsonObject.getInt("Count");
+                String toUid = sharedPreferencesHelper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID);
+
+                String selection =
+                        AppContract.RecentContactEntry.COLUMN_NAME_UID + " = ? " +
+                                "AND " +
+                                AppContract.RecentContactEntry.COLUMN_NAME_OWNER + " = ?";
+                Cursor newCursor = context.getContentResolver().query(AppContract.RecentContactEntry.CONTENT_URI,
+                        null, selection, new String[]{fromUid,toUid}, null);
+
+                ContentValues values = new ContentValues();
+                values.put(AppContract.RecentContactEntry.COLUMN_NAME_CONTENT,context.getResources().getString(R.string.content_new_offline_msg));
+                if(newCursor != null && newCursor.getCount() > 0 && newCursor.moveToFirst()){
+                    int rowId = newCursor.getInt(newCursor.getColumnIndex(AppContract.RecentContactEntry._ID));
+                    Uri appendUri = Uri.withAppendedPath(AppContract.RecentContactEntry.CONTENT_URI, Integer.toString(rowId));
+
+                    int currentCount = newCursor.getInt(newCursor.getColumnIndex(AppContract.RecentContactEntry.COLUMN_NAME_COUNT));
+
+                    values.put(AppContract.RecentContactEntry.COLUMN_NAME_UPDATE_TIME, CommonTools.TimeConvertString());
+                    values.put(AppContract.RecentContactEntry.COLUMN_NAME_COUNT,(currentCount + count));
+                    context.getContentResolver().update(appendUri, values, null, null);
+
+                    newCursor.close();
+                } else {
+                    values.put(AppContract.RecentContactEntry.COLUMN_NAME_UID,fromUid);
+                    values.put(AppContract.RecentContactEntry.COLUMN_NAME_UPDATE_TIME, CommonTools.TimeConvertString());
+                    values.put(AppContract.RecentContactEntry.COLUMN_NAME_OWNER,toUid);
+                    values.put(AppContract.RecentContactEntry.COLUMN_NAME_COUNT,count);
+                    context.getContentResolver().insert(AppContract.RecentContactEntry.CONTENT_URI,values);
+                }
+            }
+
+            Intent intent = new Intent();
+            intent.setAction(GlobalApplication.ACTION_INTENT_OFFLINE_USER_LIST_INCOMING);
+            context.sendBroadcast(intent);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
     }
 
-    private void processOfflineMesssgeList(String message) {
-        Intent intent = new Intent();
-        intent.setAction(GlobalApplication.ACTION_INTENT_OFFLINE_MESSAGE_LIST_INCOMING);
-        intent.putExtra("message", message);
-        context.sendBroadcast(intent);
+    private void processOfflineMessageList(String message) {
+        try {
+            JSONArray jsonArray = new JSONArray(message);
+            ArrayList<Uri> uriArrayList = new ArrayList<>();
+            for(int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                String fromUid = jsonObject.getString("Sender");
+                String to = jsonObject.getString("Receiver");
+                String contentType = jsonObject.getString("MessageType");
+                String content = jsonObject.getString("Contents");
+                String datetime = jsonObject.getString("SendTime");
+
+                // 消息存储
+                ChatMessageManager chatMessageManager = new ChatMessageManager(context);
+                Uri messageUri = null;
+                ContentValues values = new ContentValues();
+                if(!TextUtils.isEmpty(contentType)) {
+                    if(contentType.equals("Text")) {
+                        messageUri = chatMessageManager.insert(fromUid, to, MessageConstant.MESSAGE_TYPE_OFF_LINE,
+                                contentType, content, datetime, MessageConstant.MESSAGE_STATUS_READ);
+                        values.put(AppContract.RecentContactEntry.COLUMN_NAME_CONTENT, content);
+                    } else if(contentType.equals("Picture")){
+                        String fileExtension = "png";
+                        String filePath = MediaFileUtils.processReceiveFile(context, content,
+                                MessageConstant.MESSAGE_FILE_TYPE_IMG, fileExtension);
+                        messageUri = chatMessageManager.insert(fromUid, to, MessageConstant.MESSAGE_TYPE_OFF_LINE,
+                                contentType, filePath, datetime, MessageConstant.MESSAGE_STATUS_READ);
+                        values.put(AppContract.RecentContactEntry.COLUMN_NAME_CONTENT, context.getResources().getString(R.string.content_type_pic));
+                    } else if(contentType.equals("Audio")) {
+                        String fileExtension = GlobalApplication.VOICE_FILE_NAME_SUFFIX;
+                        String filePath = MediaFileUtils.processReceiveFile(context, content,
+                                MessageConstant.MESSAGE_FILE_TYPE_AUDIO, fileExtension);
+                        messageUri = chatMessageManager.insert(fromUid, to, MessageConstant.MESSAGE_TYPE_OFF_LINE,
+                                contentType, filePath, datetime, MessageConstant.MESSAGE_STATUS_READ);
+                        values.put(AppContract.RecentContactEntry.COLUMN_NAME_CONTENT, context.getResources().getString(R.string.content_type_voice));
+                    }
+                }
+
+                // 消息查找
+                if(messageUri != null) {
+                    uriArrayList.add(messageUri);
+
+                    String selection =
+                            AppContract.RecentContactEntry.COLUMN_NAME_UID + " = ? " +
+                                    "AND " +
+                                    AppContract.RecentContactEntry.COLUMN_NAME_OWNER + " = ?";
+                    Cursor newCursor = context.getContentResolver().query(AppContract.RecentContactEntry.CONTENT_URI,
+                            null, selection, new String[]{fromUid,to}, null);
+
+                    if(newCursor != null && newCursor.getCount() > 0 && newCursor.moveToFirst()){
+                        int rowId = newCursor.getInt(newCursor.getColumnIndex(AppContract.RecentContactEntry._ID));
+                        Uri appendUri = Uri.withAppendedPath(AppContract.RecentContactEntry.CONTENT_URI, Integer.toString(rowId));
+
+                        int currentCount = newCursor.getInt(newCursor.getColumnIndex(AppContract.RecentContactEntry.COLUMN_NAME_COUNT));
+
+                        values.put(AppContract.RecentContactEntry.COLUMN_NAME_UPDATE_TIME, datetime);
+                        values.put(AppContract.RecentContactEntry.COLUMN_NAME_COUNT,(currentCount -1));
+
+                        Log.d("ChatMessageProcessor", "processOfflineMessageList currentCount == " + currentCount);
+
+                        context.getContentResolver().update(appendUri, values, null, null);
+
+                        newCursor.close();
+                    } else {
+                        values.put(AppContract.RecentContactEntry.COLUMN_NAME_UID,fromUid);
+                        values.put(AppContract.RecentContactEntry.COLUMN_NAME_UPDATE_TIME, datetime);
+                        values.put(AppContract.RecentContactEntry.COLUMN_NAME_OWNER,to);
+                        values.put(AppContract.RecentContactEntry.COLUMN_NAME_COUNT,0);
+                        context.getContentResolver().insert(AppContract.RecentContactEntry.CONTENT_URI,values);
+                    }
+                }
+            }
+
+            Intent intent = new Intent();
+            intent.setAction(GlobalApplication.ACTION_INTENT_OFFLINE_MESSAGE_LIST_INCOMING);
+            intent.putParcelableArrayListExtra("message",uriArrayList);
+            context.sendBroadcast(intent);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
     }
 
 
@@ -276,7 +409,7 @@ public class ChatMessageProcessor implements ChatMessageListener {
             } else if(messageType.equals("OfflineMsgShort")) {
                 processOfflineMsgShort(message);
             } else if(messageType.equals("OfflineMsg")) {
-                processOfflineMesssgeList(message);
+                processOfflineMessageList(message);
             }
 
             return "ok";

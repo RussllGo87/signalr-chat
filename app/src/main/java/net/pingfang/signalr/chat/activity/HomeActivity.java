@@ -1,12 +1,7 @@
 package net.pingfang.signalr.chat.activity;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.database.Cursor;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -40,8 +35,6 @@ import net.pingfang.signalr.chat.constant.app.AppConstants;
 import net.pingfang.signalr.chat.constant.qq.TencentConstants;
 import net.pingfang.signalr.chat.constant.weibo.WeiboConstants;
 import net.pingfang.signalr.chat.constant.weibo.WeiboRequestListener;
-import net.pingfang.signalr.chat.database.AppContract;
-import net.pingfang.signalr.chat.database.UserManager;
 import net.pingfang.signalr.chat.demo.GreyBitmapActivity;
 import net.pingfang.signalr.chat.fragment.AccountFragment;
 import net.pingfang.signalr.chat.fragment.BuddyFragment;
@@ -53,10 +46,8 @@ import net.pingfang.signalr.chat.net.OkHttpCommonUtil;
 import net.pingfang.signalr.chat.service.ChatService;
 import net.pingfang.signalr.chat.ui.dialog.DoubleButtonDialogFragment;
 import net.pingfang.signalr.chat.util.CommonTools;
-import net.pingfang.signalr.chat.util.GlobalApplication;
 import net.pingfang.signalr.chat.util.SharedPreferencesHelper;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -263,12 +254,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void initCommunicate() {
-
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(GlobalApplication.ACTION_INTENT_OFFLINE_USER_LIST_INCOMING);
-        registerReceiver(receiver,filter);
-
-//        chatService = ChatService.newInstance(getApplicationContext());
         Intent intent = new Intent(getApplicationContext(),ChatService.class);
         intent.putExtra(ChatService.FLAG_SERVICE_CMD, ChatService.FLAF_INIT_CONNECTION);
         String qs = constructLogin(helper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID));
@@ -281,13 +266,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 return false;
             }
         });
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
-        unregisterReceiver(receiver);
     }
 
     private OnFragmentInteractionListener onFragmentInteractionListener = new OnFragmentInteractionListener() {
@@ -310,7 +288,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         public void loadMessage() {
 //            MessageFragment fragment = (MessageFragment) adapter.getItem(0);
 //            fragment.updateMessage("server", "2", "");
-
 
         }
 
@@ -437,54 +414,4 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         return stringBuffer.toString();
     }
 
-    private BroadcastReceiver receiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            if(action.equals(GlobalApplication.ACTION_INTENT_OFFLINE_USER_LIST_INCOMING)) {
-                String message = intent.getStringExtra("message");
-                new ProcessMessageTask().execute(message);
-            }
-        }
-    };
-
-    private class ProcessMessageTask extends AsyncTask<String,String,String> {
-        @Override
-        protected String doInBackground(String... params) {
-            String message = params[0];
-            try {
-                JSONArray jsonArray = new JSONArray(message);
-                UserManager userManager = new UserManager(getApplicationContext());
-                for(int i = 0; i < jsonArray.length(); i++) {
-                    JSONObject jsonObject = jsonArray.getJSONObject(i);
-                    String uid = jsonObject.getString("Sender");
-                    String count = jsonObject.getString("Count");
-
-                    Cursor cursor = userManager.queryByUid(uid);
-                    if(cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {
-                        String nickname = cursor.getString(cursor.getColumnIndex(AppContract.UserEntry.COLUMN_NAME_NICK_NAME));
-                        String portrait = cursor.getString(cursor.getColumnIndex(AppContract.UserEntry.COLUMN_NAME_PORTRAIT));
-
-                        publishProgress(uid,nickname,portrait,count);
-                    }
-
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-            return "ok";
-        }
-
-        @Override
-        protected void onProgressUpdate(String... values) {
-            super.onProgressUpdate(values);
-            String uid = values[0];
-            String nickname = values[1];
-            String portrait = values[2];
-            String count = values[3];
-
-            onFragmentInteractionListener.updateMessageList(nickname,uid,portrait,count);
-        }
-    }
 }

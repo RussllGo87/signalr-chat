@@ -55,12 +55,9 @@ import net.pingfang.signalr.chat.util.GlobalApplication;
 import net.pingfang.signalr.chat.util.MediaFileUtils;
 import net.pingfang.signalr.chat.util.SharedPreferencesHelper;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class ChatActivity extends AppCompatActivity implements View.OnClickListener{
 
@@ -77,7 +74,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
     MessageReceiver receiver;
 
-    String buddyName = "server";
+    String buddyName;
     String buddyUid;
 
     MediaRecorder mRecorder;
@@ -586,105 +583,32 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
-//            if(action.equals(GlobalApplication.ACTION_INTENT_TEXT_MESSAGE_INCOMING)) {
-//                Bundle args = intent.getBundleExtra("message");
-//                String fromUid = args.getString("fromUid");
-//                String nameFrom = args.getString("nameFrom");
-//                String content = args.getString("content");
-//                String datetime = args.getString("datetime");
-//                if(fromUid.equals(buddyUid)) {
-//                    inflaterTxtMessage(nameFrom, content, datetime);
-//                } else {
-//
-//                }
-//            } else if(action.equals(GlobalApplication.ACTION_INTENT_IMAGE_MESSAGE_INCOMING)) {
-//                Bundle args = intent.getBundleExtra("message");
-//                String fromUid = args.getString("fromUid");
-//                String nameFrom = args.getString("nameFrom");
-//                String content = args.getString("content");
-//                String datetime = args.getString("datetime");
-//                String fileExtension = args.getString("fileExtension");
-//
-//                if(fromUid.equals(buddyUid)) {
-//                    new ProcessReceiveFileTask(nameFrom, datetime, "IMAGE", datetime).execute(content,"IMAGE",fileExtension);
-//                }
-//            } else if(action.equals(GlobalApplication.ACTION_INTENT_VOICE_MESSAGE_INCOMING)) {
-//                Bundle args = intent.getBundleExtra("message");
-//                String fromUid = args.getString("fromUid");
-//                String nameFrom = args.getString("nameFrom");
-//                String content = args.getString("content");
-//                String datetime = args.getString("datetime");
-//                String fileExtension = args.getString("fileExtension");
-//
-//                if(fromUid.equals(buddyUid)) {
-//                    new ProcessReceiveFileTask(nameFrom, datetime, "AUDIO", datetime).execute(content,"AUDIO",fileExtension);
-//                }
-//            } else if(action.equals(GlobalApplication.ACTION_INTENT_OFFLINE_MESSAGE_LIST_INCOMING)){
-//                String message  = intent.getStringExtra("message");
-//                try {
-//                    JSONArray jsonArray = new JSONArray(message);
-//                    for(int i = 0; i < jsonArray.length(); i++) {
-//                        JSONObject jsonObject = jsonArray.getJSONObject(i);
-//                        String fromUid = jsonObject.getString("Sender");
-//                        String to = jsonObject.getString("Receiver");
-//                        String messageType = jsonObject.getString("MessageType");
-//                        String content = jsonObject.getString("Contents");
-//                        String datetime = jsonObject.getString("SendTime");
-//
-//                        if(fromUid.equals(buddyUid) && !TextUtils.isEmpty(messageType)) {
-//                            if(messageType.equals("Text")) {
-//                                inflaterTxtMessage(buddyName, content, datetime);
-//                            } else if(messageType.equals("Picture")){
-//                                new ProcessReceiveFileTask(buddyName, datetime, "IMAGE", datetime).execute(content, "IMAGE", "png");
-//                            } else if(messageType.equals("Audio")) {
-//                                new ProcessReceiveFileTask(buddyName, datetime, "AUDIO", datetime).execute(content, "AUDIO",
-//                                        GlobalApplication.VOICE_FILE_NAME_SUFFIX);
-//                            }
-//                        }
-//
-//                    }
-//                } catch (JSONException e) {
-//                    e.printStackTrace();
-//                }
-//            }
             if(action.equals(GlobalApplication.ACTION_INTENT_ONLINE_MESSAGE_INCOMING)) {
                 Bundle args = intent.getBundleExtra("message");
                 Uri messageUri = args.getParcelable("messageUri");
                 String fromUid = args.getString("fromUid");
                 if(buddyUid.equals(fromUid)) {
-                    new ProcessOnlineMessageTask().execute(messageUri);
+                    new ProcessMessageTask().execute(messageUri);
 
                 } else {
                     // build an notification on status bar when new online message is coming
 
                 }
-
-
             } else if(action.equals(GlobalApplication.ACTION_INTENT_OFFLINE_MESSAGE_LIST_INCOMING)){
-                String message  = intent.getStringExtra("message");
-                try {
-                    JSONArray jsonArray = new JSONArray(message);
-                    for(int i = 0; i < jsonArray.length(); i++) {
-                        JSONObject jsonObject = jsonArray.getJSONObject(i);
-                        String fromUid = jsonObject.getString("Sender");
-                        String to = jsonObject.getString("Receiver");
-                        String contentType = jsonObject.getString("MessageType");
-                        String content = jsonObject.getString("Contents");
-                        String datetime = jsonObject.getString("SendTime");
-
-                        if(fromUid.equals(buddyUid) && !TextUtils.isEmpty(contentType)) {
-                            new ProcessOfflineMessageTask().execute(fromUid,to,contentType,content,datetime);
-                        }
-
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                ArrayList<Uri> uriArrayList  = intent.getParcelableArrayListExtra("message");
+                for(int i = 0; i < uriArrayList.size(); i++) {
+                    new ProcessMessageTask().execute(uriArrayList.get(i));
                 }
+
+                Intent newIntent = new Intent();
+                newIntent.setAction(GlobalApplication.ACTION_INTENT_OFFLINE_MESSAGE_LIST_COUNT_UPDATE);
+                newIntent.putExtra("message","update offline message count");
+                context.sendBroadcast(newIntent);
             }
         }
     }
 
-    private class ProcessOnlineMessageTask extends AsyncTask<Uri,String,String> {
+    private class ProcessMessageTask extends AsyncTask<Uri,String,String> {
         @Override
         protected String doInBackground(Uri... params) {
             Uri messageUri = params[0];
@@ -737,85 +661,6 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private class ProcessOfflineMessageTask extends AsyncTask<String,String,String> {
-        @Override
-        protected String doInBackground(String... params) {
-            String from = params[0];
-            String to = params[1];
-            String contentType = params[2];
-            String content = params[3];
-            String datetime = params[4];
-
-            // 消息存储
-            ChatMessageManager chatMessageManager = new ChatMessageManager(getApplicationContext());
-            Uri messageUri = null;
-            if(!TextUtils.isEmpty(contentType)) {
-                if(contentType.equals("Text")) {
-                    messageUri = chatMessageManager.insert(from, to, MessageConstant.MESSAGE_TYPE_OFF_LINE,
-                            contentType, content, datetime, MessageConstant.MESSAGE_STATUS_READ);
-                } else if(contentType.equals("Picture")){
-                    String fileExtension = "png";
-                    String filePath = MediaFileUtils.processReceiveFile(getApplicationContext(), content,
-                            MessageConstant.MESSAGE_FILE_TYPE_IMG, fileExtension);
-                    messageUri = chatMessageManager.insert(from, to, MessageConstant.MESSAGE_TYPE_OFF_LINE,
-                            contentType, filePath, datetime, MessageConstant.MESSAGE_STATUS_READ);
-                } else if(contentType.equals("Audio")) {
-                    String fileExtension = GlobalApplication.VOICE_FILE_NAME_SUFFIX;
-                    String filePath = MediaFileUtils.processReceiveFile(getApplicationContext(), content,
-                            MessageConstant.MESSAGE_FILE_TYPE_AUDIO, fileExtension);
-                    messageUri = chatMessageManager.insert(from, to, MessageConstant.MESSAGE_TYPE_OFF_LINE,
-                            contentType, filePath, datetime, MessageConstant.MESSAGE_STATUS_READ);
-                }
-            }
-
-            // 消息查找
-            Cursor cursor = null;
-            if(messageUri != null) {
-                cursor = getApplicationContext().getContentResolver().query(messageUri, null, null, null, null);
-            }
-
-            if(cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {
-                String newContentType = cursor.getString(cursor.getColumnIndex(AppContract.ChatMessageEntry.COLUMN_NAME_M_CONTENT_TYPE));
-                String newDatetime = cursor.getString(cursor.getColumnIndex(AppContract.ChatMessageEntry.COLUMN_NAME_M_DATETIME));
-                if(contentType.equals("Text")) {
-                    String newContent = cursor.getString(cursor.getColumnIndex(AppContract.ChatMessageEntry.COLUMN_NAME_M_CONTENT));
-                    publishProgress(newContentType,newContent,newDatetime);
-                } else if(contentType.equals("Picture")){
-                    String newContent = cursor.getString(cursor.getColumnIndex(AppContract.ChatMessageEntry.COLUMN_NAME_M_CONTENT));
-                    publishProgress(newContentType,newContent,newDatetime);
-                } else if(contentType.equals("Audio")) {
-                    String newContent = cursor.getString(cursor.getColumnIndex(AppContract.ChatMessageEntry.COLUMN_NAME_M_CONTENT));
-                    publishProgress(newContentType,newContent,newDatetime);
-                }
-                cursor.close();
-            }
-            return "ok";
-        }
-
-        @Override
-        protected void onProgressUpdate(String... values) {
-            String contentType = values[0];
-            String content = values[1];
-            String newDatetime = values[2];
-
-            if(!TextUtils.isEmpty(contentType)) {
-                if(contentType.equals("Picture")) {
-                    Bitmap bitmap = MediaFileUtils.decodeBitmapFromPath(content,
-                            MediaFileUtils.dpToPx(getApplicationContext(),150),
-                            MediaFileUtils.dpToPx(getApplicationContext(),150));
-
-                    Uri uri = Uri.fromFile(new File(content));
-                    inflaterImgMessage(bitmap,uri,false, buddyName, newDatetime);
-                } else if(contentType.equals("Audio")) {
-                    Uri uri = Uri.fromFile(new File(content));
-                    inflaterVoiceMessage(uri,false, buddyName, newDatetime);
-                } else if(contentType.equals("Text")) {
-                    inflaterTxtMessage(buddyName, content, newDatetime);
-                }
-            }
-        }
-    }
-
     private class UpdateRecentMessageTask extends AsyncTask<String,String,String> {
         @Override
         protected String doInBackground(String... params) {
@@ -824,9 +669,12 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             String datetime = params[2];
             String owner = params[3];
 
-            String selection = AppContract.RecentContactEntry.COLUMN_NAME_UID + " = ?";
+            String selection =
+                    AppContract.RecentContactEntry.COLUMN_NAME_UID + " = ? " +
+                    "AND " +
+                    AppContract.RecentContactEntry.COLUMN_NAME_OWNER + " = ?";
             Cursor cursor = getApplicationContext().getContentResolver().query(AppContract.RecentContactEntry.CONTENT_URI,
-                    null, selection, new String[]{buddyId}, null);
+                    null, selection, new String[]{buddyId,owner}, null);
 
             if(cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()){
                 int rowId = cursor.getInt(cursor.getColumnIndex(AppContract.RecentContactEntry._ID));
@@ -835,14 +683,15 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                 ContentValues values = new ContentValues();
                 values.put(AppContract.RecentContactEntry.COLUMN_NAME_CONTENT, content);
                 values.put(AppContract.RecentContactEntry.COLUMN_NAME_UPDATE_TIME, datetime);
-                values.put(AppContract.RecentContactEntry.COLUMN_NAME_OWNER,owner);
                 getApplicationContext().getContentResolver().update(appendUri, values, null, null);
+                cursor.close();
             } else {
                 ContentValues values = new ContentValues();
                 values.put(AppContract.RecentContactEntry.COLUMN_NAME_UID,buddyId);
                 values.put(AppContract.RecentContactEntry.COLUMN_NAME_CONTENT, content);
                 values.put(AppContract.RecentContactEntry.COLUMN_NAME_UPDATE_TIME, datetime);
                 values.put(AppContract.RecentContactEntry.COLUMN_NAME_OWNER,owner);
+                values.put(AppContract.RecentContactEntry.COLUMN_NAME_COUNT,0);
                 getApplicationContext().getContentResolver().insert(AppContract.RecentContactEntry.CONTENT_URI,values);
             }
 

@@ -70,7 +70,7 @@ public final class AppContract {
         public static final String COLUMN_NAME_OWNER = "owner";
         public static final String COLUMN_NAME_CONTENT = "content";
         public static final String COLUMN_NAME_UPDATE_TIME = "update_time";
-
+        public static final String COLUMN_NAME_COUNT = "count";
     }
 
     public static abstract class RecentContactView implements BaseColumns{
@@ -92,6 +92,7 @@ public final class AppContract {
         public static final String COLUMN_NAME_OWNER = "owner";
         public static final String COLUMN_NAME_CONTENT = "content";
         public static final String COLUMN_NAME_UPDATE_TIME = "update_time";
+        public static final String COLUMN_NAME_COUNT = "count";
     }
 
 }

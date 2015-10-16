@@ -135,6 +135,7 @@
     <string name="tv_load_offline_message">离线消息(%s)</string>
     <string name="content_type_pic">[图片]</string>
     <string name="content_type_voice">[声音]</string>
+    <string name="content_new_offline_msg">[新的离线消息]</string>
 
     <!-- 设置页 -->
     <string name="title_activity_settings">@string/action_settings</string>

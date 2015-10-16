@@ -78,6 +78,8 @@ public class ChatAppProvider extends ContentProvider {
         recentProjectionMap.put(AppContract.RecentContactEntry.COLUMN_NAME_UID, AppContract.RecentContactEntry.COLUMN_NAME_UID);
         recentProjectionMap.put(AppContract.RecentContactEntry.COLUMN_NAME_CONTENT, AppContract.RecentContactEntry.COLUMN_NAME_CONTENT);
         recentProjectionMap.put(AppContract.RecentContactEntry.COLUMN_NAME_UPDATE_TIME, AppContract.RecentContactEntry.COLUMN_NAME_UPDATE_TIME);
+        recentProjectionMap.put(AppContract.RecentContactEntry.COLUMN_NAME_OWNER, AppContract.RecentContactEntry.COLUMN_NAME_OWNER);
+        recentProjectionMap.put(AppContract.RecentContactEntry.COLUMN_NAME_COUNT, AppContract.RecentContactEntry.COLUMN_NAME_COUNT);
 
         vRecentProjectionMap = new HashMap<String, String>();
         vRecentProjectionMap.put(AppContract.RecentContactView._ID, AppContract.RecentContactView._ID);
@@ -88,6 +90,7 @@ public class ChatAppProvider extends ContentProvider {
         vRecentProjectionMap.put(AppContract.RecentContactView.COLUMN_NAME_CONTENT, AppContract.RecentContactView.COLUMN_NAME_CONTENT);
         vRecentProjectionMap.put(AppContract.RecentContactView.COLUMN_NAME_UPDATE_TIME, AppContract.RecentContactView.COLUMN_NAME_UPDATE_TIME);
         vRecentProjectionMap.put(AppContract.RecentContactView.COLUMN_NAME_OWNER, AppContract.RecentContactView.COLUMN_NAME_OWNER);
+        vRecentProjectionMap.put(AppContract.RecentContactView.COLUMN_NAME_COUNT, AppContract.RecentContactView.COLUMN_NAME_COUNT);
     }
 
     @Override

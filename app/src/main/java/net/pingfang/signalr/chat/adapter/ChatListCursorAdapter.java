@@ -55,6 +55,13 @@ public class ChatListCursorAdapter extends CursorAdapter {
         TextView tv_msg_update_time = (TextView) view.findViewById(R.id.tv_msg_update_time);
         tv_msg_update_time.setText(cursor.getString(cursor.getColumnIndex(AppContract.RecentContactView.COLUMN_NAME_UPDATE_TIME)));
 
+        TextView tv_msg_not_read = (TextView) view.findViewById(R.id.tv_msg_not_read);
+        int count = cursor.getInt(cursor.getColumnIndex(AppContract.RecentContactView.COLUMN_NAME_COUNT));
+        if(count > 0) {
+            tv_msg_not_read.setText("" + count);
+        }
+
+
         String uid = cursor.getString(cursor.getColumnIndex(AppContract.RecentContactView.COLUMN_NAME_UID));
         String nickname = cursor.getString(cursor.getColumnIndex(AppContract.RecentContactView.COLUMN_NAME_NICKNAME));
         int status = cursor.getInt(cursor.getColumnIndex(AppContract.RecentContactView.COLUMN_NAME_STATUS));

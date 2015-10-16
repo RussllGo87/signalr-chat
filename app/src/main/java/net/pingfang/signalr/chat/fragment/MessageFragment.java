@@ -11,6 +11,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -61,6 +62,8 @@ public class MessageFragment extends Fragment implements LoaderManager.LoaderCal
         IntentFilter filter = new IntentFilter();
         filter.addAction(GlobalApplication.ACTION_INTENT_ONLINE_MESSAGE_INCOMING);
         filter.addAction(GlobalApplication.ACTION_INTENT_ONLINE_MESSAGE_SEND);
+        filter.addAction(GlobalApplication.ACTION_INTENT_OFFLINE_MESSAGE_LIST_COUNT_UPDATE);
+        filter.addAction(GlobalApplication.ACTION_INTENT_OFFLINE_USER_LIST_INCOMING);
         getContext().registerReceiver(receiver, filter);
     }
 
@@ -76,7 +79,7 @@ public class MessageFragment extends Fragment implements LoaderManager.LoaderCal
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        chatListCursorAdapter = new ChatListCursorAdapter(getContext(),null, android.widget.CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+        chatListCursorAdapter = new ChatListCursorAdapter(getContext(),null, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
         mListView.setAdapter(chatListCursorAdapter);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

@@ -1,6 +1,9 @@
 package net.pingfang.signalr.chat.fragment;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -12,7 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.CursorAdapter;
+import android.support.v4.widget.CursorAdapter;
 import android.widget.ListView;
 
 import net.pingfang.signalr.chat.R;
@@ -22,6 +25,7 @@ import net.pingfang.signalr.chat.constant.app.AppConstants;
 import net.pingfang.signalr.chat.database.AppContract;
 import net.pingfang.signalr.chat.database.User;
 import net.pingfang.signalr.chat.listener.OnFragmentInteractionListener;
+import net.pingfang.signalr.chat.util.GlobalApplication;
 import net.pingfang.signalr.chat.util.SharedPreferencesHelper;
 
 /**
@@ -41,6 +45,8 @@ public class BuddyFragment extends Fragment implements LoaderManager.LoaderCallb
 
     SharedPreferencesHelper sharedPreferencesHelper;
 
+    MessageReceiver receiver;
+
     public static BuddyFragment newInstance(OnFragmentInteractionListener mListener) {
         BuddyFragment fragment = new BuddyFragment();
         fragment.mListener = mListener;
@@ -52,6 +58,14 @@ public class BuddyFragment extends Fragment implements LoaderManager.LoaderCallb
         super.onCreate(savedInstanceState);
 
         sharedPreferencesHelper = SharedPreferencesHelper.newInstance(getContext());
+        registerReceiver();
+    }
+
+    public void registerReceiver() {
+        receiver = new MessageReceiver();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(GlobalApplication.ACTION_INTENT_UPDATE_ONLINE_LIST);
+        getContext().registerReceiver(receiver, filter);
     }
 
     @Override
@@ -89,13 +103,12 @@ public class BuddyFragment extends Fragment implements LoaderManager.LoaderCallb
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
+    public void onDestroy() {
+        super.onDestroy();
 
-        String uid = sharedPreferencesHelper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID);
-        Bundle args = new Bundle();
-        args.putString(AppConstants.KEY_SYS_CURRENT_UID, uid);
-        getLoaderManager().restartLoader(LOADER_ID, args, this);
+        if(receiver != null) {
+            getContext().unregisterReceiver(receiver);
+        }
     }
 
     @Override
@@ -119,5 +132,15 @@ public class BuddyFragment extends Fragment implements LoaderManager.LoaderCallb
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         listCursorAdapter.swapCursor(null);
+    }
+
+    private class MessageReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String uid = sharedPreferencesHelper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID);
+            Bundle args = new Bundle();
+            args.putString(AppConstants.KEY_SYS_CURRENT_UID,uid);
+            getLoaderManager().restartLoader(LOADER_ID, args, BuddyFragment.this);
+        }
     }
 }
