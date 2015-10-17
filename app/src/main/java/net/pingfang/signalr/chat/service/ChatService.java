@@ -29,7 +29,7 @@ public class ChatService extends Service {
     public static final int FLAF_INIT_CONNECTION = 0x01;
     public static final String FLAG_INIT_CONNECTION_QS = "FLAG_INIT_CONNECTION";
 
-    public static final String URL = "http://192.168.0.152/signalr/hubs/";
+    public static final String URL = "http://192.168.0.158:10086/signalr/hubs/";
     HubConnection connection;
     HubProxy hub;
     SignalRFuture<Void> awaitConnection;

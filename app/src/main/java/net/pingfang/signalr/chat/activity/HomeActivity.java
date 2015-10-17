@@ -340,7 +340,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                         break;
                     case R.id.action_resource:
                         Intent resourceAddIntent = new Intent();
-                        resourceAddIntent.setClass(getApplicationContext(),ResourceAddActivity.class);
+                        resourceAddIntent.setClass(getApplicationContext(),ResourcePostActivity.class);
                         startActivity(resourceAddIntent);
                         break;
                     case R.id.action_maintain:

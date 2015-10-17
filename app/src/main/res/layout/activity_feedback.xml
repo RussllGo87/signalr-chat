@@ -28,39 +28,49 @@
     </RelativeLayout>
 
 
-    <!--
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="top|left"
-        android:inputType="textMultiLine"
-        android:lines="6"
-        android:maxLines="10"/>
-    -->
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical"
+        android:padding="5.0dp" >
 
-    <EditText android:id="@+id/et_keyword"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="top|left"
-        android:inputType="textNoSuggestions"/>
+        <EditText
+            android:id="@+id/feedback_text"
+            android:layout_width="fill_parent"
+            android:layout_height="120dp"
+            android:gravity="top"
+            android:hint="最多输入150个汉字"
+            android:maxLength="150"
+            android:paddingLeft="12.0dp"
+            android:paddingTop="12.0dp"
+            android:singleLine="false"
+            android:textColor="#ff333333"
+            android:textSize="18.0sp" />
 
-    <Button android:id="@+id/btn_feedback_submit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:layout_gravity="right"
-        android:text="@string/btn_feedback_submit"/>
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
+        <Spinner
+            android:id="@+id/spinner1"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5.0dp"
+            android:gravity="center_vertical"
+            android:paddingLeft="12.0dp"
+            android:paddingRight="12.0dp"
+            android:singleLine="true"
+            android:textColor="#ff333333"
+            android:textSize="18.0sp" />
 
-        <TextView android:id="@+id/tv_result"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-
-    </ScrollView>
+        <Button
+            android:id="@+id/submit_button"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5.0dp"
+            android:layout_marginTop="10.0dp"
+            android:padding="10.0dp"
+            android:text="提交"
+            android:onClick="feedupdate"
+            android:textSize="18.0sp" />
+    </LinearLayout>
 
 
 </LinearLayout>

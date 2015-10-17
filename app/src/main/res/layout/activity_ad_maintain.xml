@@ -1,9 +1,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:orientation="vertical"
-              android:gravity="center_horizontal">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center_horizontal">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -25,5 +25,75 @@
                   android:textSize="@dimen/text_size_activity_title" />
 
     </RelativeLayout>
+
+    <EditText android:id="@+id/slogan"
+              android:layout_width="fill_parent"
+              android:layout_height="41dp"
+              android:layout_marginLeft="15dp"
+              android:layout_marginRight="15dp"
+              android:layout_marginTop="15dp"
+              android:hint="请输入广告语"
+              android:text="你好她也好"
+        />
+    <EditText android:id="@+id/iuaddress"
+              android:layout_width="fill_parent"
+              android:layout_height="41dp"
+              android:layout_marginLeft="15dp"
+              android:layout_marginRight="15dp"
+              android:hint="请输入广告地址"
+              android:layout_marginTop="2dp"/>
+    <EditText android:id="@+id/adcode"
+              android:layout_width="fill_parent"
+              android:layout_height="41dp"
+              android:layout_marginLeft="15dp"
+              android:layout_marginRight="15dp"
+              android:layout_marginTop="2dp"
+              android:hint="请输入广告编码"
+              android:text="粤10010"/>
+
+    <ImageView
+        android:id="@+id/upimage"
+        android:layout_width="105dp"
+        android:layout_height="150dp"
+        android:layout_gravity="center"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="2dp"
+        android:src="@drawable/ic_empty" />
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="2dp"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/upisok"
+            android:layout_width="fill_parent"
+            android:layout_height="40dp"
+            android:layout_marginRight="1dp"
+            android:layout_weight="1"
+            android:onClick="quedings"
+            android:text="确定" />
+
+        <Button
+            android:id="@+id/upison"
+            android:layout_width="fill_parent"
+            android:layout_height="40dp"
+            android:layout_marginLeft="1dp"
+            android:layout_weight="1"
+            android:onClick="quxiaos"
+            android:text="取消" />
+
+    </LinearLayout>
+
+    <com.baidu.mapapi.map.MapView
+        android:id="@+id/iumap"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:visibility="gone" />
 
 </LinearLayout>

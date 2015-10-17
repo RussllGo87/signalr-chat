@@ -42,9 +42,9 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     public static final String VC_SUBMIT_KEY_PHONE = "phone";
     public static final String VC_SUBMIT_KEY_CODE = "vcode";
 
-    public static final String VALIDATE_PHONE_URL = "http://192.168.0.152:8090/api/WebAPI/User/CheckPhone";
+    public static final String VALIDATE_PHONE_URL = "http://192.168.0.158/api/WebAPI/User/CheckPhone";
     public static final String VALIDATE_PHONE_KEY_PHONE_NO = "phone";
-    public static final String SUBMIT_REG_INFORMATION_URL = "http://192.168.0.152:8090/api/WebAPI/User/Register";
+    public static final String SUBMIT_REG_INFORMATION_URL = "http://192.168.0.158/api/WebAPI/User/Register";
     public static final String SUBMIT_REG_INFORMATION_KEY_PHONE = "phone";
     public static final String SUBMIT_REG_INFORMATION_KEY_NICKNAME = "nickname";
     public static final String SUBMIT_REG_INFORMATION_KEY_PASSWORD = "password";

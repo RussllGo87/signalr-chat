@@ -1,7 +1,15 @@
 package net.pingfang.signalr.chat.util;
 
-import android.app.Application;
+import android.content.Context;
+import android.os.Build;
+import android.os.StrictMode;
+import android.support.multidex.MultiDex;
+import android.support.multidex.MultiDexApplication;
 
+import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 import com.tencent.mm.sdk.openapi.IWXAPI;
 import com.tencent.mm.sdk.openapi.WXAPIFactory;
 
@@ -13,7 +21,7 @@ import java.util.Locale;
 /**
  * Created by gongguopei87@gmail.com on 2015/8/13.
  */
-public class GlobalApplication extends Application {
+public class GlobalApplication extends MultiDexApplication {
 
     public static final String ACTION_INTENT_TEXT_MESSAGE_INCOMING = "ACTION_INTENT_TEXT_MESSAGE_INCOMING";
     public static final String ACTION_INTENT_IMAGE_MESSAGE_INCOMING = "ACTION_INTENT_IMAGE_MESSAGE_INCOMING";
@@ -53,6 +61,19 @@ public class GlobalApplication extends Application {
 
         api = WXAPIFactory.createWXAPI(getApplicationContext(), WechatConstants.APP_ID,false);
         api.registerApp(WechatConstants.APP_ID);
+
+        if (Config.DEVELOPER_MODE && Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
+            StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectAll().penaltyDialog().build());
+            StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder().detectAll().penaltyDeath().build());
+        }
+
+        initImageLoader(getApplicationContext());
+    }
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        MultiDex.install(this);
     }
 
     public void changeLang(String lang) {
@@ -76,5 +97,22 @@ public class GlobalApplication extends Application {
         String langPref = getResources().getString(R.string.prefs_language);
         String language = helper.getStringValue(langPref,"zh");
         changeLang(language);
+    }
+
+    public static class Config {
+        public static final boolean DEVELOPER_MODE = false;
+    }
+
+    public static void initImageLoader(Context context) {
+
+        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context)
+                .threadPriority(Thread.NORM_PRIORITY - 2)
+                .denyCacheImageMultipleSizesInMemory()
+                .discCacheFileNameGenerator(new Md5FileNameGenerator())
+                .tasksProcessingOrder(QueueProcessingType.LIFO)
+                .writeDebugLogs() // Remove for release app
+                .build();
+
+        ImageLoader.getInstance().init(config);
     }
 }

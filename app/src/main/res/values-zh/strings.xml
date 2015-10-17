@@ -139,8 +139,20 @@
 
     <!-- 设置页 -->
     <string name="title_activity_settings">@string/action_settings</string>
+    <string name="tv_settings_item_account">账号设置</string>
     <string name="tv_settings_item_about">关于哈乐</string>
     <string name="tv_settings_item_exit">退出</string>
+
+    <!-- 帐号设置 -->
+    <string name="title_activity_account_settings">@string/tv_settings_item_account</string>
+    <string name="tv_settings_item_change_pwd">修改密码</string>
+    <string name="tv_settings_item_update_info">修改个人信息</string>
+
+    <!-- 修改密码 -->
+    <string name="title_activity_change_pwd">@string/tv_settings_item_change_pwd</string>
+
+    <!-- 修改个人信息 -->
+    <string name="title_activity_acount_info_update">@string/tv_settings_item_update_info</string>
 
     <!-- 关于 -->
     <string name="title_activity_about">@string/tv_settings_item_about</string>

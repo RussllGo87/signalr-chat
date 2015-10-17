@@ -110,8 +110,20 @@
 
     <!-- 设置页 -->
     <string name="title_activity_settings">@string/action_settings</string>
+    <string name="tv_settings_item_account">Account Settings</string>
     <string name="tv_settings_item_about">About Us</string>
     <string name="tv_settings_item_exit">Exit</string>
+
+    <!-- 帐号设置 -->
+    <string name="title_activity_account_settings">AccountSettingsActivity</string>
+    <string name="tv_settings_item_change_pwd">Change Password</string>
+    <string name="tv_settings_item_update_info">Update Profile</string>
+
+    <!-- 修改密码 -->
+    <string name="title_activity_change_pwd">ChangePwdActivity</string>
+
+    <!-- 修改个人信息 -->
+    <string name="title_activity_acount_info_update">AcountInfoUpdateActivity</string>
 
     <!-- 关于 -->
     <string name="title_activity_about">About</string>
@@ -125,6 +137,10 @@
     <string name="title_activity_feedback">FeedbackActivity</string>
     <string name="btn_feedback_submit">Submit</string>
     <string name="title_activity_grey_bitmap">GreyBitmapActivity</string>
+    <string name="title_activity_recource_post">RecourcePostActivity</string>
+
+
+
 
 
 </resources>

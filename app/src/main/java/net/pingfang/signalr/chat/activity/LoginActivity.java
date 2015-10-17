@@ -59,11 +59,11 @@ public class LoginActivity extends AppCompatActivity {
 
     public static final String TAG = LoginActivity.class.getSimpleName();
 
-    public static final String LOGIN_URL = "http://192.168.0.152:8090/api/WebAPI/User/Login";
+    public static final String LOGIN_URL = "http://192.168.0.158/api/WebAPI/User/Login";
     public static final String LOGIN_KEY_ACCOUNT = "account";
     public static final String LOGIN_KEY_PASSWORD = "password";
 
-    public static final String NEW_LOGIN_URL = "http://192.168.0.152:8090/api/WebAPI/User/GetUser";
+    public static final String NEW_LOGIN_URL = "http://192.168.0.158/api/WebAPI/User/GetUser";
     public static final String NEW_LOGIN_KEY_TID = "tid";
     public static final String NEW_LOGIN_KEY_WID = "wid";
     public static final String NEW_LOGIN_KEY_WXID = "wxid";

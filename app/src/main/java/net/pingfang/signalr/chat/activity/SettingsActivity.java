@@ -33,6 +33,7 @@ import org.json.JSONObject;
 public class SettingsActivity extends AppCompatActivity implements View.OnClickListener{
 
     TextView btn_activity_back;
+    TextView tv_settings_item_account;
     TextView tv_settings_item_about;
     TextView tv_settings_item_exit;
 
@@ -58,6 +59,10 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     private void initView() {
         btn_activity_back = (TextView) findViewById(R.id.btn_activity_back);
         btn_activity_back.setOnClickListener(this);
+
+        tv_settings_item_account = (TextView) findViewById(R.id.tv_settings_item_account);
+        tv_settings_item_account.setOnClickListener(this);
+
         tv_settings_item_about = (TextView) findViewById(R.id.tv_settings_item_about);
         tv_settings_item_about.setOnClickListener(this);
         tv_settings_item_exit = (TextView) findViewById(R.id.tv_settings_item_exit);
@@ -106,6 +111,11 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         switch (viewId) {
             case R.id.btn_activity_back:
                 navigateUp();
+                break;
+            case R.id.tv_settings_item_account:
+                Intent AccountSettingsIntent = new Intent();
+                AccountSettingsIntent.setClass(getApplicationContext(),AccountSettingsActivity.class);
+                startActivity(AccountSettingsIntent);
                 break;
             case R.id.tv_settings_item_about:
                 Intent intent = new Intent();
