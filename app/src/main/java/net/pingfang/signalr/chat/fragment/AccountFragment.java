@@ -12,10 +12,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import net.pingfang.signalr.chat.R;
+import net.pingfang.signalr.chat.activity.NearbyActivity;
+import net.pingfang.signalr.chat.activity.ResourceListActivity;
 import net.pingfang.signalr.chat.activity.SettingsActivity;
-import net.pingfang.signalr.chat.constant.app.AppConstants;
 import net.pingfang.signalr.chat.listener.OnFragmentInteractionListener;
 import net.pingfang.signalr.chat.net.OkHttpCommonUtil;
+import net.pingfang.signalr.chat.util.GlobalApplication;
 import net.pingfang.signalr.chat.util.SharedPreferencesHelper;
 
 /**
@@ -30,6 +32,8 @@ public class AccountFragment extends Fragment implements View.OnClickListener{
     ImageView iv_account_portrait;
     TextView tv_settings_item_me;
     ImageView btn_qr_code;
+    TextView tv_account_item_uploaded;
+    TextView tv_account_item_nearby;
     TextView tv_account_item_settings;
 
     SharedPreferencesHelper helper;
@@ -45,6 +49,11 @@ public class AccountFragment extends Fragment implements View.OnClickListener{
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_account, container, false);
         iv_account_portrait = (ImageView) view.findViewById(R.id.iv_account_portrait);
+        tv_account_item_uploaded = (TextView) view.findViewById(R.id.tv_account_item_uploaded);
+        tv_account_item_uploaded.setOnClickListener(this);
+        tv_account_item_nearby = (TextView) view.findViewById(R.id.tv_account_item_nearby);
+        tv_account_item_nearby.setOnClickListener(this);
+
         tv_settings_item_me = (TextView) view.findViewById(R.id.tv_settings_item_me);
         btn_qr_code = (ImageView) view.findViewById(R.id.btn_qr_code);
         btn_qr_code.setOnClickListener(this);
@@ -67,7 +76,7 @@ public class AccountFragment extends Fragment implements View.OnClickListener{
         }
 
         if(!TextUtils.isEmpty(portrait)) {
-            portrait = AppConstants.PORTRAIT_URL_PREFIX + portrait;
+            portrait = GlobalApplication.PORTRAIT_URL_PREFIX + portrait;
             OkHttpCommonUtil okHttpCommonUtil = OkHttpCommonUtil.newInstance(getContext());
             okHttpCommonUtil.display(iv_account_portrait,portrait,R.mipmap.ic_launcher);
         }
@@ -80,10 +89,20 @@ public class AccountFragment extends Fragment implements View.OnClickListener{
             case R.id.btn_qr_code:
                 showQrCodeInfo();
                 break;
+            case R.id.tv_account_item_uploaded:
+                Intent resourceListIntent = new Intent();
+                resourceListIntent.setClass(getContext(), ResourceListActivity.class);
+                getContext().startActivity(resourceListIntent);
+                break;
+            case R.id.tv_account_item_nearby:
+                Intent nearbyIntent = new Intent();
+                nearbyIntent.setClass(getContext(), NearbyActivity.class);
+                getContext().startActivity(nearbyIntent);
+                break;
             case R.id.tv_account_item_settings:
                 Intent intent = new Intent();
                 intent.setClass(getActivity(), SettingsActivity.class);
-                getActivity().startActivity(intent);
+                getContext().startActivity(intent);
                 break;
         }
     }

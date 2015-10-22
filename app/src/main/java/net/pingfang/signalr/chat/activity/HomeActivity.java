@@ -39,7 +39,6 @@ import net.pingfang.signalr.chat.demo.GreyBitmapActivity;
 import net.pingfang.signalr.chat.fragment.AccountFragment;
 import net.pingfang.signalr.chat.fragment.BuddyFragment;
 import net.pingfang.signalr.chat.fragment.MessageFragment;
-import net.pingfang.signalr.chat.fragment.NearbyFragment;
 import net.pingfang.signalr.chat.listener.OnFragmentInteractionListener;
 import net.pingfang.signalr.chat.net.HttpBaseCallback;
 import net.pingfang.signalr.chat.net.OkHttpCommonUtil;
@@ -64,7 +63,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     MessageFragment messageFragment;
     BuddyFragment buddyFragment;
-    NearbyFragment nearbyFragment;
     AccountFragment accountFragment;
 
     Button btn_list_chat;
@@ -214,8 +212,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         btn_list_chat.setOnClickListener(this);
         btn_list_friend = (Button) findViewById(R.id.btn_list_friend);
         btn_list_friend.setOnClickListener(this);
-        btn_nearby_ads = (Button) findViewById(R.id.btn_nearby_ads);
-        btn_nearby_ads.setOnClickListener(this);
         btn_account_management = (Button) findViewById(R.id.btn_account_management);
         btn_account_management.setOnClickListener(this);
     }
@@ -223,12 +219,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private void initAdapter() {
         messageFragment = MessageFragment.newInstance(onFragmentInteractionListener);
         buddyFragment = BuddyFragment.newInstance(onFragmentInteractionListener);
-        nearbyFragment = NearbyFragment.newInstance();
         accountFragment = AccountFragment.newInstance(onFragmentInteractionListener);
         adapter = new CollectionPagerAdapter(getSupportFragmentManager());
         adapter.add(messageFragment);
         adapter.add(buddyFragment);
-        adapter.add(nearbyFragment);
         adapter.add(accountFragment);
         pager.setAdapter(adapter);
 
@@ -240,9 +234,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                         tv_activity_title.setText(R.string.tv_activity_title_roster);
                         break;
                     case 2:
-                        tv_activity_title.setText(R.string.tv_activity_title_nearby_ads);
-                        break;
-                    case 3:
                         tv_activity_title.setText(R.string.tv_activity_title_account);
                         break;
                     case 0:
@@ -275,7 +266,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             String nickname = helper.getStringValue(AppConstants.KEY_SYS_CURRENT_NICKNAME);
             String portrait = helper.getStringValue(AppConstants.KEY_SYS_CURRENT_PORTRAIT);
 
-            AccountFragment fragment = (AccountFragment) adapter.getItem(3);
+            AccountFragment fragment = (AccountFragment) adapter.getItem(2);
             fragment.updateAccountInfo(nickname,portrait);
         }
 
@@ -314,11 +305,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.btn_list_friend:
                 pager.setCurrentItem(1);
                 break;
-            case R.id.btn_nearby_ads:
-                pager.setCurrentItem(2);
-                break;
             case R.id.btn_account_management:
-                pager.setCurrentItem(3);
+                pager.setCurrentItem(2);
                 break;
         }
     }

@@ -14,6 +14,7 @@ import android.widget.Toast;
 import net.pingfang.signalr.chat.R;
 import net.pingfang.signalr.chat.constant.app.AppConstants;
 import net.pingfang.signalr.chat.util.CommonUtil;
+import net.pingfang.signalr.chat.util.GlobalApplication;
 import net.pingfang.signalr.chat.util.SharedPreferencesHelper;
 
 import org.apache.http.HttpResponse;
@@ -30,7 +31,7 @@ import java.io.IOException;
 
 public class ChangePwdActivity extends AppCompatActivity implements View.OnClickListener{
 
-    public static final String URL_PWD_UPDATE = "http://192.168.0.158/api/WebAPI/User/UpPassword";
+    public static final String URL_PWD_UPDATE = GlobalApplication.URL_WEB_API_HOST + "/api/WebAPI/User/UpPassword";
 
     TextView btn_activity_back;
 

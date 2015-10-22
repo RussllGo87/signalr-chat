@@ -35,89 +35,84 @@
     </RelativeLayout>
 
     <LinearLayout
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
         android:layout_marginTop="2dp"
         android:orientation="horizontal" >
-        <EditText
-            android:id="@+id/plength"
-            android:layout_width="fill_parent"
-            android:layout_height="46dp"
-            android:layout_marginRight="1dp"
-            android:hint="长度"
-            android:inputType="numberDecimal"
-            android:layout_weight="1"
-            android:text="5"
-            />
-        <EditText android:id="@+id/pbroad"
-                  android:layout_width="fill_parent"
-                  android:layout_height="46dp"
-                  android:layout_marginLeft="1dp"
-                  android:hint="宽度"
-                  android:inputType="numberDecimal"
-                  android:text="5"
-                  android:layout_weight="1"/>
 
+        <EditText
+            android:id="@+id/et_resource_width"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="1dp"
+            android:hint="长度(米)"
+            android:inputType="numberDecimal"
+            android:layout_weight="1"/>
+
+        <EditText android:id="@+id/et_resource_height"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="1dp"
+            android:hint="宽度(米)"
+            android:inputType="numberDecimal"
+            android:layout_weight="1"/>
 
     </LinearLayout>
 
 
     <EditText
-        android:id="@+id/upaddress"
-        android:layout_width="fill_parent"
-        android:layout_height="46dp"
+        android:id="@+id/et_resource_location"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
-        android:layout_marginTop="2dp"
-        />
+        android:layout_marginTop="2dp"/>
 
     <LinearLayout
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
         android:layout_marginTop="2dp"
-        android:orientation="horizontal" >
+        android:orientation="horizontal">
+
         <EditText
-            android:id="@+id/contacts"
-            android:layout_width="fill_parent"
-            android:layout_height="46dp"
+            android:id="@+id/et_resource_contacts"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginRight="1dp"
             android:hint="联系人"
-            android:text="张三"
-            android:layout_weight="2"
-            />
-        <EditText android:id="@+id/upmob"
-                  android:layout_width="fill_parent"
-                  android:layout_height="46dp"
-                  android:layout_marginLeft="1dp"
-                  android:hint="联系电话"
-                  android:inputType="phone"
-                  android:text="15817419383"
-                  android:layout_weight="1"/>
+            android:layout_weight="2"/>
+
+        <EditText android:id="@+id/et_resource_phone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="1dp"
+            android:hint="联系电话"
+            android:inputType="phone"
+            android:layout_weight="1"/>
     </LinearLayout>
-    <EditText android:id="@+id/explain"
-              android:layout_width="fill_parent"
-              android:layout_height="52dp"
+
+    <EditText android:id="@+id/et_resource_remark"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
               android:layout_marginLeft="15dp"
               android:layout_marginRight="15dp"
               android:layout_marginTop="2dp"
-              android:text="如资源的使用时间，以及备注等信息..."/>
+              android:hint="资源说明"/>
 
     <ImageView
-        android:id="@+id/upimage"
-        android:layout_width="105dp"
-        android:layout_height="150dp"
+        android:id="@+id/iv_resource_profile"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginLeft="15dp"
-        android:layout_marginRight="15dp"
         android:layout_marginTop="2dp"
         android:src="@drawable/ic_empty" />
 
     <LinearLayout
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
@@ -125,31 +120,21 @@
         android:orientation="horizontal" >
 
         <Button
-            android:id="@+id/upisok"
-            android:layout_width="fill_parent"
-            android:layout_height="40dp"
+            android:id="@+id/btn_resource_save"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:layout_marginRight="1dp"
             android:layout_weight="1"
-            android:onClick="quedings"
             android:text="确定" />
 
         <Button
-            android:id="@+id/upison"
-            android:layout_width="fill_parent"
-            android:layout_height="40dp"
+            android:id="@+id/btn_resource_cancel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:layout_marginLeft="1dp"
             android:layout_weight="1"
             android:onClick="quxiaos"
             android:text="取消" />
     </LinearLayout>
-
-
-
-    <com.baidu.mapapi.map.MapView
-        android:id="@+id/upmapsess"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:clickable="true"
-        android:visibility="gone" />
 
 </LinearLayout>

@@ -9,6 +9,7 @@ import android.util.Log;
 
 import net.pingfang.signalr.chat.message.ChatMessageListener;
 import net.pingfang.signalr.chat.message.ChatMessageProcessor;
+import net.pingfang.signalr.chat.util.GlobalApplication;
 
 import microsoft.aspnet.signalr.client.ConnectionState;
 import microsoft.aspnet.signalr.client.LogLevel;
@@ -29,7 +30,7 @@ public class ChatService extends Service {
     public static final int FLAF_INIT_CONNECTION = 0x01;
     public static final String FLAG_INIT_CONNECTION_QS = "FLAG_INIT_CONNECTION";
 
-    public static final String URL = "http://192.168.0.158:10086/signalr/hubs/";
+    public static final String URL = GlobalApplication.URL_COMMUNICATION_API_HOST + "/signalr/hubs/";
     HubConnection connection;
     HubProxy hub;
     SignalRFuture<Void> awaitConnection;

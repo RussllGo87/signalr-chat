@@ -3,79 +3,82 @@ package net.pingfang.signalr.chat.activity;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.squareup.okhttp.Response;
+
 import net.pingfang.signalr.chat.R;
 import net.pingfang.signalr.chat.constant.app.AppConstants;
-import net.pingfang.signalr.chat.util.CommonUtil;
+import net.pingfang.signalr.chat.net.HttpBaseCallback;
+import net.pingfang.signalr.chat.net.OkHttpCommonUtil;
+import net.pingfang.signalr.chat.util.CommonTools;
+import net.pingfang.signalr.chat.util.GlobalApplication;
+import net.pingfang.signalr.chat.util.MediaFileUtils;
 import net.pingfang.signalr.chat.util.SharedPreferencesHelper;
-import net.pingfang.signalr.chat.view.CircularImage;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.protocol.HTTP;
-import org.apache.http.util.EntityUtils;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URLEncoder;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
 
 public class AccountInfoUpdateActivity extends AppCompatActivity implements View.OnClickListener{
 
-    public static final String URL_ACCOUNT_INFO_UPDATE = "http://192.168.0.158/api/WebAPI/User/PerfectInfo";
+    public static final String TAG = AccountInfoUpdateActivity.class.getSimpleName();
+
+    public static final String URL_ACCOUNT_INFO_UPDATE = GlobalApplication.URL_WEB_API_HOST + "/api/WebAPI/User/PerfectInfo";
+    public static final String KEY_URL_ACCOUNT_INFO_UPDATE_UID = "id";
+    public static final String KEY_URL_ACCOUNT_INFO_UPDATE_USER_NAME = "userName";
+    public static final String KEY_URL_ACCOUNT_INFO_UPDATE_NICKNAME = "nickname";
+    public static final String KEY_URL_ACCOUNT_INFO_UPDATE_REAL_NAME = "realName";
+    public static final String KEY_URL_ACCOUNT_INFO_UPDATE_PHONE = "mobile";
+    public static final String KEY_URL_ACCOUNT_INFO_UPDATE_QQ = "qq";
+    public static final String KEY_URL_ACCOUNT_INFO_UPDATE_PIC = "pic";
+    public static final String KEY_URL_ACCOUNT_INFO_UPDATE_ADDRESS = "address";
 
     TextView btn_activity_back;
 
-    private EditText regusername,regalName,regaddress,regqq;
-    private String username,realname,address,qq, message;
-    private CircularImage headpic;
-    Dialog dialog;
-    /**拍照所需参数*/
-    private String imagename;
-    private  String FILE_PATH = "";//SD卡的路径是：/storage/sdcard0
-    String path = "",newpath="",pic;
+    private EditText et_account_username;
+    private EditText et_account_nickname;
+    private EditText et_account_realname;
+    private EditText et_account_address;
+    private EditText et_account_phone;
+    private EditText et_account_qq;
+    private ImageView iv_account_portrait;
 
-    SharedPreferences mySharedPreferences;
-    SharedPreferences.Editor editor ;
-    boolean net;
+    private Button btn_account_info_save;
+    private Button btn_account_info_cancel;
+
+    SharedPreferencesHelper sharedPreferencesHelper;
+
+    Dialog dialog;
+    String tmpFilePath;
+    String filePath;
+    String fileContent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_acount_info_update);
+        setContentView(R.layout.activity_account_info_update);
 
-        mySharedPreferences= getSharedPreferences("reginfo", Activity.MODE_PRIVATE);
-        editor = mySharedPreferences.edit();
-        String pathsd= CommonUtil.getSDPath();
-        FILE_PATH=pathsd+"/photosed/";
-        System.out.println("图片存储文件夹位置为："+FILE_PATH);
-        CommonUtil.makeRootDirectory(FILE_PATH);
-        real();
-
+        sharedPreferencesHelper = SharedPreferencesHelper.newInstance(getApplicationContext());
         initView();
     }
 
@@ -83,107 +86,26 @@ public class AccountInfoUpdateActivity extends AppCompatActivity implements View
         btn_activity_back = (TextView) findViewById(R.id.btn_activity_back);
         btn_activity_back.setOnClickListener(this);
 
-        regusername=(EditText) this.findViewById(R.id.regusername);
-        regalName=(EditText) this.findViewById(R.id.regalName);
-        regaddress=(EditText) this.findViewById(R.id.regaddress);
-        headpic=(CircularImage) this.findViewById(R.id.headpic);
-        regqq=(EditText) this.findViewById(R.id.regqq);
-        if(newpath.length()>1){
+        et_account_username = (EditText) findViewById(R.id.et_account_username);
+        et_account_nickname = (EditText) findViewById(R.id.et_account_nickname);
+        et_account_realname = (EditText) findViewById(R.id.et_account_realname);
+        et_account_address = (EditText) findViewById(R.id.et_account_address);
+        et_account_phone = (EditText) findViewById(R.id.et_account_phone);
+        et_account_qq = (EditText) findViewById(R.id.et_account_qq);
 
-            regusername.setText(username);
-            regalName.setText(realname);
-            regaddress.setText(address);
-            regqq.setText(qq);
-            headpic.setImageBitmap(CommonUtil.getBitmapInLocal(newpath));
-        }
+        iv_account_portrait = (ImageView) findViewById(R.id.iv_account_portrait);
+        iv_account_portrait.setOnClickListener(this);
 
-        headpic.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View arg0) {
-                showDialog();
-            }
-        });
-    }
-
-    public void regok(View v){
-        username=regusername.getText().toString().trim();
-        realname=regalName.getText().toString().trim();
-        address=regaddress.getText().toString().trim();
-        qq=regqq.getText().toString().trim();
-        if(username.length()<=0){
-            Toast.makeText(getApplicationContext(), "请输入你的用户名!", Toast.LENGTH_SHORT).show();
-            return;
-        }else if(realname.length()<=0){
-            Toast.makeText(getApplicationContext(), "请输入你的真实姓名！", Toast.LENGTH_SHORT).show();
-            return;
-        }else if(address.length()<=0){
-            Toast.makeText(getApplicationContext(), "请输入你的居住地址！", Toast.LENGTH_SHORT).show();
-            return;
-        }else if(newpath.length()<=0){
-            Toast.makeText(getApplicationContext(), "请选择或拍摄照片！", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        path="";
-        //图片压缩
-        SimpleDateFormat sDateFormat = new SimpleDateFormat(
-                "yyyy-MM-dd hh:mm:ss");
-        String date = sDateFormat.format(new java.util.Date());
-        imagename=date + ".jpg";
-        path = FILE_PATH + imagename;
-        CommonUtil.dealImage(newpath, path);
-        System.out.println("传入图片的路径："+path);
-        Bitmap bt=CommonUtil.getBitmapInLocal(path);
-        pic=CommonUtil.bitmapToBase64(bt);
-        net=CommonUtil.isConnected(this);
-        if(net){
-            AsynTasks asyn=new AsynTasks();
-            asyn.execute();
-        }else{
-            save();
-        }
-
-    }
-
-    //在没有网络的状态下把数据保存到SharedPreferences
-    public void save(){
-        //用putString的方法保存数据
-        editor.putString("pic",newpath );
-        editor.putString("username", username);
-        editor.putString("realname", realname);
-        editor.putString("qq", qq);
-        editor.putString("address", address);
-        //提交当前数据
-        editor.commit();
-        //使用toast信息提示框提示成功写入数据
-        Toast.makeText(this, "当前没有网络数据已经保存到草稿，等到有网络是在发送" ,
-                Toast.LENGTH_LONG).show();
-
-    }
-    //读取SharedPreferences中的数据读出来
-    public void real(){
-
-        newpath =mySharedPreferences.getString("pic", "");
-        username=mySharedPreferences.getString("username", "");
-        realname=mySharedPreferences.getString("realname", "");
-        qq=mySharedPreferences.getString("qq", "");
-        address=mySharedPreferences.getString("address", "");
-
-    }
-
-
-    public void showinfo(View v){
-        editor.clear();
-        editor.commit();
-        finish();
-
+        btn_account_info_save = (Button) findViewById(R.id.btn_account_info_save);
+        btn_account_info_save.setOnClickListener(this);
+        btn_account_info_cancel = (Button) findViewById(R.id.btn_account_info_cancel);
     }
 
     private void showDialog() {
         View view = getLayoutInflater().inflate(R.layout.photo_choose_dialog,
                 null);
         dialog = new Dialog(this, R.style.transparentFrameWindowStyle);
-        dialog.setContentView(view, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT,
+        dialog.setContentView(view, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT));
         Window window = dialog.getWindow();
         // 设置显示动画
@@ -201,150 +123,80 @@ public class AccountInfoUpdateActivity extends AppCompatActivity implements View
         dialog.show();
     }
 
+    private void openCamera() {
+        tmpFilePath = MediaFileUtils.genarateFilePath(getApplicationContext(),
+                Environment.DIRECTORY_PICTURES, "Photos", "jpg");
+        File file = new File(tmpFilePath);
+        if (file.exists()) {
+            file.delete();
+        }
+
+        Uri uri = Uri.fromFile(file);
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(intent, GlobalApplication.REQUEST_IMAGE_CAPTURE);
+        }
+    }
+
+    private void pickImage() {
+        Intent getIntent = new Intent(Intent.ACTION_GET_CONTENT);
+        getIntent.setType("image/*");
+
+        Intent pickIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        pickIntent.setType("image/*");
+
+        if (getIntent.resolveActivity(getPackageManager()) != null ||
+                pickIntent.resolveActivity(getPackageManager()) != null) {
+
+            Intent chooserIntent = Intent.createChooser(getIntent, getString(R.string.action_select_image));
+            chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{pickIntent});
+
+            startActivityForResult(chooserIntent, GlobalApplication.REQUEST_IMAGE_GET);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if(resultCode == Activity.RESULT_OK) {
+            if(data != null && data.getData() != null) {
+                if(requestCode == GlobalApplication.REQUEST_IMAGE_CAPTURE) {
+                    filePath = tmpFilePath;
+                    Bitmap bitmap = MediaFileUtils.decodeBitmapFromPath(filePath,
+                            MediaFileUtils.dpToPx(getApplicationContext(), 150),
+                            MediaFileUtils.dpToPx(getApplicationContext(), 150));
+                    iv_account_portrait.setImageBitmap(bitmap);
+                    fileContent = CommonTools.bitmapToBase64(bitmap);
+                } else if(requestCode == GlobalApplication.REQUEST_IMAGE_GET) {
+                    Uri uri = data.getData();
+                    if(uri != null) {
+                        String filePath = MediaFileUtils.getRealPathFromURI(getApplicationContext(), uri);
+                        Bitmap bitmap = MediaFileUtils.decodeBitmapFromPath(filePath,
+                                MediaFileUtils.dpToPx(getApplicationContext(), 150),
+                                MediaFileUtils.dpToPx(getApplicationContext(), 150));
+                        iv_account_portrait.setImageBitmap(bitmap);
+                        fileContent = CommonTools.bitmapToBase64(bitmap);
+                    }
+                }
+            }
+        }
+
+    }
+
     public void on_click(View v) {
         switch (v.getId()) {
             case R.id.openCamera:
                 openCamera();
                 break;
             case R.id.openPhones:
-                //打开Android 系统相册，选择图片之后在onActivityResult 里面返回选中图片uri地址
-                Intent intent = new Intent(Intent.ACTION_PICK,android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,"image/*");
-                startActivityForResult(intent, 112);
+                pickImage();
                 break;
             case R.id.cancel:
                 dialog.cancel();
                 break;
             default:
                 break;
-        }
-    }
-
-
-    // 打开照相机
-    private void openCamera() {
-        // 调用手机摄像头进行拍照
-        Intent intent = new Intent();
-        intent.setAction(MediaStore.ACTION_IMAGE_CAPTURE);
-        intent.addCategory(Intent.CATEGORY_DEFAULT);
-        SimpleDateFormat sDateFormat = new SimpleDateFormat(
-                "yyyy-MM-dd hh:mm:ss");
-        String date = sDateFormat.format(new java.util.Date());
-        imagename=date + ".jpg";
-        path = FILE_PATH + imagename;
-        File file = new File(path);
-        if (file.exists()) {
-            file.delete();
-        }
-        // 把文件地址转换成Uri格式
-        Uri uri = Uri.fromFile(file);
-        // 设置系统相机拍摄照片完成后图片文件的存放地址
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
-        startActivityForResult(intent, 0);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-        System.out.println("requestCode:"+requestCode);
-        if (requestCode == 0) {
-            boolean ok=CommonUtil.fileIsExists(path);
-            if(ok){
-                newpath=path;
-            }
-            System.out.println("path"+path);
-            System.out.println("newpath"+newpath);
-            //压缩图片
-            CommonUtil.dealImage(newpath, newpath);
-            //删除原图192.168.0.152
-            //new File(defaultPhotoAddress).delete();
-            File file = new File(newpath);
-            System.out.println(newpath);
-            Uri uri = Uri.fromFile(file);
-            headpic.setImageURI(uri);
-        } else if (requestCode == 1) {
-            headpic.setImageURI(data.getData());
-        }else{
-            headpic.setImageURI(data.getData());
-            //压缩图片
-            newpath=CommonUtil.getRealFilePath(this, data.getData());
-            System.out.println("从图库中选择图片的地址："+newpath);
-            CommonUtil.dealImage(newpath, newpath);
-        }
-
-    }
-
-    //数据上传保存
-    class AsynTasks extends AsyncTask<String, Integer, String> {
-
-        @Override
-        protected String doInBackground(String... arg0) {
-
-            System.out.println("开始准备数据上传.....");
-            /*建立HTTPost对象*/
-            HttpPost httpRequest = new HttpPost(URL_ACCOUNT_INFO_UPDATE);
-				 /*
-		         * NameValuePair实现请求参数的封装
-		         * yingerjian3
-		         */
-            List<NameValuePair> params = new ArrayList<NameValuePair>();
-            //用户id
-            SharedPreferencesHelper helper = SharedPreferencesHelper.newInstance(getApplicationContext());
-            params.add(new BasicNameValuePair("id", helper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID)));
-            params.add(new BasicNameValuePair("userName", URLEncoder.encode(username)));
-            // params.add(new BasicNameValuePair("nickName",URLEncoder.encode("MYG")));
-            params.add(new BasicNameValuePair("realName",URLEncoder.encode(realname)));//URLEncoder.encode("白祖念")
-            // params.add(new BasicNameValuePair("mobile", "15817419383"));
-            params.add(new BasicNameValuePair("qq",qq));
-            params.add(new BasicNameValuePair("pic", pic));
-            params.add(new BasicNameValuePair("address", URLEncoder.encode(address)));
-            try{
-		          /* 添加请求参数到请求对象*/
-                httpRequest.setEntity(new UrlEncodedFormEntity(params, HTTP.UTF_8));
-		          /*发送请求并等待响应
-		           *
-		           * */
-                HttpResponse httpResponse = new DefaultHttpClient().execute(httpRequest);
-		          /*若状态码为200 ok*/
-                System.out.println("获得的状态吗是："+httpResponse.getStatusLine().getStatusCode());
-                if(httpResponse.getStatusLine().getStatusCode() == 200){
-		            /*读返回数据*/
-                    String strResult = EntityUtils.toString(httpResponse.getEntity());
-                    System.out.println(strResult);
-                    JSONObject json=new JSONObject(strResult);
-                    message = json.getString("message");
-                }else {  //请求错误后返回的其他数据
-                    String errors="Error Response: "+httpResponse.getStatusLine().toString();
-                    System.out.println(errors);
-                }
-            }
-            catch (ClientProtocolException e) {
-                System.out.println(e.getMessage().toString());
-                e.printStackTrace();
-            }
-            catch (IOException e){
-                System.out.println(e.getMessage().toString());
-                e.printStackTrace();
-            }
-            catch (Exception e){
-                System.out.println(e.getMessage().toString());
-                e.printStackTrace();
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            //Toast.makeText(getApplicationContext(),  message, Toast.LENGTH_SHORT).show();
-            if (message.equals("更新成功")) {
-                editor.clear();
-                editor.commit();
-                System.out.println(message);
-                finish();
-            } else {
-                Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
-            }
         }
     }
 
@@ -355,7 +207,53 @@ public class AccountInfoUpdateActivity extends AppCompatActivity implements View
             case R.id.btn_activity_back:
                 navigateUp();
                 break;
+            case R.id.iv_account_portrait:
+                showDialog();
+                break;
+            case R.id.btn_account_info_save:
+                saveOrUpdateAccountInfo();
+                break;
         }
+    }
+
+    private void saveOrUpdateAccountInfo() {
+        OkHttpCommonUtil okHttp = OkHttpCommonUtil.newInstance(getApplicationContext());
+        okHttp.postRequest(URL_ACCOUNT_INFO_UPDATE,
+                new OkHttpCommonUtil.Param[] {
+                    new OkHttpCommonUtil.Param(KEY_URL_ACCOUNT_INFO_UPDATE_UID,sharedPreferencesHelper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID)),
+                    new OkHttpCommonUtil.Param(KEY_URL_ACCOUNT_INFO_UPDATE_USER_NAME,et_account_username.getText().toString().trim()),
+                    new OkHttpCommonUtil.Param(KEY_URL_ACCOUNT_INFO_UPDATE_NICKNAME,et_account_nickname.getText().toString().trim()),
+                    new OkHttpCommonUtil.Param(KEY_URL_ACCOUNT_INFO_UPDATE_REAL_NAME,et_account_realname.getText().toString().trim()),
+                    new OkHttpCommonUtil.Param(KEY_URL_ACCOUNT_INFO_UPDATE_PHONE,et_account_phone.getText().toString().trim()),
+                    new OkHttpCommonUtil.Param(KEY_URL_ACCOUNT_INFO_UPDATE_QQ,et_account_qq.getText().toString().trim()),
+                    new OkHttpCommonUtil.Param(KEY_URL_ACCOUNT_INFO_UPDATE_PIC,fileContent),
+                    new OkHttpCommonUtil.Param(KEY_URL_ACCOUNT_INFO_UPDATE_ADDRESS,et_account_address.getText().toString().trim())
+                },
+                new HttpBaseCallback() {
+                    @Override
+                    public void onResponse(Response response) throws IOException {
+                        String result = response.body().string();
+                        Log.d(TAG,"URL_ACCOUNT_INFO_UPDATE return " + result);
+                        JSONObject jsonObject = null;
+                        try {
+                            jsonObject = new JSONObject(result);
+                            int status = jsonObject.getInt("status");
+                            String message = jsonObject.getString("message");
+                            if(status == 0) {
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(getApplicationContext(),
+                                                getString(R.string.toast_account_info_update_ok),
+                                                Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
     }
 
     public void navigateUp() {

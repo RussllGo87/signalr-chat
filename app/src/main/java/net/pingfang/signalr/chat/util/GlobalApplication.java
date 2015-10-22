@@ -1,11 +1,11 @@
 package net.pingfang.signalr.chat.util;
 
+import android.app.Application;
 import android.content.Context;
 import android.os.Build;
 import android.os.StrictMode;
-import android.support.multidex.MultiDex;
-import android.support.multidex.MultiDexApplication;
 
+import com.baidu.mapapi.SDKInitializer;
 import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
@@ -21,7 +21,20 @@ import java.util.Locale;
 /**
  * Created by gongguopei87@gmail.com on 2015/8/13.
  */
-public class GlobalApplication extends MultiDexApplication {
+public class GlobalApplication extends Application {
+
+    public static final int REQUEST_IMAGE_CAPTURE = 0x01;
+    public static final int REQUEST_IMAGE_GET = 0x02;
+
+//    public static final String URL_WEB_API_HOST = "http://115.171.1.96";
+//    public static final String URL_COMMUNICATION_API_HOST = "http://115.171.1.96:10086";
+
+    public static final String URL_WEB_API_HOST = "http://192.168.0.120";
+    public static final String URL_COMMUNICATION_API_HOST = "http://192.168.0.120:10086";
+
+    public static final String PORTRAIT_URL_PREFIX = URL_WEB_API_HOST + "/UpLoad/Head/";
+    public static final String PIC_URL_PREFIX = URL_WEB_API_HOST + "/UpLoad/";
+    public static final String RESOURCE_PIC_URL_PREFIX = PIC_URL_PREFIX + "Resource/";
 
     public static final String ACTION_INTENT_TEXT_MESSAGE_INCOMING = "ACTION_INTENT_TEXT_MESSAGE_INCOMING";
     public static final String ACTION_INTENT_IMAGE_MESSAGE_INCOMING = "ACTION_INTENT_IMAGE_MESSAGE_INCOMING";
@@ -35,10 +48,9 @@ public class GlobalApplication extends MultiDexApplication {
     public static final String ACTION_INTENT_OFFLINE_MESSAGE_LIST_INCOMING = "ACTION_INTENT_OFFLINE_MESSAGE_LIST_INCOMING";
     public static final String ACTION_INTENT_OFFLINE_MESSAGE_LIST_COUNT_UPDATE = "ACTION_INTENT_OFFLINE_MESSAGE_LIST_COUNT_UPDATE";
 
-    public static final String IMAGE_TITLE_NAME_PREFIX = "IMAAGE_";
+    public static final String IMAGE_TITLE_NAME_PREFIX = "IMAGE_";
     public static final String VOICE_FILE_NAME_PREFIX = "VOICE_";
     public static final String VOICE_FILE_NAME_SUFFIX = ".3gp";
-
 
 
     // 腾讯地图webservice接口相关
@@ -59,21 +71,18 @@ public class GlobalApplication extends MultiDexApplication {
         helper = SharedPreferencesHelper.newInstance(getApplicationContext());
         loadLocale();
 
-        api = WXAPIFactory.createWXAPI(getApplicationContext(), WechatConstants.APP_ID,false);
+        api = WXAPIFactory.createWXAPI(getApplicationContext(), WechatConstants.APP_ID, false);
         api.registerApp(WechatConstants.APP_ID);
+
+        SDKInitializer.initialize(getApplicationContext());
+        initImageLoader(getApplicationContext());
 
         if (Config.DEVELOPER_MODE && Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
             StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectAll().penaltyDialog().build());
             StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder().detectAll().penaltyDeath().build());
         }
 
-        initImageLoader(getApplicationContext());
-    }
 
-    @Override
-    protected void attachBaseContext(Context base) {
-        super.attachBaseContext(base);
-        MultiDex.install(this);
     }
 
     public void changeLang(String lang) {

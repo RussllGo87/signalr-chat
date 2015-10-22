@@ -26,6 +26,7 @@ import net.pingfang.signalr.chat.listener.OnRegisterInteractionListener;
 import net.pingfang.signalr.chat.net.HttpBaseCallback;
 import net.pingfang.signalr.chat.net.OkHttpCommonUtil;
 import net.pingfang.signalr.chat.ui.dialog.SingleButtonDialogFragment;
+import net.pingfang.signalr.chat.util.GlobalApplication;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -42,9 +43,9 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     public static final String VC_SUBMIT_KEY_PHONE = "phone";
     public static final String VC_SUBMIT_KEY_CODE = "vcode";
 
-    public static final String VALIDATE_PHONE_URL = "http://192.168.0.158/api/WebAPI/User/CheckPhone";
+    public static final String VALIDATE_PHONE_URL = GlobalApplication.URL_WEB_API_HOST + "/api/WebAPI/User/CheckPhone";
     public static final String VALIDATE_PHONE_KEY_PHONE_NO = "phone";
-    public static final String SUBMIT_REG_INFORMATION_URL = "http://192.168.0.158/api/WebAPI/User/Register";
+    public static final String SUBMIT_REG_INFORMATION_URL = GlobalApplication.URL_WEB_API_HOST + "/api/WebAPI/User/Register";
     public static final String SUBMIT_REG_INFORMATION_KEY_PHONE = "phone";
     public static final String SUBMIT_REG_INFORMATION_KEY_NICKNAME = "nickname";
     public static final String SUBMIT_REG_INFORMATION_KEY_PASSWORD = "password";

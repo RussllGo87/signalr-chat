@@ -61,8 +61,6 @@ import java.util.ArrayList;
 
 public class ChatActivity extends AppCompatActivity implements View.OnClickListener{
 
-    public static final int REQUEST_IMAGE_GET = 0x01;
-
     TextView btn_activity_back;
     TextView tv_activity_title;
     TextView tv_offline_message;
@@ -362,9 +360,9 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                 pickIntent.resolveActivity(getPackageManager()) != null) {
 
             Intent chooserIntent = Intent.createChooser(getIntent, getString(R.string.action_select_image));
-            chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[] {pickIntent});
+            chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{pickIntent});
 
-            startActivityForResult(chooserIntent, REQUEST_IMAGE_GET);
+            startActivityForResult(chooserIntent, GlobalApplication.REQUEST_IMAGE_GET);
         }
     }
 
@@ -372,7 +370,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(resultCode == Activity.RESULT_OK) {
             if(data != null && data.getData() != null) {
-                if(requestCode == REQUEST_IMAGE_GET) {
+                if(requestCode == GlobalApplication.REQUEST_IMAGE_GET) {
                     Uri uri = data.getData();
                     if(uri != null) {
                         String filePath = MediaFileUtils.getRealPathFromURI(getApplicationContext(), uri);

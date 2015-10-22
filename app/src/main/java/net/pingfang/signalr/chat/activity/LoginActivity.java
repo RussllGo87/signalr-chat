@@ -46,6 +46,7 @@ import net.pingfang.signalr.chat.database.UserManager;
 import net.pingfang.signalr.chat.net.HttpBaseCallback;
 import net.pingfang.signalr.chat.net.OkHttpCommonUtil;
 import net.pingfang.signalr.chat.ui.dialog.SingleButtonDialogFragment;
+import net.pingfang.signalr.chat.util.GlobalApplication;
 import net.pingfang.signalr.chat.util.MediaFileUtils;
 import net.pingfang.signalr.chat.util.SharedPreferencesHelper;
 
@@ -59,11 +60,11 @@ public class LoginActivity extends AppCompatActivity {
 
     public static final String TAG = LoginActivity.class.getSimpleName();
 
-    public static final String LOGIN_URL = "http://192.168.0.158/api/WebAPI/User/Login";
+    public static final String LOGIN_URL = GlobalApplication.URL_WEB_API_HOST + "/api/WebAPI/User/Login";
     public static final String LOGIN_KEY_ACCOUNT = "account";
     public static final String LOGIN_KEY_PASSWORD = "password";
 
-    public static final String NEW_LOGIN_URL = "http://192.168.0.158/api/WebAPI/User/GetUser";
+    public static final String NEW_LOGIN_URL = GlobalApplication.URL_WEB_API_HOST + "/api/WebAPI/User/GetUser";
     public static final String NEW_LOGIN_KEY_TID = "tid";
     public static final String NEW_LOGIN_KEY_WID = "wid";
     public static final String NEW_LOGIN_KEY_WXID = "wxid";
@@ -355,12 +356,6 @@ public class LoginActivity extends AppCompatActivity {
                     mDelivery.post(new Runnable() {
                         @Override
                         public void run() {
-
-                            //                            Intent intent = new Intent();
-                            //                            intent.setClass(getApplicationContext(), HomeActivity.class);
-                            //                            startActivity(intent);
-                            //                            finish();
-
                             login(NEW_LGOIN_PARAM_PLATFROM_QQ);
                         }
                     });

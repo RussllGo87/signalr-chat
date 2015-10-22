@@ -5,6 +5,7 @@
         <!-- Customize your theme here. -->
         <item name="android:popupBackground">#0F213F</item>
         <item name="android:disabledAlpha">0.5</item>
+        <item name="android:textColor">@android:color/black</item>
     </style>
 
     <style name="CaptureThemeFullScreen" parent="Theme.AppCompat.Light.DarkActionBar"/>

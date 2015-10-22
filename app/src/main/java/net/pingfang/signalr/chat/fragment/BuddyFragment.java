@@ -20,7 +20,7 @@ import android.widget.ListView;
 
 import net.pingfang.signalr.chat.R;
 import net.pingfang.signalr.chat.activity.ChatActivity;
-import net.pingfang.signalr.chat.adapter.ListCursorAdapter;
+import net.pingfang.signalr.chat.adapter.BuddyListCursorAdapter;
 import net.pingfang.signalr.chat.constant.app.AppConstants;
 import net.pingfang.signalr.chat.database.AppContract;
 import net.pingfang.signalr.chat.database.User;
@@ -39,7 +39,7 @@ public class BuddyFragment extends Fragment implements LoaderManager.LoaderCallb
 
     private ListView list_user;
 
-    private ListCursorAdapter listCursorAdapter;
+    private BuddyListCursorAdapter listCursorAdapter;
 
     private OnFragmentInteractionListener mListener;
 
@@ -81,7 +81,7 @@ public class BuddyFragment extends Fragment implements LoaderManager.LoaderCallb
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        listCursorAdapter = new ListCursorAdapter(getContext(),null, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+        listCursorAdapter = new BuddyListCursorAdapter(getContext(),null, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
         list_user.setAdapter(listCursorAdapter);
         list_user.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

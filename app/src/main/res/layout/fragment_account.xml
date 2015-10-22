@@ -40,11 +40,11 @@
               android:drawableRight="@drawable/setting_view_arrow"
               android:drawableEnd="@drawable/setting_view_arrow"/>
 
-    <TextView android:id="@+id/tv_account_item_maintained"
+    <TextView android:id="@+id/tv_account_item_nearby"
               style="@style/SettingItemStyle"
               android:layout_marginBottom="@dimen/activity_vertical_margin"
               android:background="@drawable/selector_settings_item"
-              android:text="@string/tv_account_item_maintained"
+              android:text="@string/tv_account_item_ads"
               android:drawableRight="@drawable/setting_view_arrow"
               android:drawableEnd="@drawable/setting_view_arrow"/>
 

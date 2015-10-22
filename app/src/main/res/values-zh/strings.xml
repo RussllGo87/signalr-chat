@@ -85,16 +85,12 @@
     <string name="tv_activity_title_account">我</string>
     <string name="tv_list_chat">消息</string>
     <string name="tv_list_friend">好友</string>
-    <string name="tv_nearby_ads">周边</string>
     <string name="tv_account_management">我</string>
     <string name="tv_menu_drop_down">下拉菜单</string>
     <string name="menu_action_scan">扫一扫</string>
     <string name="menu_action_resource">资源上传</string>
     <string name="menu_action_maintain">广告维护</string>
     <string name="resp_return_empty">返回为空</string>
-
-    <!-- 菜单项 之 扫码 -->
-    <string name="dialog_message_url">是否用浏览器打开链接?</string>
 
     <!-- BuddyFragment -->
     <string name="tv_fragment_buddy">好友</string>
@@ -104,11 +100,40 @@
     <!-- AccountFragment -->
     <string name="tv_account_item_settings">@string/title_activity_settings</string>
     <string name="tv_fragment_account">我</string>
-    <string name="tv_account_item_uploaded">我的上传</string>
-    <string name="tv_account_item_maintained">我的维护</string>
+    <string name="tv_account_item_uploaded">广告资源</string>
+    <string name="tv_account_item_ads">周边</string>
 
+    <!-- 我的资源上传记录 -->
+    <string name="title_activity_resource_list">我的资源</string>
+    <string name="action_range_all">全部</string>
+    <string name="action_range_1">已审核</string>
+    <string name="action_range_2">未审核</string>
+    <!-- 我的上传资源资源详情 -->
+    <string name="title_activity_resource_detail">资源详情</string>
+    <string name="tv_resource_detail_width">长度:%s</string>
+    <string name="tv_resource_detail_height">宽度:%s</string>
+    <string name="tv_resource_detail_update_time">最近更新：%s</string>
+    <string name="tv_resource_detail_contact">联系人:%s</string>
+    <string name="tv_resource_detail_contact_info">电话:%s</string>
+    <string name="tv_resource_detail_address">地址:%s</string>
+    <string name="tv_resource_detail_remark">备注:%s</string>
+    <string name="tv_resource_detail_status">审核状态:%s</string>
+
+    <!-- 周边广告地图展示 -->
+    <string name="title_activity_nearby">周边广告</string>
+    <string name="action_radius_half">500米</string>
+    <string name="action_radius_kilometer">1公里</string>
+    <string name="action_radius_kilometer_2">2公里</string>
+    <string name="action_radius_kilometer_5">5公里</string>
+    <string name="action_radius_all">所有</string>
+    <!-- 周边广告详细展示 -->
+    <string name="title_activity_nearby_ad_detail">周边广告详情</string>
+
+    <!--- 下拉菜单列表 -->
+    <!-- 菜单项 之 扫码 -->
+    <string name="dialog_message_url">是否用浏览器打开链接?</string>
     <!-- 资源上传 -->
-    <string name="title_activity_resource_add">资源上传</string>
+    <string name="title_activity_resource_post">资源上传</string>
     <string name="hint_et_resource_width">宽度(米)</string>
     <string name="hint_et_resource_height">高度(米)</string>
     <string name="tv_location">位置</string>
@@ -117,9 +142,11 @@
     <string name="hint_et_contact">联系人</string>
     <string name="hint_et_contact_phone">联系电话</string>
     <string name="tv_photos">相关照片</string>
-
+    <string name="toast_resource_post_ok">广告资源上传成功</string>
     <!-- 广告维护 -->
     <string name="title_activity_ad_maintain">广告维护</string>
+    <string name="toast_ad_maintain_ok">广告上传成功</string>
+
 
     <!-- 聊天页 -->
     <string name="title_activity_chat">%s</string>
@@ -153,6 +180,7 @@
 
     <!-- 修改个人信息 -->
     <string name="title_activity_acount_info_update">@string/tv_settings_item_update_info</string>
+    <string name="toast_account_info_update_ok">个人资料更新成功</string>
 
     <!-- 关于 -->
     <string name="title_activity_about">@string/tv_settings_item_about</string>
@@ -165,6 +193,7 @@
     <!-- 意见反馈 -->
     <string name="title_activity_feedback">@string/tv_about_item_suggestion</string>
     <string name="btn_feedback_submit">提交</string>
+    <string name="toast_feedback_ok">反馈提交成功,我们会继续努力的</string>
 
     <!-- provider 相关 -->
     <string name="illegal_uri_exception">错误的 URI</string>

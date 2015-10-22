@@ -1,10 +1,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:orientation="vertical"
-              tools:context="net.pingfang.xmpp.activity.HomeActivity">
-
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="net.pingfang.xmpp.activity.HomeActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -57,12 +56,6 @@
 
         <Button android:id="@+id/btn_list_friend"
                 android:text="@string/tv_list_friend"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"/>
-
-        <Button android:id="@+id/btn_nearby_ads"
-                android:text="@string/tv_nearby_ads"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"/>

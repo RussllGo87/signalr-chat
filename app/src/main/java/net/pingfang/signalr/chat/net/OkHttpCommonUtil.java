@@ -259,7 +259,7 @@ public class OkHttpCommonUtil {
     /**
      * HTTP POST异步上传文件
      * @param url 请求url
-     * @param files 上传文件
+     * @param file 上传文件
      * @param fileKey 模拟上传表单(form)对应的key
      * @param params 请求参数
      * @return 响应
@@ -274,8 +274,7 @@ public class OkHttpCommonUtil {
         multipartBuilder.type(MultipartBuilder.FORM);
 
         for(Param param : params) {
-            multipartBuilder.addPart(Headers.of("Content-Disposition", "form-data; name=\"" + param.key + "\""),
-                    RequestBody.create(null, param.value));
+            multipartBuilder.addFormDataPart(param.key,param.value);
         }
 
         if(files != null && files.length > 0) {
@@ -283,9 +282,7 @@ public class OkHttpCommonUtil {
             for (File file : files) {
                 String fileName = file.getName();
                 fileBody = RequestBody.create(MediaType.parse(guessMimeType(fileName)), file);
-                multipartBuilder.addPart(Headers.of("Content-Disposition",
-                                "form-data; name=\"" + fileKey + "\"; filename=\"" + fileName + "\""),
-                        fileBody);
+                multipartBuilder.addFormDataPart(fileKey,fileName, fileBody);
             }
         }
 
@@ -489,6 +486,16 @@ public class OkHttpCommonUtil {
             this.value = value;
         }
 
+        public Param(String key, double value) {
+            this.key = key;
+            this.value = Double.toString(value);
+        }
+
+        public Param(String key, int value) {
+            this.key = key;
+            this.value = Integer.toString(value);
+        }
+
         String key;
         String value;
     }
@@ -525,11 +532,15 @@ public class OkHttpCommonUtil {
     }
 
     public void getRequest(String url,Param[] params,Callback callback) {
-        getAsync(url,params,null,callback);
+        getAsync(url, params, null, callback);
     }
 
     public void display(final ImageView view, final String url, final int errorResId) {
-        displayImage(view,url,errorResId);
+        displayImage(view, url, errorResId);
+    }
+
+    public void uploadFileForm(String url, String fileKey, File[] files,Param[] params,Callback callback) {
+        postAsyncUploadFile(url,callback,files,fileKey,params);
     }
 
 }

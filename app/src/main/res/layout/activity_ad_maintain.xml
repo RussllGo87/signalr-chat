@@ -26,34 +26,27 @@
 
     </RelativeLayout>
 
-    <EditText android:id="@+id/slogan"
-              android:layout_width="fill_parent"
-              android:layout_height="41dp"
-              android:layout_marginLeft="15dp"
-              android:layout_marginRight="15dp"
+    <EditText android:id="@+id/et_ad_maintain_slogan"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
               android:layout_marginTop="15dp"
-              android:hint="请输入广告语"
-              android:text="你好她也好"
-        />
-    <EditText android:id="@+id/iuaddress"
-              android:layout_width="fill_parent"
-              android:layout_height="41dp"
-              android:layout_marginLeft="15dp"
-              android:layout_marginRight="15dp"
-              android:hint="请输入广告地址"
+              android:hint="广告语"/>
+
+    <EditText android:id="@+id/et_ad_maintain_location"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:hint="广告位置"
               android:layout_marginTop="2dp"/>
-    <EditText android:id="@+id/adcode"
-              android:layout_width="fill_parent"
-              android:layout_height="41dp"
-              android:layout_marginLeft="15dp"
-              android:layout_marginRight="15dp"
+
+    <EditText android:id="@+id/et_ad_maintain_code"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
               android:layout_marginTop="2dp"
-              android:hint="请输入广告编码"
-              android:text="粤10010"/>
+              android:hint="广告编码"/>
 
     <ImageView
-        android:id="@+id/upimage"
-        android:layout_width="105dp"
+        android:id="@+id/iv_ad_maintain_pic"
+        android:layout_width="150dp"
         android:layout_height="150dp"
         android:layout_gravity="center"
         android:layout_marginLeft="15dp"
@@ -62,7 +55,7 @@
         android:src="@drawable/ic_empty" />
 
     <LinearLayout
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
@@ -70,30 +63,21 @@
         android:orientation="horizontal" >
 
         <Button
-            android:id="@+id/upisok"
-            android:layout_width="fill_parent"
+            android:id="@+id/btn_ad_maintain_save"
+            android:layout_width="0dp"
             android:layout_height="40dp"
             android:layout_marginRight="1dp"
             android:layout_weight="1"
-            android:onClick="quedings"
             android:text="确定" />
 
         <Button
-            android:id="@+id/upison"
-            android:layout_width="fill_parent"
+            android:id="@+id/btn_ad_maintain_cancel"
+            android:layout_width="0dp"
             android:layout_height="40dp"
             android:layout_marginLeft="1dp"
             android:layout_weight="1"
-            android:onClick="quxiaos"
             android:text="取消" />
 
     </LinearLayout>
-
-    <com.baidu.mapapi.map.MapView
-        android:id="@+id/iumap"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:clickable="true"
-        android:visibility="gone" />
 
 </LinearLayout>

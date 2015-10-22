@@ -65,7 +65,6 @@
     <string name="tv_activity_title_account">Account</string>
     <string name="tv_list_chat">Message</string>
     <string name="tv_list_friend">Buddies</string>
-    <string name="tv_nearby_ads">Nearby</string>
     <string name="tv_account_management">Account</string>
     <string name="tv_menu_drop_down">dropdown</string>
     <string name="menu_action_scan">Scan</string>
@@ -75,24 +74,33 @@
     <!-- BuddyFragment -->
     <string name="tv_fragment_buddy">BuddyFragment</string>
 
-    <!-- NearbyFragment -->
-    <string name="tv_fragment_nearby">NearbyFragment</string>
-
     <!-- AccountFragment -->
     <string name="tv_fragment_account">AccountFragment</string>
     <string name="tv_account_item_settings">@string/title_activity_settings</string>
     <string name="tv_account_item_uploaded">My Uploaded</string>
     <string name="tv_account_item_maintained">My Maintained</string>
+    <string name="tv_account_item_ads">Nearby</string>
 
+    <!-- 我的上传资源记录 -->
+    <string name="title_activity_resource_list">ResourceListActivity</string>
+    <!-- 我的上传的资源详情 -->
+    <string name="title_activity_resource_detail">ResourceDetailActivity</string>
+
+
+    <!-- 周边广告地图展示 -->
+    <string name="title_activity_nearby">NearbyActivity</string>
+    <!-- 周边广告详细展示 -->
+    <string name="title_activity_nearby_ad_detail">NearbyAdDetailActivity</string>
+
+    <!--- 下拉菜单列表 -->
     <!-- 资源上传 -->
-    <string name="title_activity_resource_add">ResourceAdd</string>
+    <string name="title_activity_resource_post">ResourcePostActivity</string>
     <string name="hint_et_resource_width">Width</string>
     <string name="hint_et_resource_height">Height</string>
     <string name="tv_location">Location</string>
     <string name="hint_et_location">Location</string>
     <string name="hint_et_description">Description</string>
     <string name="tv_photos">Photos</string>
-
     <!-- 广告维护 -->
     <string name="title_activity_ad_maintain">AdMaintain</string>
 
@@ -137,7 +145,10 @@
     <string name="title_activity_feedback">FeedbackActivity</string>
     <string name="btn_feedback_submit">Submit</string>
     <string name="title_activity_grey_bitmap">GreyBitmapActivity</string>
-    <string name="title_activity_recource_post">RecourcePostActivity</string>
+
+
+
+
 
 
 

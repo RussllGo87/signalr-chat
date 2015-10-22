@@ -1,0 +1,30 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto"
+      xmlns:tools="http://schemas.android.com/tools"
+      tools:context="net.pingfang.signalr.chat.activity.NearbyActivity">
+
+      <item android:id="@+id/action_radius_half"
+            android:title="@string/action_radius_half"
+            android:orderInCategory="100"
+            app:showAsAction="never"/>
+
+      <item android:id="@+id/action_radius_kilometer"
+            android:title="@string/action_radius_kilometer"
+            android:orderInCategory="101"
+            app:showAsAction="never"/>
+
+      <item android:id="@+id/action_radius_kilometer_2"
+            android:title="@string/action_radius_kilometer_2"
+            android:orderInCategory="102"
+            app:showAsAction="never"/>
+
+      <item android:id="@+id/action_radius_kilometer_5"
+            android:title="@string/action_radius_kilometer_5"
+            android:orderInCategory="103"
+            app:showAsAction="never"/>
+
+      <item android:id="@+id/action_radius_all"
+            android:title="@string/action_radius_all"
+            android:orderInCategory="103"
+            app:showAsAction="never"/>
+</menu>
