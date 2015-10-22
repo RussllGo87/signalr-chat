@@ -65,11 +65,11 @@ public class LoginActivity extends AppCompatActivity {
     public static final String LOGIN_KEY_PASSWORD = "password";
 
     public static final String NEW_LOGIN_URL = GlobalApplication.URL_WEB_API_HOST + "/api/WebAPI/User/GetUser";
-    public static final String NEW_LOGIN_KEY_TID = "tid";
-    public static final String NEW_LOGIN_KEY_WID = "wid";
-    public static final String NEW_LOGIN_KEY_WXID = "wxid";
+    public static final String NEW_LOGIN_KEY_TID = "key";
+    public static final String NEW_LOGIN_KEY_WID = "key";
+    public static final String NEW_LOGIN_KEY_WXID = "key";
     public static final String NEW_LOGIN_KEY_NICK_NAME = "nickname";
-    public static final String NEW_LOGIN_KEY_PORTRAIT = "portrait";
+    public static final String NEW_LOGIN_KEY_PORTRAIT = "pic";
 
     public static final String NEW_LGOIN_PARAM_PLATFROM_QQ = "qq";
     public static final String NEW_LGOIN_PARAM_PLATFROM_WEIBO = "weibo";
@@ -240,12 +240,6 @@ public class LoginActivity extends AppCompatActivity {
                         mDelivery.post(new Runnable() {
                             @Override
                             public void run() {
-
-                                //                                Intent intent = new Intent();
-                                //                                intent.setClass(getApplicationContext(), HomeActivity.class);
-                                //                                startActivity(intent);
-                                //                                finish();
-
                                 login(NEW_LGOIN_PARAM_PLATFROM_WEIBO);
                             }
                         });
@@ -398,7 +392,7 @@ public class LoginActivity extends AppCompatActivity {
                             new OkHttpCommonUtil.Param(NEW_LOGIN_KEY_WID,mAccessToken.getUid()),
                             new OkHttpCommonUtil.Param(NEW_LOGIN_KEY_NICK_NAME,
                                     sharedPreferencesHelper.getStringValue(WeiboConstants.KEY_WB_SCREEN_NAME)),
-                            new OkHttpCommonUtil.Param(NEW_LOGIN_KEY_WID,
+                            new OkHttpCommonUtil.Param(NEW_LOGIN_KEY_PORTRAIT,
                                     sharedPreferencesHelper.getStringValue(WeiboConstants.KEY_WB_PROFILE_IMAGE_URL))
                     };
                 } else {
@@ -422,7 +416,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onResponse(Response response) throws IOException {
                 String json = response.body().string();
-                Log.d(TAG, "NEW_LOGIN_URL return " + json);
+                Log.d(TAG, "LOGIN_URL return " + json);
                 JSONObject jsonObject;
                 try {
                     jsonObject = new JSONObject(json);
@@ -431,38 +425,71 @@ public class LoginActivity extends AppCompatActivity {
                     if (status == 0) {
                         JSONObject result = jsonObject.getJSONObject("result");
                         final String id = result.getString("id");
-                        final String nickname = result.getString("nickname");
-                        final String portrait = result.getString("portrait");
+                    //  final String nickname = result.getString("nickname");
+                    //  final String portrait = result.getString("portrait");
 
                         UserManager userManager = new UserManager(getApplicationContext());
-                        userManager.addRecord(id, nickname, portrait);
-
-                        JSONArray jsonArray = jsonObject.getJSONArray("list");
-                        for (int i = 0; i < jsonArray.length(); i++) {
-                            JSONObject user = jsonArray.getJSONObject(i);
-                            String fuid = user.getString("uid");
-                            String fnickname = user.getString("nickname");
-                            String fportrait = user.getString("portrait");
-
-                            userManager.addRecord(fuid, fnickname, fportrait);
+                        JSONArray list = jsonObject.getJSONArray("list");
+                        if(list != null && list.length() > 0) {
+                            for(int i = 0; i < list.length(); i++) {
+                                JSONObject tmpJson = list.getJSONObject(i);
+                                String item_uid = tmpJson.getString("id");
+                                String item_nickname = tmpJson.getString("nickname");
+                                String item_portrait = tmpJson.getString("portrait");
+                                //                                    UserManager userManager = new UserManager(getApplicationContext());
+                                if(item_portrait != null && !TextUtils.isEmpty(item_portrait) && !"null".equals(item_portrait)) {
+                                    userManager.addRecord(item_uid,item_nickname,item_portrait);
+                                } else {
+                                    userManager.addRecord(item_uid,item_nickname,"");
+                                }
+                            }
                         }
 
+                        Cursor cursor = userManager.queryByUid(id);
+
+                        if(cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {
+                            final String nickname = cursor.getString(cursor.getColumnIndex(AppContract.UserEntry.COLUMN_NAME_NICK_NAME));
+                            final String portrait = cursor.getString(cursor.getColumnIndex(AppContract.UserEntry.COLUMN_NAME_PORTRAIT));
+                            mDelivery.post(new Runnable() {
+                                @Override
+                                public void run() {
+
+                                    Toast.makeText(getApplicationContext(), R.string.pb_message_login_ok, Toast.LENGTH_SHORT).show();
+                                    ll_progress_bar_container.setVisibility(View.GONE);
+
+                                    sharedPreferencesHelper.putStringValue(AppConstants.KEY_SYS_CURRENT_UID,id);
+                                    sharedPreferencesHelper.putStringValue(AppConstants.KEY_SYS_CURRENT_NICKNAME, nickname);
+                                    sharedPreferencesHelper.putStringValue(AppConstants.KEY_SYS_CURRENT_PORTRAIT, portrait);
+
+                                    Intent intent = new Intent();
+                                    intent.setClass(getApplicationContext(), HomeActivity.class);
+                                    startActivity(intent);
+                                    finish();
+
+                                }
+                            });
+                        } else {
+                            mDelivery.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(getApplicationContext(), R.string.pb_message_login_failure, Toast.LENGTH_SHORT).show();
+                                    ll_progress_bar_container.setVisibility(View.GONE);
+                                }
+                            });
+                        }
+                    } else {
                         mDelivery.post(new Runnable() {
                             @Override
                             public void run() {
-                                sharedPreferencesHelper.putStringValue(AppConstants.KEY_SYS_CURRENT_UID, id);
-                                sharedPreferencesHelper.putStringValue(AppConstants.KEY_SYS_CURRENT_NICKNAME, nickname);
-                                sharedPreferencesHelper.putStringValue(AppConstants.KEY_SYS_CURRENT_PORTRAIT, portrait);
-
-                                Intent intent = new Intent();
-                                intent.setClass(getApplicationContext(), HomeActivity.class);
-                                startActivity(intent);
-                                finish();
+                                Toast.makeText(getApplicationContext(), R.string.pb_message_login_failure, Toast.LENGTH_SHORT).show();
+                                ll_progress_bar_container.setVisibility(View.GONE);
                             }
                         });
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
+
+                    Log.d(TAG, "LOGIN_URL return " + e.getMessage());
                 }
             }
         });
