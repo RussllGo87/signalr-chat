@@ -177,6 +177,7 @@
 
     <!-- 修改密码 -->
     <string name="title_activity_change_pwd">@string/tv_settings_item_change_pwd</string>
+    <string name="toast_change_pwd_ok">密码修改成功</string>
 
     <!-- 修改个人信息 -->
     <string name="title_activity_acount_info_update">@string/tv_settings_item_update_info</string>
