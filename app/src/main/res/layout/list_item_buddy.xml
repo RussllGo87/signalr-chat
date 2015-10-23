@@ -8,8 +8,8 @@
     android:gravity="center">
 
     <ImageView android:id="@+id/iv_user_portrait"
-        android:layout_width="@dimen/btn_qr_code_width"
-        android:layout_height="@dimen/btn_qr_code_width"
+        android:layout_width="@dimen/iv_user_portrait_width"
+        android:layout_height="@dimen/iv_user_portrait_width"
         android:src="@mipmap/ic_launcher"/>
 
     <LinearLayout

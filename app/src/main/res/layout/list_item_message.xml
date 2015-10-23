@@ -6,8 +6,8 @@
     android:padding="4dp">
 
     <ImageView android:id="@+id/iv_account_portrait"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/iv_user_portrait_width"
+        android:layout_height="@dimen/iv_user_portrait_width"
         android:src="@mipmap/ic_launcher"/>
 
     <LinearLayout
