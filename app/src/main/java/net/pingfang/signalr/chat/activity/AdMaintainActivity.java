@@ -1,6 +1,7 @@
 package net.pingfang.signalr.chat.activity;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -13,6 +14,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -68,7 +72,8 @@ public class AdMaintainActivity extends AppCompatActivity implements View.OnClic
 
     SharedPreferencesHelper sharedPreferencesHelper;
 
-    String filePath;
+    Dialog dialog;
+    Uri targetUri;
     String tmpFilePath;
     String fileContent;
 
@@ -134,7 +139,7 @@ public class AdMaintainActivity extends AppCompatActivity implements View.OnClic
                 navigateUp();
                 break;
             case R.id.iv_ad_maintain_pic:
-                takePic();
+                showDialog();
                 break;
             case R.id.btn_ad_maintain_save:
                 storeOrPostAdMaintain();
@@ -183,34 +188,126 @@ public class AdMaintainActivity extends AppCompatActivity implements View.OnClic
         }
     }
 
-    private void takePic() {
+    private void showDialog() {
+        View view = getLayoutInflater().inflate(R.layout.photo_choose_dialog,
+                null);
+        dialog = new Dialog(this, R.style.transparentFrameWindowStyle);
+        dialog.setContentView(view, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT));
+        Window window = dialog.getWindow();
+        // 设置显示动画
+        //        window.setWindowAnimations(R.style.main_menu_animstyle);
+        WindowManager.LayoutParams wl = window.getAttributes();
+        wl.x = 0;
+        wl.y = getWindowManager().getDefaultDisplay().getHeight();
+        // 以下这两句是为了保证按钮可以水平满屏
+        wl.width = ViewGroup.LayoutParams.MATCH_PARENT;
+        wl.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+        // 设置显示位置
+        dialog.onWindowAttributesChanged(wl);
+        // 设置点击外围解散
+        dialog.setCanceledOnTouchOutside(true);
+        dialog.show();
+    }
+
+    public void on_click(View v) {
+        switch (v.getId()) {
+            case R.id.openCamera:
+                openCamera();
+                dialog.cancel();
+                break;
+            case R.id.openPhones:
+                pickImage();
+                dialog.cancel();
+                break;
+            case R.id.cancel:
+                dialog.cancel();
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void openCamera() {
         tmpFilePath = MediaFileUtils.genarateFilePath(getApplicationContext(),
-                Environment.DIRECTORY_PICTURES,"Photos","jpg");
+                Environment.DIRECTORY_PICTURES, "Photos", "jpg");
         File file = new File(tmpFilePath);
         if (file.exists()) {
             file.delete();
         }
 
-        Uri uri = Uri.fromFile(file);
+        targetUri = Uri.fromFile(file);
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT,uri);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, targetUri);
         if (intent.resolveActivity(getPackageManager()) != null) {
             startActivityForResult(intent, GlobalApplication.REQUEST_IMAGE_CAPTURE);
+        }
+
+    }
+
+    private void pickImage() {
+        Intent getIntent = new Intent(Intent.ACTION_GET_CONTENT);
+        getIntent.setType("image/*");
+
+        Intent pickIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        pickIntent.setType("image/*");
+
+        if (getIntent.resolveActivity(getPackageManager()) != null ||
+                pickIntent.resolveActivity(getPackageManager()) != null) {
+
+            Intent chooserIntent = Intent.createChooser(getIntent, getString(R.string.action_select_image));
+            chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{pickIntent});
+
+            startActivityForResult(chooserIntent, GlobalApplication.REQUEST_IMAGE_GET);
         }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
         if(resultCode == Activity.RESULT_OK) {
             if(requestCode == GlobalApplication.REQUEST_IMAGE_CAPTURE) {
-                filePath = tmpFilePath;
+
+                String filePath = tmpFilePath;
                 Bitmap bitmap = MediaFileUtils.decodeBitmapFromPath(filePath,
                         MediaFileUtils.dpToPx(getApplicationContext(), 150),
                         MediaFileUtils.dpToPx(getApplicationContext(), 150));
                 iv_ad_maintain_pic.setImageBitmap(bitmap);
                 fileContent = CommonTools.bitmapToBase64(bitmap);
+            } else if(requestCode == GlobalApplication.REQUEST_IMAGE_GET) {
+                if(data != null && data.getData() != null) {
+                    Uri uri = data.getData();
+                    String filePath = MediaFileUtils.getRealPathFromURI(getApplicationContext(), uri);
+                    Bitmap bitmap = MediaFileUtils.decodeBitmapFromPath(filePath,
+                            MediaFileUtils.dpToPx(getApplicationContext(), 150),
+                            MediaFileUtils.dpToPx(getApplicationContext(), 150));
+                    iv_ad_maintain_pic.setImageBitmap(bitmap);
+                    fileContent = CommonTools.bitmapToBase64(bitmap);
+                } else if(data == null) {
+                    Toast.makeText(getApplicationContext(),getString(R.string.image_capture_data_null),Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getApplicationContext(),getString(R.string.image_capture_file_null),Toast.LENGTH_SHORT).show();
+                }
+            }
+        } else if(resultCode == Activity.RESULT_CANCELED) {
+            if(requestCode == GlobalApplication.REQUEST_IMAGE_CAPTURE) {
+                Toast.makeText(getApplicationContext(),getString(R.string.image_capture_user_canceled),Toast.LENGTH_SHORT).show();
+            }
+
+            if(requestCode == GlobalApplication.REQUEST_IMAGE_GET) {
+                Toast.makeText(getApplicationContext(),getString(R.string.image_get_file_user_canceled),Toast.LENGTH_SHORT).show();
+            }
+
+        } else {
+            if(requestCode == GlobalApplication.REQUEST_IMAGE_CAPTURE) {
+                Toast.makeText(getApplicationContext(),getString(R.string.image_capture_user_error),Toast.LENGTH_SHORT).show();
+            }
+
+            if(requestCode == GlobalApplication.REQUEST_IMAGE_GET) {
+                Toast.makeText(getApplicationContext(),getString(R.string.image_get_file_user_error),Toast.LENGTH_SHORT).show();
             }
         }
+
     }
 
     public void navigateUp() {

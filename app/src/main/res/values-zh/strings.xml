@@ -147,11 +147,11 @@
     <string name="title_activity_ad_maintain">广告维护</string>
     <string name="toast_ad_maintain_ok">广告上传成功</string>
 
-
     <!-- 聊天页 -->
     <string name="title_activity_chat">%s</string>
     <string name="btn_send">发送</string>
     <string name="action_text">文字</string>
+    <string name="action_photo">照片</string>
     <string name="action_image">图片</string>
     <string name="action_voice">语音</string>
     <string name="action_select_image">选择图片</string>
@@ -198,5 +198,14 @@
 
     <!-- provider 相关 -->
     <string name="illegal_uri_exception">错误的 URI</string>
+
+    <!-- 公共错误提示 -->
+    <string name="image_capture_data_null">拍照返回响应为为空</string>
+    <string name="image_capture_file_null">拍照返回文件为不存在</string>
+    <string name="image_capture_user_canceled">拍照返回被取消</string>
+    <string name="image_capture_user_error">拍照返回出错</string>
+
+    <string name="image_get_file_user_canceled">获取图片返回被取消</string>
+    <string name="image_get_file_user_error">获取图片返回出错</string>
 
 </resources>

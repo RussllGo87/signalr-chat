@@ -69,8 +69,8 @@ public class AccountInfoUpdateActivity extends AppCompatActivity implements View
     SharedPreferencesHelper sharedPreferencesHelper;
 
     Dialog dialog;
+    Uri targetUri;
     String tmpFilePath;
-    String filePath;
     String fileContent;
 
     @Override
@@ -131,12 +131,14 @@ public class AccountInfoUpdateActivity extends AppCompatActivity implements View
             file.delete();
         }
 
-        Uri uri = Uri.fromFile(file);
+        targetUri = Uri.fromFile(file);
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, targetUri);
         if (intent.resolveActivity(getPackageManager()) != null) {
             startActivityForResult(intent, GlobalApplication.REQUEST_IMAGE_CAPTURE);
         }
+
+
     }
 
     private void pickImage() {
@@ -160,25 +162,45 @@ public class AccountInfoUpdateActivity extends AppCompatActivity implements View
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         if(resultCode == Activity.RESULT_OK) {
-            if(data != null && data.getData() != null) {
-                if(requestCode == GlobalApplication.REQUEST_IMAGE_CAPTURE) {
-                    filePath = tmpFilePath;
+            if(requestCode == GlobalApplication.REQUEST_IMAGE_CAPTURE) {
+
+                String filePath = tmpFilePath;
+                Bitmap bitmap = MediaFileUtils.decodeBitmapFromPath(filePath,
+                        MediaFileUtils.dpToPx(getApplicationContext(), 150),
+                        MediaFileUtils.dpToPx(getApplicationContext(), 150));
+                iv_account_portrait.setImageBitmap(bitmap);
+                fileContent = CommonTools.bitmapToBase64(bitmap);
+            } else if(requestCode == GlobalApplication.REQUEST_IMAGE_GET) {
+                if(data != null && data.getData() != null) {
+                    Uri uri = data.getData();
+                    String filePath = MediaFileUtils.getRealPathFromURI(getApplicationContext(), uri);
                     Bitmap bitmap = MediaFileUtils.decodeBitmapFromPath(filePath,
                             MediaFileUtils.dpToPx(getApplicationContext(), 150),
                             MediaFileUtils.dpToPx(getApplicationContext(), 150));
                     iv_account_portrait.setImageBitmap(bitmap);
                     fileContent = CommonTools.bitmapToBase64(bitmap);
-                } else if(requestCode == GlobalApplication.REQUEST_IMAGE_GET) {
-                    Uri uri = data.getData();
-                    if(uri != null) {
-                        String filePath = MediaFileUtils.getRealPathFromURI(getApplicationContext(), uri);
-                        Bitmap bitmap = MediaFileUtils.decodeBitmapFromPath(filePath,
-                                MediaFileUtils.dpToPx(getApplicationContext(), 150),
-                                MediaFileUtils.dpToPx(getApplicationContext(), 150));
-                        iv_account_portrait.setImageBitmap(bitmap);
-                        fileContent = CommonTools.bitmapToBase64(bitmap);
-                    }
+                } else if(data == null) {
+                    Toast.makeText(getApplicationContext(),getString(R.string.image_capture_data_null),Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getApplicationContext(),getString(R.string.image_capture_file_null),Toast.LENGTH_SHORT).show();
                 }
+            }
+        } else if(resultCode == Activity.RESULT_CANCELED) {
+            if(requestCode == GlobalApplication.REQUEST_IMAGE_CAPTURE) {
+                Toast.makeText(getApplicationContext(),getString(R.string.image_capture_user_canceled),Toast.LENGTH_SHORT).show();
+            }
+
+            if(requestCode == GlobalApplication.REQUEST_IMAGE_GET) {
+                Toast.makeText(getApplicationContext(),getString(R.string.image_get_file_user_canceled),Toast.LENGTH_SHORT).show();
+            }
+
+        } else {
+            if(requestCode == GlobalApplication.REQUEST_IMAGE_CAPTURE) {
+                Toast.makeText(getApplicationContext(),getString(R.string.image_capture_user_error),Toast.LENGTH_SHORT).show();
+            }
+
+            if(requestCode == GlobalApplication.REQUEST_IMAGE_GET) {
+                Toast.makeText(getApplicationContext(),getString(R.string.image_get_file_user_error),Toast.LENGTH_SHORT).show();
             }
         }
 
@@ -188,9 +210,11 @@ public class AccountInfoUpdateActivity extends AppCompatActivity implements View
         switch (v.getId()) {
             case R.id.openCamera:
                 openCamera();
+                dialog.cancel();
                 break;
             case R.id.openPhones:
                 pickImage();
+                dialog.cancel();
                 break;
             case R.id.cancel:
                 dialog.cancel();

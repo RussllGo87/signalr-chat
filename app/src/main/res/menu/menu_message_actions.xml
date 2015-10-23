@@ -8,13 +8,18 @@
           android:orderInCategory="100"
           app:showAsAction="never"/>
 
+    <item android:id="@+id/action_photo"
+          android:title="@string/action_photo"
+          android:orderInCategory="101"
+          app:showAsAction="never"/>
+
     <item android:id="@+id/action_image"
           android:title="@string/action_image"
-          android:orderInCategory="101"
+          android:orderInCategory="102"
           app:showAsAction="never"/>
 
     <item android:id="@+id/action_voice"
           android:title="@string/action_voice"
-          android:orderInCategory="102"
+          android:orderInCategory="103"
           app:showAsAction="never"/>
 </menu>

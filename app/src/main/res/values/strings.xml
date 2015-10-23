@@ -108,6 +108,7 @@
     <string name="title_activity_chat">%s</string>
     <string name="btn_send">Send</string>
     <string name="action_text">Text</string>
+    <string name="action_photo">Photo</string>
     <string name="action_image">Image</string>
     <string name="action_select_image">Select Image</string>
     <string name="action_voice">Voice</string>
@@ -146,12 +147,12 @@
     <string name="btn_feedback_submit">Submit</string>
     <string name="title_activity_grey_bitmap">GreyBitmapActivity</string>
 
+    <!-- 公共错误提示 -->
+    <string name="image_capture_data_null">REQUEST_IMAGE_CAPTURE data null</string>
+    <string name="image_capture_file_null">REQUEST_IMAGE_CAPTURE file null</string>
+    <string name="image_capture_user_canceled">REQUEST_IMAGE_CAPTURE canceled</string>
+    <string name="image_capture_user_error">REQUEST_IMAGE_CAPTURE error</string>
 
-
-
-
-
-
-
-
+    <string name="image_get_file_user_canceled">REQUEST_IMAGE_GET canceled</string>
+    <string name="image_get_file_user_error">REQUEST_IMAGE_GET error</string>
 </resources>

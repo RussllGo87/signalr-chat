@@ -64,11 +64,11 @@ public class LoginActivity extends AppCompatActivity {
     public static final String LOGIN_KEY_ACCOUNT = "account";
     public static final String LOGIN_KEY_PASSWORD = "password";
 
-    public static final String NEW_LOGIN_URL = GlobalApplication.URL_WEB_API_HOST + "/api/WebAPI/User/GetUser";
+    public static final String NEW_LOGIN_URL = GlobalApplication.URL_WEB_API_HOST + "/api/WebAPI/User/thirdLogin";
     public static final String NEW_LOGIN_KEY_TID = "key";
     public static final String NEW_LOGIN_KEY_WID = "key";
     public static final String NEW_LOGIN_KEY_WXID = "key";
-    public static final String NEW_LOGIN_KEY_NICK_NAME = "nickname";
+    public static final String NEW_LOGIN_KEY_NICK_NAME = "nickName";
     public static final String NEW_LOGIN_KEY_PORTRAIT = "pic";
 
     public static final String NEW_LGOIN_PARAM_PLATFROM_QQ = "qq";
@@ -406,8 +406,8 @@ public class LoginActivity extends AppCompatActivity {
             }
         }
 
-        OkHttpCommonUtil okHttpCommonUtil = OkHttpCommonUtil.newInstance(getApplicationContext());
-        okHttpCommonUtil.getRequest(NEW_LOGIN_URL, params, new HttpBaseCallback() {
+        OkHttpCommonUtil okHttp = OkHttpCommonUtil.newInstance(getApplicationContext());
+        okHttp.postRequest(NEW_LOGIN_URL, params, new HttpBaseCallback() {
             @Override
             public void onFailure(Request request, IOException e) {
 
@@ -425,29 +425,29 @@ public class LoginActivity extends AppCompatActivity {
                     if (status == 0) {
                         JSONObject result = jsonObject.getJSONObject("result");
                         final String id = result.getString("id");
-                    //  final String nickname = result.getString("nickname");
-                    //  final String portrait = result.getString("portrait");
+                        //  final String nickname = result.getString("nickname");
+                        //  final String portrait = result.getString("portrait");
 
                         UserManager userManager = new UserManager(getApplicationContext());
                         JSONArray list = jsonObject.getJSONArray("list");
-                        if(list != null && list.length() > 0) {
-                            for(int i = 0; i < list.length(); i++) {
+                        if (list != null && list.length() > 0) {
+                            for (int i = 0; i < list.length(); i++) {
                                 JSONObject tmpJson = list.getJSONObject(i);
                                 String item_uid = tmpJson.getString("id");
                                 String item_nickname = tmpJson.getString("nickname");
                                 String item_portrait = tmpJson.getString("portrait");
                                 //                                    UserManager userManager = new UserManager(getApplicationContext());
-                                if(item_portrait != null && !TextUtils.isEmpty(item_portrait) && !"null".equals(item_portrait)) {
-                                    userManager.addRecord(item_uid,item_nickname,item_portrait);
+                                if (item_portrait != null && !TextUtils.isEmpty(item_portrait) && !"null".equals(item_portrait)) {
+                                    userManager.addRecord(item_uid, item_nickname, item_portrait);
                                 } else {
-                                    userManager.addRecord(item_uid,item_nickname,"");
+                                    userManager.addRecord(item_uid, item_nickname, "");
                                 }
                             }
                         }
 
                         Cursor cursor = userManager.queryByUid(id);
 
-                        if(cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {
+                        if (cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {
                             final String nickname = cursor.getString(cursor.getColumnIndex(AppContract.UserEntry.COLUMN_NAME_NICK_NAME));
                             final String portrait = cursor.getString(cursor.getColumnIndex(AppContract.UserEntry.COLUMN_NAME_PORTRAIT));
                             mDelivery.post(new Runnable() {
@@ -457,7 +457,7 @@ public class LoginActivity extends AppCompatActivity {
                                     Toast.makeText(getApplicationContext(), R.string.pb_message_login_ok, Toast.LENGTH_SHORT).show();
                                     ll_progress_bar_container.setVisibility(View.GONE);
 
-                                    sharedPreferencesHelper.putStringValue(AppConstants.KEY_SYS_CURRENT_UID,id);
+                                    sharedPreferencesHelper.putStringValue(AppConstants.KEY_SYS_CURRENT_UID, id);
                                     sharedPreferencesHelper.putStringValue(AppConstants.KEY_SYS_CURRENT_NICKNAME, nickname);
                                     sharedPreferencesHelper.putStringValue(AppConstants.KEY_SYS_CURRENT_PORTRAIT, portrait);
 
@@ -545,8 +545,8 @@ public class LoginActivity extends AppCompatActivity {
             ll_progress_bar_container.setVisibility(View.VISIBLE);
             tv_pb_operation.setText(R.string.pb_message_login_now);
 
-            OkHttpCommonUtil okHttpCommonUtil = OkHttpCommonUtil.newInstance(getApplicationContext());
-            okHttpCommonUtil.getRequest(LOGIN_URL, new OkHttpCommonUtil.Param[]{
+            OkHttpCommonUtil okHttp = OkHttpCommonUtil.newInstance(getApplicationContext());
+            okHttp.getRequest(LOGIN_URL, new OkHttpCommonUtil.Param[]{
                 new OkHttpCommonUtil.Param(LOGIN_KEY_ACCOUNT, account),
                 new OkHttpCommonUtil.Param(LOGIN_KEY_PASSWORD, password)
             }, new HttpBaseCallback() {

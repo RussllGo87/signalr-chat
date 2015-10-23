@@ -18,6 +18,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
+import android.provider.MediaStore;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.AppCompatActivity;
@@ -88,6 +89,10 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     String uid;
     String nickname;
     String portrait;
+
+    Uri targetUri;
+    String tmpFilePath;
+    String fileContent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -184,6 +189,11 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                     case R.id.action_text:
                         btn_voice_record.setVisibility(View.GONE);
                         et_message.setVisibility(View.VISIBLE);
+                        break;
+                    case R.id.action_photo:
+                        btn_voice_record.setVisibility(View.GONE);
+                        et_message.setVisibility(View.VISIBLE);
+                        openCamera();
                         break;
                     case R.id.action_image:
                         btn_voice_record.setVisibility(View.GONE);
@@ -366,6 +376,23 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    private void openCamera() {
+        tmpFilePath = MediaFileUtils.genarateFilePath(getApplicationContext(),
+                Environment.DIRECTORY_PICTURES, "Photos", "jpg");
+        File file = new File(tmpFilePath);
+        if (file.exists()) {
+            file.delete();
+        }
+
+        targetUri = Uri.fromFile(file);
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, targetUri);
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(intent, GlobalApplication.REQUEST_IMAGE_CAPTURE);
+        }
+
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(resultCode == Activity.RESULT_OK) {
@@ -389,6 +416,20 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                     } else {
                         Log.d("ChatActivity", "no data");
                     }
+                }
+            } else if(requestCode == GlobalApplication.REQUEST_IMAGE_CAPTURE) {
+                String filePath = tmpFilePath;
+                Bitmap bitmap = MediaFileUtils.decodeBitmapFromPath(filePath,
+                        MediaFileUtils.dpToPx(getApplicationContext(), 150),
+                        MediaFileUtils.dpToPx(getApplicationContext(), 150));
+                inflaterImgMessage(bitmap, targetUri, true, helper.getStringValue(AppConstants.KEY_SYS_CURRENT_NICKNAME), CommonTools.TimeConvertString());
+                String fileExtension = MediaFileUtils.getFileExtension(filePath);
+                String fileBody = CommonTools.bitmapToBase64(bitmap);
+                if(!TextUtils.isEmpty(fileExtension) && !TextUtils.isEmpty(fileBody)) {
+                    String messageBody = MessageConstructor.constructFileMessage(uid,nickname,portrait, buddyUid,"Picture", fileExtension, fileBody);
+                    Log.d("ChatActivity","messageBody = " + messageBody);
+                    mService.sendMessage("OnlineMsg", messageBody);
+                    new UpdateRecentMessageTask().execute(buddyUid, getString(R.string.content_type_pic), CommonTools.TimeConvertString(),uid);
                 }
             }
         }
