@@ -200,12 +200,13 @@
     <string name="illegal_uri_exception">错误的 URI</string>
 
     <!-- 公共错误提示 -->
-    <string name="image_capture_data_null">拍照返回响应为为空</string>
-    <string name="image_capture_file_null">拍照返回文件为不存在</string>
+    <string name="image_get_data_null">获取图片返回响应为为空</string>
+    <string name="image_get_file_null">获取图片返回文件为不存在</string>
     <string name="image_capture_user_canceled">拍照返回被取消</string>
     <string name="image_capture_user_error">拍照返回出错</string>
 
     <string name="image_get_file_user_canceled">获取图片返回被取消</string>
     <string name="image_get_file_user_error">获取图片返回出错</string>
+    <string name="image_data_null">没有选择图片</string>
 
 </resources>

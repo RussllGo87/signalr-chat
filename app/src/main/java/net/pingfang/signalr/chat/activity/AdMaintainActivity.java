@@ -36,6 +36,7 @@ import net.pingfang.signalr.chat.location.LocationNotify;
 import net.pingfang.signalr.chat.net.HttpBaseCallback;
 import net.pingfang.signalr.chat.net.OkHttpCommonUtil;
 import net.pingfang.signalr.chat.util.CommonTools;
+import net.pingfang.signalr.chat.util.FileUtil;
 import net.pingfang.signalr.chat.util.GlobalApplication;
 import net.pingfang.signalr.chat.util.MediaFileUtils;
 import net.pingfang.signalr.chat.util.SharedPreferencesHelper;
@@ -148,7 +149,7 @@ public class AdMaintainActivity extends AppCompatActivity implements View.OnClic
     }
 
     private void storeOrPostAdMaintain() {
-        if(!TextUtils.isEmpty(tmpFilePath)) {
+        if(!TextUtils.isEmpty(fileContent)) {
             OkHttpCommonUtil okhtp = OkHttpCommonUtil.newInstance(getApplicationContext());
             okhtp.postRequest(
                     URL_AD_MAINTAIN,
@@ -186,6 +187,8 @@ public class AdMaintainActivity extends AppCompatActivity implements View.OnClic
                         }
                     }
             );
+        } else {
+            Toast.makeText(getApplicationContext(),getString(R.string.image_data_null),Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -278,16 +281,16 @@ public class AdMaintainActivity extends AppCompatActivity implements View.OnClic
             } else if(requestCode == GlobalApplication.REQUEST_IMAGE_GET) {
                 if(data != null && data.getData() != null) {
                     Uri uri = data.getData();
-                    String filePath = MediaFileUtils.getRealPathFromURI(getApplicationContext(), uri);
+                    String filePath = FileUtil.getPath(getApplicationContext(), uri);
                     Bitmap bitmap = MediaFileUtils.decodeBitmapFromPath(filePath,
                             MediaFileUtils.dpToPx(getApplicationContext(), 150),
                             MediaFileUtils.dpToPx(getApplicationContext(), 150));
                     iv_ad_maintain_pic.setImageBitmap(bitmap);
                     fileContent = CommonTools.bitmapToBase64(bitmap);
                 } else if(data == null) {
-                    Toast.makeText(getApplicationContext(),getString(R.string.image_capture_data_null),Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(),getString(R.string.image_get_data_null),Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(getApplicationContext(),getString(R.string.image_capture_file_null),Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(),getString(R.string.image_get_file_null),Toast.LENGTH_SHORT).show();
                 }
             }
         } else if(resultCode == Activity.RESULT_CANCELED) {

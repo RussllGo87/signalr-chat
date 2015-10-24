@@ -11,6 +11,7 @@ import android.provider.MediaStore;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,6 +36,7 @@ import net.pingfang.signalr.chat.location.LocationNotify;
 import net.pingfang.signalr.chat.net.HttpBaseCallback;
 import net.pingfang.signalr.chat.net.OkHttpCommonUtil;
 import net.pingfang.signalr.chat.util.CommonTools;
+import net.pingfang.signalr.chat.util.FileUtil;
 import net.pingfang.signalr.chat.util.GlobalApplication;
 import net.pingfang.signalr.chat.util.MediaFileUtils;
 import net.pingfang.signalr.chat.util.SharedPreferencesHelper;
@@ -245,16 +247,16 @@ public class ResourcePostActivity extends AppCompatActivity implements View.OnCl
             } else if(requestCode == GlobalApplication.REQUEST_IMAGE_GET) {
                 if(data != null && data.getData() != null) {
                     Uri uri = data.getData();
-                    String filePath = MediaFileUtils.getRealPathFromURI(getApplicationContext(), uri);
+                    String filePath = FileUtil.getPath(getApplicationContext(), uri);
                     Bitmap bitmap = MediaFileUtils.decodeBitmapFromPath(filePath,
                             MediaFileUtils.dpToPx(getApplicationContext(), 150),
                             MediaFileUtils.dpToPx(getApplicationContext(), 150));
                     iv_resource_profile.setImageBitmap(bitmap);
                     fileContent = CommonTools.bitmapToBase64(bitmap);
                 } else if(data == null) {
-                    Toast.makeText(getApplicationContext(),getString(R.string.image_capture_data_null),Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(),getString(R.string.image_get_data_null),Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(getApplicationContext(),getString(R.string.image_capture_file_null),Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(),getString(R.string.image_get_file_null),Toast.LENGTH_SHORT).show();
                 }
             }
         } else if(resultCode == Activity.RESULT_CANCELED) {
@@ -279,46 +281,51 @@ public class ResourcePostActivity extends AppCompatActivity implements View.OnCl
     }
 
     private void storeOrPostRes() {
-        OkHttpCommonUtil okhtp = OkHttpCommonUtil.newInstance(getApplicationContext());
-        okhtp.postRequest(
-                URL_RESOURCE_POST,
-                new OkHttpCommonUtil.Param[]{
-                        new OkHttpCommonUtil.Param(KEY_RESOURCE_POST_UID, sharedPreferencesHelper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID)),
-                        new OkHttpCommonUtil.Param(KEY_RESOURCE_POST_WIDTH, et_resource_width.getText().toString().trim()),
-                        new OkHttpCommonUtil.Param(KEY_RESOURCE_POST_HEIGHT, et_resource_height.getText().toString().trim()),
-                        new OkHttpCommonUtil.Param(KEY_RESOURCE_POST_ADDRESS, et_resource_location.getText().toString().trim()),
-                        new OkHttpCommonUtil.Param(KEY_RESOURCE_POST_CONTACTS, et_resource_contacts.getText().toString().trim()),
-                        new OkHttpCommonUtil.Param(KEY_RESOURCE_POST_PHONE, et_resource_phone.getText().toString().trim()),
-                        new OkHttpCommonUtil.Param(KEY_RESOURCE_POST_REMARK, et_resource_remark.getText().toString().trim()),
-                        new OkHttpCommonUtil.Param(KEY_RESOURCE_POST_PROFILE, fileContent)
-                },
-                new HttpBaseCallback() {
-                    @Override
-                    public void onResponse(Response response) throws IOException {
-                        String result = response.body().string();
-                        Log.d(TAG, "URL_RESOURCE_POST return == " + result);
-                        JSONObject jsonObject = null;
-                        try {
-                            jsonObject = new JSONObject(result);
-                            int status = jsonObject.getInt("status");
-                            String message = jsonObject.getString("message");
-                            if(status == 0) {
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        Toast.makeText(getApplicationContext(),
-                                                getString(R.string.toast_resource_post_ok),
-                                                Toast.LENGTH_SHORT).show();
-                                        navigateUp();
-                                    }
-                                });
+        if(!TextUtils.isEmpty(fileContent)) {
+            OkHttpCommonUtil okhtp = OkHttpCommonUtil.newInstance(getApplicationContext());
+            okhtp.postRequest(
+                    URL_RESOURCE_POST,
+                    new OkHttpCommonUtil.Param[]{
+                            new OkHttpCommonUtil.Param(KEY_RESOURCE_POST_UID, sharedPreferencesHelper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID)),
+                            new OkHttpCommonUtil.Param(KEY_RESOURCE_POST_WIDTH, et_resource_width.getText().toString().trim()),
+                            new OkHttpCommonUtil.Param(KEY_RESOURCE_POST_HEIGHT, et_resource_height.getText().toString().trim()),
+                            new OkHttpCommonUtil.Param(KEY_RESOURCE_POST_ADDRESS, et_resource_location.getText().toString().trim()),
+                            new OkHttpCommonUtil.Param(KEY_RESOURCE_POST_CONTACTS, et_resource_contacts.getText().toString().trim()),
+                            new OkHttpCommonUtil.Param(KEY_RESOURCE_POST_PHONE, et_resource_phone.getText().toString().trim()),
+                            new OkHttpCommonUtil.Param(KEY_RESOURCE_POST_REMARK, et_resource_remark.getText().toString().trim()),
+                            new OkHttpCommonUtil.Param(KEY_RESOURCE_POST_PROFILE, fileContent)
+                    },
+                    new HttpBaseCallback() {
+                        @Override
+                        public void onResponse(Response response) throws IOException {
+                            String result = response.body().string();
+                            Log.d(TAG, "URL_RESOURCE_POST return == " + result);
+                            JSONObject jsonObject = null;
+                            try {
+                                jsonObject = new JSONObject(result);
+                                int status = jsonObject.getInt("status");
+                                String message = jsonObject.getString("message");
+                                if(status == 0) {
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Toast.makeText(getApplicationContext(),
+                                                    getString(R.string.toast_resource_post_ok),
+                                                    Toast.LENGTH_SHORT).show();
+                                            navigateUp();
+                                        }
+                                    });
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
                             }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
                         }
                     }
-                }
-        );
+            );
+        } else {
+            Toast.makeText(getApplicationContext(),getString(R.string.image_data_null),Toast.LENGTH_SHORT).show();
+        }
+
     }
 
     public void navigateUp() {

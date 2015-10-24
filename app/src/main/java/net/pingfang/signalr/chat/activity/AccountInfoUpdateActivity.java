@@ -11,6 +11,7 @@ import android.provider.MediaStore;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +30,7 @@ import net.pingfang.signalr.chat.constant.app.AppConstants;
 import net.pingfang.signalr.chat.net.HttpBaseCallback;
 import net.pingfang.signalr.chat.net.OkHttpCommonUtil;
 import net.pingfang.signalr.chat.util.CommonTools;
+import net.pingfang.signalr.chat.util.FileUtil;
 import net.pingfang.signalr.chat.util.GlobalApplication;
 import net.pingfang.signalr.chat.util.MediaFileUtils;
 import net.pingfang.signalr.chat.util.SharedPreferencesHelper;
@@ -173,16 +175,16 @@ public class AccountInfoUpdateActivity extends AppCompatActivity implements View
             } else if(requestCode == GlobalApplication.REQUEST_IMAGE_GET) {
                 if(data != null && data.getData() != null) {
                     Uri uri = data.getData();
-                    String filePath = MediaFileUtils.getRealPathFromURI(getApplicationContext(), uri);
+                    String filePath = FileUtil.getPath(getApplicationContext(),uri);
                     Bitmap bitmap = MediaFileUtils.decodeBitmapFromPath(filePath,
                             MediaFileUtils.dpToPx(getApplicationContext(), 150),
                             MediaFileUtils.dpToPx(getApplicationContext(), 150));
                     iv_account_portrait.setImageBitmap(bitmap);
                     fileContent = CommonTools.bitmapToBase64(bitmap);
                 } else if(data == null) {
-                    Toast.makeText(getApplicationContext(),getString(R.string.image_capture_data_null),Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(),getString(R.string.image_get_data_null),Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(getApplicationContext(),getString(R.string.image_capture_file_null),Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(),getString(R.string.image_get_file_null),Toast.LENGTH_SHORT).show();
                 }
             }
         } else if(resultCode == Activity.RESULT_CANCELED) {
@@ -241,44 +243,50 @@ public class AccountInfoUpdateActivity extends AppCompatActivity implements View
     }
 
     private void saveOrUpdateAccountInfo() {
-        OkHttpCommonUtil okHttp = OkHttpCommonUtil.newInstance(getApplicationContext());
-        okHttp.postRequest(URL_ACCOUNT_INFO_UPDATE,
-                new OkHttpCommonUtil.Param[] {
-                    new OkHttpCommonUtil.Param(KEY_URL_ACCOUNT_INFO_UPDATE_UID,sharedPreferencesHelper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID)),
-                    new OkHttpCommonUtil.Param(KEY_URL_ACCOUNT_INFO_UPDATE_USER_NAME,et_account_username.getText().toString().trim()),
-                    new OkHttpCommonUtil.Param(KEY_URL_ACCOUNT_INFO_UPDATE_NICKNAME,et_account_nickname.getText().toString().trim()),
-                    new OkHttpCommonUtil.Param(KEY_URL_ACCOUNT_INFO_UPDATE_REAL_NAME,et_account_realname.getText().toString().trim()),
-                    new OkHttpCommonUtil.Param(KEY_URL_ACCOUNT_INFO_UPDATE_PHONE,et_account_phone.getText().toString().trim()),
-                    new OkHttpCommonUtil.Param(KEY_URL_ACCOUNT_INFO_UPDATE_QQ,et_account_qq.getText().toString().trim()),
-                    new OkHttpCommonUtil.Param(KEY_URL_ACCOUNT_INFO_UPDATE_PIC,fileContent),
-                    new OkHttpCommonUtil.Param(KEY_URL_ACCOUNT_INFO_UPDATE_ADDRESS,et_account_address.getText().toString().trim())
-                },
-                new HttpBaseCallback() {
-                    @Override
-                    public void onResponse(Response response) throws IOException {
-                        String result = response.body().string();
-                        Log.d(TAG,"URL_ACCOUNT_INFO_UPDATE return " + result);
-                        JSONObject jsonObject = null;
-                        try {
-                            jsonObject = new JSONObject(result);
-                            int status = jsonObject.getInt("status");
-                            String message = jsonObject.getString("message");
-                            if(status == 0) {
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        Toast.makeText(getApplicationContext(),
-                                                getString(R.string.toast_account_info_update_ok),
-                                                Toast.LENGTH_SHORT).show();
-                                        navigateUp();
-                                    }
-                                });
+        if(!TextUtils.isEmpty(fileContent)) {
+            OkHttpCommonUtil okHttp = OkHttpCommonUtil.newInstance(getApplicationContext());
+            okHttp.postRequest(URL_ACCOUNT_INFO_UPDATE,
+                    new OkHttpCommonUtil.Param[] {
+                            new OkHttpCommonUtil.Param(KEY_URL_ACCOUNT_INFO_UPDATE_UID,sharedPreferencesHelper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID)),
+                            new OkHttpCommonUtil.Param(KEY_URL_ACCOUNT_INFO_UPDATE_USER_NAME,et_account_username.getText().toString().trim()),
+                            new OkHttpCommonUtil.Param(KEY_URL_ACCOUNT_INFO_UPDATE_NICKNAME,et_account_nickname.getText().toString().trim()),
+                            new OkHttpCommonUtil.Param(KEY_URL_ACCOUNT_INFO_UPDATE_REAL_NAME,et_account_realname.getText().toString().trim()),
+                            new OkHttpCommonUtil.Param(KEY_URL_ACCOUNT_INFO_UPDATE_PHONE,et_account_phone.getText().toString().trim()),
+                            new OkHttpCommonUtil.Param(KEY_URL_ACCOUNT_INFO_UPDATE_QQ,et_account_qq.getText().toString().trim()),
+                            new OkHttpCommonUtil.Param(KEY_URL_ACCOUNT_INFO_UPDATE_PIC,fileContent),
+                            new OkHttpCommonUtil.Param(KEY_URL_ACCOUNT_INFO_UPDATE_ADDRESS,et_account_address.getText().toString().trim())
+                    },
+                    new HttpBaseCallback() {
+                        @Override
+                        public void onResponse(Response response) throws IOException {
+                            String result = response.body().string();
+                            Log.d(TAG,"URL_ACCOUNT_INFO_UPDATE return " + result);
+                            JSONObject jsonObject = null;
+                            try {
+                                jsonObject = new JSONObject(result);
+                                int status = jsonObject.getInt("status");
+                                String message = jsonObject.getString("message");
+                                if(status == 0) {
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Toast.makeText(getApplicationContext(),
+                                                    getString(R.string.toast_account_info_update_ok),
+                                                    Toast.LENGTH_SHORT).show();
+                                            navigateUp();
+                                        }
+                                    });
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
                             }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
                         }
-                    }
-                });
+                    });
+
+        } else {
+            Toast.makeText(getApplicationContext(),getString(R.string.image_data_null),Toast.LENGTH_SHORT).show();
+        }
+
     }
 
     public void navigateUp() {

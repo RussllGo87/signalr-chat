@@ -52,6 +52,7 @@ import net.pingfang.signalr.chat.message.MessageConstant;
 import net.pingfang.signalr.chat.message.MessageConstructor;
 import net.pingfang.signalr.chat.service.ChatService;
 import net.pingfang.signalr.chat.util.CommonTools;
+import net.pingfang.signalr.chat.util.FileUtil;
 import net.pingfang.signalr.chat.util.GlobalApplication;
 import net.pingfang.signalr.chat.util.MediaFileUtils;
 import net.pingfang.signalr.chat.util.SharedPreferencesHelper;
@@ -400,7 +401,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                 if(requestCode == GlobalApplication.REQUEST_IMAGE_GET) {
                     Uri uri = data.getData();
                     if(uri != null) {
-                        String filePath = MediaFileUtils.getRealPathFromURI(getApplicationContext(), uri);
+                        String filePath = FileUtil.getPath(getApplicationContext(), uri);
                         Bitmap bitmap = MediaFileUtils.decodeBitmapFromPath(filePath,
                                 MediaFileUtils.dpToPx(getApplicationContext(), 150),
                                 MediaFileUtils.dpToPx(getApplicationContext(), 150));

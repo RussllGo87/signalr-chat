@@ -148,8 +148,8 @@
     <string name="title_activity_grey_bitmap">GreyBitmapActivity</string>
 
     <!-- 公共错误提示 -->
-    <string name="image_capture_data_null">REQUEST_IMAGE_CAPTURE data null</string>
-    <string name="image_capture_file_null">REQUEST_IMAGE_CAPTURE file null</string>
+    <string name="image_get_data_null">REQUEST_IMAGE_GET data null</string>
+    <string name="image_get_file_null">REQUEST_IMAGE_GET file null</string>
     <string name="image_capture_user_canceled">REQUEST_IMAGE_CAPTURE canceled</string>
     <string name="image_capture_user_error">REQUEST_IMAGE_CAPTURE error</string>
 
