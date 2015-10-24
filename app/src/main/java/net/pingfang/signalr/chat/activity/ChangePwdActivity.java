@@ -121,7 +121,10 @@ public class ChangePwdActivity extends AppCompatActivity implements View.OnClick
                                     runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
-                                            Toast.makeText(getApplicationContext(), getString(R.string.toast_change_pwd_ok), Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(getApplicationContext(),
+                                                    getString(R.string.toast_change_pwd_ok),
+                                                    Toast.LENGTH_SHORT).show();
+                                            navigateUp();
                                         }
                                     });
                                 }

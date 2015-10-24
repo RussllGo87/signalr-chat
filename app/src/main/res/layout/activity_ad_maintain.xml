@@ -26,58 +26,71 @@
 
     </RelativeLayout>
 
-    <EditText android:id="@+id/et_ad_maintain_slogan"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:layout_marginTop="15dp"
-              android:hint="广告语"/>
-
-    <EditText android:id="@+id/et_ad_maintain_location"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:hint="广告位置"
-              android:layout_marginTop="2dp"/>
-
-    <EditText android:id="@+id/et_ad_maintain_code"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:layout_marginTop="2dp"
-              android:hint="广告编码"/>
-
-    <ImageView
-        android:id="@+id/iv_ad_maintain_pic"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:layout_gravity="center"
-        android:layout_marginLeft="15dp"
-        android:layout_marginRight="15dp"
-        android:layout_marginTop="2dp"
-        android:src="@drawable/ic_empty" />
-
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="15dp"
-        android:layout_marginRight="15dp"
-        android:layout_marginTop="2dp"
-        android:orientation="horizontal" >
+        android:layout_height="match_parent">
 
-        <Button
-            android:id="@+id/btn_ad_maintain_save"
-            android:layout_width="0dp"
-            android:layout_height="40dp"
-            android:layout_marginRight="1dp"
-            android:layout_weight="1"
-            android:text="确定" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-        <Button
-            android:id="@+id/btn_ad_maintain_cancel"
-            android:layout_width="0dp"
-            android:layout_height="40dp"
-            android:layout_marginLeft="1dp"
-            android:layout_weight="1"
-            android:text="取消" />
+            <EditText android:id="@+id/et_ad_maintain_slogan"
+                      android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:layout_marginTop="15dp"
+                      android:hint="广告语"/>
 
-    </LinearLayout>
+            <EditText android:id="@+id/et_ad_maintain_location"
+                      android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:hint="广告位置"
+                      android:layout_marginTop="2dp"/>
+
+            <EditText android:id="@+id/et_ad_maintain_code"
+                      android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:layout_marginTop="2dp"
+                      android:hint="广告编码"/>
+
+            <ImageView
+                android:id="@+id/iv_ad_maintain_pic"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:layout_gravity="center"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:layout_marginTop="2dp"
+                android:src="@drawable/ic_empty" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:layout_marginTop="2dp"
+                android:orientation="horizontal" >
+
+                <Button
+                    android:id="@+id/btn_ad_maintain_save"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_marginRight="1dp"
+                    android:layout_weight="1"
+                    android:text="确定" />
+
+                <Button
+                    android:id="@+id/btn_ad_maintain_cancel"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_marginLeft="1dp"
+                    android:layout_weight="1"
+                    android:text="取消" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
 
 </LinearLayout>

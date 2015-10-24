@@ -260,12 +260,11 @@ public class NearbyActivity extends AppCompatActivity implements View.OnClickLis
                 });
     }
 
-    private void addMark(double latitude, double longitude, String title, String picUrl) {
+    private void addMark(final double latitude, final double longitude, final String title, final String picUrl) {
         LatLng point = new LatLng(latitude, longitude);
         MarkerOptions options = new MarkerOptions();
         options.position(point);
-        BitmapDescriptor bitmapDescriptor =
-        BitmapDescriptorFactory.fromResource(R.drawable.pointe_map);
+        BitmapDescriptor bitmapDescriptor = BitmapDescriptorFactory.fromResource(R.drawable.pointe_map);
         options.icon(bitmapDescriptor);
 
         Marker marker = (Marker) (baiduMap.addOverlay(options));

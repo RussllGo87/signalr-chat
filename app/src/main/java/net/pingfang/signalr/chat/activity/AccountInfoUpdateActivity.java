@@ -270,6 +270,7 @@ public class AccountInfoUpdateActivity extends AppCompatActivity implements View
                                         Toast.makeText(getApplicationContext(),
                                                 getString(R.string.toast_account_info_update_ok),
                                                 Toast.LENGTH_SHORT).show();
+                                        navigateUp();
                                     }
                                 });
                             }

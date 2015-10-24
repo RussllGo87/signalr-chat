@@ -259,7 +259,7 @@ public class OkHttpCommonUtil {
     /**
      * HTTP POST异步上传文件
      * @param url 请求url
-     * @param file 上传文件
+     * @param files 上传文件
      * @param fileKey 模拟上传表单(form)对应的key
      * @param params 请求参数
      * @return 响应
@@ -274,7 +274,7 @@ public class OkHttpCommonUtil {
         multipartBuilder.type(MultipartBuilder.FORM);
 
         for(Param param : params) {
-            multipartBuilder.addFormDataPart(param.key,param.value);
+            multipartBuilder.addFormDataPart(param.key, param.value);
         }
 
         if(files != null && files.length > 0) {
@@ -282,7 +282,7 @@ public class OkHttpCommonUtil {
             for (File file : files) {
                 String fileName = file.getName();
                 fileBody = RequestBody.create(MediaType.parse(guessMimeType(fileName)), file);
-                multipartBuilder.addFormDataPart(fileKey,fileName, fileBody);
+                multipartBuilder.addFormDataPart(fileKey, fileName, fileBody);
             }
         }
 
@@ -540,7 +540,10 @@ public class OkHttpCommonUtil {
     }
 
     public void uploadFileForm(String url, String fileKey, File[] files,Param[] params,Callback callback) {
-        postAsyncUploadFile(url,callback,files,fileKey,params);
+        postAsyncUploadFile(url, callback, files, fileKey, params);
     }
 
+    public void downloadFileAsync(final String url, final String destFileDir,final ResultCallback callback) {
+        downloadAsyn(url,destFileDir,callback);
+    }
 }

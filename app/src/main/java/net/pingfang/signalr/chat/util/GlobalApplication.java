@@ -26,11 +26,11 @@ public class GlobalApplication extends Application {
     public static final int REQUEST_IMAGE_CAPTURE = 0x01;
     public static final int REQUEST_IMAGE_GET = 0x02;
 
-//    public static final String URL_WEB_API_HOST = "http://115.171.1.96";
-//    public static final String URL_COMMUNICATION_API_HOST = "http://115.171.1.96:10086";
+    public static final String URL_WEB_API_HOST = "http://106.37.80.161";
+    public static final String URL_COMMUNICATION_API_HOST = "http://106.37.80.161:10086";
 
-    public static final String URL_WEB_API_HOST = "http://192.168.0.120";
-    public static final String URL_COMMUNICATION_API_HOST = "http://192.168.0.120:10086";
+//    public static final String URL_WEB_API_HOST = "http://192.168.1.241";
+//    public static final String URL_COMMUNICATION_API_HOST = "http://192.168.1.241:10086";
 
     public static final String PORTRAIT_URL_PREFIX = URL_WEB_API_HOST + "/UpLoad/Head/";
     public static final String PIC_URL_PREFIX = URL_WEB_API_HOST + "/UpLoad/";

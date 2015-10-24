@@ -35,76 +35,91 @@
                   android:textSize="12sp" />
     </RelativeLayout>
 
-    <ImageView
-        android:id="@+id/iv_resource_detail_profile"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:src="@drawable/ic_empty" />
-
-    <TextView
-        android:id="@+id/tv_resource_detail_width"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="20dp"
-        android:text="长度:" />
+        android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/tv_resource_detail_height"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="20dp"
-        android:text="宽度:" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/tv_resource_detail_contact"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="20dp"
-        android:text="联系人:" />
+            <ImageView
+                android:id="@+id/iv_resource_detail_profile"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_empty" />
 
-    <TextView
-        android:id="@+id/tv_resource_detail_contact_info"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="20dp"
-        android:text="电话:" />
+            <TextView
+                android:id="@+id/tv_resource_detail_width"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="20dp"
+                android:text="长度:" />
 
-    <TextView
-        android:id="@+id/tv_resource_detail_address"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="16dp"
-        android:text="地址:" />
+            <TextView
+                android:id="@+id/tv_resource_detail_height"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="20dp"
+                android:text="宽度:" />
 
-    <TextView
-        android:id="@+id/tv_resource_detail_update_time"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="20dp"
-        android:text="最近更新:" />
+            <TextView
+                android:id="@+id/tv_resource_detail_contact"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="20dp"
+                android:text="联系人:" />
 
-    <TextView
-        android:id="@+id/tv_resource_detail_status"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="20dp"
-        android:text="审核状态:" />
+            <TextView
+                android:id="@+id/tv_resource_detail_contact_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="20dp"
+                android:text="电话:" />
+
+            <TextView
+                android:id="@+id/tv_resource_detail_address"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="16dp"
+                android:text="地址:" />
+
+            <TextView
+                android:id="@+id/tv_resource_detail_update_time"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="20dp"
+                android:text="最近更新:" />
+
+            <TextView
+                android:id="@+id/tv_resource_detail_status"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="20dp"
+                android:text="审核状态:" />
 
 
-    <TextView
-        android:id="@+id/tv_resource_detail_remark"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="16dp"
-        android:text="备注:" />
+            <TextView
+                android:id="@+id/tv_resource_detail_remark"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="16dp"
+                android:text="备注:" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+
 
 </LinearLayout>

@@ -123,7 +123,10 @@ public class FeedbackActivity extends AppCompatActivity implements View.OnClickL
                                     runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
-                                            Toast.makeText(getApplicationContext(),getString(R.string.toast_feedback_ok), Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(getApplicationContext(),
+                                                    getString(R.string.toast_feedback_ok),
+                                                    Toast.LENGTH_SHORT).show();
+                                            navigateUp();
                                         }
                                     });
                                 }

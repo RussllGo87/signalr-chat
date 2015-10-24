@@ -176,6 +176,7 @@ public class AdMaintainActivity extends AppCompatActivity implements View.OnClic
                                             Toast.makeText(getApplicationContext(),
                                                     getString(R.string.toast_ad_maintain_ok),
                                                     Toast.LENGTH_SHORT).show();
+                                            navigateUp();
                                         }
                                     });
                                 }

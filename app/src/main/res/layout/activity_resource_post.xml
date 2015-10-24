@@ -34,107 +34,122 @@
 
     </RelativeLayout>
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="15dp"
-        android:layout_marginRight="15dp"
-        android:layout_marginTop="2dp"
-        android:orientation="horizontal" >
+        android:layout_height="match_parent">
 
-        <EditText
-            android:id="@+id/et_resource_width"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="1dp"
-            android:hint="长度(米)"
-            android:inputType="numberDecimal"
-            android:layout_weight="1"/>
-
-        <EditText android:id="@+id/et_resource_height"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="1dp"
-            android:hint="宽度(米)"
-            android:inputType="numberDecimal"
-            android:layout_weight="1"/>
-
-    </LinearLayout>
-
-
-    <EditText
-        android:id="@+id/et_resource_location"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="15dp"
-        android:layout_marginRight="15dp"
-        android:layout_marginTop="2dp"/>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="15dp"
-        android:layout_marginRight="15dp"
-        android:layout_marginTop="2dp"
-        android:orientation="horizontal">
-
-        <EditText
-            android:id="@+id/et_resource_contacts"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginRight="1dp"
-            android:hint="联系人"
-            android:layout_weight="2"/>
+            android:orientation="vertical">
 
-        <EditText android:id="@+id/et_resource_phone"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="1dp"
-            android:hint="联系电话"
-            android:inputType="phone"
-            android:layout_weight="1"/>
-    </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:layout_marginTop="2dp"
+                android:orientation="horizontal" >
 
-    <EditText android:id="@+id/et_resource_remark"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:layout_marginLeft="15dp"
-              android:layout_marginRight="15dp"
-              android:layout_marginTop="2dp"
-              android:hint="资源说明"/>
+                <EditText
+                    android:id="@+id/et_resource_width"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="1dp"
+                    android:hint="长度(米)"
+                    android:inputType="numberDecimal"
+                    android:layout_weight="1"/>
 
-    <ImageView
-        android:id="@+id/iv_resource_profile"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="2dp"
-        android:src="@drawable/ic_empty" />
+                <EditText android:id="@+id/et_resource_height"
+                          android:layout_width="0dp"
+                          android:layout_height="wrap_content"
+                          android:layout_marginLeft="1dp"
+                          android:hint="宽度(米)"
+                          android:inputType="numberDecimal"
+                          android:layout_weight="1"/>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="15dp"
-        android:layout_marginRight="15dp"
-        android:layout_marginTop="2dp"
-        android:orientation="horizontal" >
+            </LinearLayout>
 
-        <Button
-            android:id="@+id/btn_resource_save"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="1dp"
-            android:layout_weight="1"
-            android:text="确定" />
 
-        <Button
-            android:id="@+id/btn_resource_cancel"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="1dp"
-            android:layout_weight="1"
-            android:onClick="quxiaos"
-            android:text="取消" />
-    </LinearLayout>
+            <EditText
+                android:id="@+id/et_resource_location"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:layout_marginTop="2dp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:layout_marginTop="2dp"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/et_resource_contacts"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="1dp"
+                    android:hint="联系人"
+                    android:layout_weight="2"/>
+
+                <EditText android:id="@+id/et_resource_phone"
+                          android:layout_width="match_parent"
+                          android:layout_height="wrap_content"
+                          android:layout_marginLeft="1dp"
+                          android:hint="联系电话"
+                          android:inputType="phone"
+                          android:layout_weight="1"/>
+            </LinearLayout>
+
+            <EditText android:id="@+id/et_resource_remark"
+                      android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:layout_marginLeft="15dp"
+                      android:layout_marginRight="15dp"
+                      android:layout_marginTop="2dp"
+                      android:hint="资源说明"/>
+
+            <ImageView
+                android:id="@+id/iv_resource_profile"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="2dp"
+                android:src="@drawable/ic_empty" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:layout_marginTop="2dp"
+                android:orientation="horizontal" >
+
+                <Button
+                    android:id="@+id/btn_resource_save"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="1dp"
+                    android:layout_weight="1"
+                    android:text="确定" />
+
+                <Button
+                    android:id="@+id/btn_resource_cancel"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="1dp"
+                    android:layout_weight="1"
+                    android:onClick="quxiaos"
+                    android:text="取消" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+
 
 </LinearLayout>

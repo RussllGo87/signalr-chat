@@ -306,7 +306,10 @@ public class ResourcePostActivity extends AppCompatActivity implements View.OnCl
                                 runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        Toast.makeText(getApplicationContext(), getString(R.string.toast_resource_post_ok), Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(getApplicationContext(),
+                                                getString(R.string.toast_resource_post_ok),
+                                                Toast.LENGTH_SHORT).show();
+                                        navigateUp();
                                     }
                                 });
                             }
