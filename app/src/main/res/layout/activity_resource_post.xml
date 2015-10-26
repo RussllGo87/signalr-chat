@@ -142,7 +142,6 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="1dp"
                     android:layout_weight="1"
-                    android:onClick="quxiaos"
                     android:text="取消" />
             </LinearLayout>
 

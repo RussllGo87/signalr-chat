@@ -40,25 +40,6 @@ public class ChatMessageProcessor implements ChatMessageListener {
     @Override
     public void onMessageReceive(String messageType, String message) {
         new ProcessMessageTask().execute(messageType, message);
-//        if(messageType.equals("OnlineList")) {
-//            new ProcessOnlineListTask().execute(message);
-//        } else if(messageType.equals("Online")){
-//            updaeUserStatus(message,0);
-//        } else if(messageType.equals("Offline")) {
-//            updaeUserStatus(message, 1);
-//        } else if(messageType.equals("OfflineMsgShort")) {
-//            processOfflineMsgShort(message);
-//        } else if(messageType.equals("OfflineMsg")) {
-//            processOfflineMsgShort(message);
-//        } else if(messageType.equals("OnlineMsg")) {
-//
-//        } else if(messageType.equals("BulkMssaging")) {
-//
-//        } else if(messageType.equals("RemainingTimes")) {
-//
-//        } else if(messageType.equals("")) {
-//
-//        }
     }
 
 
@@ -150,6 +131,7 @@ public class ChatMessageProcessor implements ChatMessageListener {
             object = new JSONObject(message);
             String from = object.getString("Sender");
             String to = object.getString("Receiver");
+            String owner = to;
             String fromNickname = object.getString("SenderName");
             String fromPortrait = object.getString("SenderPortrait");
             String content = object.getString("Contents");
@@ -171,21 +153,21 @@ public class ChatMessageProcessor implements ChatMessageListener {
             if(!TextUtils.isEmpty(contentType)) {
                 ContentValues values = new ContentValues();
                 if(contentType.equals("Text")) {
-                   messageUri = chatMessageManager.insert(from, to, MessageConstant.MESSAGE_TYPE_ON_LINE,
+                   messageUri = chatMessageManager.insert(from, to, owner, MessageConstant.MESSAGE_TYPE_ON_LINE,
                             contentType, content, datetime, MessageConstant.MESSAGE_STATUS_NOT_READ);
                     values.put(AppContract.RecentContactEntry.COLUMN_NAME_CONTENT, content);
                 } else if(contentType.equals("Picture")){
                     String fileExtension = object.getString("fileExtension");
                     String filePath = MediaFileUtils.processReceiveFile(context, content,
                             MessageConstant.MESSAGE_FILE_TYPE_IMG, fileExtension);
-                    messageUri = chatMessageManager.insert(from, to, MessageConstant.MESSAGE_TYPE_ON_LINE,
+                    messageUri = chatMessageManager.insert(from, to, owner, MessageConstant.MESSAGE_TYPE_ON_LINE,
                             contentType, filePath, datetime, MessageConstant.MESSAGE_STATUS_NOT_READ);
                     values.put(AppContract.RecentContactEntry.COLUMN_NAME_CONTENT, context.getResources().getString(R.string.content_type_pic));
                 } else if(contentType.equals("Audio")) {
                     String fileExtension = object.getString("fileExtension");
                     String filePath = MediaFileUtils.processReceiveFile(context, content,
                             MessageConstant.MESSAGE_FILE_TYPE_AUDIO, fileExtension);
-                    messageUri = chatMessageManager.insert(from, to, MessageConstant.MESSAGE_TYPE_ON_LINE,
+                    messageUri = chatMessageManager.insert(from, to, owner, MessageConstant.MESSAGE_TYPE_ON_LINE,
                             contentType, filePath, datetime, MessageConstant.MESSAGE_STATUS_NOT_READ);
                     values.put(AppContract.RecentContactEntry.COLUMN_NAME_CONTENT, context.getResources().getString(R.string.content_type_voice));
                 }
@@ -313,6 +295,7 @@ public class ChatMessageProcessor implements ChatMessageListener {
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
                 String fromUid = jsonObject.getString("Sender");
                 String to = jsonObject.getString("Receiver");
+                String owner = to;
                 String contentType = jsonObject.getString("MessageType");
                 String content = jsonObject.getString("Contents");
                 String datetime = jsonObject.getString("SendTime");
@@ -323,21 +306,21 @@ public class ChatMessageProcessor implements ChatMessageListener {
                 ContentValues values = new ContentValues();
                 if(!TextUtils.isEmpty(contentType)) {
                     if(contentType.equals("Text")) {
-                        messageUri = chatMessageManager.insert(fromUid, to, MessageConstant.MESSAGE_TYPE_OFF_LINE,
+                        messageUri = chatMessageManager.insert(fromUid, to, owner, MessageConstant.MESSAGE_TYPE_OFF_LINE,
                                 contentType, content, datetime, MessageConstant.MESSAGE_STATUS_READ);
                         values.put(AppContract.RecentContactEntry.COLUMN_NAME_CONTENT, content);
                     } else if(contentType.equals("Picture")){
                         String fileExtension = "png";
                         String filePath = MediaFileUtils.processReceiveFile(context, content,
                                 MessageConstant.MESSAGE_FILE_TYPE_IMG, fileExtension);
-                        messageUri = chatMessageManager.insert(fromUid, to, MessageConstant.MESSAGE_TYPE_OFF_LINE,
+                        messageUri = chatMessageManager.insert(fromUid, to, owner, MessageConstant.MESSAGE_TYPE_OFF_LINE,
                                 contentType, filePath, datetime, MessageConstant.MESSAGE_STATUS_READ);
                         values.put(AppContract.RecentContactEntry.COLUMN_NAME_CONTENT, context.getResources().getString(R.string.content_type_pic));
                     } else if(contentType.equals("Audio")) {
                         String fileExtension = GlobalApplication.VOICE_FILE_NAME_SUFFIX;
                         String filePath = MediaFileUtils.processReceiveFile(context, content,
                                 MessageConstant.MESSAGE_FILE_TYPE_AUDIO, fileExtension);
-                        messageUri = chatMessageManager.insert(fromUid, to, MessageConstant.MESSAGE_TYPE_OFF_LINE,
+                        messageUri = chatMessageManager.insert(fromUid, to, owner, MessageConstant.MESSAGE_TYPE_OFF_LINE,
                                 contentType, filePath, datetime, MessageConstant.MESSAGE_STATUS_READ);
                         values.put(AppContract.RecentContactEntry.COLUMN_NAME_CONTENT, context.getResources().getString(R.string.content_type_voice));
                     }

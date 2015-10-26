@@ -67,7 +67,9 @@ public class AccountFragment extends Fragment implements View.OnClickListener{
         super.onViewCreated(view, savedInstanceState);
 
         helper = SharedPreferencesHelper.newInstance(getContext());
-        mListener.loadAccountInfo();
+        if(mListener != null) {
+            mListener.loadAccountInfo();
+        }
     }
 
     public void updateAccountInfo(String nickname,String portrait) {

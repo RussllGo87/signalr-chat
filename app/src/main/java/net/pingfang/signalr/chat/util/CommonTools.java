@@ -35,6 +35,18 @@ public class CommonTools {
         }
     }
 
+    public static boolean isValidPwd(String password) {
+        if(TextUtils.isEmpty(password)) {
+            return false;
+        }
+
+        if(password.length() < 5 || password.length() > 16) {
+            return false;
+        }
+
+        return true;
+    }
+
     public static boolean isAvailableVc(String vc) {
         if(!TextUtils.isEmpty(vc) && TextUtils.isDigitsOnly(vc) && vc.length() == 6) {
             return true;

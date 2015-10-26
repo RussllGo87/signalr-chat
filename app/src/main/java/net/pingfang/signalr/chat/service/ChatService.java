@@ -62,7 +62,7 @@ public class ChatService extends Service {
             case FLAF_INIT_CONNECTION:
                 String qs = intent.getStringExtra(FLAG_INIT_CONNECTION_QS);
                 initConnection(qs);
-                break;
+                return START_REDELIVER_INTENT;
         }
 
         return super.onStartCommand(intent, flags, startId);

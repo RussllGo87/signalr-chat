@@ -46,7 +46,8 @@ public final class AppContract {
 
         public static final String TABLE_NAME = "t_message";
         public static final String COLUMN_NAME_ENTRY_M_FROM = "m_from";
-        public static final String COLUMN_NAME_NICK_M_TO = "m_to";
+        public static final String COLUMN_NAME_ENTRY_M_TO = "m_to";
+        public static final String COLUMN_NAME_M_OWNER = "m_own";
         public static final String COLUMN_NAME_M_TYPE = "m_type";
         public static final String COLUMN_NAME_M_CONTENT_TYPE = "m_content_type";
         public static final String COLUMN_NAME_M_CONTENT = "m_content";

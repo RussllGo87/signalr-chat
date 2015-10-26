@@ -16,14 +16,15 @@ public class ChatMessageManager {
         this.context = context;
     }
 
-    public Uri insert(String from, String to, int messageType, String contentType,
+    public Uri insert(String from, String to, String owner, int messageType, String contentType,
                       String content, String datetime, int status) {
         ContentResolver contentResolver = context.getContentResolver();
 
         ContentValues values = new ContentValues();
 
         values.put(AppContract.ChatMessageEntry.COLUMN_NAME_ENTRY_M_FROM, from);
-        values.put(AppContract.ChatMessageEntry.COLUMN_NAME_NICK_M_TO, to);
+        values.put(AppContract.ChatMessageEntry.COLUMN_NAME_ENTRY_M_TO, to);
+        values.put(AppContract.ChatMessageEntry.COLUMN_NAME_M_OWNER, owner);
         values.put(AppContract.ChatMessageEntry.COLUMN_NAME_M_TYPE, messageType);
         values.put(AppContract.ChatMessageEntry.COLUMN_NAME_M_CONTENT_TYPE, contentType);
         values.put(AppContract.ChatMessageEntry.COLUMN_NAME_M_CONTENT, content);

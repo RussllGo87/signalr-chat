@@ -1,13 +1,11 @@
 package net.pingfang.signalr.chat.message;
 
-import net.pingfang.signalr.chat.util.CommonTools;
-
 /**
  * Created by gongguopei87@gmail.com on 2015/10/9.
  */
 public class MessageConstructor {
 
-    public static String constructTxtMessage(String uid, String nickname, String portrait, String buddyUid, String content) {
+    public static String constructTxtMessage(String uid, String nickname, String portrait, String buddyUid, String content, String datatime) {
         StringBuffer stringBuffer = new StringBuffer();
         stringBuffer.append("{");
         stringBuffer.append("\"");
@@ -59,14 +57,15 @@ public class MessageConstructor {
         stringBuffer.append("\"");
         stringBuffer.append(":");
         stringBuffer.append("\"");
-        stringBuffer.append(CommonTools.TimeConvertString());
+        stringBuffer.append(datatime);
         stringBuffer.append("\"");
         stringBuffer.append("}");
 
         return stringBuffer.toString();
     }
 
-    public static String constructFileMessage(String uid, String nickname, String portrait, String buddyUid, String messageType,String fileExtension, String fileBody) {
+    public static String constructFileMessage(String uid, String nickname, String portrait,
+                                              String buddyUid, String messageType,String fileExtension, String fileBody,String datetime) {
         StringBuilder stringBuffer = new StringBuilder();
         stringBuffer.append("{");
         stringBuffer.append("\"");
@@ -130,7 +129,7 @@ public class MessageConstructor {
         stringBuffer.append("\"");
         stringBuffer.append(":");
         stringBuffer.append("\"");
-        stringBuffer.append(CommonTools.TimeConvertString());
+        stringBuffer.append(datetime);
         stringBuffer.append("\"");
 
         stringBuffer.append("}");

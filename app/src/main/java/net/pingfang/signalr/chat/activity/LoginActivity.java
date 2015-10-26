@@ -46,6 +46,7 @@ import net.pingfang.signalr.chat.database.UserManager;
 import net.pingfang.signalr.chat.net.HttpBaseCallback;
 import net.pingfang.signalr.chat.net.OkHttpCommonUtil;
 import net.pingfang.signalr.chat.ui.dialog.SingleButtonDialogFragment;
+import net.pingfang.signalr.chat.util.CommonTools;
 import net.pingfang.signalr.chat.util.GlobalApplication;
 import net.pingfang.signalr.chat.util.MediaFileUtils;
 import net.pingfang.signalr.chat.util.SharedPreferencesHelper;
@@ -270,11 +271,6 @@ public class LoginActivity extends AppCompatActivity {
 
             Toast.makeText(getApplicationContext(),getString(R.string.weibosdk_demo_toast_auth_success),Toast.LENGTH_SHORT).show();
             doComplete(jsonResponse);
-
-//            Intent intent = new Intent();
-//            intent.setClass(getApplicationContext(), HomeActivity.class);
-//            startActivity(intent);
-//            finish();
         }
 
         public void doComplete(JSONObject jsonObject) {
@@ -420,7 +416,8 @@ public class LoginActivity extends AppCompatActivity {
                 JSONObject jsonObject;
                 try {
                     jsonObject = new JSONObject(json);
-                    int status = jsonObject.getInt("status");
+                    int status = -1;
+                    status = jsonObject.getInt("status");
                     String message = jsonObject.getString("message");
                     if (status == 0) {
                         JSONObject result = jsonObject.getJSONObject("result");
@@ -488,8 +485,9 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
-
-                    Log.d(TAG, "LOGIN_URL return " + e.getMessage());
+                    Log.e(TAG, "LOGIN_URL return " + getString(R.string.debug_http_response_invalid));
+                    Log.e(TAG, "LOGIN_URL return " + e.getMessage());
+                    ll_progress_bar_container.setVisibility(View.GONE);
                 }
             }
         });
@@ -541,7 +539,8 @@ public class LoginActivity extends AppCompatActivity {
     public void login(View view) {
         final String account = et_login_no.getText().toString().trim();
         String password = et_login_pwd.getText().toString().trim();
-        if(!TextUtils.isEmpty(account) && !TextUtils.isEmpty(password)) {
+
+        if(CommonTools.isPhoneNumber(account) && CommonTools.isValidPwd(password)) {
             ll_progress_bar_container.setVisibility(View.VISIBLE);
             tv_pb_operation.setText(R.string.pb_message_login_now);
 
@@ -639,8 +638,9 @@ public class LoginActivity extends AppCompatActivity {
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
-
+                        Toast.makeText(getApplicationContext(), R.string.debug_http_response_invalid, Toast.LENGTH_SHORT).show();
                         Log.d(TAG, "LOGIN_URL return " + e.getMessage());
+                        ll_progress_bar_container.setVisibility(View.GONE);
                     }
 
                 }

@@ -66,7 +66,8 @@ public class ChatAppProvider extends ContentProvider {
         messageProjectionMap = new HashMap<String, String>();
         messageProjectionMap.put(AppContract.ChatMessageEntry._ID, AppContract.ChatMessageEntry._ID);
         messageProjectionMap.put(AppContract.ChatMessageEntry.COLUMN_NAME_ENTRY_M_FROM, AppContract.ChatMessageEntry.COLUMN_NAME_ENTRY_M_FROM);
-        messageProjectionMap.put(AppContract.ChatMessageEntry.COLUMN_NAME_NICK_M_TO, AppContract.ChatMessageEntry.COLUMN_NAME_NICK_M_TO);
+        messageProjectionMap.put(AppContract.ChatMessageEntry.COLUMN_NAME_ENTRY_M_TO, AppContract.ChatMessageEntry.COLUMN_NAME_ENTRY_M_TO);
+        messageProjectionMap.put(AppContract.ChatMessageEntry.COLUMN_NAME_M_OWNER, AppContract.ChatMessageEntry.COLUMN_NAME_M_OWNER);
         messageProjectionMap.put(AppContract.ChatMessageEntry.COLUMN_NAME_M_TYPE, AppContract.ChatMessageEntry.COLUMN_NAME_M_TYPE);
         messageProjectionMap.put(AppContract.ChatMessageEntry.COLUMN_NAME_M_CONTENT_TYPE, AppContract.ChatMessageEntry.COLUMN_NAME_M_CONTENT_TYPE);
         messageProjectionMap.put(AppContract.ChatMessageEntry.COLUMN_NAME_M_CONTENT, AppContract.ChatMessageEntry.COLUMN_NAME_M_CONTENT);

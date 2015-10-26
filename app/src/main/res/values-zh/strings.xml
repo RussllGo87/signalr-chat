@@ -209,4 +209,7 @@
     <string name="image_get_file_user_error">获取图片返回出错</string>
     <string name="image_data_null">没有选择图片</string>
 
+    <!-- 调试错误 -->
+    <string name="debug_http_response_invalid">响应不合法</string>
+
 </resources>

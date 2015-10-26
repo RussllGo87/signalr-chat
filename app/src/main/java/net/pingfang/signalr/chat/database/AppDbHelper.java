@@ -37,7 +37,8 @@ public class AppDbHelper extends SQLiteOpenHelper {
             "CREATE TABLE " + AppContract.ChatMessageEntry.TABLE_NAME + " (" +
             AppContract.ChatMessageEntry._ID + INTEGER_TYPE + PRIMARY_KEY + COMMA_SEP +
             AppContract.ChatMessageEntry.COLUMN_NAME_ENTRY_M_FROM + TEXT_TYPE + NOT_NULL + COMMA_SEP +
-            AppContract.ChatMessageEntry.COLUMN_NAME_NICK_M_TO + TEXT_TYPE + NOT_NULL + COMMA_SEP +
+            AppContract.ChatMessageEntry.COLUMN_NAME_ENTRY_M_TO + TEXT_TYPE + NOT_NULL + COMMA_SEP +
+            AppContract.ChatMessageEntry.COLUMN_NAME_M_OWNER + TEXT_TYPE + NOT_NULL + COMMA_SEP +
             AppContract.ChatMessageEntry.COLUMN_NAME_M_TYPE + INTEGER_TYPE + NOT_NULL + COMMA_SEP +
             AppContract.ChatMessageEntry.COLUMN_NAME_M_CONTENT_TYPE + TEXT_TYPE + NOT_NULL +COMMA_SEP +
             AppContract.ChatMessageEntry.COLUMN_NAME_M_CONTENT + TEXT_TYPE + NOT_NULL + COMMA_SEP +
