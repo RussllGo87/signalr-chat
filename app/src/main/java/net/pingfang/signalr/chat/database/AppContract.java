@@ -42,7 +42,7 @@ public final class AppContract {
         public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/net.pingfang.signalr.chat.message";
 
         // 默认排序常量
-        public static final String DEFAULT_SORT_ORDER = "_id DESC";
+        public static final String DEFAULT_SORT_ORDER = "m_datetime ASC";
 
         public static final String TABLE_NAME = "t_message";
         public static final String COLUMN_NAME_ENTRY_M_FROM = "m_from";
@@ -67,7 +67,7 @@ public final class AppContract {
         public static final String DEFAULT_SORT_ORDER = "update_time DESC";
 
         public static final String TABLE_NAME = "t_recent_contact";
-        public static final String COLUMN_NAME_UID = "uid";
+        public static final String COLUMN_NAME_BUDDY = "buddy";
         public static final String COLUMN_NAME_OWNER = "owner";
         public static final String COLUMN_NAME_CONTENT = "content";
         public static final String COLUMN_NAME_UPDATE_TIME = "update_time";

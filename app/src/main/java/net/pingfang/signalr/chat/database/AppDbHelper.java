@@ -52,7 +52,7 @@ public class AppDbHelper extends SQLiteOpenHelper {
     private static final String SQL_CREATE_ENTRY_RECENT =
             "CREATE TABLE " + AppContract.RecentContactEntry.TABLE_NAME + " (" +
             AppContract.RecentContactEntry._ID + INTEGER_TYPE + PRIMARY_KEY + COMMA_SEP +
-            AppContract.RecentContactEntry.COLUMN_NAME_UID + TEXT_TYPE + NOT_NULL + COMMA_SEP +
+            AppContract.RecentContactEntry.COLUMN_NAME_BUDDY + TEXT_TYPE + NOT_NULL + COMMA_SEP +
             AppContract.RecentContactEntry.COLUMN_NAME_OWNER + TEXT_TYPE + NOT_NULL + COMMA_SEP +
             AppContract.RecentContactEntry.COLUMN_NAME_CONTENT + TEXT_TYPE + NOT_NULL + COMMA_SEP +
             AppContract.RecentContactEntry.COLUMN_NAME_UPDATE_TIME + DATETIME_TYPE + NOT_NULL + COMMA_SEP +
@@ -79,7 +79,7 @@ public class AppDbHelper extends SQLiteOpenHelper {
             AppContract.RecentContactEntry.TABLE_NAME + " AS recent " +
             "WHERE " +
             "user." + AppContract.UserEntry.COLUMN_NAME_ENTRY_UID + " = " +
-            "recent." + AppContract.RecentContactEntry.COLUMN_NAME_UID;
+            "recent." + AppContract.RecentContactEntry.COLUMN_NAME_BUDDY;
 
     private static final String SQL_DELETE_VIEW_RECENT =
             "DROP VIEW IF EXISTS " + AppContract.RecentContactView.VIEW_NAME;

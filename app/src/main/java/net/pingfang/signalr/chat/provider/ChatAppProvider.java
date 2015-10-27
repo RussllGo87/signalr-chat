@@ -76,7 +76,7 @@ public class ChatAppProvider extends ContentProvider {
 
         recentProjectionMap = new HashMap<String, String>();
         recentProjectionMap.put(AppContract.RecentContactEntry._ID, AppContract.RecentContactEntry._ID);
-        recentProjectionMap.put(AppContract.RecentContactEntry.COLUMN_NAME_UID, AppContract.RecentContactEntry.COLUMN_NAME_UID);
+        recentProjectionMap.put(AppContract.RecentContactEntry.COLUMN_NAME_BUDDY, AppContract.RecentContactEntry.COLUMN_NAME_BUDDY);
         recentProjectionMap.put(AppContract.RecentContactEntry.COLUMN_NAME_CONTENT, AppContract.RecentContactEntry.COLUMN_NAME_CONTENT);
         recentProjectionMap.put(AppContract.RecentContactEntry.COLUMN_NAME_UPDATE_TIME, AppContract.RecentContactEntry.COLUMN_NAME_UPDATE_TIME);
         recentProjectionMap.put(AppContract.RecentContactEntry.COLUMN_NAME_OWNER, AppContract.RecentContactEntry.COLUMN_NAME_OWNER);

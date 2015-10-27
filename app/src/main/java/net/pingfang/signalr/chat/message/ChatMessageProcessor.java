@@ -42,6 +42,10 @@ public class ChatMessageProcessor implements ChatMessageListener {
         new ProcessMessageTask().execute(messageType, message);
     }
 
+    public void onSendMessage(String messageBody) {
+        new ProcessSendMessageTask().execute(messageBody);
+    }
+
 
     /**
      * 实现获取用户在线列表
@@ -125,28 +129,38 @@ public class ChatMessageProcessor implements ChatMessageListener {
         context.getContentResolver().update(AppContract.UserEntry.CONTENT_URI, values, null, null);
     }
 
-    private void processOnlineMessage(String message) {
+    private void processOnlineMessage(String message,boolean direction) {
         JSONObject object;
         try {
             object = new JSONObject(message);
             String from = object.getString("Sender");
             String to = object.getString("Receiver");
+            String buddy = from;
             String owner = to;
+            int status = MessageConstant.MESSAGE_STATUS_NOT_READ;
+            if(direction) {
+                buddy = to;
+                owner = from;
+                status = MessageConstant.MESSAGE_STATUS_READ;
+            }
             String fromNickname = object.getString("SenderName");
             String fromPortrait = object.getString("SenderPortrait");
             String content = object.getString("Contents");
             String datetime = object.getString("SendTime");
             String contentType = object.getString("MessageType");
 
-            UserManager userManager = new UserManager(context);
-            Cursor cursor = userManager.queryByUid(from);
-            if(cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {
-                fromNickname = cursor.getString(cursor.getColumnIndex(AppContract.UserEntry.COLUMN_NAME_NICK_NAME));
-                fromPortrait = cursor.getString(cursor.getColumnIndex(AppContract.UserEntry.COLUMN_NAME_PORTRAIT));
-                cursor.close();
-            } else {
-                userManager.addRecord(from,fromNickname,fromPortrait);
+            if(!direction) {
+                UserManager userManager = new UserManager(context);
+                Cursor cursor = userManager.queryByUid(from);
+                if(cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {
+                    fromNickname = cursor.getString(cursor.getColumnIndex(AppContract.UserEntry.COLUMN_NAME_NICK_NAME));
+                    fromPortrait = cursor.getString(cursor.getColumnIndex(AppContract.UserEntry.COLUMN_NAME_PORTRAIT));
+                    cursor.close();
+                } else {
+                    userManager.addRecord(from,fromNickname,fromPortrait);
+                }
             }
+
 
             ChatMessageManager chatMessageManager = new ChatMessageManager(context);
             Uri messageUri = null;
@@ -154,32 +168,34 @@ public class ChatMessageProcessor implements ChatMessageListener {
                 ContentValues values = new ContentValues();
                 if(contentType.equals("Text")) {
                    messageUri = chatMessageManager.insert(from, to, owner, MessageConstant.MESSAGE_TYPE_ON_LINE,
-                            contentType, content, datetime, MessageConstant.MESSAGE_STATUS_NOT_READ);
+                            contentType, content, datetime, status);
                     values.put(AppContract.RecentContactEntry.COLUMN_NAME_CONTENT, content);
                 } else if(contentType.equals("Picture")){
                     String fileExtension = object.getString("fileExtension");
                     String filePath = MediaFileUtils.processReceiveFile(context, content,
                             MessageConstant.MESSAGE_FILE_TYPE_IMG, fileExtension);
                     messageUri = chatMessageManager.insert(from, to, owner, MessageConstant.MESSAGE_TYPE_ON_LINE,
-                            contentType, filePath, datetime, MessageConstant.MESSAGE_STATUS_NOT_READ);
+                            contentType, filePath, datetime, status);
                     values.put(AppContract.RecentContactEntry.COLUMN_NAME_CONTENT, context.getResources().getString(R.string.content_type_pic));
                 } else if(contentType.equals("Audio")) {
                     String fileExtension = object.getString("fileExtension");
                     String filePath = MediaFileUtils.processReceiveFile(context, content,
                             MessageConstant.MESSAGE_FILE_TYPE_AUDIO, fileExtension);
                     messageUri = chatMessageManager.insert(from, to, owner, MessageConstant.MESSAGE_TYPE_ON_LINE,
-                            contentType, filePath, datetime, MessageConstant.MESSAGE_STATUS_NOT_READ);
+                            contentType, filePath, datetime, status);
                     values.put(AppContract.RecentContactEntry.COLUMN_NAME_CONTENT, context.getResources().getString(R.string.content_type_voice));
                 }
 
                 if(messageUri != null) {
 
                     String selection =
-                            AppContract.RecentContactEntry.COLUMN_NAME_UID + " = ? " +
+                            AppContract.RecentContactEntry.COLUMN_NAME_BUDDY + " = ? " +
                                     "AND " +
                                     AppContract.RecentContactEntry.COLUMN_NAME_OWNER + " = ?";
+                    String[] selectionArgs = new String[]{buddy,owner};
+
                     Cursor newCursor = context.getContentResolver().query(AppContract.RecentContactEntry.CONTENT_URI,
-                            null, selection, new String[]{from,to}, null);
+                            null, selection, selectionArgs, null);
 
                     if(newCursor != null && newCursor.getCount() > 0 && newCursor.moveToFirst()){
                         int rowId = newCursor.getInt(newCursor.getColumnIndex(AppContract.RecentContactEntry._ID));
@@ -190,21 +206,33 @@ public class ChatMessageProcessor implements ChatMessageListener {
 
                         newCursor.close();
                     } else {
-                        values.put(AppContract.RecentContactEntry.COLUMN_NAME_UID,from);
+                        values.put(AppContract.RecentContactEntry.COLUMN_NAME_BUDDY,buddy);
                         values.put(AppContract.RecentContactEntry.COLUMN_NAME_UPDATE_TIME, datetime);
-                        values.put(AppContract.RecentContactEntry.COLUMN_NAME_OWNER,to);
+                        values.put(AppContract.RecentContactEntry.COLUMN_NAME_OWNER,owner);
                         values.put(AppContract.RecentContactEntry.COLUMN_NAME_COUNT,0);
                         context.getContentResolver().insert(AppContract.RecentContactEntry.CONTENT_URI,values);
                     }
 
-                    Bundle args =  new Bundle();
-                    args.putParcelable("messageUri", messageUri);
-                    args.putString("fromUid",from);
+                    if(!direction) {
+                        Bundle args =  new Bundle();
+                        args.putParcelable("messageUri", messageUri);
+                        args.putString("fromUid",buddy);
 
-                    Intent intent = new Intent();
-                    intent.setAction(GlobalApplication.ACTION_INTENT_ONLINE_MESSAGE_INCOMING);
-                    intent.putExtra("message", args);
-                    context.sendBroadcast(intent);
+                        Intent intent = new Intent();
+                        intent.setAction(GlobalApplication.ACTION_INTENT_ONLINE_MESSAGE_INCOMING);
+                        intent.putExtra("message", args);
+                        context.sendBroadcast(intent);
+                    } else {
+                        Bundle args =  new Bundle();
+                        args.putParcelable("messageUri", messageUri);
+                        args.putString("fromUid",buddy);
+
+                        Intent intent = new Intent();
+                        intent.setAction(GlobalApplication.ACTION_INTENT_ONLINE_MESSAGE_SEND);
+                        intent.putExtra("message", args);
+                        context.sendBroadcast(intent);
+                    }
+
                 }
 
             }
@@ -249,7 +277,7 @@ public class ChatMessageProcessor implements ChatMessageListener {
                 String toUid = sharedPreferencesHelper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID);
 
                 String selection =
-                        AppContract.RecentContactEntry.COLUMN_NAME_UID + " = ? " +
+                        AppContract.RecentContactEntry.COLUMN_NAME_BUDDY + " = ? " +
                                 "AND " +
                                 AppContract.RecentContactEntry.COLUMN_NAME_OWNER + " = ?";
                 Cursor newCursor = context.getContentResolver().query(AppContract.RecentContactEntry.CONTENT_URI,
@@ -269,7 +297,7 @@ public class ChatMessageProcessor implements ChatMessageListener {
 
                     newCursor.close();
                 } else {
-                    values.put(AppContract.RecentContactEntry.COLUMN_NAME_UID,fromUid);
+                    values.put(AppContract.RecentContactEntry.COLUMN_NAME_BUDDY,fromUid);
                     values.put(AppContract.RecentContactEntry.COLUMN_NAME_UPDATE_TIME, CommonTools.TimeConvertString());
                     values.put(AppContract.RecentContactEntry.COLUMN_NAME_OWNER,toUid);
                     values.put(AppContract.RecentContactEntry.COLUMN_NAME_COUNT,count);
@@ -331,7 +359,7 @@ public class ChatMessageProcessor implements ChatMessageListener {
                     uriArrayList.add(messageUri);
 
                     String selection =
-                            AppContract.RecentContactEntry.COLUMN_NAME_UID + " = ? " +
+                            AppContract.RecentContactEntry.COLUMN_NAME_BUDDY + " = ? " +
                                     "AND " +
                                     AppContract.RecentContactEntry.COLUMN_NAME_OWNER + " = ?";
                     Cursor newCursor = context.getContentResolver().query(AppContract.RecentContactEntry.CONTENT_URI,
@@ -352,7 +380,7 @@ public class ChatMessageProcessor implements ChatMessageListener {
 
                         newCursor.close();
                     } else {
-                        values.put(AppContract.RecentContactEntry.COLUMN_NAME_UID,fromUid);
+                        values.put(AppContract.RecentContactEntry.COLUMN_NAME_BUDDY,fromUid);
                         values.put(AppContract.RecentContactEntry.COLUMN_NAME_UPDATE_TIME, datetime);
                         values.put(AppContract.RecentContactEntry.COLUMN_NAME_OWNER,to);
                         values.put(AppContract.RecentContactEntry.COLUMN_NAME_COUNT,0);
@@ -388,13 +416,22 @@ public class ChatMessageProcessor implements ChatMessageListener {
             } else if(messageType.equals("exitApp")) {
                 exitApp();
             } else if(messageType.equals("OnlineMsg")) {
-                processOnlineMessage(message);
+                processOnlineMessage(message,false);
             } else if(messageType.equals("OfflineMsgShort")) {
                 processOfflineMsgShort(message);
             } else if(messageType.equals("OfflineMsg")) {
                 processOfflineMessageList(message);
             }
 
+            return "ok";
+        }
+    }
+
+    private class ProcessSendMessageTask extends AsyncTask<String,String,String> {
+        @Override
+        protected String doInBackground(String... params) {
+            String messageBody = params[0];
+            processOnlineMessage(messageBody,true);
             return "ok";
         }
     }
