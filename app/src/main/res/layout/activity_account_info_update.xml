@@ -23,7 +23,7 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:padding="@dimen/padding_activity_title"
-            android:text="@string/title_activity_acount_info_update"
+            android:text="@string/title_activity_account_info_update"
             android:textSize="@dimen/text_size_activity_title" />
 
     </RelativeLayout>

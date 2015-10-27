@@ -167,6 +167,7 @@
     <!-- 设置页 -->
     <string name="title_activity_settings">@string/action_settings</string>
     <string name="tv_settings_item_account">账号设置</string>
+    <string name="tv_settings_item_filter_list">屏蔽人列表</string>
     <string name="tv_settings_item_about">关于哈乐</string>
     <string name="tv_settings_item_exit">退出</string>
 
@@ -174,14 +175,15 @@
     <string name="title_activity_account_settings">@string/tv_settings_item_account</string>
     <string name="tv_settings_item_change_pwd">修改密码</string>
     <string name="tv_settings_item_update_info">修改个人信息</string>
-
     <!-- 修改密码 -->
     <string name="title_activity_change_pwd">@string/tv_settings_item_change_pwd</string>
     <string name="toast_change_pwd_ok">密码修改成功</string>
-
     <!-- 修改个人信息 -->
-    <string name="title_activity_acount_info_update">@string/tv_settings_item_update_info</string>
+    <string name="title_activity_account_info_update">@string/tv_settings_item_update_info</string>
     <string name="toast_account_info_update_ok">个人资料更新成功</string>
+
+    <!-- 屏蔽人列表 -->
+    <string name="title_activity_filter_list">@string/tv_settings_item_filter_list</string>
 
     <!-- 关于 -->
     <string name="title_activity_about">@string/tv_settings_item_about</string>

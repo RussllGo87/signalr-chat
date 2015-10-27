@@ -185,4 +185,58 @@ public class MessageConstructor {
 
         return stringBuffer.toString();
     }
+
+    public static String constructShieldMsgReq(String uid, String shieldId) {
+        StringBuffer stringBuffer = new StringBuffer();
+
+        stringBuffer.append("{");
+        stringBuffer.append("\"");
+        stringBuffer.append("UserId");
+        stringBuffer.append("\"");
+        stringBuffer.append(":");
+        stringBuffer.append(uid);
+        stringBuffer.append(",");
+        stringBuffer.append("\"");
+        stringBuffer.append("ShieldedObjectId");
+        stringBuffer.append("\"");
+        stringBuffer.append(":");
+        stringBuffer.append(shieldId);
+        stringBuffer.append("}");
+
+        return stringBuffer.toString();
+    }
+
+    public static String constructUnShieldMsgReq(String uid, String unShieldId) {
+        StringBuffer stringBuffer = new StringBuffer();
+
+        stringBuffer.append("{");
+        stringBuffer.append("\"");
+        stringBuffer.append("UserId");
+        stringBuffer.append("\"");
+        stringBuffer.append(":");
+        stringBuffer.append(uid);
+        stringBuffer.append(",");
+        stringBuffer.append("\"");
+        stringBuffer.append("ShieldedObjectId");
+        stringBuffer.append("\"");
+        stringBuffer.append(":");
+        stringBuffer.append(unShieldId);
+        stringBuffer.append("}");
+
+        return stringBuffer.toString();
+    }
+
+    public static String constructShieldsListMsgReq(String uid) {
+        StringBuffer stringBuffer = new StringBuffer();
+
+        stringBuffer.append("{");
+        stringBuffer.append("\"");
+        stringBuffer.append("UserId");
+        stringBuffer.append("\"");
+        stringBuffer.append(":");
+        stringBuffer.append(uid);
+        stringBuffer.append("}");
+
+        return stringBuffer.toString();
+    }
 }

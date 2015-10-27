@@ -24,7 +24,7 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme" >
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
             android:value="2DNGDiGfbcKr9tLpvmSAVjEs" />
@@ -34,6 +34,7 @@
             android:label="@string/title_activity_main" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -106,7 +107,7 @@
         <activity
             android:name=".activity.FeedbackActivity"
             android:label="@string/title_activity_feedback"
-            android:parentActivityName=".activity.AppAboutActivity">
+            android:parentActivityName=".activity.AppAboutActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="net.pingfang.signalr.chat.activity.AppAboutActivity" />
@@ -153,7 +154,7 @@
         </activity>
         <activity
             android:name=".activity.AccountInfoUpdateActivity"
-            android:label="@string/title_activity_acount_info_update"
+            android:label="@string/title_activity_account_info_update"
             android:parentActivityName=".activity.AccountSettingsActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -190,6 +191,14 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="net.pingfang.signalr.chat.activity.ResourceListActivity" />
+        </activity>
+        <activity
+            android:name=".activity.ListShieldsActivity"
+            android:label="@string/title_acctivity_chat_settings"
+            android:parentActivityName=".activity.SettingsActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="net.pingfang.signalr.chat.activity.SettingsActivity" />
         </activity>
 
         <service

@@ -279,7 +279,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         public void loadMessage() {
 //            MessageFragment fragment = (MessageFragment) adapter.getItem(0);
 //            fragment.updateMessage("server", "2", "");
-
         }
 
         @Override
@@ -396,7 +395,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             stringBuffer.append("\"Latitude\":");
             stringBuffer.append(99.99);
             stringBuffer.append("}");
-
         }
 
         return stringBuffer.toString();

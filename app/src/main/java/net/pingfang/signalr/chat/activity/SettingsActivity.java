@@ -34,6 +34,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
 
     TextView btn_activity_back;
     TextView tv_settings_item_account;
+    TextView tv_settings_item_filter_list;
     TextView tv_settings_item_about;
     TextView tv_settings_item_exit;
 
@@ -62,6 +63,8 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
 
         tv_settings_item_account = (TextView) findViewById(R.id.tv_settings_item_account);
         tv_settings_item_account.setOnClickListener(this);
+        tv_settings_item_filter_list = (TextView) findViewById(R.id.tv_settings_item_filter_list);
+        tv_settings_item_filter_list.setOnClickListener(this);
 
         tv_settings_item_about = (TextView) findViewById(R.id.tv_settings_item_about);
         tv_settings_item_about.setOnClickListener(this);
@@ -70,7 +73,6 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     }
 
     private void initCommunicate() {
-//        chatService = ChatService.newInstance(getApplicationContext());
         if(!mBound) {
             Intent intent = new Intent(this, ChatService.class);
             bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
@@ -116,6 +118,11 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                 Intent AccountSettingsIntent = new Intent();
                 AccountSettingsIntent.setClass(getApplicationContext(),AccountSettingsActivity.class);
                 startActivity(AccountSettingsIntent);
+                break;
+            case R.id.tv_settings_item_filter_list:
+                Intent shieldsListIntent = new Intent();
+                shieldsListIntent.setClass(getApplicationContext(),ListShieldsActivity.class);
+                startActivity(shieldsListIntent);
                 break;
             case R.id.tv_settings_item_about:
                 Intent intent = new Intent();
