@@ -60,6 +60,8 @@ public class ResourcePostActivity extends AppCompatActivity implements View.OnCl
     public static final String KEY_RESOURCE_POST_PHONE = "mobile";
     public static final String KEY_RESOURCE_POST_REMARK = "remark";
     public static final String KEY_RESOURCE_POST_PROFILE = "pic";
+    public static final String KEY_URL_RESOURCE_POST_LOCATION_LAT = "lat";
+    public static final String KEY_URL_RESOURCE_POST_LOCATION_LNG = "lng";
 
     private TextView btn_activity_back;
     private EditText et_resource_width;
@@ -75,7 +77,7 @@ public class ResourcePostActivity extends AppCompatActivity implements View.OnCl
 
     private LocationClient locationClient;
     public LocationListenerImpl locationListener;
-    private LatLng currentLatlng;
+    private LatLng currentLatLng;
 
     SharedPreferencesHelper sharedPreferencesHelper;
 
@@ -134,7 +136,7 @@ public class ResourcePostActivity extends AppCompatActivity implements View.OnCl
         if (bdLocation == null)
             return;
 
-        currentLatlng = new LatLng(bdLocation.getLatitude(),
+        currentLatLng = new LatLng(bdLocation.getLatitude(),
                 bdLocation.getLongitude());
         et_resource_location.setText(bdLocation.getAddrStr());
     }
@@ -293,6 +295,8 @@ public class ResourcePostActivity extends AppCompatActivity implements View.OnCl
                             new OkHttpCommonUtil.Param(KEY_RESOURCE_POST_CONTACTS, et_resource_contacts.getText().toString().trim()),
                             new OkHttpCommonUtil.Param(KEY_RESOURCE_POST_PHONE, et_resource_phone.getText().toString().trim()),
                             new OkHttpCommonUtil.Param(KEY_RESOURCE_POST_REMARK, et_resource_remark.getText().toString().trim()),
+                            new OkHttpCommonUtil.Param(KEY_URL_RESOURCE_POST_LOCATION_LAT, currentLatLng.latitude),
+                            new OkHttpCommonUtil.Param(KEY_URL_RESOURCE_POST_LOCATION_LNG, currentLatLng.longitude),
                             new OkHttpCommonUtil.Param(KEY_RESOURCE_POST_PROFILE, fileContent)
                     },
                     new HttpBaseCallback() {

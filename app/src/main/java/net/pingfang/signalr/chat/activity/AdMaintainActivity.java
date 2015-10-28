@@ -27,6 +27,8 @@ import com.baidu.location.BDLocation;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
 import com.baidu.mapapi.model.LatLng;
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 import com.squareup.okhttp.Response;
 
 import net.pingfang.signalr.chat.R;
@@ -56,20 +58,22 @@ public class AdMaintainActivity extends AppCompatActivity implements View.OnClic
     public static final String KEY_URL_AD_MAINTAIN_CODE = "adcode";
     public static final String KEY_URL_AD_MAINTAIN_ADDRESS = "address";
     public static final String KEY_URL_AD_MAINTAIN_CONTENT = "content";
+    public static final String KEY_URL_AD_MAINTAIN_LOCATION_LAT = "lat";
+    public static final String KEY_URL_AD_MAINTAIN_LOCATION_LNG = "lng";
     public static final String KEY_URL_AD_MAINTAIN_PIC = "pic";
 
     TextView btn_activity_back;
 
-    private EditText et_ad_maintain_slogan;
-    private EditText et_ad_maintain_location;
     private EditText et_ad_maintain_code;
+    private Button btn_ad_maintain_code_scan;
+    private EditText et_ad_maintain_location;
     private ImageView iv_ad_maintain_pic;
     private Button btn_ad_maintain_save;
     private Button btn_ad_maintain_cancel;
 
     private LocationClient locationClient;
     private LocationListenerImpl locationListener;
-    private LatLng currentLatlng;
+    private LatLng currentLatLng;
 
     SharedPreferencesHelper sharedPreferencesHelper;
 
@@ -93,10 +97,10 @@ public class AdMaintainActivity extends AppCompatActivity implements View.OnClic
         btn_activity_back = (TextView) findViewById(R.id.btn_activity_back);
         btn_activity_back.setOnClickListener(this);
 
-
-        et_ad_maintain_slogan = (EditText) findViewById(R.id.et_ad_maintain_slogan);
-        et_ad_maintain_location = (EditText) findViewById(R.id.et_ad_maintain_location);
         et_ad_maintain_code = (EditText) findViewById(R.id.et_ad_maintain_code);
+        btn_ad_maintain_code_scan = (Button) findViewById(R.id.btn_ad_maintain_code_scan);
+        btn_ad_maintain_code_scan.setOnClickListener(this);
+        et_ad_maintain_location = (EditText) findViewById(R.id.et_ad_maintain_location);
         iv_ad_maintain_pic = (ImageView) findViewById(R.id.iv_ad_maintain_pic);
         iv_ad_maintain_pic.setOnClickListener(this);
         btn_ad_maintain_save = (Button) findViewById(R.id.btn_ad_maintain_save);
@@ -127,7 +131,7 @@ public class AdMaintainActivity extends AppCompatActivity implements View.OnClic
         if (bdLocation == null)
             return;
 
-        currentLatlng = new LatLng(bdLocation.getLatitude(),
+        currentLatLng = new LatLng(bdLocation.getLatitude(),
                 bdLocation.getLongitude());
         et_ad_maintain_location.setText(bdLocation.getAddrStr());
     }
@@ -138,6 +142,12 @@ public class AdMaintainActivity extends AppCompatActivity implements View.OnClic
         switch(viewId) {
             case R.id.btn_activity_back:
                 navigateUp();
+                break;
+            case R.id.btn_ad_maintain_code_scan:
+                IntentIntegrator integrator = new IntentIntegrator(AdMaintainActivity.this);
+                integrator.setCaptureActivity(CaptureActivityAnyOrientation.class);
+                integrator.setOrientationLocked(true);
+                integrator.initiateScan();
                 break;
             case R.id.iv_ad_maintain_pic:
                 showDialog();
@@ -150,14 +160,16 @@ public class AdMaintainActivity extends AppCompatActivity implements View.OnClic
 
     private void storeOrPostAdMaintain() {
         if(!TextUtils.isEmpty(fileContent)) {
-            OkHttpCommonUtil okhtp = OkHttpCommonUtil.newInstance(getApplicationContext());
-            okhtp.postRequest(
+            OkHttpCommonUtil okHttp = OkHttpCommonUtil.newInstance(getApplicationContext());
+            okHttp.postRequest(
                     URL_AD_MAINTAIN,
                     new OkHttpCommonUtil.Param[]{
                             new OkHttpCommonUtil.Param(KEY_URL_AD_MAINTAIN_UID, sharedPreferencesHelper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID)),
                             new OkHttpCommonUtil.Param(KEY_URL_AD_MAINTAIN_CODE, et_ad_maintain_code.getText().toString().trim()),
                             new OkHttpCommonUtil.Param(KEY_URL_AD_MAINTAIN_ADDRESS, et_ad_maintain_location.getText().toString().trim()),
-                            new OkHttpCommonUtil.Param(KEY_URL_AD_MAINTAIN_CONTENT, et_ad_maintain_slogan.getText().toString().trim()),
+//                            new OkHttpCommonUtil.Param(KEY_URL_AD_MAINTAIN_CONTENT, et_ad_maintain_slogan.getText().toString().trim()),
+                            new OkHttpCommonUtil.Param(KEY_URL_AD_MAINTAIN_LOCATION_LAT, currentLatLng.latitude),
+                            new OkHttpCommonUtil.Param(KEY_URL_AD_MAINTAIN_LOCATION_LNG, currentLatLng.longitude),
                             new OkHttpCommonUtil.Param(KEY_URL_AD_MAINTAIN_PIC, fileContent)
                     },
                     new HttpBaseCallback() {
@@ -268,6 +280,20 @@ public class AdMaintainActivity extends AppCompatActivity implements View.OnClic
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        super.onActivityResult(requestCode, resultCode, data);
+        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+        if(result != null) {
+            if(result.getContents() == null) {
+                Toast.makeText(getApplicationContext(), "Cancelled", Toast.LENGTH_LONG).show();
+            } else {
+                final String content = result.getContents();
+                Toast.makeText(getApplicationContext(), "Scanned: " + content, Toast.LENGTH_LONG).show();
+                et_ad_maintain_code.setText(content);
+            }
+        } else {
+            Log.d("MainActivity", "Weird");
+        }
 
         if(resultCode == Activity.RESULT_OK) {
             if(requestCode == GlobalApplication.REQUEST_IMAGE_CAPTURE) {

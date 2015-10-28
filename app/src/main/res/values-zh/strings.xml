@@ -146,6 +146,7 @@
     <!-- 广告维护 -->
     <string name="title_activity_ad_maintain">广告维护</string>
     <string name="toast_ad_maintain_ok">广告上传成功</string>
+    <string name="btn_ad_maintain_code_scan">扫码</string>
 
     <!-- 聊天页 -->
     <string name="title_activity_chat">%s</string>
