@@ -21,8 +21,8 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.zxing.integration.android.IntentIntegrator;
-import com.google.zxing.integration.android.IntentResult;
+import com.google.zxing.integration.android.CustomerIntentIntegrator;
+import com.google.zxing.integration.android.CustomerIntentResult;
 import com.sina.weibo.sdk.auth.Oauth2AccessToken;
 import com.sina.weibo.sdk.openapi.LogoutAPI;
 import com.sina.weibo.sdk.utils.LogUtil;
@@ -38,6 +38,7 @@ import net.pingfang.signalr.chat.constant.weibo.WeiboRequestListener;
 import net.pingfang.signalr.chat.demo.GreyBitmapActivity;
 import net.pingfang.signalr.chat.fragment.AccountFragment;
 import net.pingfang.signalr.chat.fragment.BuddyFragment;
+import net.pingfang.signalr.chat.fragment.DiscoveryFragment;
 import net.pingfang.signalr.chat.fragment.MessageFragment;
 import net.pingfang.signalr.chat.listener.OnFragmentInteractionListener;
 import net.pingfang.signalr.chat.net.HttpBaseCallback;
@@ -63,11 +64,12 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     MessageFragment messageFragment;
     BuddyFragment buddyFragment;
+    DiscoveryFragment discoveryFragment;
     AccountFragment accountFragment;
 
     Button btn_list_chat;
     Button btn_list_friend;
-    Button btn_nearby_ads;
+    Button btn_discovery;
     Button btn_account_management;
 
     CollectionPagerAdapter adapter;
@@ -205,6 +207,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         tv_activity_title = (TextView) findViewById(R.id.tv_activity_title);
         tv_menu_drop_down = (TextView) findViewById(R.id.tv_menu_drop_down);
         tv_menu_drop_down.setOnClickListener(this);
+        tv_menu_drop_down.setVisibility(View.GONE);
         fl_container = (FrameLayout) findViewById(R.id.fl_container);
         fl_container = (FrameLayout) findViewById(R.id.fl_container);
         pager = (ViewPager) findViewById(R.id.pager);
@@ -212,6 +215,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         btn_list_chat.setOnClickListener(this);
         btn_list_friend = (Button) findViewById(R.id.btn_list_friend);
         btn_list_friend.setOnClickListener(this);
+        btn_discovery = (Button) findViewById(R.id.btn_discovery);
+        btn_discovery.setOnClickListener(this);
         btn_account_management = (Button) findViewById(R.id.btn_account_management);
         btn_account_management.setOnClickListener(this);
     }
@@ -219,10 +224,12 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private void initAdapter() {
         messageFragment = MessageFragment.newInstance(onFragmentInteractionListener);
         buddyFragment = BuddyFragment.newInstance(onFragmentInteractionListener);
+        discoveryFragment = DiscoveryFragment.newInstance();
         accountFragment = AccountFragment.newInstance(onFragmentInteractionListener);
         adapter = new CollectionPagerAdapter(getSupportFragmentManager());
         adapter.add(messageFragment);
         adapter.add(buddyFragment);
+        adapter.add(discoveryFragment);
         adapter.add(accountFragment);
         pager.setAdapter(adapter);
 
@@ -234,6 +241,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                         tv_activity_title.setText(R.string.tv_activity_title_roster);
                         break;
                     case 2:
+                        tv_activity_title.setText(R.string.tv_activity_title_discovery);
+                        break;
+                    case 3:
                         tv_activity_title.setText(R.string.tv_activity_title_account);
                         break;
                     case 0:
@@ -248,6 +258,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         Intent intent = new Intent(getApplicationContext(),ChatService.class);
         intent.putExtra(ChatService.FLAG_SERVICE_CMD, ChatService.FLAF_INIT_CONNECTION);
         String qs = constructLogin(helper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID));
+        Log.d(TAG,"qs == " + qs);
         intent.putExtra(newChatService.FLAG_INIT_CONNECTION_QS,qs);
         startService(intent);
 
@@ -266,7 +277,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             String nickname = helper.getStringValue(AppConstants.KEY_SYS_CURRENT_NICKNAME);
             String portrait = helper.getStringValue(AppConstants.KEY_SYS_CURRENT_PORTRAIT);
 
-            AccountFragment fragment = (AccountFragment) adapter.getItem(2);
+            AccountFragment fragment = (AccountFragment) adapter.getItem(3);
             fragment.updateAccountInfo(nickname,portrait);
         }
 
@@ -304,8 +315,11 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.btn_list_friend:
                 pager.setCurrentItem(1);
                 break;
-            case R.id.btn_account_management:
+            case R.id.btn_discovery:
                 pager.setCurrentItem(2);
+                break;
+            case R.id.btn_account_management:
+                pager.setCurrentItem(3);
                 break;
         }
     }
@@ -320,7 +334,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.action_scan:
-                        IntentIntegrator integrator = new IntentIntegrator(HomeActivity.this);
+                        CustomerIntentIntegrator integrator = new CustomerIntentIntegrator(HomeActivity.this);
                         integrator.setCaptureActivity(CaptureActivityAnyOrientation.class);
                         integrator.setOrientationLocked(true);
                         integrator.initiateScan();
@@ -350,7 +364,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+        CustomerIntentResult result = CustomerIntentIntegrator.parseActivityResult(requestCode, resultCode, data);
         if(result != null) {
             if(result.getContents() == null) {
                 Toast.makeText(getApplicationContext(), "Cancelled", Toast.LENGTH_LONG).show();
@@ -383,6 +397,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     private String constructLogin(String uid) {
         StringBuffer stringBuffer = new StringBuffer();
+        String lat = helper.getStringValue(AppConstants.KEY_SYS_LOCATION_LAT,"0.0");
+        String lng = helper.getStringValue(AppConstants.KEY_SYS_LOCATION_LNG, "0.0");
         if(!TextUtils.isEmpty(uid)) {
             stringBuffer.append("Android=");
             stringBuffer.append("{");
@@ -390,10 +406,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             stringBuffer.append(uid);
             stringBuffer.append(",");
             stringBuffer.append("\"Longitude\":");
-            stringBuffer.append(100.55);
+            stringBuffer.append(lng);
             stringBuffer.append(",");
             stringBuffer.append("\"Latitude\":");
-            stringBuffer.append(99.99);
+            stringBuffer.append(lat);
             stringBuffer.append("}");
         }
 

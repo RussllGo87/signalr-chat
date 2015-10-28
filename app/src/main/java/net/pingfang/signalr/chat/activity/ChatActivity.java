@@ -171,7 +171,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void loadLocalMessage() {
-        new LoadLocalMessageTask().execute(uid,buddyUid);
+        new LoadLocalMessageTask().execute(uid, buddyUid);
     }
 
     private void initCommunicate() {
@@ -461,7 +461,12 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         tv_msg.setPadding(0, 0, MediaFileUtils.dpToPx(getApplicationContext(), 20), 0);
         tv_msg.setGravity(Gravity.CENTER_VERTICAL);
         tv_msg.setText(content);
-        tv_msg.setBackgroundResource(R.drawable.msg_buddy);
+        if(direction) {
+            tv_msg.setBackgroundResource(R.drawable.msg_me);
+        } else {
+            tv_msg.setBackgroundResource(R.drawable.msg_buddy);
+        }
+
 
 
         ll.addView(tv_datetime);

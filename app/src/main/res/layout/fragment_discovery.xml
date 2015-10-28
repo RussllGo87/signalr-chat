@@ -1,0 +1,31 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+     xmlns:tools="http://schemas.android.com/tools"
+     android:layout_width="match_parent"
+     android:layout_height="match_parent"
+     android:orientation="vertical"
+     tools:context="net.pingfang.signalr.chat.fragment.DiscoveryFragment">
+
+    <TextView android:id="@+id/tv_account_item_scan"
+        style="@style/SettingItemStyle"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:background="@drawable/selector_settings_item"
+        android:text="@string/menu_action_scan"
+        android:drawableRight="@drawable/setting_view_arrow"
+        android:drawableEnd="@drawable/setting_view_arrow"/>
+
+    <TextView android:id="@+id/tv_account_item_resource"
+              style="@style/SettingItemStyle"
+              android:background="@drawable/selector_settings_item"
+              android:text="@string/menu_action_resource"
+              android:drawableRight="@drawable/setting_view_arrow"
+              android:drawableEnd="@drawable/setting_view_arrow"/>
+
+    <TextView android:id="@+id/tv_account_item_maintain"
+              style="@style/SettingItemStyle"
+              android:background="@drawable/selector_settings_item"
+              android:text="@string/menu_action_maintain"
+              android:drawableRight="@drawable/setting_view_arrow"
+              android:drawableEnd="@drawable/setting_view_arrow"/>
+
+</LinearLayout>

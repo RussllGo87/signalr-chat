@@ -27,8 +27,8 @@ import com.baidu.location.BDLocation;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
 import com.baidu.mapapi.model.LatLng;
-import com.google.zxing.integration.android.IntentIntegrator;
-import com.google.zxing.integration.android.IntentResult;
+import com.google.zxing.integration.android.CustomerIntentIntegrator;
+import com.google.zxing.integration.android.CustomerIntentResult;
 import com.squareup.okhttp.Response;
 
 import net.pingfang.signalr.chat.R;
@@ -144,7 +144,7 @@ public class AdMaintainActivity extends AppCompatActivity implements View.OnClic
                 navigateUp();
                 break;
             case R.id.btn_ad_maintain_code_scan:
-                IntentIntegrator integrator = new IntentIntegrator(AdMaintainActivity.this);
+                CustomerIntentIntegrator integrator = new CustomerIntentIntegrator(AdMaintainActivity.this);
                 integrator.setCaptureActivity(CaptureActivityAnyOrientation.class);
                 integrator.setOrientationLocked(true);
                 integrator.initiateScan();
@@ -282,7 +282,7 @@ public class AdMaintainActivity extends AppCompatActivity implements View.OnClic
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         super.onActivityResult(requestCode, resultCode, data);
-        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+        CustomerIntentResult result = CustomerIntentIntegrator.parseActivityResult(requestCode, resultCode, data);
         if(result != null) {
             if(result.getContents() == null) {
                 Toast.makeText(getApplicationContext(), "Cancelled", Toast.LENGTH_LONG).show();

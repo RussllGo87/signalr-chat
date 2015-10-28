@@ -10,7 +10,7 @@ import net.pingfang.signalr.chat.R;
 import net.pingfang.signalr.chat.constant.app.AppConstants;
 import net.pingfang.signalr.chat.util.SharedPreferencesHelper;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity{
 
     SharedPreferencesHelper sharedPreferencesHelper;
 
@@ -29,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
+
 
     public void login(View view) {
         Intent intent = new Intent();

@@ -25,11 +25,13 @@ android {
     }
 }
 
+
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile files('lib/signalr-client-sdk.jar')
     compile files('lib/signalr-client-sdk-android.jar')
     compile project(':weibosdk')
+    compile project(':zxing-android-embedded')
     compile files('lib/weixin_base_sdk.jar')
     compile files('lib/open_sdk_r5276.jar')
     compile files('lib/mta-sdk-1.6.2.jar')
@@ -40,8 +42,6 @@ dependencies {
     compile 'com.squareup.okio:okio:1.6.0'
     compile 'com.squareup.okhttp:okhttp:2.5.0'
     compile 'com.squareup.picasso:picasso:2.5.2'
-    compile 'com.google.zxing:core:3.2.0'
-    compile 'com.journeyapps:zxing-android-embedded:3.0.2@aar'
     compile 'org.apache.directory.studio:org.apache.commons.io:2.4'
     compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.4'
 }

@@ -21,6 +21,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.baidu.location.BDLocation;
+import com.baidu.location.LocationClient;
+import com.baidu.location.LocationClientOption;
+import com.baidu.mapapi.model.LatLng;
 import com.sina.weibo.sdk.auth.Oauth2AccessToken;
 import com.sina.weibo.sdk.auth.WeiboAuth;
 import com.sina.weibo.sdk.auth.WeiboAuthListener;
@@ -43,6 +47,8 @@ import net.pingfang.signalr.chat.constant.weibo.WeiboConstants;
 import net.pingfang.signalr.chat.constant.weibo.WeiboRequestListener;
 import net.pingfang.signalr.chat.database.AppContract;
 import net.pingfang.signalr.chat.database.UserManager;
+import net.pingfang.signalr.chat.location.LocationListenerImpl;
+import net.pingfang.signalr.chat.location.LocationNotify;
 import net.pingfang.signalr.chat.net.HttpBaseCallback;
 import net.pingfang.signalr.chat.net.OkHttpCommonUtil;
 import net.pingfang.signalr.chat.ui.dialog.SingleButtonDialogFragment;
@@ -57,7 +63,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity implements LocationNotify {
 
     public static final String TAG = LoginActivity.class.getSimpleName();
 
@@ -108,6 +114,10 @@ public class LoginActivity extends AppCompatActivity {
 
     int currentClickViewId = 0;
 
+    private LocationClient locationClient;
+    public LocationListenerImpl locationListener;
+    private LatLng currentLatLng;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -118,6 +128,7 @@ public class LoginActivity extends AppCompatActivity {
         savedAccount = sharedPreferencesHelper.getStringValue("account");
 
         initLoginConfig();
+        initLocation();
         initView();
     }
 
@@ -130,6 +141,35 @@ public class LoginActivity extends AppCompatActivity {
 
         // 创建腾讯qq实例
         mTencent = Tencent.createInstance(TencentConstants.APP_ID,getApplicationContext());
+    }
+
+    /**
+     * 初始化定位设置并开始定位
+     */
+    public void initLocation() {
+        LocationClientOption option = new LocationClientOption();
+        option.setLocationMode(LocationClientOption.LocationMode.Hight_Accuracy);
+        option.setCoorType("bd09ll");
+        option.setOpenGps(true);
+        option.setIsNeedAddress(true);
+        option.setIgnoreKillProcess(false);
+
+        locationClient = new LocationClient(getApplicationContext(),option);
+        locationListener = new LocationListenerImpl(this);
+        locationClient.registerLocationListener(locationListener);
+        locationClient.start();
+    }
+
+    @Override
+    public void updateLoc(BDLocation bdLocation) {
+        if (bdLocation == null)
+            return;
+
+        currentLatLng = new LatLng(bdLocation.getLatitude(),
+                bdLocation.getLongitude());
+
+        sharedPreferencesHelper.putStringValue(AppConstants.KEY_SYS_LOCATION_LAT, Double.toString(currentLatLng.latitude));
+        sharedPreferencesHelper.putStringValue(AppConstants.KEY_SYS_LOCATION_LNG, Double.toString(currentLatLng.longitude));
     }
 
     private void initView() {
