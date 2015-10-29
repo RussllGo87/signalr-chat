@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:paddingLeft="@dimen/padding_left_list_item_buddy_container"
+    android:paddingRight="@dimen/padding_left_list_item_buddy_container">
+
+    <ImageView android:id="@+id/iv_shield_portrait"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:src="@mipmap/ic_launcher"/>
+
+    <TextView android:id="@+id/tv_shield_nickname"
+        style="@style/SettingItemStyle"
+        android:layout_width="match_parent"
+        android:minHeight="18dp"
+        android:paddingLeft="@dimen/padding_tv_settings_item_me"
+        android:text="朋友昵称"
+        android:textSize="@dimen/text_size_activity_title"/>
+
+</LinearLayout>

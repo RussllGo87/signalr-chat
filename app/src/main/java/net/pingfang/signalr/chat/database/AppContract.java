@@ -96,4 +96,39 @@ public final class AppContract {
         public static final String COLUMN_NAME_COUNT = "count";
     }
 
+    public static abstract class ShieldEntry implements BaseColumns {
+        // 访问Uri
+        public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/shield");
+
+        // 内容类型
+        public static final String CONTENT_TYPE = "vnd.android.cursor.dir/net.pingfang.signalr.chat.shield";
+        public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/net.pingfang.signalr.chat.shield";
+
+        // 默认排序常量
+        public static final String DEFAULT_SORT_ORDER = "shield DESC";
+
+        public static final String TABLE_NAME = "t_shield";
+        public static final String COLUMN_NAME_SHIELD = "shield";
+        public static final String COLUMN_NAME_OWNER = "owner";
+
+    }
+
+    public static abstract class ShieldListView implements BaseColumns {
+        // 访问Uri
+        public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/v_shield");
+
+        // 内容类型
+        public static final String CONTENT_TYPE = "vnd.android.cursor.dir/net.pingfang.signalr.chat.v_shield";
+        public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/net.pingfang.signalr.chat.v_shield";
+
+        // 默认排序常量
+        public static final String DEFAULT_SORT_ORDER = "uid DESC";
+
+        public static final String VIEW_NAME = "v_list_shield";
+        public static final String COLUMN_NAME_UID = "uid";
+        public static final String COLUMN_NAME_NICKNAME ="nickname";
+        public static final String COLUMN_NAME_PORTRAIT = "portrait";
+        public static final String COLUMN_NAME_STATUS = "status";
+        public static final String COLUMN_NAME_OWNER = "owner";
+    }
 }

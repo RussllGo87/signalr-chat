@@ -225,11 +225,6 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify {
                                     R.string.weibosdk_demo_toast_auth_success, Toast.LENGTH_SHORT).show();
 
                             loadWbAccountInfo();
-
-//                            Intent intent = new Intent();
-//                            intent.setClass(getApplicationContext(), HomeActivity.class);
-//                            startActivity(intent);
-//                            finish();
                         } else {
                             // 当您注册的应用程序签名不正确时，就会收到 Code，请确保签名正确
                             String code = bundle.getString("code");

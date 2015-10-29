@@ -34,12 +34,18 @@ public class ChatAppProvider extends ContentProvider {
     private static final int RECENT_COLUMN_ID = 6;
     private static final int RECENT_VIEW = 7;
     private static final int RECENT_VIEW_COLUMN_ID = 8;
+    private static final int SHIELD = 9;
+    private static final int SHIELD_COLUMN_ID = 10;
+    private static final int SHIELD_VIEW = 11;
+    private static final int SHIELD_VIEW_COLUMN_ID = 12;
 
     // 查询列集合
     private static HashMap<String, String> userProjectionMap;
     private static HashMap<String, String> messageProjectionMap;
     private static HashMap<String, String> recentProjectionMap;
     private static HashMap<String, String> vRecentProjectionMap;
+    private static HashMap<String, String> shieldProjectionMap;
+    private static HashMap<String, String> vShieldProjectionMap;
 
     static {
         // Uri匹配工具类
@@ -52,6 +58,10 @@ public class ChatAppProvider extends ContentProvider {
         sUriMatcher.addURI(AppContract.AUTHORITY, "recent/#", RECENT_COLUMN_ID);
         sUriMatcher.addURI(AppContract.AUTHORITY, "v_recent", RECENT_VIEW);
         sUriMatcher.addURI(AppContract.AUTHORITY, "v_recent/#", RECENT_VIEW_COLUMN_ID);
+        sUriMatcher.addURI(AppContract.AUTHORITY, "shield", SHIELD);
+        sUriMatcher.addURI(AppContract.AUTHORITY, "shield/#", SHIELD_COLUMN_ID);
+        sUriMatcher.addURI(AppContract.AUTHORITY, "v_shield", SHIELD_VIEW);
+        sUriMatcher.addURI(AppContract.AUTHORITY, "v_shield/#", SHIELD_VIEW_COLUMN_ID);
 
 
         // 实例化查询列集合
@@ -92,6 +102,19 @@ public class ChatAppProvider extends ContentProvider {
         vRecentProjectionMap.put(AppContract.RecentContactView.COLUMN_NAME_UPDATE_TIME, AppContract.RecentContactView.COLUMN_NAME_UPDATE_TIME);
         vRecentProjectionMap.put(AppContract.RecentContactView.COLUMN_NAME_OWNER, AppContract.RecentContactView.COLUMN_NAME_OWNER);
         vRecentProjectionMap.put(AppContract.RecentContactView.COLUMN_NAME_COUNT, AppContract.RecentContactView.COLUMN_NAME_COUNT);
+
+        shieldProjectionMap = new HashMap<String, String>();
+        shieldProjectionMap.put(AppContract.ShieldEntry._ID, AppContract.ShieldEntry._ID);
+        shieldProjectionMap.put(AppContract.ShieldEntry.COLUMN_NAME_SHIELD, AppContract.ShieldEntry.COLUMN_NAME_SHIELD);
+        shieldProjectionMap.put(AppContract.ShieldEntry.COLUMN_NAME_OWNER, AppContract.ShieldEntry.COLUMN_NAME_OWNER);
+
+        vShieldProjectionMap = new HashMap<String, String>();
+        vShieldProjectionMap.put(AppContract.ShieldListView._ID, AppContract.ShieldListView._ID);
+        vShieldProjectionMap.put(AppContract.ShieldListView.COLUMN_NAME_UID, AppContract.ShieldListView.COLUMN_NAME_UID);
+        vShieldProjectionMap.put(AppContract.ShieldListView.COLUMN_NAME_NICKNAME, AppContract.ShieldListView.COLUMN_NAME_NICKNAME);
+        vShieldProjectionMap.put(AppContract.ShieldListView.COLUMN_NAME_PORTRAIT, AppContract.ShieldListView.COLUMN_NAME_PORTRAIT);
+        vShieldProjectionMap.put(AppContract.ShieldListView.COLUMN_NAME_STATUS, AppContract.ShieldListView.COLUMN_NAME_STATUS);
+        vShieldProjectionMap.put(AppContract.ShieldListView.COLUMN_NAME_OWNER, AppContract.ShieldListView.COLUMN_NAME_OWNER);
     }
 
     @Override
@@ -167,6 +190,34 @@ public class ChatAppProvider extends ContentProvider {
                 qb.setProjectionMap(vRecentProjectionMap);
                 qb.appendWhere(AppContract.RecentContactView._ID + "=" + uri.getPathSegments().get(1));
                 break;
+            case SHIELD:
+                qb.setTables(AppContract.ShieldEntry.TABLE_NAME);
+                qb.setProjectionMap(shieldProjectionMap);
+                if (TextUtils.isEmpty(sortOrder)) {
+                    orderBy = AppContract.ShieldEntry.DEFAULT_SORT_ORDER;
+                } else {
+                    orderBy = sortOrder;
+                }
+                break;
+            case SHIELD_COLUMN_ID:
+                qb.setTables(AppContract.ShieldEntry.TABLE_NAME);
+                qb.setProjectionMap(vShieldProjectionMap);
+                qb.appendWhere(AppContract.ShieldEntry._ID + "=" + uri.getPathSegments().get(1));
+                break;
+            case SHIELD_VIEW:
+                qb.setTables(AppContract.ShieldListView.VIEW_NAME);
+                qb.setProjectionMap(vShieldProjectionMap);
+                if (TextUtils.isEmpty(sortOrder)) {
+                    orderBy = AppContract.ShieldListView.DEFAULT_SORT_ORDER;
+                } else {
+                    orderBy = sortOrder;
+                }
+                break;
+            case SHIELD_VIEW_COLUMN_ID:
+                qb.setTables(AppContract.ShieldListView.VIEW_NAME);
+                qb.setProjectionMap(vShieldProjectionMap);
+                qb.appendWhere(AppContract.ShieldListView._ID + "=" + uri.getPathSegments().get(1));
+                break;
             default:
                 throw new IllegalArgumentException(getContext().getString(R.string.illegal_uri_exception)  + " = " + uri);
         }
@@ -213,6 +264,13 @@ public class ChatAppProvider extends ContentProvider {
                     getContext().getContentResolver().notifyChange(recentUri, null);
                     return recentUri;
                 }
+            case SHIELD:
+                rowId = db.insert(AppContract.ShieldEntry.TABLE_NAME, null, values);
+                if(rowId > 0) {
+                    Uri shieldUri = ContentUris.withAppendedId(AppContract.ShieldEntry.CONTENT_URI,rowId);
+                    getContext().getContentResolver().notifyChange(shieldUri, null);
+                    return shieldUri;
+                }
                 break;
         }
         return null;
@@ -249,6 +307,14 @@ public class ChatAppProvider extends ContentProvider {
             case RECENT_COLUMN_ID:
                 String recentColumnId = uri.getPathSegments().get(1);
                 count = db.delete(AppContract.RecentContactEntry.TABLE_NAME, AppContract.RecentContactEntry._ID + "=" + recentColumnId
+                        + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ')' : ""), selectionArgs);
+                break;
+            case SHIELD:
+                count = db.delete(AppContract.ShieldEntry.TABLE_NAME, selection, selectionArgs);
+                break;
+            case SHIELD_COLUMN_ID:
+                String shieldColumnId = uri.getPathSegments().get(1);
+                count = db.delete(AppContract.ShieldEntry.TABLE_NAME, AppContract.ShieldEntry._ID + "=" + shieldColumnId
                         + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ')' : ""), selectionArgs);
                 break;
             default:
@@ -288,6 +354,14 @@ public class ChatAppProvider extends ContentProvider {
             case RECENT_COLUMN_ID:
                 String recentColumnId = uri.getPathSegments().get(1);
                 count = db.update(AppContract.RecentContactEntry.TABLE_NAME, values, AppContract.RecentContactEntry._ID + "=" + recentColumnId
+                        + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ')' : ""), selectionArgs);
+                break;
+            case SHIELD:
+                count = db.update(AppContract.ShieldEntry.TABLE_NAME, values, selection, selectionArgs);
+                break;
+            case SHIELD_COLUMN_ID:
+                String shieldColumnId = uri.getPathSegments().get(1);
+                count = db.update(AppContract.ShieldEntry.TABLE_NAME, values, AppContract.ShieldEntry._ID + "=" + shieldColumnId
                         + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ')' : ""), selectionArgs);
                 break;
             default:

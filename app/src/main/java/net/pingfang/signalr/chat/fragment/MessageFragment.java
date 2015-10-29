@@ -92,6 +92,17 @@ public class MessageFragment extends Fragment implements LoaderManager.LoaderCal
                 startActivity(intent);
             }
         });
+        mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                User user = (User) view.getTag();
+                if(mListener != null) {
+                    mListener.shield(user);
+                    return true;
+                }
+                return false;
+            }
+        });
 
         String uid = sharedPreferencesHelper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID);
         Bundle args = new Bundle();

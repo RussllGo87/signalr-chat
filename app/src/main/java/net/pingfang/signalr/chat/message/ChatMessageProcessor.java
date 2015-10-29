@@ -391,7 +391,7 @@ public class ChatMessageProcessor implements ChatMessageListener {
 
             Intent intent = new Intent();
             intent.setAction(GlobalApplication.ACTION_INTENT_OFFLINE_MESSAGE_LIST_INCOMING);
-            intent.putParcelableArrayListExtra("message",uriArrayList);
+            intent.putParcelableArrayListExtra("message", uriArrayList);
             context.sendBroadcast(intent);
 
         } catch (JSONException e) {
@@ -399,6 +399,87 @@ public class ChatMessageProcessor implements ChatMessageListener {
         }
 
 
+    }
+
+    private void processShieldMsg(String message) {
+        JSONObject jsonObject;
+        try {
+            jsonObject = new JSONObject(message);
+            String owner = jsonObject.getString("UserId");
+            String shield = jsonObject.getString("ShieldedObjectId");
+            String selection =
+                    AppContract.ShieldListView.COLUMN_NAME_UID + " = ? " +
+                            "AND " +
+                            AppContract.ShieldListView.COLUMN_NAME_OWNER + " = ?";
+
+            String[] selectionArgs = new String[]{shield,owner};
+
+            Cursor newCursor = context.getContentResolver().query(AppContract.ShieldListView.CONTENT_URI,
+                    null, selection, selectionArgs, null);
+
+            if(newCursor != null && newCursor.getCount() > 0) {
+                return;
+            } else {
+                ContentValues values = new ContentValues();
+                values.put(AppContract.ShieldEntry.COLUMN_NAME_SHIELD,shield);
+                values.put(AppContract.ShieldEntry.COLUMN_NAME_OWNER,owner);
+                context.getContentResolver().insert(AppContract.ShieldEntry.CONTENT_URI,values);
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void processShieldListMsg(String message) {
+        JSONArray jsonArray;
+        try {
+            jsonArray = new JSONArray(message);
+            for(int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                String owner = jsonObject.getString("UserId");
+                String shield = jsonObject.getString("ShieldedObjectId");
+                String selection =
+                        AppContract.ShieldListView.COLUMN_NAME_UID + " = ? " +
+                                "AND " +
+                                AppContract.ShieldListView.COLUMN_NAME_OWNER + " = ?";
+
+                String[] selectionArgs = new String[]{shield,owner};
+
+                Cursor newCursor = context.getContentResolver().query(AppContract.ShieldListView.CONTENT_URI,
+                        null, selection, selectionArgs, null);
+
+                if(newCursor != null && newCursor.getCount() > 0) {
+                    continue;
+                } else {
+                    ContentValues values = new ContentValues();
+                    values.put(AppContract.ShieldEntry.COLUMN_NAME_SHIELD,shield);
+                    values.put(AppContract.ShieldEntry.COLUMN_NAME_OWNER,owner);
+                    context.getContentResolver().insert(AppContract.ShieldEntry.CONTENT_URI,values);
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void processUnShieldMsg(String message) {
+        JSONObject jsonObject;
+        try {
+            jsonObject = new JSONObject(message);
+            String owner = jsonObject.getString("UserId");
+            String unshield = jsonObject.getString("ShieldedObjectId");
+            String selection =
+                    AppContract.ShieldListView.COLUMN_NAME_UID + " = ? " +
+                            "AND " +
+                            AppContract.ShieldListView.COLUMN_NAME_OWNER + " = ?";
+
+            String[] selectionArgs = new String[]{unshield,owner};
+
+            context.getContentResolver().delete(AppContract.ShieldEntry.CONTENT_URI,selection,selectionArgs);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -421,6 +502,12 @@ public class ChatMessageProcessor implements ChatMessageListener {
                 processOfflineMsgShort(message);
             } else if(messageType.equals("OfflineMsg")) {
                 processOfflineMessageList(message);
+            } else if(messageType.equals("Shield")) {
+                processShieldMsg(message);
+            } else if(messageType.equals("Shields")) {
+                processShieldListMsg(message);
+            } else if(messageType.equals("UnShield")) {
+                processUnShieldMsg(message);
             }
 
             return "ok";

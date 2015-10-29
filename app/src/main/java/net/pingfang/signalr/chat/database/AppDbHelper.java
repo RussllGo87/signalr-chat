@@ -85,6 +85,37 @@ public class AppDbHelper extends SQLiteOpenHelper {
             "DROP VIEW IF EXISTS " + AppContract.RecentContactView.VIEW_NAME;
 
 
+    private static final String SQL_CREATE_ENTRY_SHIELD =
+            "CREATE TABLE " + AppContract.ShieldEntry.TABLE_NAME + " (" +
+            AppContract.ShieldEntry._ID + INTEGER_TYPE + PRIMARY_KEY + COMMA_SEP +
+            AppContract.ShieldEntry.COLUMN_NAME_SHIELD + TEXT_TYPE + NOT_NULL + COMMA_SEP +
+            AppContract.ShieldEntry.COLUMN_NAME_OWNER + TEXT_TYPE + NOT_NULL +
+            " )";
+
+    private static final String SQL_DELETE_ENTRY_SHIELD =
+            "DROP TABLE IF EXISTS " + AppContract.ShieldEntry.TABLE_NAME;
+
+
+    private static final String SQL_CREATE_VIEW_LIST_SHIELD =
+            "CREATE VIEW IF NOT EXISTS " + AppContract.ShieldListView.VIEW_NAME + " AS " +
+            "SELECT " +
+            "shield." + AppContract.ShieldEntry._ID + " AS " + AppContract.ShieldListView._ID + COMMA_SEP +
+            "user." + AppContract.UserEntry.COLUMN_NAME_ENTRY_UID + " AS " + AppContract.ShieldListView.COLUMN_NAME_UID + COMMA_SEP +
+            "user." + AppContract.UserEntry.COLUMN_NAME_NICK_NAME + " AS " + AppContract.ShieldListView.COLUMN_NAME_NICKNAME + COMMA_SEP +
+            "user." + AppContract.UserEntry.COLUMN_NAME_PORTRAIT + " AS " + AppContract.ShieldListView.COLUMN_NAME_PORTRAIT + COMMA_SEP +
+            "user." + AppContract.UserEntry.COLUMN_NAME_STATUS + " AS " + AppContract.ShieldListView.COLUMN_NAME_STATUS + COMMA_SEP +
+            "shield." + AppContract.ShieldEntry.COLUMN_NAME_OWNER + " AS " + AppContract.ShieldListView.COLUMN_NAME_OWNER + " " +
+            "FROM " +
+            AppContract.UserEntry.TABLE_NAME + " AS user, " +
+            AppContract.ShieldEntry.TABLE_NAME + " AS shield " +
+            "WHERE " +
+            "user." + AppContract.UserEntry.COLUMN_NAME_ENTRY_UID + " = " +
+            "shield." + AppContract.ShieldEntry.COLUMN_NAME_SHIELD;
+
+    private static final String SQL_DELETE_VIEW_LIST_SHIELD =
+            "DROP VIEW IF EXISTS " + AppContract.ShieldListView.VIEW_NAME;
+
+
     public AppDbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -94,14 +125,19 @@ public class AppDbHelper extends SQLiteOpenHelper {
         db.execSQL(SQL_CREATE_ENTRY_USER);
         db.execSQL(SQL_CREATE_ENTRY_MESSAGE);
         db.execSQL(SQL_CREATE_ENTRY_RECENT);
+        db.execSQL(SQL_CREATE_ENTRY_SHIELD);
 
         db.execSQL(SQL_CREATE_VIEW_RECENT);
+        db.execSQL(SQL_CREATE_VIEW_LIST_SHIELD);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+
+        db.execSQL(SQL_DELETE_VIEW_LIST_SHIELD);
         db.execSQL(SQL_DELETE_VIEW_RECENT);
 
+        db.execSQL(SQL_DELETE_ENTRY_SHIELD);
         db.execSQL(SQL_DELETE_ENTRY_RECENT);
         db.execSQL(SQL_DELETE_ENTRY_MESSAGE);
         db.execSQL(SQL_DELETE_ENTRY_USER);

@@ -1,11 +1,14 @@
 package net.pingfang.signalr.chat.activity;
 
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Looper;
-import android.os.Message;
 import android.support.v4.content.IntentCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -35,12 +38,14 @@ import net.pingfang.signalr.chat.constant.app.AppConstants;
 import net.pingfang.signalr.chat.constant.qq.TencentConstants;
 import net.pingfang.signalr.chat.constant.weibo.WeiboConstants;
 import net.pingfang.signalr.chat.constant.weibo.WeiboRequestListener;
+import net.pingfang.signalr.chat.database.User;
 import net.pingfang.signalr.chat.demo.GreyBitmapActivity;
 import net.pingfang.signalr.chat.fragment.AccountFragment;
 import net.pingfang.signalr.chat.fragment.BuddyFragment;
 import net.pingfang.signalr.chat.fragment.DiscoveryFragment;
 import net.pingfang.signalr.chat.fragment.MessageFragment;
 import net.pingfang.signalr.chat.listener.OnFragmentInteractionListener;
+import net.pingfang.signalr.chat.message.MessageConstructor;
 import net.pingfang.signalr.chat.net.HttpBaseCallback;
 import net.pingfang.signalr.chat.net.OkHttpCommonUtil;
 import net.pingfang.signalr.chat.service.ChatService;
@@ -86,8 +91,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     Tencent mTencent;
 
 //    ChatService chatService;
-    ChatService newChatService;
-    Handler handler;
+    ChatService mService;
+    boolean mBound = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,6 +106,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         initAdapter();
 
         initCommunicate();
+        bindChatService();
     }
 
     private void refreshToken() {
@@ -255,20 +261,48 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void initCommunicate() {
-        Intent intent = new Intent(getApplicationContext(),ChatService.class);
-        intent.putExtra(ChatService.FLAG_SERVICE_CMD, ChatService.FLAF_INIT_CONNECTION);
         String qs = constructLogin(helper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID));
-        Log.d(TAG,"qs == " + qs);
-        intent.putExtra(newChatService.FLAG_INIT_CONNECTION_QS,qs);
+        Log.d(TAG, "qs == " + qs);
+        Intent intent = new Intent(getApplicationContext(),ChatService.class);
+        Bundle args = new Bundle();
+        args.putInt(ChatService.FLAG_SERVICE_CMD, ChatService.FLAF_INIT_CONNECTION);
+        args.putString(ChatService.FLAG_INIT_CONNECTION_QS, qs);
+        intent.putExtra("args", args);
         startService(intent);
-
-        handler = new Handler(Looper.getMainLooper(), new Handler.Callback() {
-            @Override
-            public boolean handleMessage(Message msg) {
-                return false;
-            }
-        });
     }
+
+    private void bindChatService() {
+        Intent intent = new Intent(this, ChatService.class);
+        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        if (mBound) {
+            unbindService(mConnection);
+            mBound = false;
+        }
+    }
+
+    /** Defines callbacks for service binding, passed to bindService() */
+    private ServiceConnection mConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName className,
+                                       IBinder service) {
+            // We've bound to LocalService, cast the IBinder and get LocalService instance
+            ChatService.ChatBinder binder = (ChatService.ChatBinder) service;
+            mService = (ChatService) binder.getService();
+            mBound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName className) {
+            mBound = false;
+        }
+    };
 
     private OnFragmentInteractionListener onFragmentInteractionListener = new OnFragmentInteractionListener() {
 
@@ -278,27 +312,17 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             String portrait = helper.getStringValue(AppConstants.KEY_SYS_CURRENT_PORTRAIT);
 
             AccountFragment fragment = (AccountFragment) adapter.getItem(3);
-            fragment.updateAccountInfo(nickname,portrait);
+            fragment.updateAccountInfo(nickname, portrait);
         }
 
         @Override
-        public void updateMessageList(String name, String uid, String portrait, String body) {
-
-        }
-
-        @Override
-        public void loadMessage() {
-//            MessageFragment fragment = (MessageFragment) adapter.getItem(0);
-//            fragment.updateMessage("server", "2", "");
-        }
-
-        @Override
-        public void onFragmentInteraction(String name, String uid) {
-            Intent intent = new Intent();
-            intent.setClass(getApplicationContext(),ChatActivity.class);
-            intent.putExtra("name", name);
-            intent.putExtra("uid", uid);
-            startActivity(intent);
+        public void shield(User user) {
+            if(mBound) {
+                mService.sendMessage("Shield",
+                        MessageConstructor.constructShieldMsgReq(
+                                helper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID),
+                                user.getUid()));
+            }
         }
     };
 

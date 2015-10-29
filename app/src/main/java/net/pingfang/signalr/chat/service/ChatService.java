@@ -4,6 +4,7 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Binder;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 
@@ -57,10 +58,11 @@ public class ChatService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        int requestFlag = intent.getIntExtra(FLAG_SERVICE_CMD,FLAF_INIT_CONNECTION);
+        Bundle args = intent.getBundleExtra("args");
+        int requestFlag = args.getInt(FLAG_SERVICE_CMD, FLAF_INIT_CONNECTION);
         switch(requestFlag) {
             case FLAF_INIT_CONNECTION:
-                String qs = intent.getStringExtra(FLAG_INIT_CONNECTION_QS);
+                String qs = args.getString(FLAG_INIT_CONNECTION_QS);
                 initConnection(qs);
                 return START_REDELIVER_INTENT;
         }
@@ -127,6 +129,8 @@ public class ChatService extends Service {
     private class MessageSendTask extends AsyncTask<String,String,String> {
         @Override
         protected String doInBackground(String... params) {
+            Log.d(TAG,"send msgType == " + params[0]);
+            Log.d(TAG,"send msg == " + params[1]);
             hub.invoke("send",params[0],params[1]);
             return "ok";
         }
