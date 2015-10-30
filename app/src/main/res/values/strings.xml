@@ -118,6 +118,9 @@
     <string name="tv_offline_message">Offline Message</string>
     <string name="tv_load_offline_message">Offline Message(%s)</string>
 
+    <!-- 群发消息 -->
+    <string name="title_activity_bulk_msg">BulkMsgActivity</string>
+
     <!-- 设置页 -->
     <string name="title_activity_settings">@string/action_settings</string>
     <string name="tv_settings_item_account">Account Settings</string>
@@ -158,4 +161,5 @@
 
     <string name="image_get_file_user_canceled">REQUEST_IMAGE_GET canceled</string>
     <string name="image_get_file_user_error">REQUEST_IMAGE_GET error</string>
+
 </resources>

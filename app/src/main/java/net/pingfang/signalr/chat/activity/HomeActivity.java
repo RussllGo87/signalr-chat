@@ -63,6 +63,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     public static final String TAG = HomeActivity.class.getSimpleName();
 
     TextView tv_activity_title;
+    TextView tv_msg_bulk;
     TextView tv_menu_drop_down;
     FrameLayout fl_container;
     ViewPager pager;
@@ -211,6 +212,15 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     private void initView() {
         tv_activity_title = (TextView) findViewById(R.id.tv_activity_title);
+        tv_msg_bulk = (TextView) findViewById(R.id.tv_msg_bulk);
+        tv_msg_bulk.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent();
+                intent.setClass(getApplicationContext(), BulkMsgActivity.class);
+                startActivity(intent);
+            }
+        });
         tv_menu_drop_down = (TextView) findViewById(R.id.tv_menu_drop_down);
         tv_menu_drop_down.setOnClickListener(this);
         tv_menu_drop_down.setVisibility(View.GONE);

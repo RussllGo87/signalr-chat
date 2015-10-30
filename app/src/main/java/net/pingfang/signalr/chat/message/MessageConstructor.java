@@ -186,6 +186,127 @@ public class MessageConstructor {
         return stringBuffer.toString();
     }
 
+    public static String constructBulkTxtMsgReq(String uid, String nickname, String portrait,String content, String datetime) {
+        StringBuffer stringBuffer = new StringBuffer();
+        stringBuffer.append("{");
+        stringBuffer.append("\"");
+        stringBuffer.append("Sender");
+        stringBuffer.append("\"");
+        stringBuffer.append(":");
+        stringBuffer.append("\"");
+        stringBuffer.append(uid);
+        stringBuffer.append("\"");
+        stringBuffer.append(",");
+//        stringBuffer.append("\"");
+//        stringBuffer.append("SenderName");
+//        stringBuffer.append("\"");
+//        stringBuffer.append(":");
+//        stringBuffer.append("\"");
+//        stringBuffer.append(nickname);
+//        stringBuffer.append("\"");
+//        stringBuffer.append(",");
+//        stringBuffer.append("\"");
+//        stringBuffer.append("SenderPortrait");
+//        stringBuffer.append("\"");
+//        stringBuffer.append(":");
+//        stringBuffer.append("\"");
+//        stringBuffer.append(portrait);
+//        stringBuffer.append("\"");
+//        stringBuffer.append(",");
+        stringBuffer.append("\"");
+        stringBuffer.append("MessageType");
+        stringBuffer.append("\"");
+        stringBuffer.append(":");
+        stringBuffer.append("\"");
+        stringBuffer.append("Text");
+        stringBuffer.append("\"");
+        stringBuffer.append(",");
+        stringBuffer.append("\"");
+        stringBuffer.append("Contents");
+        stringBuffer.append("\"");
+        stringBuffer.append(":");
+        stringBuffer.append("\"");
+        stringBuffer.append(content);
+        stringBuffer.append("\"");
+        stringBuffer.append(",");
+        stringBuffer.append("\"");
+        stringBuffer.append("SendTime");
+        stringBuffer.append("\"");
+        stringBuffer.append(":");
+        stringBuffer.append("\"");
+        stringBuffer.append(datetime);
+        stringBuffer.append("\"");
+        stringBuffer.append("}");
+        return stringBuffer.toString();
+    }
+
+    public static String constructBulkFileMsgReq(String uid, String nickname, String portrait,String messageType,
+                                                 String fileExtension, String fileBody, String datetime) {
+        StringBuffer stringBuffer = new StringBuffer();
+        stringBuffer.append("{");
+        stringBuffer.append("\"");
+        stringBuffer.append("Sender");
+        stringBuffer.append("\"");
+        stringBuffer.append(":");
+        stringBuffer.append("\"");
+        stringBuffer.append(uid);
+        stringBuffer.append("\"");
+//        stringBuffer.append(",");
+//        stringBuffer.append("\"");
+//        stringBuffer.append("SenderName");
+//        stringBuffer.append("\"");
+//        stringBuffer.append(":");
+//        stringBuffer.append("\"");
+//        stringBuffer.append(nickname);
+//        stringBuffer.append("\"");
+//        stringBuffer.append(",");
+//        stringBuffer.append("\"");
+//        stringBuffer.append("SenderPortrait");
+//        stringBuffer.append("\"");
+//        stringBuffer.append(":");
+//        stringBuffer.append("\"");
+//        stringBuffer.append(portrait);
+//        stringBuffer.append("\"");
+        stringBuffer.append(",");
+        stringBuffer.append("\"");
+        stringBuffer.append("MessageType");
+        stringBuffer.append("\"");
+        stringBuffer.append(":");
+        stringBuffer.append("\"");
+        stringBuffer.append(messageType);
+        stringBuffer.append("\"");
+        stringBuffer.append(",");
+
+        stringBuffer.append("\"");
+        stringBuffer.append("fileExtension");
+        stringBuffer.append("\"");
+        stringBuffer.append(":");
+        stringBuffer.append("\"");
+        stringBuffer.append(fileExtension);
+        stringBuffer.append("\"");
+        stringBuffer.append(",");
+
+        stringBuffer.append("\"");
+        stringBuffer.append("Contents");
+        stringBuffer.append("\"");
+        stringBuffer.append(":");
+        stringBuffer.append("\"");
+        stringBuffer.append(fileBody);
+        stringBuffer.append("\"");
+
+        stringBuffer.append(",");
+
+        stringBuffer.append("\"");
+        stringBuffer.append("SendTime");
+        stringBuffer.append("\"");
+        stringBuffer.append(":");
+        stringBuffer.append("\"");
+        stringBuffer.append(datetime);
+        stringBuffer.append("\"");
+        stringBuffer.append("}");
+        return stringBuffer.toString();
+    }
+    
     public static String constructShieldMsgReq(String uid, String shieldId) {
         StringBuffer stringBuffer = new StringBuffer();
 

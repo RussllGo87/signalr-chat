@@ -12,6 +12,7 @@ public class MessageConstant {
 
     public static final int MESSAGE_TYPE_ON_LINE = 1;
     public static final int MESSAGE_TYPE_OFF_LINE = 2;
+    public static final int MESSAGE_TYPE_BULK = 3;
 
     public static final int MESSAGE_STATUS_NOT_READ = 1;
     public static final int MESSAGE_STATUS_READ = 2;

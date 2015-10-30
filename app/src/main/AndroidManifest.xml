@@ -216,6 +216,14 @@
             android:name=".provider.ChatAppProvider"
             android:authorities="net.pingfang.signalr.chat.provider" />
 
+        <activity
+            android:name=".activity.BulkMsgActivity"
+            android:label="@string/title_activity_bulk_msg"
+            android:parentActivityName=".activity.HomeActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="net.pingfang.signalr.chat.activity.HomeActivity" />
+        </activity>
     </application>
 
 </manifest>

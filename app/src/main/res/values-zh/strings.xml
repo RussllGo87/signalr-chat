@@ -166,6 +166,9 @@
     <string name="content_type_voice">[声音]</string>
     <string name="content_new_offline_msg">[新的离线消息]</string>
 
+    <!-- 群发消息 -->
+    <string name="title_activity_bulk_msg">群发消息</string>
+
     <!-- 设置页 -->
     <string name="title_activity_settings">@string/action_settings</string>
     <string name="tv_settings_item_account">账号设置</string>

@@ -42,8 +42,8 @@ public class ChatMessageProcessor implements ChatMessageListener {
         new ProcessMessageTask().execute(messageType, message);
     }
 
-    public void onSendMessage(String messageBody) {
-        new ProcessSendMessageTask().execute(messageBody);
+    public void onSendMessage(String messgeType, String messageBody) {
+        new ProcessSendMessageTask().execute(messgeType,messageBody);
     }
 
 
@@ -401,6 +401,90 @@ public class ChatMessageProcessor implements ChatMessageListener {
 
     }
 
+    private void processBulkMessage(String message,boolean direction) {
+        SharedPreferencesHelper helper = SharedPreferencesHelper.newInstance(context);
+        JSONObject object;
+        try {
+            object = new JSONObject(message);
+            String from = object.getString("Sender");
+            String to = helper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID);
+            String owner = to;
+            int status = MessageConstant.MESSAGE_STATUS_NOT_READ;
+            if(direction) {
+                status = MessageConstant.MESSAGE_STATUS_READ;
+            }
+//            String fromNickname = object.getString("SenderName");
+//            String fromPortrait = object.getString("SenderPortrait");
+            String content = object.getString("Contents");
+            String datetime = object.getString("SendTime");
+            String contentType = object.getString("MessageType");
+
+//            if(!direction) {
+//                UserManager userManager = new UserManager(context);
+//                Cursor cursor = userManager.queryByUid(from);
+//                if(cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {
+//                    fromNickname = cursor.getString(cursor.getColumnIndex(AppContract.UserEntry.COLUMN_NAME_NICK_NAME));
+//                    fromPortrait = cursor.getString(cursor.getColumnIndex(AppContract.UserEntry.COLUMN_NAME_PORTRAIT));
+//                    cursor.close();
+//                } else {
+//                    userManager.addRecord(from,fromNickname,fromPortrait);
+//                }
+//            }
+
+
+            ChatMessageManager chatMessageManager = new ChatMessageManager(context);
+            Uri messageUri = null;
+            if(!TextUtils.isEmpty(contentType)) {
+                ContentValues values = new ContentValues();
+                if(contentType.equals("Text")) {
+                    messageUri = chatMessageManager.insert(from, to, owner, MessageConstant.MESSAGE_TYPE_BULK,
+                            contentType, content, datetime, status);
+                    values.put(AppContract.RecentContactEntry.COLUMN_NAME_CONTENT, content);
+                } else if(contentType.equals("Picture")){
+                    String fileExtension = object.getString("fileExtension");
+                    String filePath = MediaFileUtils.processReceiveFile(context, content,
+                            MessageConstant.MESSAGE_FILE_TYPE_IMG, fileExtension);
+                    messageUri = chatMessageManager.insert(from, to, owner, MessageConstant.MESSAGE_TYPE_BULK,
+                            contentType, filePath, datetime, status);
+                    values.put(AppContract.RecentContactEntry.COLUMN_NAME_CONTENT, context.getResources().getString(R.string.content_type_pic));
+                } else if(contentType.equals("Audio")) {
+                    String fileExtension = object.getString("fileExtension");
+                    String filePath = MediaFileUtils.processReceiveFile(context, content,
+                            MessageConstant.MESSAGE_FILE_TYPE_AUDIO, fileExtension);
+                    messageUri = chatMessageManager.insert(from, to, owner, MessageConstant.MESSAGE_TYPE_BULK,
+                            contentType, filePath, datetime, status);
+                    values.put(AppContract.RecentContactEntry.COLUMN_NAME_CONTENT, context.getResources().getString(R.string.content_type_voice));
+                }
+
+                if(messageUri != null) {
+                    if (!direction) {
+                        Bundle args = new Bundle();
+                        args.putParcelable("messageUri", messageUri);
+                        args.putString("fromUid", from);
+
+                        Intent intent = new Intent();
+                        intent.setAction(GlobalApplication.ACTION_INTENT_BULK_MESSAGE_INCOMING);
+                        intent.putExtra("message", args);
+                        context.sendBroadcast(intent);
+                    } else {
+                        Bundle args = new Bundle();
+                        args.putParcelable("messageUri", messageUri);
+                        args.putString("fromUid", from);
+
+                        Intent intent = new Intent();
+                        intent.setAction(GlobalApplication.ACTION_INTENT_BULK_MESSAGE_SEND);
+                        intent.putExtra("message", args);
+                        context.sendBroadcast(intent);
+                    }
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+
     private void processShieldMsg(String message) {
         JSONObject jsonObject;
         try {
@@ -486,8 +570,8 @@ public class ChatMessageProcessor implements ChatMessageListener {
     private class ProcessMessageTask extends AsyncTask<String,String,String> {
         @Override
         protected String doInBackground(String... params) {
-            String messageType = params[0];
-            String message = params[1];
+                String messageType = params[0];
+                String message = params[1];
             if(messageType.equals("OnlineList")) {
                 processOnlineList(message);
             } else if(messageType.equals("Online")){
@@ -508,6 +592,8 @@ public class ChatMessageProcessor implements ChatMessageListener {
                 processShieldListMsg(message);
             } else if(messageType.equals("UnShield")) {
                 processUnShieldMsg(message);
+            } else if(messageType.equals("BulkMssaging")) {
+                processBulkMessage(message, false);
             }
 
             return "ok";
@@ -517,8 +603,14 @@ public class ChatMessageProcessor implements ChatMessageListener {
     private class ProcessSendMessageTask extends AsyncTask<String,String,String> {
         @Override
         protected String doInBackground(String... params) {
-            String messageBody = params[0];
-            processOnlineMessage(messageBody,true);
+            String messageType = params[0];
+            String message = params[1];
+            if(messageType.equals("OnlineMsg")) {
+                processOnlineMessage(message,true);
+            } else if(messageType.equals("BulkMssaging")) {
+                processBulkMessage(message,true);
+            }
+
             return "ok";
         }
     }

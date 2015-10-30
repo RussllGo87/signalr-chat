@@ -46,6 +46,22 @@ public class UserManager {
         return cursor;
     }
 
+    public User queryUserByUid(String uid) {
+        Cursor cursor = queryByUid(uid);
+        if(cursor != null && cursor.getCount() > 0) {
+            cursor.moveToPrevious();
+            if(cursor.moveToNext()) {
+                String nickname = cursor.getString(cursor.getColumnIndex(AppContract.UserEntry.COLUMN_NAME_NICK_NAME));
+                String portrait = cursor.getString(cursor.getColumnIndex(AppContract.UserEntry.COLUMN_NAME_PORTRAIT));
+                int status = cursor.getInt(cursor.getColumnIndex(AppContract.UserEntry.COLUMN_NAME_STATUS));
+                User user = new User(uid,nickname,portrait,status);
+                return user;
+            }
+        }
+
+        return null;
+    }
+
     public int update(String uid, String nickname, String portrait) {
 
         ContentValues values = new ContentValues();

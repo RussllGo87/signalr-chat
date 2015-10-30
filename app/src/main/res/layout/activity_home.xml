@@ -18,6 +18,16 @@
                   android:text="@string/tv_activity_title_message"
                   android:textSize="@dimen/text_size_activity_title" />
 
+        <TextView android:id="@+id/tv_msg_bulk"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:layout_alignParentRight="true"
+                  android:layout_alignParentEnd="true"
+                  android:layout_centerVertical="true"
+                  android:padding="@dimen/padding_activity_title"
+                  android:text="群发消息"
+                  android:textSize="12sp" />
+
         <TextView android:id="@+id/tv_menu_drop_down"
                   android:layout_width="wrap_content"
                   android:layout_height="wrap_content"

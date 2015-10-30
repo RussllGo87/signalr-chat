@@ -35,7 +35,6 @@ public class MessageFragment extends Fragment implements LoaderManager.LoaderCal
     private static final int LOADER_ID = 0x02;
 
     private OnFragmentInteractionListener mListener;
-
     private ListView mListView;
     private ChatListCursorAdapter chatListCursorAdapter;
 
@@ -71,6 +70,7 @@ public class MessageFragment extends Fragment implements LoaderManager.LoaderCal
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_list_message, container, false);
+
         mListView = (ListView) view.findViewById(android.R.id.list);
         return view;
     }
@@ -78,7 +78,6 @@ public class MessageFragment extends Fragment implements LoaderManager.LoaderCal
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
         chatListCursorAdapter = new ChatListCursorAdapter(getContext(),null, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
         mListView.setAdapter(chatListCursorAdapter);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
