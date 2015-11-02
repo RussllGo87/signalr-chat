@@ -8,11 +8,9 @@ import android.widget.Toast;
 import com.tencent.mm.sdk.constants.ConstantsAPI;
 import com.tencent.mm.sdk.modelbase.BaseReq;
 import com.tencent.mm.sdk.modelbase.BaseResp;
-import com.tencent.mm.sdk.openapi.IWXAPI;
 import com.tencent.mm.sdk.openapi.IWXAPIEventHandler;
-import com.tencent.mm.sdk.openapi.WXAPIFactory;
 
-import net.pingfang.signalr.chat.constant.wechat.WechatConstants;
+import net.pingfang.signalr.chat.util.GlobalApplication;
 
 /**
  * Created by gongguopei87@gmail.com on 2015/8/25.
@@ -24,8 +22,7 @@ public class IWXAPIEventProcessor extends BroadcastReceiver implements IWXAPIEve
     @Override
     public void onReceive(Context context, Intent intent) {
         this.context = context;
-        final IWXAPI api = WXAPIFactory.createWXAPI(context, WechatConstants.APP_ID,true);
-        if(api.handleIntent(intent,this)) {
+        if(GlobalApplication.api.handleIntent(intent, this)) {
             return;
         }
     }
@@ -51,6 +48,7 @@ public class IWXAPIEventProcessor extends BroadcastReceiver implements IWXAPIEve
         switch (baseResp.getType()) {
             case ConstantsAPI.COMMAND_SENDAUTH:
                 Toast.makeText(context, "get auth resp, processed here", Toast.LENGTH_LONG).show();
+
                 break;
 
             case ConstantsAPI.COMMAND_SENDMESSAGE_TO_WX:

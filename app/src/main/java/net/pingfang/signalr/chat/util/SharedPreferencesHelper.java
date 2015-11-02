@@ -7,6 +7,8 @@ import com.sina.weibo.sdk.auth.Oauth2AccessToken;
 
 import net.pingfang.signalr.chat.R;
 import net.pingfang.signalr.chat.constant.qq.TencentConstants;
+import net.pingfang.signalr.chat.constant.wechat.WxConstants;
+import net.pingfang.signalr.chat.constant.wechat.WxOauth2AccessToken;
 import net.pingfang.signalr.chat.constant.weibo.WeiboConstants;
 
 /**
@@ -135,6 +137,16 @@ public class SharedPreferencesHelper {
         helper.clearKey(TencentConstants.KEY_ACCESS_TOKEN);
         helper.clearKey(TencentConstants.KEY_EXPIRES_IN);
         helper.clearKey(TencentConstants.KEY_OPEN_ID);
+    }
+
+    public static void writeAccessToken(WxOauth2AccessToken token) {
+        if (null == token) {
+            return;
+        }
+        helper.putStringValue(WxConstants.KEY_WX_OPEN_ID, token.getOpenId());
+        helper.putStringValue(WxConstants.KEY_WX_ACCESS_TOKEN, token.getToken());
+        helper.putLong(WxConstants.KEY_WX_EXPIRES_IN, token.getExpiresTime());
+        helper.putStringValue(WxConstants.KEY_WX_REFRESH_TOKEN, token.getRefreshToken());
     }
 
 }

@@ -25,6 +25,7 @@
     <string name="btn_login_pattern_qq">QQ</string>
     <string name="btn_login_pattern_wechat">WeChat</string>
     <string name="btn_login_pattern_weibo">Weibo</string>
+    <string name="error_msg_wechat_not_installed">Wechat App not installed</string>
 
     <!-- 注册页 -->
     <string name="title_activity_register">RegisterActivity</string>

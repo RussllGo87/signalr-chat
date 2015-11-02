@@ -36,6 +36,11 @@ import com.squareup.okhttp.Response;
 import com.tencent.connect.UserInfo;
 import com.tencent.connect.auth.QQAuth;
 import com.tencent.connect.common.Constants;
+import com.tencent.mm.sdk.constants.ConstantsAPI;
+import com.tencent.mm.sdk.modelbase.BaseReq;
+import com.tencent.mm.sdk.modelbase.BaseResp;
+import com.tencent.mm.sdk.modelmsg.SendAuth;
+import com.tencent.mm.sdk.openapi.IWXAPIEventHandler;
 import com.tencent.tauth.IUiListener;
 import com.tencent.tauth.Tencent;
 import com.tencent.tauth.UiError;
@@ -43,6 +48,8 @@ import com.tencent.tauth.UiError;
 import net.pingfang.signalr.chat.R;
 import net.pingfang.signalr.chat.constant.app.AppConstants;
 import net.pingfang.signalr.chat.constant.qq.TencentConstants;
+import net.pingfang.signalr.chat.constant.wechat.WxConstants;
+import net.pingfang.signalr.chat.constant.wechat.WxOauth2AccessToken;
 import net.pingfang.signalr.chat.constant.weibo.WeiboConstants;
 import net.pingfang.signalr.chat.constant.weibo.WeiboRequestListener;
 import net.pingfang.signalr.chat.database.AppContract;
@@ -63,7 +70,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 
-public class LoginActivity extends AppCompatActivity implements LocationNotify {
+public class LoginActivity extends AppCompatActivity implements LocationNotify, IWXAPIEventHandler {
 
     public static final String TAG = LoginActivity.class.getSimpleName();
 
@@ -109,8 +116,12 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify {
     /** 注意：SsoHandler 仅当 SDK 支持 SSO 时有效 */
     private SsoHandler mWeiboSsoHandler;
 
+    // 腾讯qq登录相关
     // 腾讯qq实例
     Tencent mTencent;
+
+    // 微信登录相关
+    WxOauth2AccessToken mWxOauth2AccessToken;
 
     int currentClickViewId = 0;
 
@@ -130,6 +141,16 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify {
         initLoginConfig();
         initLocation();
         initView();
+
+        GlobalApplication.api.handleIntent(getIntent(),this);
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+
+        setIntent(intent);
+        GlobalApplication.api.handleIntent(intent, this);
     }
 
     /**
@@ -205,6 +226,20 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify {
             }
         });
         btn_login_pattern_wechat = (ImageView) findViewById(R.id.btn_login_pattern_wechat);
+        btn_login_pattern_wechat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                currentClickViewId = view.getId();
+                if(GlobalApplication.api.isWXAppInstalled()) {
+                    final SendAuth.Req req = new SendAuth.Req();
+                    req.scope = "snsapi_userinfo";
+                    req.state = "signal_r_chat";
+                    GlobalApplication.api.sendReq(req);
+                } else {
+                    Toast.makeText(getApplicationContext(), R.string.error_msg_wechat_not_installed, Toast.LENGTH_SHORT);
+                }
+            }
+        });
         btn_login_pattern_weibo = (ImageView) findViewById(R.id.btn_login_pattern_weibo);
         btn_login_pattern_weibo.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -402,6 +437,116 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify {
         });
     }
 
+    // 微信发送请求到第三方应用时，会回调到该方法
+    @Override
+    public void onReq(BaseReq baseReq) {
+        switch (baseReq.getType()) {
+            case ConstantsAPI.COMMAND_GETMESSAGE_FROM_WX:
+                Toast.makeText(getApplicationContext(), "get message from wx, processed here", Toast.LENGTH_LONG).show();
+                break;
+
+            case ConstantsAPI.COMMAND_SHOWMESSAGE_FROM_WX:
+                Toast.makeText(getApplicationContext(), "show message from wx, processed here", Toast.LENGTH_LONG).show();
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    // 第三方应用发送到微信的请求处理后的响应结果，会回调到该方法
+    @Override
+    public void onResp(BaseResp baseResp) {
+        switch (baseResp.getType()) {
+            case ConstantsAPI.COMMAND_SENDAUTH:
+                Toast.makeText(getApplicationContext(), "get auth resp, processed here", Toast.LENGTH_LONG).show();
+                SendAuth.Resp resp = (SendAuth.Resp) baseResp;
+                int errorCode = resp.errCode;
+                if(errorCode == BaseResp.ErrCode.ERR_OK) {
+                    String accessCode = resp.code;
+                    getWxAccessToken(accessCode);
+                } else {
+                    if(errorCode == BaseResp.ErrCode.ERR_AUTH_DENIED) {
+
+                    } else if(errorCode == BaseResp.ErrCode.ERR_USER_CANCEL){
+                        Toast.makeText(getApplicationContext(),R.string.weibosdk_demo_toast_auth_canceled,Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(getApplicationContext(),R.string.weibosdk_demo_toast_auth_failed,Toast.LENGTH_SHORT).show();
+                    }
+                }
+                break;
+
+            case ConstantsAPI.COMMAND_SENDMESSAGE_TO_WX:
+                // 处理微信主程序返回的SendMessageToWX.Resp
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    private void getWxAccessToken(final String accessCode) {
+        OkHttpCommonUtil okHttp = OkHttpCommonUtil.newInstance(getApplicationContext());
+        okHttp.getRequest(
+                "https://api.weixin.qq.com/sns/oauth2/access_token",
+                new OkHttpCommonUtil.Param[]{
+                        new OkHttpCommonUtil.Param("appid", WxConstants.APP_ID),
+                        new OkHttpCommonUtil.Param("secret", WxConstants.APP_SECRET),
+                        new OkHttpCommonUtil.Param("code", accessCode),
+                        new OkHttpCommonUtil.Param("grant_type", "authorization_code")
+                },
+                new HttpBaseCallback() {
+
+                    @Override
+                    public void onResponse(Response response) throws IOException {
+                        String body = response.body().string();
+                        mWxOauth2AccessToken = WxOauth2AccessToken.parseAccessToken(body);
+                        if (mWxOauth2AccessToken != null && mWxOauth2AccessToken.isSessionValid()) {
+                            // 保存 Token 到 SharedPreferences
+                            SharedPreferencesHelper.writeAccessToken(mWxOauth2AccessToken);
+                            loadWxAccountInfo();
+                        }
+                    }
+                });
+    }
+
+    private void loadWxAccountInfo() {
+        String openId = mWxOauth2AccessToken.getOpenId();
+        String accessToken = mWxOauth2AccessToken.getToken();
+        OkHttpCommonUtil okHttp = OkHttpCommonUtil.newInstance(getApplicationContext());
+        okHttp.getRequest("https://api.weixin.qq.com/sns/userinfo",
+                new OkHttpCommonUtil.Param[]{
+                        new OkHttpCommonUtil.Param("access_token", accessToken),
+                        new OkHttpCommonUtil.Param("openid", openId)
+                },
+                new HttpBaseCallback() {
+                    @Override
+                    public void onResponse(Response response) throws IOException {
+                        String body = response.body().string();
+                        JSONObject jsonObject;
+                        try {
+                            jsonObject = new JSONObject(body);
+                            String nickname = jsonObject.getString(WxConstants.PARAM_WX_NICKNAME);
+                            String headimgurl = jsonObject.getString(WxConstants.PARAM_WX_HEAD_IMG_URL);
+
+                            sharedPreferencesHelper.putStringValue(WxConstants.KEY_WX_NICKNAME, nickname);
+                            sharedPreferencesHelper.putStringValue(WxConstants.KEY_WX_HEAD_IMG_URL, headimgurl);
+
+                            mDelivery.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    login(NEW_LGOIN_PARAM_PLATFROM_WECHAT);
+                                }
+                            });
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+        );
+    }
+
     private void login(String platform) {
 
         OkHttpCommonUtil.Param[] params = new OkHttpCommonUtil.Param[0];
@@ -431,7 +576,13 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify {
                 }
 
             } else if(platform.equals(NEW_LGOIN_PARAM_PLATFROM_WECHAT)) {
-                params = new OkHttpCommonUtil.Param[]{};
+                    params = new OkHttpCommonUtil.Param[]{
+                            new OkHttpCommonUtil.Param(NEW_LOGIN_KEY_WXID,mWxOauth2AccessToken.getOpenId()),
+                            new OkHttpCommonUtil.Param(NEW_LOGIN_KEY_NICK_NAME,
+                                    sharedPreferencesHelper.getStringValue(WxConstants.KEY_WX_NICKNAME)),
+                            new OkHttpCommonUtil.Param(NEW_LOGIN_KEY_PORTRAIT,
+                                    sharedPreferencesHelper.getStringValue(WxConstants.KEY_WX_HEAD_IMG_URL))
+                    };
             } else {
                 return;
             }
@@ -535,12 +686,14 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+        // 微博发起授权返回
         // SSO 授权回调
         // 重要：发起 SSO 登陆的 Activity 必须重写 onActivityResult
         if (mWeiboSsoHandler != null && currentClickViewId == btn_login_pattern_weibo.getId()) {
             mWeiboSsoHandler.authorizeCallBack(requestCode, resultCode, data);
         }
 
+        // qq发起授权返回
         if(mTencent != null && currentClickViewId == btn_login_pattern_qq.getId()) {
             Tencent.onActivityResultData(requestCode, resultCode, data, loginListener);
             if (requestCode == Constants.REQUEST_API) {

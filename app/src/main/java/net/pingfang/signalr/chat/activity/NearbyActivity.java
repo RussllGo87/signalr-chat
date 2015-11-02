@@ -38,8 +38,6 @@ import com.baidu.mapapi.map.Marker;
 import com.baidu.mapapi.map.MarkerOptions;
 import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.model.LatLng;
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoader;
 import com.squareup.okhttp.Response;
 
 import net.pingfang.signalr.chat.R;
@@ -74,9 +72,6 @@ public class NearbyActivity extends AppCompatActivity implements View.OnClickLis
     private LatLng currentLatlng = new LatLng(23.23d,112.6d);
 
     private Handler mHandler = new Handler(Looper.getMainLooper());
-
-    private ImageLoader loder;
-    DisplayImageOptions optionss;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

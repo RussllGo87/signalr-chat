@@ -1,7 +1,6 @@
 package net.pingfang.signalr.chat.activity;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
@@ -10,45 +9,46 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoader;
-
 import net.pingfang.signalr.chat.R;
+import net.pingfang.signalr.chat.net.OkHttpCommonUtil;
 
 public class NearbyAdDetailActivity extends AppCompatActivity implements View.OnClickListener{
 
     TextView btn_activity_back;
 
-    private ImageView advimageshow;
-    private TextView advtext;
-    private Bitmap bitmap;
-    private String advt,url;
-    private ImageLoader loder;
-    DisplayImageOptions optionss;
+    private ImageView iv_ad_image;
+    private TextView tv_ad_content;
+
+    private String advt;
+    private String url;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_nearby_ad_detail);
 
+        Bundle bundle = getIntent().getExtras();
+        advt = bundle.getString("text");
+        url = bundle.getString("url");
+
         initView();
 
-        loder = ImageLoader.getInstance();
-        advimageshow=(ImageView) this.findViewById(R.id.advimageshow);
-        advtext=(TextView) this.findViewById(R.id.advtext);
-        Bundle bundle=this.getIntent().getExtras();
-        advt=bundle.getString("text");
-        url=bundle.getString("url");
-        System.out.println("advt"+advt+":url:"+url);
-        //显示图片
-        loder.displayImage(url, advimageshow, optionss);
-        advtext.setText(advt);
+        initData();
+
     }
 
     private void initView() {
         btn_activity_back = (TextView) findViewById(R.id.btn_activity_back);
         btn_activity_back.setOnClickListener(this);
 
+        iv_ad_image = (ImageView) findViewById(R.id.iv_ad_image);
+        tv_ad_content = (TextView) findViewById(R.id.tv_ad_content);
+    }
+
+    private void initData() {
+        OkHttpCommonUtil okHttp = OkHttpCommonUtil.newInstance(getApplicationContext());
+        okHttp.display(iv_ad_image, url, R.drawable.ic_empty);
+        tv_ad_content.setText(advt);
     }
 
     @Override

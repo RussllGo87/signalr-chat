@@ -39,6 +39,8 @@
     <string name="weibosdk_demo_toast_obtain_code_failed">获取 Code 失败</string>
     <string name="weibosdk_demo_toast_obtain_token_success">获取 Token 成功</string>
     <string name="weibosdk_demo_toast_obtain_token_failed">获取 Token 失败</string>
+    <string name="error_msg_wechat_not_installed">你还没有安装微信</string>
+
 
     <!-- 注册页 -->
     <string name="title_activity_register">注册</string>

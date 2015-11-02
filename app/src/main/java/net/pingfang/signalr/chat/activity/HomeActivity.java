@@ -203,6 +203,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             mTencent.logout(getApplicationContext());
         }
 
+
+
         Intent exitIntent = new Intent();
         exitIntent.setClass(getApplicationContext(), LoginActivity.class);
         exitIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | IntentCompat.FLAG_ACTIVITY_CLEAR_TASK);
