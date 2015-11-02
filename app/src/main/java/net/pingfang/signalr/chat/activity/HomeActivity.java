@@ -36,6 +36,8 @@ import net.pingfang.signalr.chat.R;
 import net.pingfang.signalr.chat.adapter.CollectionPagerAdapter;
 import net.pingfang.signalr.chat.constant.app.AppConstants;
 import net.pingfang.signalr.chat.constant.qq.TencentConstants;
+import net.pingfang.signalr.chat.constant.wechat.WxConstants;
+import net.pingfang.signalr.chat.constant.wechat.WxOauth2AccessToken;
 import net.pingfang.signalr.chat.constant.weibo.WeiboConstants;
 import net.pingfang.signalr.chat.constant.weibo.WeiboRequestListener;
 import net.pingfang.signalr.chat.database.User;
@@ -90,6 +92,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     // qq 登录配置
     Tencent mTencent;
+
+    // 微信登录配置
+    private WxOauth2AccessToken mWxOauth2AccessToken;
 
 //    ChatService chatService;
     ChatService mService;
@@ -164,6 +169,24 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
 
+        mWxOauth2AccessToken = SharedPreferencesHelper.readWxAccessToken();
+        if(!TextUtils.isEmpty(mWxOauth2AccessToken.getOpenId()) && !mWxOauth2AccessToken.isSessionValid()) {
+            OkHttpCommonUtil okHttpCommonUtil = OkHttpCommonUtil.newInstance(getApplicationContext());
+            okHttpCommonUtil.getRequest(
+                    "https://api.weixin.qq.com/sns/oauth2/refresh_token",
+                    new OkHttpCommonUtil.Param[]{
+                            new OkHttpCommonUtil.Param("appid", WxConstants.APP_ID),
+                            new OkHttpCommonUtil.Param("grant_type","refresh_token"),
+                            new OkHttpCommonUtil.Param("refresh_token",mWxOauth2AccessToken.getRefreshToken())
+                    },
+                    new HttpBaseCallback() {
+                        @Override
+                        public void onResponse(Response response) throws IOException {
+                            String body = response.body().string();
+
+                        }
+                    });
+        }
     }
 
     private void logout() {
