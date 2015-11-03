@@ -23,6 +23,7 @@ import com.tencent.tauth.Tencent;
 import net.pingfang.signalr.chat.R;
 import net.pingfang.signalr.chat.constant.app.AppConstants;
 import net.pingfang.signalr.chat.constant.qq.TencentConstants;
+import net.pingfang.signalr.chat.constant.wechat.WxOauth2AccessToken;
 import net.pingfang.signalr.chat.constant.weibo.WeiboRequestListener;
 import net.pingfang.signalr.chat.service.ChatService;
 import net.pingfang.signalr.chat.util.SharedPreferencesHelper;
@@ -42,6 +43,10 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
 
     /** Access Token 实例  */
     private Oauth2AccessToken wbAccessToken;
+    // qq 登录配置
+    Tencent mTencent;
+    // 微信登录配置
+    private WxOauth2AccessToken mWxOauth2AccessToken;
 
 //    ChatService chatService;
     ChatService mService;
@@ -160,11 +165,18 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                         }
                     });
                 }
-                Tencent mTencent = Tencent.createInstance(TencentConstants.APP_ID, getApplicationContext());
+                mTencent = Tencent.createInstance(TencentConstants.APP_ID, getApplicationContext());
                 if(mTencent.isSessionValid()) {
                     SharedPreferencesHelper.clearQqAccessToken();
                     mTencent.logout(getApplicationContext());
                 }
+
+                mWxOauth2AccessToken = SharedPreferencesHelper.readWxAccessToken();
+                if(mWxOauth2AccessToken != null && mWxOauth2AccessToken.isSessionValid()) {
+                    mWxOauth2AccessToken = null;
+                    SharedPreferencesHelper.clearWxAccessToken();
+                }
+
 
                 mService.destroy();
                 if (mBound) {

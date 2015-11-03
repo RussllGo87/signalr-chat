@@ -505,6 +505,8 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify, 
                             // 保存 Token 到 SharedPreferences
                             SharedPreferencesHelper.writeAccessToken(mWxOauth2AccessToken);
                             loadWxAccountInfo();
+                        } else { // 授权失败
+
                         }
                     }
                 });
@@ -539,7 +541,7 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify, 
                                 }
                             });
 
-                        } catch (Exception e) {
+                        } catch (Exception e) {  // 加载微信个人信息失败
                             e.printStackTrace();
                         }
                     }

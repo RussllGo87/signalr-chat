@@ -183,7 +183,19 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                         @Override
                         public void onResponse(Response response) throws IOException {
                             String body = response.body().string();
-
+                            mWxOauth2AccessToken = WxOauth2AccessToken.parseAccessToken(body);
+                            if (mWxOauth2AccessToken != null && mWxOauth2AccessToken.isSessionValid()) {
+                                // 保存 Token 到 SharedPreferences
+                                SharedPreferencesHelper.writeAccessToken(mWxOauth2AccessToken);
+                            } else {
+                                mDelivery.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(getApplicationContext(), getString(R.string.weibo_toast_auth_expired), Toast.LENGTH_SHORT).show();
+                                        logout();
+                                    }
+                                });
+                            }
                         }
                     });
         }
@@ -226,6 +238,11 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             mTencent.logout(getApplicationContext());
         }
 
+        mWxOauth2AccessToken = SharedPreferencesHelper.readWxAccessToken();
+        if(mWxOauth2AccessToken != null && mWxOauth2AccessToken.isSessionValid()) {
+            mWxOauth2AccessToken = null;
+            SharedPreferencesHelper.clearWxAccessToken();
+        }
 
 
         Intent exitIntent = new Intent();

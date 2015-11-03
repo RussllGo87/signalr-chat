@@ -158,4 +158,11 @@ public class SharedPreferencesHelper {
         return token;
     }
 
+    public static void clearWxAccessToken() {
+        helper.clearKey(WxConstants.KEY_WX_OPEN_ID);
+        helper.clearKey(WxConstants.KEY_WX_ACCESS_TOKEN);
+        helper.clearKey(WxConstants.KEY_WX_REFRESH_TOKEN);
+        helper.clearKey(WxConstants.KEY_WX_REFRESH_TOKEN);
+    }
+
 }
