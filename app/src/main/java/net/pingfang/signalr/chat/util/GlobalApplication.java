@@ -3,11 +3,8 @@ package net.pingfang.signalr.chat.util;
 import android.app.Application;
 
 import com.baidu.mapapi.SDKInitializer;
-import com.tencent.mm.sdk.openapi.IWXAPI;
-import com.tencent.mm.sdk.openapi.WXAPIFactory;
 
 import net.pingfang.signalr.chat.R;
-import net.pingfang.signalr.chat.constant.wechat.WxConstants;
 
 import java.util.Locale;
 
@@ -50,11 +47,6 @@ public class GlobalApplication extends Application {
     private Locale myLocale;
     SharedPreferencesHelper helper;
 
-    /**
-     * IWXAPI 是第三方app和微信通信的openapi接口
-     */
-    public static IWXAPI api;
-
     @Override
     public void onCreate() {
         super.onCreate();
@@ -62,10 +54,6 @@ public class GlobalApplication extends Application {
         helper = SharedPreferencesHelper.newInstance(getApplicationContext());
         // 语言切换
         loadLocale();
-
-        // 注册微信API
-        api = WXAPIFactory.createWXAPI(getApplicationContext(), WxConstants.APP_ID, true);
-        api.registerApp(WxConstants.APP_ID);
 
         // 初始化百度地图SDK
         SDKInitializer.initialize(getApplicationContext());

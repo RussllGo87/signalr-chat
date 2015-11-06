@@ -36,11 +36,8 @@ import com.squareup.okhttp.Response;
 import com.tencent.connect.UserInfo;
 import com.tencent.connect.auth.QQAuth;
 import com.tencent.connect.common.Constants;
-import com.tencent.mm.sdk.constants.ConstantsAPI;
-import com.tencent.mm.sdk.modelbase.BaseReq;
-import com.tencent.mm.sdk.modelbase.BaseResp;
-import com.tencent.mm.sdk.modelmsg.SendAuth;
-import com.tencent.mm.sdk.openapi.IWXAPIEventHandler;
+import com.tencent.mm.sdk.openapi.IWXAPI;
+import com.tencent.mm.sdk.openapi.WXAPIFactory;
 import com.tencent.tauth.IUiListener;
 import com.tencent.tauth.Tencent;
 import com.tencent.tauth.UiError;
@@ -63,6 +60,7 @@ import net.pingfang.signalr.chat.util.CommonTools;
 import net.pingfang.signalr.chat.util.GlobalApplication;
 import net.pingfang.signalr.chat.util.MediaFileUtils;
 import net.pingfang.signalr.chat.util.SharedPreferencesHelper;
+import net.pingfang.signalr.chat.wxapi.WXEntryActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -70,7 +68,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 
-public class LoginActivity extends AppCompatActivity implements LocationNotify, IWXAPIEventHandler {
+public class LoginActivity extends AppCompatActivity implements LocationNotify{
 
     public static final String TAG = LoginActivity.class.getSimpleName();
 
@@ -85,9 +83,9 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify, 
     public static final String NEW_LOGIN_KEY_NICK_NAME = "nickName";
     public static final String NEW_LOGIN_KEY_PORTRAIT = "pic";
 
-    public static final String NEW_LGOIN_PARAM_PLATFROM_QQ = "qq";
-    public static final String NEW_LGOIN_PARAM_PLATFROM_WEIBO = "weibo";
-    public static final String NEW_LGOIN_PARAM_PLATFROM_WECHAT = "wechat";
+    public static final String NEW_LOGIN_PARAM_PLATFROM_QQ = "qq";
+    public static final String NEW_LOGIN_PARAM_PLATFROM_WEIBO = "weibo";
+    public static final String NEW_LOGIN_PARAM_PLATFROM_WECHAT = "wechat";
 
 
     LinearLayout ll_form_container;
@@ -101,7 +99,6 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify, 
     LinearLayout ll_progress_bar_container;
     ProgressBar pb_operation;
     TextView tv_pb_operation;
-
 
     private Handler mDelivery;
 
@@ -122,6 +119,7 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify, 
 
     // 微信登录相关
     WxOauth2AccessToken mWxOauth2AccessToken;
+    IWXAPI api;
 
     int currentClickViewId = 0;
 
@@ -142,15 +140,9 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify, 
         initLocation();
         initView();
 
-        GlobalApplication.api.handleIntent(getIntent(),this);
-    }
-
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-
-        setIntent(intent);
-        GlobalApplication.api.handleIntent(intent, this);
+        // 注册微信API
+        api = WXAPIFactory.createWXAPI(getApplicationContext(), WxConstants.APP_ID, true);
+        api.registerApp(WxConstants.APP_ID);
     }
 
     /**
@@ -230,14 +222,16 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify, 
             @Override
             public void onClick(View view) {
                 currentClickViewId = view.getId();
-                if(GlobalApplication.api.isWXAppInstalled()) {
-                    final SendAuth.Req req = new SendAuth.Req();
-                    req.scope = "snsapi_userinfo";
-                    req.state = "signal_r_chat";
-                    GlobalApplication.api.sendReq(req);
-                } else {
-                    Toast.makeText(getApplicationContext(), R.string.error_msg_wechat_not_installed, Toast.LENGTH_SHORT);
-                }
+                Intent intent = new Intent(getApplicationContext(), WXEntryActivity.class);
+                startActivity(intent);
+//                if(api.isWXAppInstalled()) {
+//                    final SendAuth.Req req = new SendAuth.Req();
+//                    req.scope = "snsapi_userinfo";
+//                    req.state = "signal_r_chat";
+//                    api.sendReq(req);
+//                } else {
+//                    Toast.makeText(getApplicationContext(), R.string.error_msg_wechat_not_installed, Toast.LENGTH_SHORT);
+//                }
             }
         });
         btn_login_pattern_weibo = (ImageView) findViewById(R.id.btn_login_pattern_weibo);
@@ -311,7 +305,7 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify, 
                         mDelivery.post(new Runnable() {
                             @Override
                             public void run() {
-                                login(NEW_LGOIN_PARAM_PLATFROM_WEIBO);
+                                login(NEW_LOGIN_PARAM_PLATFROM_WEIBO);
                             }
                         });
 
@@ -416,7 +410,7 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify, 
                     mDelivery.post(new Runnable() {
                         @Override
                         public void run() {
-                            login(NEW_LGOIN_PARAM_PLATFROM_QQ);
+                            login(NEW_LOGIN_PARAM_PLATFROM_QQ);
                         }
                     });
 
@@ -437,53 +431,52 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify, 
         });
     }
 
-    // 微信发送请求到第三方应用时，会回调到该方法
-    @Override
-    public void onReq(BaseReq baseReq) {
-        switch (baseReq.getType()) {
-            case ConstantsAPI.COMMAND_GETMESSAGE_FROM_WX:
-                Toast.makeText(getApplicationContext(), "get message from wx, processed here", Toast.LENGTH_LONG).show();
-                break;
-
-            case ConstantsAPI.COMMAND_SHOWMESSAGE_FROM_WX:
-                Toast.makeText(getApplicationContext(), "show message from wx, processed here", Toast.LENGTH_LONG).show();
-                break;
-
-            default:
-                break;
-        }
-    }
+    // 微信发送请求到第三方应用时，会回调到该
+//    public void onReq(BaseReq baseReq) {
+//        switch (baseReq.getType()) {
+//            case ConstantsAPI.COMMAND_GETMESSAGE_FROM_WX:
+//                Toast.makeText(getApplicationContext(), "get message from wx, processed here", Toast.LENGTH_LONG).show();
+//                break;
+//
+//            case ConstantsAPI.COMMAND_SHOWMESSAGE_FROM_WX:
+//                Toast.makeText(getApplicationContext(), "show message from wx, processed here", Toast.LENGTH_LONG).show();
+//                break;
+//
+//            default:
+//                break;
+//        }
+//    }
 
     // 第三方应用发送到微信的请求处理后的响应结果，会回调到该方法
-    @Override
-    public void onResp(BaseResp baseResp) {
-        switch (baseResp.getType()) {
-            case ConstantsAPI.COMMAND_SENDAUTH:
-                Toast.makeText(getApplicationContext(), "get auth resp, processed here", Toast.LENGTH_LONG).show();
-                SendAuth.Resp resp = (SendAuth.Resp) baseResp;
-                int errorCode = resp.errCode;
-                if(errorCode == BaseResp.ErrCode.ERR_OK) {
-                    String accessCode = resp.code;
-                    getWxAccessToken(accessCode);
-                } else {
-                    if(errorCode == BaseResp.ErrCode.ERR_AUTH_DENIED) {
-
-                    } else if(errorCode == BaseResp.ErrCode.ERR_USER_CANCEL){
-                        Toast.makeText(getApplicationContext(),R.string.weibosdk_demo_toast_auth_canceled,Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(getApplicationContext(),R.string.weibosdk_demo_toast_auth_failed,Toast.LENGTH_SHORT).show();
-                    }
-                }
-                break;
-
-            case ConstantsAPI.COMMAND_SENDMESSAGE_TO_WX:
-                // 处理微信主程序返回的SendMessageToWX.Resp
-                break;
-
-            default:
-                break;
-        }
-    }
+//    public void onResp(BaseResp baseResp) {
+//        Log.d(TAG,"baseResp.getType() == " + baseResp.getType());
+//        switch (baseResp.getType()) {
+//            case ConstantsAPI.COMMAND_SENDAUTH:
+//                Toast.makeText(getApplicationContext(), "get auth resp, processed here", Toast.LENGTH_LONG).show();
+//                SendAuth.Resp resp = (SendAuth.Resp) baseResp;
+//                int errorCode = resp.errCode;
+//                if(errorCode == BaseResp.ErrCode.ERR_OK) {
+//                    String accessCode = resp.code;
+//                    getWxAccessToken(accessCode);
+//                } else {
+//                    if(errorCode == BaseResp.ErrCode.ERR_AUTH_DENIED) {
+//
+//                    } else if(errorCode == BaseResp.ErrCode.ERR_USER_CANCEL){
+//                        Toast.makeText(getApplicationContext(),R.string.weibosdk_demo_toast_auth_canceled,Toast.LENGTH_SHORT).show();
+//                    } else {
+//                        Toast.makeText(getApplicationContext(),R.string.weibosdk_demo_toast_auth_failed,Toast.LENGTH_SHORT).show();
+//                    }
+//                }
+//                break;
+//
+//            case ConstantsAPI.COMMAND_SENDMESSAGE_TO_WX:
+//                // 处理微信主程序返回的SendMessageToWX.Resp
+//                break;
+//
+//            default:
+//                break;
+//        }
+//    }
 
     private void getWxAccessToken(final String accessCode) {
         OkHttpCommonUtil okHttp = OkHttpCommonUtil.newInstance(getApplicationContext());
@@ -537,7 +530,7 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify, 
                             mDelivery.post(new Runnable() {
                                 @Override
                                 public void run() {
-                                    login(NEW_LGOIN_PARAM_PLATFROM_WECHAT);
+                                    login(NEW_LOGIN_PARAM_PLATFROM_WECHAT);
                                 }
                             });
 
@@ -553,7 +546,7 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify, 
 
         OkHttpCommonUtil.Param[] params = new OkHttpCommonUtil.Param[0];
         if(!TextUtils.isEmpty(platform)) {
-            if(platform.equals(NEW_LGOIN_PARAM_PLATFROM_QQ)) {
+            if(platform.equals(NEW_LOGIN_PARAM_PLATFROM_QQ)) {
                 if(mTencent.isSessionValid()) {
                     params = new OkHttpCommonUtil.Param[] {
                             new OkHttpCommonUtil.Param(NEW_LOGIN_KEY_TID,mTencent.getOpenId()),
@@ -564,7 +557,7 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify, 
                     };
                 }
 
-            } else if(platform.equals(NEW_LGOIN_PARAM_PLATFROM_WEIBO)) {
+            } else if(platform.equals(NEW_LOGIN_PARAM_PLATFROM_WEIBO)) {
                 if(mAccessToken.isSessionValid()) {
                     params = new OkHttpCommonUtil.Param[]{
                             new OkHttpCommonUtil.Param(NEW_LOGIN_KEY_WID,mAccessToken.getUid()),
@@ -577,7 +570,7 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify, 
                     return;
                 }
 
-            } else if(platform.equals(NEW_LGOIN_PARAM_PLATFROM_WECHAT)) {
+            } else if(platform.equals(NEW_LOGIN_PARAM_PLATFROM_WECHAT)) {
                     params = new OkHttpCommonUtil.Param[]{
                             new OkHttpCommonUtil.Param(NEW_LOGIN_KEY_WXID,mWxOauth2AccessToken.getOpenId()),
                             new OkHttpCommonUtil.Param(NEW_LOGIN_KEY_NICK_NAME,
