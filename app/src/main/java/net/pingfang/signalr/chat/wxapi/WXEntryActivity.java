@@ -3,15 +3,13 @@ package net.pingfang.signalr.chat.wxapi;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.tencent.mm.sdk.constants.ConstantsAPI;
 import com.tencent.mm.sdk.modelbase.BaseReq;
 import com.tencent.mm.sdk.modelbase.BaseResp;
 import com.tencent.mm.sdk.modelmsg.SendAuth;
-import com.tencent.mm.sdk.modelmsg.ShowMessageFromWX;
 import com.tencent.mm.sdk.openapi.IWXAPI;
 import com.tencent.mm.sdk.openapi.IWXAPIEventHandler;
 import com.tencent.mm.sdk.openapi.WXAPIFactory;
@@ -26,72 +24,14 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
 
     public static final String TAG = WXEntryActivity.class.getSimpleName();
 
-    private static final int TIMELINE_SUPPORTED_VERSION = 0x21020001;
-
-    private Button gotoBtn, regBtn, launchBtn, checkBtn;
-
-    // IWXAPI 是第三方app和微信通信的openapi接口
     private IWXAPI api;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.entry);
 
         // 通过WXAPIFactory工厂，获取IWXAPI的实例
-        api = WXAPIFactory.createWXAPI(this, WxConstants.APP_ID, false);
-
-        regBtn = (Button) findViewById(R.id.reg_btn);
-        regBtn.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                // 将该app注册到微信
-                api.registerApp(WxConstants.APP_ID);
-            }
-        });
-
-        gotoBtn = (Button) findViewById(R.id.goto_send_btn);
-        gotoBtn.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-//                startActivity(new Intent(WXEntryActivity.this, SendToWXActivity.class));
-//                finish();
-                if(api.isWXAppInstalled()) {
-                    final SendAuth.Req req = new SendAuth.Req();
-                    req.scope = "snsapi_userinfo";
-                    req.state = "signal_r_chat";
-                    api.sendReq(req);
-                } else {
-                    Toast.makeText(getApplicationContext(), R.string.error_msg_wechat_not_installed, Toast.LENGTH_SHORT);
-                }
-            }
-        });
-
-        launchBtn = (Button) findViewById(R.id.launch_wx_btn);
-        launchBtn.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(WXEntryActivity.this, "launch result = " + api.openWXApp(), Toast.LENGTH_LONG).show();
-            }
-        });
-
-        checkBtn = (Button) findViewById(R.id.check_timeline_supported_btn);
-        checkBtn.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                int wxSdkVersion = api.getWXAppSupportAPI();
-                if (wxSdkVersion >= TIMELINE_SUPPORTED_VERSION) {
-                    Toast.makeText(WXEntryActivity.this, "wxSdkVersion = " + Integer.toHexString(wxSdkVersion) + "\ntimeline supported", Toast.LENGTH_LONG).show();
-                } else {
-                    Toast.makeText(WXEntryActivity.this, "wxSdkVersion = " + Integer.toHexString(wxSdkVersion) + "\ntimeline not supported", Toast.LENGTH_LONG).show();
-                }
-            }
-        });
-
+        api = WXAPIFactory.createWXAPI(this, WxConstants.APP_ID, true);
         api.handleIntent(getIntent(), this);
     }
 
@@ -101,18 +41,21 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
 
         setIntent(intent);
         api.handleIntent(intent, this);
+        finish();
     }
 
     // 微信发送请求到第三方应用时，会回调到该方法
     @Override
-    public void onReq(BaseReq req) {
-        switch (req.getType()) {
+    public void onReq(BaseReq baseReq) {
+        switch (baseReq.getType()) {
             case ConstantsAPI.COMMAND_GETMESSAGE_FROM_WX:
-                goToGetMsg();
+                Toast.makeText(getApplicationContext(), "get message from wx, processed here", Toast.LENGTH_LONG).show();
                 break;
+
             case ConstantsAPI.COMMAND_SHOWMESSAGE_FROM_WX:
-                goToShowMsg((ShowMessageFromWX.Req) req);
+                Toast.makeText(getApplicationContext(), "show message from wx, processed here", Toast.LENGTH_LONG).show();
                 break;
+
             default:
                 break;
         }
@@ -120,10 +63,9 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
 
     // 第三方应用发送到微信的请求处理后的响应结果，会回调到该方法
     @Override
-    public void onResp(BaseResp resp) {
+    public void onResp(BaseResp baseResp) {
         int result = 0;
-
-        switch (resp.errCode) {
+        switch (baseResp.errCode) {
             case BaseResp.ErrCode.ERR_OK:
                 result = R.string.errcode_success;
                 break;
@@ -138,17 +80,34 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
                 break;
         }
 
+        Log.d(TAG, "baseResp.getType() == " + baseResp.getType());
+        switch (baseResp.getType()) {
+            case ConstantsAPI.COMMAND_SENDAUTH:
+                Toast.makeText(getApplicationContext(), "get auth resp, processed here", Toast.LENGTH_LONG).show();
+                SendAuth.Resp resp = (SendAuth.Resp) baseResp;
+                int errorCode = resp.errCode;
+                if(errorCode == BaseResp.ErrCode.ERR_OK) {
+                    String accessCode = resp.code;
+//                    getWxAccessToken(accessCode);
+                } else {
+                    if(errorCode == BaseResp.ErrCode.ERR_AUTH_DENIED) {
+
+                    } else if(errorCode == BaseResp.ErrCode.ERR_USER_CANCEL){
+                        Toast.makeText(getApplicationContext(),R.string.weibosdk_demo_toast_auth_canceled,Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(getApplicationContext(),R.string.weibosdk_demo_toast_auth_failed,Toast.LENGTH_SHORT).show();
+                    }
+                }
+                break;
+
+            case ConstantsAPI.COMMAND_SENDMESSAGE_TO_WX:
+                // 处理微信主程序返回的SendMessageToWX.Resp
+                break;
+
+            default:
+                break;
+        }
+
         Toast.makeText(this, result, Toast.LENGTH_LONG).show();
-    }
-
-    private void goToGetMsg() {
-//        Intent intent = new Intent(this, GetFromWXActivity.class);
-//        intent.putExtras(getIntent());
-//        startActivity(intent);
-//        finish();
-    }
-
-    private void goToShowMsg(ShowMessageFromWX.Req showReq) {
-
     }
 }

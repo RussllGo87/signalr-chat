@@ -36,6 +36,7 @@ import com.squareup.okhttp.Response;
 import com.tencent.connect.UserInfo;
 import com.tencent.connect.auth.QQAuth;
 import com.tencent.connect.common.Constants;
+import com.tencent.mm.sdk.modelmsg.SendAuth;
 import com.tencent.mm.sdk.openapi.IWXAPI;
 import com.tencent.mm.sdk.openapi.WXAPIFactory;
 import com.tencent.tauth.IUiListener;
@@ -60,7 +61,6 @@ import net.pingfang.signalr.chat.util.CommonTools;
 import net.pingfang.signalr.chat.util.GlobalApplication;
 import net.pingfang.signalr.chat.util.MediaFileUtils;
 import net.pingfang.signalr.chat.util.SharedPreferencesHelper;
-import net.pingfang.signalr.chat.wxapi.WXEntryActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -222,16 +222,14 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
             @Override
             public void onClick(View view) {
                 currentClickViewId = view.getId();
-                Intent intent = new Intent(getApplicationContext(), WXEntryActivity.class);
-                startActivity(intent);
-//                if(api.isWXAppInstalled()) {
-//                    final SendAuth.Req req = new SendAuth.Req();
-//                    req.scope = "snsapi_userinfo";
-//                    req.state = "signal_r_chat";
-//                    api.sendReq(req);
-//                } else {
-//                    Toast.makeText(getApplicationContext(), R.string.error_msg_wechat_not_installed, Toast.LENGTH_SHORT);
-//                }
+                if(api.isWXAppInstalled()) {
+                    final SendAuth.Req req = new SendAuth.Req();
+                    req.scope = "snsapi_userinfo";
+                    req.state = "signal_r_chat";
+                    api.sendReq(req);
+                } else {
+                    Toast.makeText(getApplicationContext(), R.string.error_msg_wechat_not_installed, Toast.LENGTH_SHORT);
+                }
             }
         });
         btn_login_pattern_weibo = (ImageView) findViewById(R.id.btn_login_pattern_weibo);

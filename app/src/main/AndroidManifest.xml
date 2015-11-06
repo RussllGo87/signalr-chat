@@ -227,10 +227,6 @@
             android:name=".provider.ChatAppProvider"
             android:authorities="net.pingfang.signalr.chat.provider" />
 
-        <receiver android:name=".receiver.IWXAPIEventProcessor">
-
-        </receiver>
-
     </application>
 
 </manifest>
