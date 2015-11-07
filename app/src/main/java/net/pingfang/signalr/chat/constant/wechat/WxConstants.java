@@ -5,9 +5,9 @@ package net.pingfang.signalr.chat.constant.wechat;
  */
 public abstract class WxConstants {
 
-    public static final String APP_ID = "wx0fcc821b51b8c948";
-    public static final String APP_SECRET = "0226c0e8b45a0e88347d6e33c0c420d1";
-    public static final String SCOPE = "snsapi_base";
+    public static final String APP_ID = "wx1b94e2667b92c9b3";
+    public static final String APP_SECRET = "d4624c36b6795d1d99dcf0547af5443d";
+    public static final String SCOPE = "snsapi_userinfo";
 
     // 访问标记(access token)相关
     public static final String KEY_WX_OPEN_ID = "KEY_WX_OPEN_ID";

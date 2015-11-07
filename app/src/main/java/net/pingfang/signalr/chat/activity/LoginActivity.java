@@ -1,11 +1,14 @@
 package net.pingfang.signalr.chat.activity;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.v4.content.IntentCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
 import android.text.TextUtils;
@@ -83,9 +86,9 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
     public static final String NEW_LOGIN_KEY_NICK_NAME = "nickName";
     public static final String NEW_LOGIN_KEY_PORTRAIT = "pic";
 
-    public static final String NEW_LOGIN_PARAM_PLATFROM_QQ = "qq";
-    public static final String NEW_LOGIN_PARAM_PLATFROM_WEIBO = "weibo";
-    public static final String NEW_LOGIN_PARAM_PLATFROM_WECHAT = "wechat";
+    public static final String NEW_LOGIN_PARAM_PLATFORM_QQ = "qq";
+    public static final String NEW_LOGIN_PARAM_PLATFORM_WEIBO = "weibo";
+    public static final String NEW_LOGIN_PARAM_PLATFORM_WECHAT = "wechat";
 
 
     LinearLayout ll_form_container;
@@ -122,9 +125,6 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
     IWXAPI api;
 
     int currentClickViewId = 0;
-
-    private LocationClient locationClient;
-    public LocationListenerImpl locationListener;
     private LatLng currentLatLng;
 
     @Override
@@ -143,6 +143,16 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
         // 注册微信API
         api = WXAPIFactory.createWXAPI(getApplicationContext(), WxConstants.APP_ID, true);
         api.registerApp(WxConstants.APP_ID);
+
+        loadWxLoginCode();
+    }
+
+    private void loadWxLoginCode() {
+        Intent intent = getIntent();
+        String accessCode = intent.getStringExtra("accessCode");
+        if(!TextUtils.isEmpty(accessCode)) {
+            getWxAccessToken(accessCode);
+        }
     }
 
     /**
@@ -167,8 +177,8 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
         option.setIsNeedAddress(true);
         option.setIgnoreKillProcess(false);
 
-        locationClient = new LocationClient(getApplicationContext(),option);
-        locationListener = new LocationListenerImpl(this);
+        LocationClient locationClient = new LocationClient(getApplicationContext(),option);
+        LocationListenerImpl locationListener = new LocationListenerImpl(this);
         locationClient.registerLocationListener(locationListener);
         locationClient.start();
     }
@@ -224,7 +234,8 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
                 currentClickViewId = view.getId();
                 if(api.isWXAppInstalled()) {
                     final SendAuth.Req req = new SendAuth.Req();
-                    req.scope = "snsapi_userinfo";
+                    req.openId = WxConstants.APP_ID;
+                    req.scope = WxConstants.SCOPE;
                     req.state = "signal_r_chat";
                     api.sendReq(req);
                 } else {
@@ -303,7 +314,7 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
                         mDelivery.post(new Runnable() {
                             @Override
                             public void run() {
-                                login(NEW_LOGIN_PARAM_PLATFROM_WEIBO);
+                                login(NEW_LOGIN_PARAM_PLATFORM_WEIBO);
                             }
                         });
 
@@ -408,7 +419,7 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
                     mDelivery.post(new Runnable() {
                         @Override
                         public void run() {
-                            login(NEW_LOGIN_PARAM_PLATFROM_QQ);
+                            login(NEW_LOGIN_PARAM_PLATFORM_QQ);
                         }
                     });
 
@@ -429,56 +440,9 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
         });
     }
 
-    // 微信发送请求到第三方应用时，会回调到该
-//    public void onReq(BaseReq baseReq) {
-//        switch (baseReq.getType()) {
-//            case ConstantsAPI.COMMAND_GETMESSAGE_FROM_WX:
-//                Toast.makeText(getApplicationContext(), "get message from wx, processed here", Toast.LENGTH_LONG).show();
-//                break;
-//
-//            case ConstantsAPI.COMMAND_SHOWMESSAGE_FROM_WX:
-//                Toast.makeText(getApplicationContext(), "show message from wx, processed here", Toast.LENGTH_LONG).show();
-//                break;
-//
-//            default:
-//                break;
-//        }
-//    }
-
-    // 第三方应用发送到微信的请求处理后的响应结果，会回调到该方法
-//    public void onResp(BaseResp baseResp) {
-//        Log.d(TAG,"baseResp.getType() == " + baseResp.getType());
-//        switch (baseResp.getType()) {
-//            case ConstantsAPI.COMMAND_SENDAUTH:
-//                Toast.makeText(getApplicationContext(), "get auth resp, processed here", Toast.LENGTH_LONG).show();
-//                SendAuth.Resp resp = (SendAuth.Resp) baseResp;
-//                int errorCode = resp.errCode;
-//                if(errorCode == BaseResp.ErrCode.ERR_OK) {
-//                    String accessCode = resp.code;
-//                    getWxAccessToken(accessCode);
-//                } else {
-//                    if(errorCode == BaseResp.ErrCode.ERR_AUTH_DENIED) {
-//
-//                    } else if(errorCode == BaseResp.ErrCode.ERR_USER_CANCEL){
-//                        Toast.makeText(getApplicationContext(),R.string.weibosdk_demo_toast_auth_canceled,Toast.LENGTH_SHORT).show();
-//                    } else {
-//                        Toast.makeText(getApplicationContext(),R.string.weibosdk_demo_toast_auth_failed,Toast.LENGTH_SHORT).show();
-//                    }
-//                }
-//                break;
-//
-//            case ConstantsAPI.COMMAND_SENDMESSAGE_TO_WX:
-//                // 处理微信主程序返回的SendMessageToWX.Resp
-//                break;
-//
-//            default:
-//                break;
-//        }
-//    }
-
-    private void getWxAccessToken(final String accessCode) {
+    private void getWxAccessToken( String accessCode) {
         OkHttpCommonUtil okHttp = OkHttpCommonUtil.newInstance(getApplicationContext());
-        okHttp.getRequest(
+        okHttp.postRequest(
                 "https://api.weixin.qq.com/sns/oauth2/access_token",
                 new OkHttpCommonUtil.Param[]{
                         new OkHttpCommonUtil.Param("appid", WxConstants.APP_ID),
@@ -495,9 +459,15 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
                         if (mWxOauth2AccessToken != null && mWxOauth2AccessToken.isSessionValid()) {
                             // 保存 Token 到 SharedPreferences
                             SharedPreferencesHelper.writeAccessToken(mWxOauth2AccessToken);
-                            loadWxAccountInfo();
-                        } else { // 授权失败
+                            mDelivery.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    loadWxAccountInfo();
+                                }
+                            });
 
+                        } else { // 授权失败
+                            Log.d(TAG, "body == " + body);
                         }
                     }
                 });
@@ -507,7 +477,7 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
         String openId = mWxOauth2AccessToken.getOpenId();
         String accessToken = mWxOauth2AccessToken.getToken();
         OkHttpCommonUtil okHttp = OkHttpCommonUtil.newInstance(getApplicationContext());
-        okHttp.getRequest("https://api.weixin.qq.com/sns/userinfo",
+        okHttp.postRequest("https://api.weixin.qq.com/sns/userinfo",
                 new OkHttpCommonUtil.Param[]{
                         new OkHttpCommonUtil.Param("access_token", accessToken),
                         new OkHttpCommonUtil.Param("openid", openId)
@@ -528,7 +498,7 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
                             mDelivery.post(new Runnable() {
                                 @Override
                                 public void run() {
-                                    login(NEW_LOGIN_PARAM_PLATFROM_WECHAT);
+                                    login(NEW_LOGIN_PARAM_PLATFORM_WECHAT);
                                 }
                             });
 
@@ -544,7 +514,7 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
 
         OkHttpCommonUtil.Param[] params = new OkHttpCommonUtil.Param[0];
         if(!TextUtils.isEmpty(platform)) {
-            if(platform.equals(NEW_LOGIN_PARAM_PLATFROM_QQ)) {
+            if(platform.equals(NEW_LOGIN_PARAM_PLATFORM_QQ)) {
                 if(mTencent.isSessionValid()) {
                     params = new OkHttpCommonUtil.Param[] {
                             new OkHttpCommonUtil.Param(NEW_LOGIN_KEY_TID,mTencent.getOpenId()),
@@ -555,7 +525,7 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
                     };
                 }
 
-            } else if(platform.equals(NEW_LOGIN_PARAM_PLATFROM_WEIBO)) {
+            } else if(platform.equals(NEW_LOGIN_PARAM_PLATFORM_WEIBO)) {
                 if(mAccessToken.isSessionValid()) {
                     params = new OkHttpCommonUtil.Param[]{
                             new OkHttpCommonUtil.Param(NEW_LOGIN_KEY_WID,mAccessToken.getUid()),
@@ -568,7 +538,7 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
                     return;
                 }
 
-            } else if(platform.equals(NEW_LOGIN_PARAM_PLATFROM_WECHAT)) {
+            } else if(platform.equals(NEW_LOGIN_PARAM_PLATFORM_WECHAT)) {
                     params = new OkHttpCommonUtil.Param[]{
                             new OkHttpCommonUtil.Param(NEW_LOGIN_KEY_WXID,mWxOauth2AccessToken.getOpenId()),
                             new OkHttpCommonUtil.Param(NEW_LOGIN_KEY_NICK_NAME,
@@ -585,7 +555,7 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
         okHttp.postRequest(NEW_LOGIN_URL, params, new HttpBaseCallback() {
             @Override
             public void onFailure(Request request, IOException e) {
-
+                Log.d("HttpBaseCallback",e.getMessage());
             }
 
             @Override
@@ -639,6 +609,7 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
 
                                     Intent intent = new Intent();
                                     intent.setClass(getApplicationContext(), HomeActivity.class);
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | IntentCompat.FLAG_ACTIVITY_CLEAR_TASK);
                                     startActivity(intent);
                                     finish();
 
@@ -727,8 +698,8 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
 
             OkHttpCommonUtil okHttp = OkHttpCommonUtil.newInstance(getApplicationContext());
             okHttp.getRequest(LOGIN_URL, new OkHttpCommonUtil.Param[]{
-                new OkHttpCommonUtil.Param(LOGIN_KEY_ACCOUNT, account),
-                new OkHttpCommonUtil.Param(LOGIN_KEY_PASSWORD, password)
+                    new OkHttpCommonUtil.Param(LOGIN_KEY_ACCOUNT, account),
+                    new OkHttpCommonUtil.Param(LOGIN_KEY_PASSWORD, password)
             }, new HttpBaseCallback() {
 
                 @Override
@@ -756,29 +727,29 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
                         if (status == 0) {
                             JSONObject result = jsonObject.getJSONObject("result");
                             final String id = result.getString("id");
-//                            final String nickname = result.getString("nickname");
-//                            final String portrait = result.getString("portrait");
+                            //                            final String nickname = result.getString("nickname");
+                            //                            final String portrait = result.getString("portrait");
 
                             UserManager userManager = new UserManager(getApplicationContext());
                             JSONArray list = jsonObject.getJSONArray("list");
-                            if(list != null && list.length() > 0) {
-                                for(int i = 0; i < list.length(); i++) {
+                            if (list != null && list.length() > 0) {
+                                for (int i = 0; i < list.length(); i++) {
                                     JSONObject tmpJson = list.getJSONObject(i);
                                     String item_uid = tmpJson.getString("id");
                                     String item_nickname = tmpJson.getString("nickname");
                                     String item_portrait = tmpJson.getString("portrait");
-//                                    UserManager userManager = new UserManager(getApplicationContext());
-                                    if(item_portrait != null && !TextUtils.isEmpty(item_portrait) && !"null".equals(item_portrait)) {
-                                        userManager.addRecord(item_uid,item_nickname,item_portrait);
+                                    //                                    UserManager userManager = new UserManager(getApplicationContext());
+                                    if (item_portrait != null && !TextUtils.isEmpty(item_portrait) && !"null".equals(item_portrait)) {
+                                        userManager.addRecord(item_uid, item_nickname, item_portrait);
                                     } else {
-                                        userManager.addRecord(item_uid,item_nickname,"");
+                                        userManager.addRecord(item_uid, item_nickname, "");
                                     }
                                 }
                             }
 
                             Cursor cursor = userManager.queryByUid(id);
 
-                            if(cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {
+                            if (cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {
                                 final String nickname = cursor.getString(cursor.getColumnIndex(AppContract.UserEntry.COLUMN_NAME_NICK_NAME));
                                 final String portrait = cursor.getString(cursor.getColumnIndex(AppContract.UserEntry.COLUMN_NAME_PORTRAIT));
                                 mDelivery.post(new Runnable() {
@@ -788,7 +759,7 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
                                         Toast.makeText(getApplicationContext(), R.string.pb_message_login_ok, Toast.LENGTH_SHORT).show();
                                         ll_progress_bar_container.setVisibility(View.GONE);
 
-                                        sharedPreferencesHelper.putStringValue(AppConstants.KEY_SYS_CURRENT_UID,id);
+                                        sharedPreferencesHelper.putStringValue(AppConstants.KEY_SYS_CURRENT_UID, id);
                                         sharedPreferencesHelper.putStringValue(AppConstants.KEY_SYS_CURRENT_NICKNAME, nickname);
                                         sharedPreferencesHelper.putStringValue(AppConstants.KEY_SYS_CURRENT_PORTRAIT, portrait);
 
@@ -825,14 +796,28 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
                     }
 
                 }
-                });
+            });
         }
     }
+
 
     public void register(View view) {
         Intent intent = new Intent();
         intent.setClass(getApplicationContext(),RegisterActivity.class);
         startActivity(intent);
         finish();
+    }
+
+    private class MessageReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if(action.equals(GlobalApplication.ACTION_WX_AUTH_OK)) {
+                String accessCode = intent.getStringExtra("accessCode");
+                if(!TextUtils.isEmpty(accessCode)) {
+                    getWxAccessToken(accessCode);
+                }
+            }
+        }
     }
 }

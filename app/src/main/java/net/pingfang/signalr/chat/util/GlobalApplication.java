@@ -44,6 +44,8 @@ public class GlobalApplication extends Application {
     public static final String VOICE_FILE_NAME_PREFIX = "VOICE_";
     public static final String VOICE_FILE_NAME_SUFFIX = ".3gp";
 
+    public static final String ACTION_WX_AUTH_OK = "ACTION_WX_AUTH_OK";
+
     private Locale myLocale;
     SharedPreferencesHelper helper;
 
