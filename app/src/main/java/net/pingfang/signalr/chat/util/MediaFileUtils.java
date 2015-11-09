@@ -48,7 +48,7 @@ public class MediaFileUtils {
             }
 
             stringBuilder.append(c.get(Calendar.YEAR));
-            stringBuilder.append(c.get(Calendar.MONTH));
+            stringBuilder.append(c.get(Calendar.MONTH) + 1);
             stringBuilder.append(c.get(Calendar.DAY_OF_MONTH));
             stringBuilder.append(c.get(Calendar.HOUR_OF_DAY));
             stringBuilder.append(c.get(Calendar.MINUTE));

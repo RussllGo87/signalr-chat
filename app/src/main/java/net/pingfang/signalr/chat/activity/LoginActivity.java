@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.content.IntentCompat;
@@ -59,6 +60,7 @@ import net.pingfang.signalr.chat.location.LocationListenerImpl;
 import net.pingfang.signalr.chat.location.LocationNotify;
 import net.pingfang.signalr.chat.net.HttpBaseCallback;
 import net.pingfang.signalr.chat.net.OkHttpCommonUtil;
+import net.pingfang.signalr.chat.net.ResultCallbackImpl;
 import net.pingfang.signalr.chat.ui.dialog.SingleButtonDialogFragment;
 import net.pingfang.signalr.chat.util.CommonTools;
 import net.pingfang.signalr.chat.util.GlobalApplication;
@@ -311,10 +313,12 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
                         sharedPreferencesHelper.putStringValue(WeiboConstants.KEY_WB_SCREEN_NAME, screenname);
                         sharedPreferencesHelper.putStringValue(WeiboConstants.KEY_WB_PROFILE_IMAGE_URL, profileImageUrl);
 
+                        final String tmpProfile = profileImageUrl;
+
                         mDelivery.post(new Runnable() {
                             @Override
                             public void run() {
-                                login(NEW_LOGIN_PARAM_PLATFORM_WEIBO);
+                                downloadPortrait(NEW_LOGIN_PARAM_PLATFORM_WEIBO, tmpProfile);
                             }
                         });
 
@@ -413,13 +417,13 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
             public void doComplete(JSONObject jsonObject) {
                 try {
                     String nickname = jsonObject.getString(TencentConstants.PARAM_NICK_NAME);
-                    String figureurl_qq_1 = jsonObject.getString(TencentConstants.PARAM_QQ_PORTRAIT);
+                    final String figureurl_qq_1 = jsonObject.getString(TencentConstants.PARAM_QQ_PORTRAIT);
                     sharedPreferencesHelper.putStringValue(TencentConstants.KEY_QQ_NICK_NAME, nickname);
                     sharedPreferencesHelper.putStringValue(TencentConstants.KEY_QQ_PORTRAIT, figureurl_qq_1);
                     mDelivery.post(new Runnable() {
                         @Override
                         public void run() {
-                            login(NEW_LOGIN_PARAM_PLATFORM_QQ);
+                            downloadPortrait(NEW_LOGIN_PARAM_PLATFORM_QQ, figureurl_qq_1);
                         }
                     });
 
@@ -490,7 +494,7 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
                         try {
                             jsonObject = new JSONObject(body);
                             String nickname = jsonObject.getString(WxConstants.PARAM_WX_NICKNAME);
-                            String headimgurl = jsonObject.getString(WxConstants.PARAM_WX_HEAD_IMG_URL);
+                            final String headimgurl = jsonObject.getString(WxConstants.PARAM_WX_HEAD_IMG_URL);
 
                             sharedPreferencesHelper.putStringValue(WxConstants.KEY_WX_NICKNAME, nickname);
                             sharedPreferencesHelper.putStringValue(WxConstants.KEY_WX_HEAD_IMG_URL, headimgurl);
@@ -498,7 +502,7 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
                             mDelivery.post(new Runnable() {
                                 @Override
                                 public void run() {
-                                    login(NEW_LOGIN_PARAM_PLATFORM_WECHAT);
+                                    downloadPortrait(NEW_LOGIN_PARAM_PLATFORM_WECHAT, headimgurl);
                                 }
                             });
 
@@ -510,7 +514,31 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
         );
     }
 
-    private void login(String platform) {
+    private void downloadPortrait(final String platform,String portraitUrl) {
+        String portraitDest = MediaFileUtils.genarateFilePath(getApplicationContext(),
+                Environment.DIRECTORY_PICTURES, "Portrait", "jpg");
+        OkHttpCommonUtil okHttp = OkHttpCommonUtil.newInstance(getApplicationContext());
+        okHttp.downloadFileAsync(portraitUrl, portraitDest, new ResultCallbackImpl<String>() {
+            @Override
+            public void onError(Request request, Exception e) {
+                Log.e(TAG, e.getMessage());
+            }
+
+            @Override
+            public void onResponse(String response) {
+                String path = response;
+                String base64File = CommonTools.fileToBase64(path);
+                login(platform,base64File);
+            }
+
+            @Override
+            public void publishProgress(long dowloaded, long target) {
+                Log.d(TAG, "total == " + target + " downloaded ==" + dowloaded);
+            }
+        });
+    }
+
+    private void login(String platform, String base64File) {
 
         OkHttpCommonUtil.Param[] params = new OkHttpCommonUtil.Param[0];
         if(!TextUtils.isEmpty(platform)) {
@@ -520,8 +548,7 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
                             new OkHttpCommonUtil.Param(NEW_LOGIN_KEY_TID,mTencent.getOpenId()),
                             new OkHttpCommonUtil.Param(NEW_LOGIN_KEY_NICK_NAME,
                                     sharedPreferencesHelper.getStringValue(TencentConstants.KEY_QQ_NICK_NAME)),
-                            new OkHttpCommonUtil.Param(NEW_LOGIN_KEY_PORTRAIT,
-                                    sharedPreferencesHelper.getStringValue(TencentConstants.KEY_QQ_PORTRAIT))
+                            new OkHttpCommonUtil.Param(NEW_LOGIN_KEY_PORTRAIT, base64File)
                     };
                 }
 
@@ -531,8 +558,7 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
                             new OkHttpCommonUtil.Param(NEW_LOGIN_KEY_WID,mAccessToken.getUid()),
                             new OkHttpCommonUtil.Param(NEW_LOGIN_KEY_NICK_NAME,
                                     sharedPreferencesHelper.getStringValue(WeiboConstants.KEY_WB_SCREEN_NAME)),
-                            new OkHttpCommonUtil.Param(NEW_LOGIN_KEY_PORTRAIT,
-                                    sharedPreferencesHelper.getStringValue(WeiboConstants.KEY_WB_PROFILE_IMAGE_URL))
+                            new OkHttpCommonUtil.Param(NEW_LOGIN_KEY_PORTRAIT,base64File)
                     };
                 } else {
                     return;
@@ -543,8 +569,7 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
                             new OkHttpCommonUtil.Param(NEW_LOGIN_KEY_WXID,mWxOauth2AccessToken.getOpenId()),
                             new OkHttpCommonUtil.Param(NEW_LOGIN_KEY_NICK_NAME,
                                     sharedPreferencesHelper.getStringValue(WxConstants.KEY_WX_NICKNAME)),
-                            new OkHttpCommonUtil.Param(NEW_LOGIN_KEY_PORTRAIT,
-                                    sharedPreferencesHelper.getStringValue(WxConstants.KEY_WX_HEAD_IMG_URL))
+                            new OkHttpCommonUtil.Param(NEW_LOGIN_KEY_PORTRAIT,base64File)
                     };
             } else {
                 return;

@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -294,7 +295,7 @@ public class OkHttpCommonUtil {
         mOkHttpClient.newCall(request).enqueue(callback);
     }
 
-    private void downloadAsyn(final String url, final String destFileDir,final ResultCallback callback) {
+    private void downloadAsyn(final String url, final String filePath,final ResultCallback callback) {
         Request request = new Request.Builder()
                 .url(url)
                 .build();
@@ -314,19 +315,19 @@ public class OkHttpCommonUtil {
                 InputStream is = null;
                 FileOutputStream fos = null;
 
-                long downloaded = 0;
+                int downloaded = 0;
                 final long target = response.body().contentLength();
 
                 try {
                     is = response.body().byteStream();
-                    File file = new File(destFileDir, getFileName(url));
+                    File file = new File(filePath);
                     fos = new FileOutputStream(file);
                     while (true) {
                         int read = is.read(buf);
                         if (read == -1) {
                             break;
                         }
-                        fos.write(buf, 0, len);
+                        fos.write(buf, downloaded, read);
                         downloaded += read;
                         publishProgress(downloaded, target, callback);
                     }
@@ -336,16 +337,14 @@ public class OkHttpCommonUtil {
                     sendExceptionCallBack(response.request(), e, callback);
                 } finally {
                     try {
-                        if (is != null)
-                            is.close();
                         if (fos != null)
                             fos.close();
+                        if (is != null)
+                            is.close();
                     } catch (IOException e) {
-
+                        Log.e(TAG, e.getMessage());
                     }
                 }
-
-
             }
         });
     }
@@ -543,7 +542,7 @@ public class OkHttpCommonUtil {
         postAsyncUploadFile(url, callback, files, fileKey, params);
     }
 
-    public void downloadFileAsync(final String url, final String destFileDir,final ResultCallback callback) {
-        downloadAsyn(url,destFileDir,callback);
+    public void downloadFileAsync(final String url, final String filePath,final ResultCallback callback) {
+        downloadAsyn(url,filePath,callback);
     }
 }
