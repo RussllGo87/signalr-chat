@@ -7,8 +7,8 @@ package net.pingfang.signalr.chat.constant.weibo;
 public abstract class WeiboConstants {
 
     // 应用配置相关
-    public static final String APP_KEY = "1321500663";
-    public static final String APP_SECRET = "12206d5369ade642409bb97c90684c69";
+    public static final String APP_KEY = "1632292707";
+    public static final String APP_SECRET = "ad5a4a3290dd238475f2923e76c7ebb5";
     public static final String REDIRECT_URL = "https://api.weibo.com/oauth2/default.html";
     public static final String SCOPE =
             "email,direct_messages_read,direct_messages_write,"

@@ -327,7 +327,7 @@ public class OkHttpCommonUtil {
                         if (read == -1) {
                             break;
                         }
-                        fos.write(buf, downloaded, read);
+                        fos.write(buf);
                         downloaded += read;
                         publishProgress(downloaded, target, callback);
                     }

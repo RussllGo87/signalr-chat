@@ -225,6 +225,8 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
             public void onClick(View view) {
                 currentClickViewId = view.getId();
                 if (!mTencent.isSessionValid()) {
+                    ll_progress_bar_container.setVisibility(View.VISIBLE);
+                    tv_pb_operation.setText("登录qq");
                     mTencent.login(LoginActivity.this, TencentConstants.SCOPE, loginListener);
                 }
             }
@@ -252,6 +254,9 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
 
                 currentClickViewId = view.getId();
 
+                ll_progress_bar_container.setVisibility(View.VISIBLE);
+                tv_pb_operation.setText("登录微博");
+
                 mWeiboSsoHandler = new SsoHandler(LoginActivity.this, mWeiboAuth);
                 mWeiboSsoHandler.authorize(new WeiboAuthListener() {
                     @Override
@@ -278,12 +283,16 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
 
                     @Override
                     public void onWeiboException(WeiboException e) {
+                        tv_pb_operation.setText("登录微博异常");
+                        ll_progress_bar_container.setVisibility(View.GONE);
                         Toast.makeText(getApplicationContext(),
                                 "Auth exception : " + e.getMessage(), Toast.LENGTH_LONG).show();
                     }
 
                     @Override
                     public void onCancel() {
+                        tv_pb_operation.setText("用户取消登录");
+                        ll_progress_bar_container.setVisibility(View.GONE);
                         Toast.makeText(getApplicationContext(),
                                 R.string.weibosdk_demo_toast_auth_canceled, Toast.LENGTH_LONG).show();
                     }
@@ -298,6 +307,7 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
     }
 
     private void loadWbAccountInfo() {
+        tv_pb_operation.setText("加载微博个人信息");
         long uid = Long.parseLong(mAccessToken.getUid());
         new UsersAPI(mAccessToken).show(uid, new WeiboRequestListener() {
             @Override
@@ -318,7 +328,8 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
                         mDelivery.post(new Runnable() {
                             @Override
                             public void run() {
-                                downloadPortrait(NEW_LOGIN_PARAM_PLATFORM_WEIBO, tmpProfile);
+                                tv_pb_operation.setText("微博个人信息加载成功");
+                                login(NEW_LOGIN_PARAM_PLATFORM_WEIBO, tmpProfile);
                             }
                         });
 
@@ -334,6 +345,7 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
         @Override
         public void onComplete(Object response) {
             if (null == response) {
+                ll_progress_bar_container.setVisibility(View.GONE);
                 SingleButtonDialogFragment dialogFragment = SingleButtonDialogFragment.newInstance("登录失败","返回为空");
                 dialogFragment.show(getSupportFragmentManager(),"SingleButtonDialogFragment");
                 return;
@@ -341,11 +353,13 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
 
             JSONObject jsonResponse = (JSONObject) response;
             if(jsonResponse.length() == 0) {
+                ll_progress_bar_container.setVisibility(View.GONE);
                 SingleButtonDialogFragment dialogFragment = SingleButtonDialogFragment.newInstance("登录失败","返回为空");
                 dialogFragment.show(getSupportFragmentManager(),"SingleButtonDialogFragment");
                 return;
             }
 
+            tv_pb_operation.setText("登录qq成功");
             Toast.makeText(getApplicationContext(),getString(R.string.weibosdk_demo_toast_auth_success),Toast.LENGTH_SHORT).show();
             doComplete(jsonResponse);
         }
@@ -363,6 +377,7 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
                     mTencent.setAccessToken(token, expires);
                     mTencent.setOpenId(openId);
 
+                    tv_pb_operation.setText("获取qq个人信息");
                     loadQQAccountInfo();
 
                 }
@@ -376,6 +391,7 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
             mDelivery.post(new Runnable() {
                 @Override
                 public void run() {
+                    ll_progress_bar_container.setVisibility(View.GONE);
                     Toast.makeText(getApplicationContext(),getString(R.string.weibosdk_demo_toast_auth_failed),Toast.LENGTH_SHORT).show();
                 }
             });
@@ -386,6 +402,7 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
             mDelivery.post(new Runnable() {
                 @Override
                 public void run() {
+                    ll_progress_bar_container.setVisibility(View.GONE);
                     Toast.makeText(getApplicationContext(),getString(R.string.weibosdk_demo_toast_auth_canceled),Toast.LENGTH_SHORT).show();
                 }
             });
@@ -402,15 +419,18 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
             public void onComplete(Object response) {
                 if (null == response) {
                     Toast.makeText(getApplicationContext(), getString(R.string.resp_return_empty), Toast.LENGTH_SHORT).show();
+                    tv_pb_operation.setText("qq个人信息为空");
                     return;
                 }
 
                 JSONObject jsonResponse = (JSONObject) response;
                 if (jsonResponse.length() == 0) {
                     Toast.makeText(getApplicationContext(), getString(R.string.resp_return_empty), Toast.LENGTH_SHORT).show();
+                    tv_pb_operation.setText("qq个人信息为空");
                     return;
                 }
 
+                tv_pb_operation.setText("qq个人信息获取成功");
                 doComplete(jsonResponse);
             }
 
@@ -423,7 +443,7 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
                     mDelivery.post(new Runnable() {
                         @Override
                         public void run() {
-                            downloadPortrait(NEW_LOGIN_PARAM_PLATFORM_QQ, figureurl_qq_1);
+                            login(NEW_LOGIN_PARAM_PLATFORM_QQ, figureurl_qq_1);
                         }
                     });
 
@@ -445,6 +465,10 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
     }
 
     private void getWxAccessToken( String accessCode) {
+
+        ll_progress_bar_container.setVisibility(View.VISIBLE);
+        tv_pb_operation.setText("获取微信access_token");
+
         OkHttpCommonUtil okHttp = OkHttpCommonUtil.newInstance(getApplicationContext());
         okHttp.postRequest(
                 "https://api.weixin.qq.com/sns/oauth2/access_token",
@@ -478,6 +502,9 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
     }
 
     private void loadWxAccountInfo() {
+
+        tv_pb_operation.setText("获取微信用户个人信息");
+
         String openId = mWxOauth2AccessToken.getOpenId();
         String accessToken = mWxOauth2AccessToken.getToken();
         OkHttpCommonUtil okHttp = OkHttpCommonUtil.newInstance(getApplicationContext());
@@ -502,7 +529,7 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
                             mDelivery.post(new Runnable() {
                                 @Override
                                 public void run() {
-                                    downloadPortrait(NEW_LOGIN_PARAM_PLATFORM_WECHAT, headimgurl);
+                                    login(NEW_LOGIN_PARAM_PLATFORM_WECHAT, headimgurl);
                                 }
                             });
 
@@ -515,6 +542,7 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
     }
 
     private void downloadPortrait(final String platform,String portraitUrl) {
+
         String portraitDest = MediaFileUtils.genarateFilePath(getApplicationContext(),
                 Environment.DIRECTORY_PICTURES, "Portrait", "jpg");
         OkHttpCommonUtil okHttp = OkHttpCommonUtil.newInstance(getApplicationContext());
@@ -539,7 +567,7 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
     }
 
     private void login(String platform, String base64File) {
-
+        tv_pb_operation.setText("向服务器注册个人信息");
         OkHttpCommonUtil.Param[] params = new OkHttpCommonUtil.Param[0];
         if(!TextUtils.isEmpty(platform)) {
             if(platform.equals(NEW_LOGIN_PARAM_PLATFORM_QQ)) {
@@ -660,7 +688,8 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    Log.e(TAG, "LOGIN_URL return " + getString(R.string.debug_http_response_invalid));
+                    Toast.makeText(getApplicationContext(),getString(R.string.debug_http_response_invalid),Toast.LENGTH_LONG).show();
+//                    Log.e(TAG, "LOGIN_URL return " + getString(R.string.debug_http_response_invalid));
                     Log.e(TAG, "LOGIN_URL return " + e.getMessage());
                     ll_progress_bar_container.setVisibility(View.GONE);
                 }
