@@ -92,7 +92,6 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
     public static final String NEW_LOGIN_PARAM_PLATFORM_WEIBO = "weibo";
     public static final String NEW_LOGIN_PARAM_PLATFORM_WECHAT = "wechat";
 
-
     LinearLayout ll_form_container;
     EditText et_login_no;
     EditText et_login_pwd;
