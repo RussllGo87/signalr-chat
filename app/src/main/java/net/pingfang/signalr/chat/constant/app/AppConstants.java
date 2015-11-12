@@ -9,9 +9,9 @@ public class AppConstants {
     public static final String KEY_SYS_CURRENT_UID = "KEY_SYS_CURRENT_UID";
     public static final String KEY_SYS_CURRENT_NICKNAME = "KEY_SYS_CURRENT_NICKNAME";
     public static final String KEY_SYS_CURRENT_PORTRAIT = "KEY_SYS_CURRENT_PORTRAIT";
+    public static final String KEY_SYS_CURRENT_USER_PHONE = "KEY_SYS_CURRENT_USER_PHONE";
 
     public static final String KEY_SYS_LOCATION_LAT = "lat";
     public static final String KEY_SYS_LOCATION_LNG = "lng";
-
 
 }

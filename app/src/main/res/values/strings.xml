@@ -29,7 +29,7 @@
 
     <!-- 注册页 -->
     <string name="title_activity_register">RegisterActivity</string>
-    <string name="btn_step_previous">Previous</string>
+    <string name="btn_step_previous">Back</string>
     <string name="btn_step_next">Next</string>
 
     <!-- 注册之电话号码验证 PhoneFragment -->
@@ -72,6 +72,7 @@
     <string name="menu_action_scan">Scan</string>
     <string name="menu_action_resource">Resource</string>
     <string name="menu_action_maintain">Maintain</string>
+    <string name="menu_action_maintain_nearby_friends">Nearby Buddies</string>
 
     <!-- BuddyFragment -->
     <string name="tv_fragment_buddy">BuddyFragment</string>
@@ -81,20 +82,17 @@
     <string name="tv_account_item_settings">@string/title_activity_settings</string>
     <string name="tv_account_item_uploaded">My Uploaded</string>
     <string name="tv_account_item_maintained">My Maintained</string>
-    <string name="tv_account_item_ads">Nearby</string>
-
+    <string name="tv_account_item_ads">Nearby ads</string>
     <!-- 我的上传资源记录 -->
     <string name="title_activity_resource_list">ResourceListActivity</string>
     <!-- 我的上传的资源详情 -->
     <string name="title_activity_resource_detail">ResourceDetailActivity</string>
-
-
     <!-- 周边广告地图展示 -->
     <string name="title_activity_nearby">NearbyActivity</string>
     <!-- 周边广告详细展示 -->
     <string name="title_activity_nearby_ad_detail">NearbyAdDetailActivity</string>
 
-    <!--- 下拉菜单列表 -->
+    <!--- 下拉菜单列表,发现界面 -->
     <!-- 资源上传 -->
     <string name="title_activity_resource_post">ResourcePostActivity</string>
     <string name="hint_et_resource_width">Width</string>
@@ -105,6 +103,7 @@
     <string name="tv_photos">Photos</string>
     <!-- 广告维护 -->
     <string name="title_activity_ad_maintain">AdMaintain</string>
+    <string name="title_activity_nearby_friends">NearbyFriendsActivity</string>
 
     <!-- 聊天页 -->
     <string name="title_activity_chat">%s</string>
@@ -162,5 +161,6 @@
 
     <string name="image_get_file_user_canceled">REQUEST_IMAGE_GET canceled</string>
     <string name="image_get_file_user_error">REQUEST_IMAGE_GET error</string>
+
 
 </resources>

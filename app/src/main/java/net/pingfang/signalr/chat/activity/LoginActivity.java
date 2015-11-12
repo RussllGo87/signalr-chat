@@ -1,7 +1,5 @@
 package net.pingfang.signalr.chat.activity;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.database.Cursor;
@@ -127,6 +125,8 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
 
     int currentClickViewId = 0;
     private LatLng currentLatLng;
+    private LocationClient locationClient;
+    private LocationListenerImpl locationListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -140,6 +140,7 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
         initLoginConfig();
         initLocation();
         initView();
+        initValues();
 
         // 注册微信API
         api = WXAPIFactory.createWXAPI(getApplicationContext(), WxConstants.APP_ID, true);
@@ -178,8 +179,8 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
         option.setIsNeedAddress(true);
         option.setIgnoreKillProcess(false);
 
-        LocationClient locationClient = new LocationClient(getApplicationContext(),option);
-        LocationListenerImpl locationListener = new LocationListenerImpl(this);
+        locationClient = new LocationClient(getApplicationContext(),option);
+        locationListener = new LocationListenerImpl(this);
         locationClient.registerLocationListener(locationListener);
         locationClient.start();
     }
@@ -194,6 +195,22 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
 
         sharedPreferencesHelper.putStringValue(AppConstants.KEY_SYS_LOCATION_LAT, Double.toString(currentLatLng.latitude));
         sharedPreferencesHelper.putStringValue(AppConstants.KEY_SYS_LOCATION_LNG, Double.toString(currentLatLng.longitude));
+
+        String uid = sharedPreferencesHelper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID);
+        if(!TextUtils.isEmpty(uid)) {
+            Intent intent = new Intent();
+            intent.setClass(getApplicationContext(), HomeActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | IntentCompat.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            finish();
+        }
+    }
+
+    private void initValues() {
+        String currentPhone = sharedPreferencesHelper.getStringValue(AppConstants.KEY_SYS_CURRENT_USER_PHONE);
+        if(!TextUtils.isEmpty(currentPhone)) {
+            et_login_no.setText(currentPhone);
+        }
     }
 
     private void initView() {
@@ -495,6 +512,8 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
 
                         } else { // 授权失败
                             Log.d(TAG, "body == " + body);
+                            ll_progress_bar_container.setVisibility(View.GONE);
+                            Toast.makeText(getApplicationContext(), "微信access_token获取异常", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -534,6 +553,8 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
 
                         } catch (Exception e) {  // 加载微信个人信息失败
                             e.printStackTrace();
+                            ll_progress_bar_container.setVisibility(View.GONE);
+                            Toast.makeText(getApplicationContext(), "加载微信个人信息失败", Toast.LENGTH_SHORT).show();
                         }
                     }
                 }
@@ -555,7 +576,7 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
             public void onResponse(String response) {
                 String path = response;
                 String base64File = CommonTools.fileToBase64(path);
-                login(platform,base64File);
+                login(platform, base64File);
             }
 
             @Override
@@ -607,7 +628,7 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
         okHttp.postRequest(NEW_LOGIN_URL, params, new HttpBaseCallback() {
             @Override
             public void onFailure(Request request, IOException e) {
-                Log.d("HttpBaseCallback",e.getMessage());
+                Log.d("HttpBaseCallback", e.getMessage());
             }
 
             @Override
@@ -623,8 +644,6 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
                     if (status == 0) {
                         JSONObject result = jsonObject.getJSONObject("result");
                         final String id = result.getString("id");
-                        //  final String nickname = result.getString("nickname");
-                        //  final String portrait = result.getString("portrait");
 
                         UserManager userManager = new UserManager(getApplicationContext());
                         JSONArray list = jsonObject.getJSONArray("list");
@@ -634,7 +653,6 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
                                 String item_uid = tmpJson.getString("id");
                                 String item_nickname = tmpJson.getString("nickname");
                                 String item_portrait = tmpJson.getString("portrait");
-                                //                                    UserManager userManager = new UserManager(getApplicationContext());
                                 if (item_portrait != null && !TextUtils.isEmpty(item_portrait) && !"null".equals(item_portrait)) {
                                     userManager.addRecord(item_uid, item_nickname, item_portrait);
                                 } else {
@@ -651,13 +669,14 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
                             mDelivery.post(new Runnable() {
                                 @Override
                                 public void run() {
-
-                                    Toast.makeText(getApplicationContext(), R.string.pb_message_login_ok, Toast.LENGTH_SHORT).show();
                                     ll_progress_bar_container.setVisibility(View.GONE);
+                                    Toast.makeText(getApplicationContext(), R.string.pb_message_login_ok, Toast.LENGTH_SHORT).show();
 
                                     sharedPreferencesHelper.putStringValue(AppConstants.KEY_SYS_CURRENT_UID, id);
                                     sharedPreferencesHelper.putStringValue(AppConstants.KEY_SYS_CURRENT_NICKNAME, nickname);
                                     sharedPreferencesHelper.putStringValue(AppConstants.KEY_SYS_CURRENT_PORTRAIT, portrait);
+
+                                    sharedPreferencesHelper.clearKey(AppConstants.KEY_SYS_CURRENT_USER_PHONE);
 
                                     Intent intent = new Intent();
                                     intent.setClass(getApplicationContext(), HomeActivity.class);
@@ -671,8 +690,8 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
                             mDelivery.post(new Runnable() {
                                 @Override
                                 public void run() {
-                                    Toast.makeText(getApplicationContext(), R.string.pb_message_login_failure, Toast.LENGTH_SHORT).show();
                                     ll_progress_bar_container.setVisibility(View.GONE);
+                                    Toast.makeText(getApplicationContext(), R.string.pb_message_login_failure, Toast.LENGTH_SHORT).show();
                                 }
                             });
                         }
@@ -680,17 +699,17 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
                         mDelivery.post(new Runnable() {
                             @Override
                             public void run() {
-                                Toast.makeText(getApplicationContext(), R.string.pb_message_login_failure, Toast.LENGTH_SHORT).show();
                                 ll_progress_bar_container.setVisibility(View.GONE);
+                                Toast.makeText(getApplicationContext(), R.string.pb_message_login_failure, Toast.LENGTH_SHORT).show();
                             }
                         });
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    Toast.makeText(getApplicationContext(),getString(R.string.debug_http_response_invalid),Toast.LENGTH_LONG).show();
-//                    Log.e(TAG, "LOGIN_URL return " + getString(R.string.debug_http_response_invalid));
-                    Log.e(TAG, "LOGIN_URL return " + e.getMessage());
                     ll_progress_bar_container.setVisibility(View.GONE);
+                    Toast.makeText(getApplicationContext(), getString(R.string.debug_http_response_invalid), Toast.LENGTH_LONG).show();
+                    Log.e(TAG, "LOGIN_URL return " + getString(R.string.debug_http_response_invalid));
+                    Log.e(TAG, "LOGIN_URL return " + e.getMessage());
                 }
             }
         });
@@ -780,8 +799,6 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
                         if (status == 0) {
                             JSONObject result = jsonObject.getJSONObject("result");
                             final String id = result.getString("id");
-                            //                            final String nickname = result.getString("nickname");
-                            //                            final String portrait = result.getString("portrait");
 
                             UserManager userManager = new UserManager(getApplicationContext());
                             JSONArray list = jsonObject.getJSONArray("list");
@@ -791,7 +808,6 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
                                     String item_uid = tmpJson.getString("id");
                                     String item_nickname = tmpJson.getString("nickname");
                                     String item_portrait = tmpJson.getString("portrait");
-                                    //                                    UserManager userManager = new UserManager(getApplicationContext());
                                     if (item_portrait != null && !TextUtils.isEmpty(item_portrait) && !"null".equals(item_portrait)) {
                                         userManager.addRecord(item_uid, item_nickname, item_portrait);
                                     } else {
@@ -808,13 +824,14 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
                                 mDelivery.post(new Runnable() {
                                     @Override
                                     public void run() {
-
-                                        Toast.makeText(getApplicationContext(), R.string.pb_message_login_ok, Toast.LENGTH_SHORT).show();
                                         ll_progress_bar_container.setVisibility(View.GONE);
+                                        Toast.makeText(getApplicationContext(), R.string.pb_message_login_ok, Toast.LENGTH_SHORT).show();
 
                                         sharedPreferencesHelper.putStringValue(AppConstants.KEY_SYS_CURRENT_UID, id);
                                         sharedPreferencesHelper.putStringValue(AppConstants.KEY_SYS_CURRENT_NICKNAME, nickname);
                                         sharedPreferencesHelper.putStringValue(AppConstants.KEY_SYS_CURRENT_PORTRAIT, portrait);
+
+                                        sharedPreferencesHelper.putStringValue(AppConstants.KEY_SYS_CURRENT_USER_PHONE,account);
 
                                         Intent intent = new Intent();
                                         intent.setClass(getApplicationContext(), HomeActivity.class);
@@ -827,8 +844,8 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
                                 mDelivery.post(new Runnable() {
                                     @Override
                                     public void run() {
-                                        Toast.makeText(getApplicationContext(), R.string.pb_message_login_failure, Toast.LENGTH_SHORT).show();
                                         ll_progress_bar_container.setVisibility(View.GONE);
+                                        Toast.makeText(getApplicationContext(), R.string.pb_message_login_failure, Toast.LENGTH_SHORT).show();
                                     }
                                 });
                             }
@@ -836,16 +853,16 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
                             mDelivery.post(new Runnable() {
                                 @Override
                                 public void run() {
-                                    Toast.makeText(getApplicationContext(), R.string.pb_message_login_failure, Toast.LENGTH_SHORT).show();
                                     ll_progress_bar_container.setVisibility(View.GONE);
+                                    Toast.makeText(getApplicationContext(), R.string.pb_message_login_failure, Toast.LENGTH_SHORT).show();
                                 }
                             });
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
+                        ll_progress_bar_container.setVisibility(View.GONE);
                         Toast.makeText(getApplicationContext(), R.string.debug_http_response_invalid, Toast.LENGTH_SHORT).show();
                         Log.d(TAG, "LOGIN_URL return " + e.getMessage());
-                        ll_progress_bar_container.setVisibility(View.GONE);
                     }
 
                 }
@@ -861,16 +878,11 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
         finish();
     }
 
-    private class MessageReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            if(action.equals(GlobalApplication.ACTION_WX_AUTH_OK)) {
-                String accessCode = intent.getStringExtra("accessCode");
-                if(!TextUtils.isEmpty(accessCode)) {
-                    getWxAccessToken(accessCode);
-                }
-            }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(locationClient != null && locationClient.isStarted()) {
+            locationClient.stop();
         }
     }
 }

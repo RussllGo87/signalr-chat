@@ -28,4 +28,12 @@
               android:drawableRight="@drawable/setting_view_arrow"
               android:drawableEnd="@drawable/setting_view_arrow"/>
 
+    <TextView android:id="@+id/tv_account_item_nearby_friends"
+              style="@style/SettingItemStyle"
+              android:layout_marginTop="@dimen/activity_vertical_margin"
+              android:background="@drawable/selector_settings_item"
+              android:text="@string/menu_action_maintain_nearby_friends"
+              android:drawableRight="@drawable/setting_view_arrow"
+              android:drawableEnd="@drawable/setting_view_arrow"/>
+
 </LinearLayout>

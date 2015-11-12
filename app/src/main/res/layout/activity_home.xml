@@ -58,6 +58,12 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
+        <Button android:id="@+id/btn_discovery"
+                android:text="@string/tv_discovery"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"/>
+
         <Button android:id="@+id/btn_list_chat"
                 android:text="@string/tv_list_chat"
                 android:layout_width="0dp"
@@ -66,12 +72,6 @@
 
         <Button android:id="@+id/btn_list_friend"
                 android:text="@string/tv_list_friend"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"/>
-
-        <Button android:id="@+id/btn_discovery"
-                android:text="@string/tv_discovery"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"/>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="feedback_type">
-        <item>bug反馈</item>
+        <item>闪退</item>
         <item>举报</item>
         <item>合作</item>
         <item>其他</item>

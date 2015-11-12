@@ -80,6 +80,13 @@ public class PhoneFragment extends Fragment implements View.OnClickListener{
         }
     }
 
+    public void  validatePhoneNo() {
+        String phoneNo = et_phone_reg.getText().toString().trim();
+        if(CommonTools.isPhoneNumber(phoneNo)) {
+            mListener.validate(phoneNo);
+        }
+    }
+
     public void validatePhone() {
         String phoneNo = et_phone_reg.getText().toString().trim();
         if(CommonTools.isPhoneNumber(phoneNo)) {

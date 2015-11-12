@@ -24,5 +24,6 @@
 
     <!-- 聊天用户列表 -->
     <dimen name="padding_left_list_item_buddy_container">12dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
 
 </resources>

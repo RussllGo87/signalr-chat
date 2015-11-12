@@ -45,7 +45,7 @@
 
     <!-- 注册页 -->
     <string name="title_activity_register">注册</string>
-    <string name="btn_step_previous">上一步</string>
+    <string name="btn_step_previous">返回</string>
     <string name="btn_step_next">下一步</string>
 
     <!-- 注册之电话号码验证 PhoneFragment -->
@@ -94,6 +94,7 @@
     <string name="menu_action_scan">扫一扫</string>
     <string name="menu_action_resource">资源上传</string>
     <string name="menu_action_maintain">广告维护</string>
+    <string name="menu_action_maintain_nearby_friends">附近的人</string>
     <string name="resp_return_empty">返回为空</string>
 
     <!-- BuddyFragment -->
@@ -105,8 +106,7 @@
     <string name="tv_account_item_settings">@string/title_activity_settings</string>
     <string name="tv_fragment_account">我</string>
     <string name="tv_account_item_uploaded">我的资源</string>
-    <string name="tv_account_item_ads">周边</string>
-
+    <string name="tv_account_item_ads">周边广告</string>
     <!-- 我的资源上传记录 -->
     <string name="title_activity_resource_list">我的资源</string>
     <string name="action_range_all">全部</string>
@@ -122,7 +122,6 @@
     <string name="tv_resource_detail_address">地址:%s</string>
     <string name="tv_resource_detail_remark">备注:%s</string>
     <string name="tv_resource_detail_status">审核状态:%s</string>
-
     <!-- 周边广告地图展示 -->
     <string name="title_activity_nearby">周边广告</string>
     <string name="action_radius_half">500米</string>
@@ -132,6 +131,7 @@
     <string name="action_radius_all">所有</string>
     <!-- 周边广告详细展示 -->
     <string name="title_activity_nearby_ad_detail">周边广告详情</string>
+
 
     <!--- 下拉菜单列表 -->
     <!-- 菜单项 之 扫码 -->
@@ -151,6 +151,8 @@
     <string name="title_activity_ad_maintain">广告维护</string>
     <string name="toast_ad_maintain_ok">广告上传成功</string>
     <string name="btn_ad_maintain_code_scan">扫码</string>
+    <!-- 周边可以直接聊天用户地图显示 -->
+    <string name="title_activity_nearby_friends">周边人</string>
 
     <!-- 聊天页 -->
     <string name="title_activity_chat">%s</string>

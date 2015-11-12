@@ -118,13 +118,15 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 //                    fragment.submitCode();
 //                    fragment.validatePhone();
 
-                    requestStep = STEP_2;
-                    btn_step_previous.setText(R.string.btn_step_previous);
-                    InfoRegFragment infoFragment = InfoRegFragment.newInstance("18576685313");
-                    FragmentManager fm = getSupportFragmentManager();
-                    FragmentTransaction ft = fm.beginTransaction();
-                    ft.replace(R.id.fl_container_reg,infoFragment,"InfoRegFragment");
-                    ft.commit();
+//                    requestStep = STEP_2;
+//                    btn_step_previous.setText(R.string.btn_step_previous);
+//                    InfoRegFragment infoFragment = InfoRegFragment.newInstance("18576685313");
+//                    FragmentManager fm = getSupportFragmentManager();
+//                    FragmentTransaction ft = fm.beginTransaction();
+//                    ft.replace(R.id.fl_container_reg,infoFragment,"InfoRegFragment");
+//                    ft.commit();
+
+                    fragment.validatePhoneNo();
 
                 } else {
                     InfoRegFragment infoFragment = (InfoRegFragment) getSupportFragmentManager().findFragmentByTag("InfoRegFragment");

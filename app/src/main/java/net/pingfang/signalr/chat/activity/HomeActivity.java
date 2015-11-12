@@ -75,9 +75,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     DiscoveryFragment discoveryFragment;
     AccountFragment accountFragment;
 
+    Button btn_discovery;
     Button btn_list_chat;
     Button btn_list_friend;
-    Button btn_discovery;
     Button btn_account_management;
 
     CollectionPagerAdapter adapter;
@@ -269,25 +269,25 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         fl_container = (FrameLayout) findViewById(R.id.fl_container);
         fl_container = (FrameLayout) findViewById(R.id.fl_container);
         pager = (ViewPager) findViewById(R.id.pager);
+        btn_discovery = (Button) findViewById(R.id.btn_discovery);
+        btn_discovery.setOnClickListener(this);
         btn_list_chat = (Button) findViewById(R.id.btn_list_chat);
         btn_list_chat.setOnClickListener(this);
         btn_list_friend = (Button) findViewById(R.id.btn_list_friend);
         btn_list_friend.setOnClickListener(this);
-        btn_discovery = (Button) findViewById(R.id.btn_discovery);
-        btn_discovery.setOnClickListener(this);
         btn_account_management = (Button) findViewById(R.id.btn_account_management);
         btn_account_management.setOnClickListener(this);
     }
 
     private void initAdapter() {
+        discoveryFragment = DiscoveryFragment.newInstance();
         messageFragment = MessageFragment.newInstance(onFragmentInteractionListener);
         buddyFragment = BuddyFragment.newInstance(onFragmentInteractionListener);
-        discoveryFragment = DiscoveryFragment.newInstance();
         accountFragment = AccountFragment.newInstance(onFragmentInteractionListener);
         adapter = new CollectionPagerAdapter(getSupportFragmentManager());
+        adapter.add(discoveryFragment);
         adapter.add(messageFragment);
         adapter.add(buddyFragment);
-        adapter.add(discoveryFragment);
         adapter.add(accountFragment);
         pager.setAdapter(adapter);
 
@@ -296,16 +296,17 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             public void onPageSelected(int position) {
                 switch (position) {
                     case 1:
-                        tv_activity_title.setText(R.string.tv_activity_title_roster);
+                        tv_activity_title.setText(R.string.tv_activity_title_message);
                         break;
                     case 2:
-                        tv_activity_title.setText(R.string.tv_activity_title_discovery);
+                        tv_activity_title.setText(R.string.tv_activity_title_roster);
+
                         break;
                     case 3:
                         tv_activity_title.setText(R.string.tv_activity_title_account);
                         break;
                     case 0:
-                        tv_activity_title.setText(R.string.tv_activity_title_message);
+                        tv_activity_title.setText(R.string.tv_activity_title_discovery);
                         break;
                 }
             }
@@ -385,13 +386,13 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.tv_menu_drop_down:
                 popupMenu(view);
                 break;
-            case R.id.btn_list_chat:
+            case R.id.btn_discovery:
                 pager.setCurrentItem(0);
                 break;
-            case R.id.btn_list_friend:
+            case R.id.btn_list_chat:
                 pager.setCurrentItem(1);
                 break;
-            case R.id.btn_discovery:
+            case R.id.btn_list_friend:
                 pager.setCurrentItem(2);
                 break;
             case R.id.btn_account_management:

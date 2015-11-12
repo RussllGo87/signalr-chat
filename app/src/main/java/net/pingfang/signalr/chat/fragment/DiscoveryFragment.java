@@ -14,6 +14,7 @@ import com.google.zxing.integration.android.CustomerIntentIntegrator;
 import net.pingfang.signalr.chat.R;
 import net.pingfang.signalr.chat.activity.AdMaintainActivity;
 import net.pingfang.signalr.chat.activity.CaptureActivityAnyOrientation;
+import net.pingfang.signalr.chat.activity.NearbyFriendsActivity;
 import net.pingfang.signalr.chat.activity.ResourcePostActivity;
 import net.pingfang.signalr.chat.listener.OnFragmentInteractionListener;
 
@@ -32,6 +33,7 @@ public class DiscoveryFragment extends Fragment implements View.OnClickListener{
     private TextView tv_account_item_scan;
     private TextView tv_account_item_resource;
     private TextView tv_account_item_maintain;
+    private TextView tv_account_item_nearby_friends;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -49,7 +51,8 @@ public class DiscoveryFragment extends Fragment implements View.OnClickListener{
         tv_account_item_resource.setOnClickListener(this);
         tv_account_item_maintain = (TextView) view.findViewById(R.id.tv_account_item_maintain);
         tv_account_item_maintain.setOnClickListener(this);
-
+        tv_account_item_nearby_friends = (TextView) view.findViewById(R.id.tv_account_item_nearby_friends);
+        tv_account_item_nearby_friends.setOnClickListener(this);
         return view;
     }
 
@@ -72,6 +75,11 @@ public class DiscoveryFragment extends Fragment implements View.OnClickListener{
                 Intent adMaintainIntent = new Intent();
                 adMaintainIntent.setClass(getContext(), AdMaintainActivity.class);
                 startActivity(adMaintainIntent);
+                break;
+            case R.id.tv_account_item_nearby_friends:
+                Intent nearByFriendsIntent = new Intent();
+                nearByFriendsIntent.setClass(getContext(), NearbyFriendsActivity.class);
+                startActivity(nearByFriendsIntent);
                 break;
         }
     }
