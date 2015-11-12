@@ -72,7 +72,8 @@
     <string name="menu_action_scan">Scan</string>
     <string name="menu_action_resource">Resource</string>
     <string name="menu_action_maintain">Maintain</string>
-    <string name="menu_action_maintain_nearby_friends">Nearby Buddies</string>
+    <string name="menu_action_nearby_friends">Nearby Buddies</string>
+    <string name="menu_action_share_apk">Share App</string>
 
     <!-- BuddyFragment -->
     <string name="tv_fragment_buddy">BuddyFragment</string>

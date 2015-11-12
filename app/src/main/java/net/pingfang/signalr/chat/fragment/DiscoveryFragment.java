@@ -2,12 +2,17 @@ package net.pingfang.signalr.chat.fragment;
 
 
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.zxing.integration.android.CustomerIntentIntegrator;
 
@@ -17,6 +22,8 @@ import net.pingfang.signalr.chat.activity.CaptureActivityAnyOrientation;
 import net.pingfang.signalr.chat.activity.NearbyFriendsActivity;
 import net.pingfang.signalr.chat.activity.ResourcePostActivity;
 import net.pingfang.signalr.chat.listener.OnFragmentInteractionListener;
+
+import java.io.File;
 
 public class DiscoveryFragment extends Fragment implements View.OnClickListener{
 
@@ -34,6 +41,7 @@ public class DiscoveryFragment extends Fragment implements View.OnClickListener{
     private TextView tv_account_item_resource;
     private TextView tv_account_item_maintain;
     private TextView tv_account_item_nearby_friends;
+    private TextView tv_account_item_share_apk;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -53,6 +61,8 @@ public class DiscoveryFragment extends Fragment implements View.OnClickListener{
         tv_account_item_maintain.setOnClickListener(this);
         tv_account_item_nearby_friends = (TextView) view.findViewById(R.id.tv_account_item_nearby_friends);
         tv_account_item_nearby_friends.setOnClickListener(this);
+        tv_account_item_share_apk = (TextView) view.findViewById(R.id.tv_account_item_share_apk);
+        tv_account_item_share_apk.setOnClickListener(this);
         return view;
     }
 
@@ -81,6 +91,30 @@ public class DiscoveryFragment extends Fragment implements View.OnClickListener{
                 nearByFriendsIntent.setClass(getContext(), NearbyFriendsActivity.class);
                 startActivity(nearByFriendsIntent);
                 break;
+            case R.id.tv_account_item_share_apk:
+                getApkSourceInfo();
+                break;
+        }
+    }
+
+    private void getApkSourceInfo() {
+        try {
+            PackageInfo info = getActivity().getPackageManager().getPackageInfo(getActivity().getPackageName(),0);
+            ApplicationInfo appInfo = info.applicationInfo;
+            String sourceDir = appInfo.sourceDir;
+            File file = new File(sourceDir);
+            Uri sourceUri = Uri.fromFile(file);
+            Intent sharingIntent = new Intent();
+            sharingIntent.setAction(Intent.ACTION_SEND);
+            sharingIntent.setType("application/*");
+            sharingIntent.setPackage("com.android.bluetooth");
+            sharingIntent.putExtra(Intent.EXTRA_STREAM, sourceUri);
+
+            startActivity(Intent.createChooser(sharingIntent, "Share Application"));
+
+            Toast.makeText(getContext(), sourceDir, Toast.LENGTH_SHORT).show();
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
         }
     }
 }

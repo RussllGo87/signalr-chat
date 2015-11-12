@@ -94,7 +94,8 @@
     <string name="menu_action_scan">扫一扫</string>
     <string name="menu_action_resource">资源上传</string>
     <string name="menu_action_maintain">广告维护</string>
-    <string name="menu_action_maintain_nearby_friends">附近的人</string>
+    <string name="menu_action_nearby_friends">附近的人</string>
+    <string name="menu_action_share_apk">分享</string>
     <string name="resp_return_empty">返回为空</string>
 
     <!-- BuddyFragment -->
