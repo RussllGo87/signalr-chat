@@ -19,7 +19,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
+import android.widget.GridView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,7 +30,9 @@ import com.baidu.mapapi.model.LatLng;
 import com.squareup.okhttp.Response;
 
 import net.pingfang.signalr.chat.R;
+import net.pingfang.signalr.chat.adapter.PhotoGridViewAdapter;
 import net.pingfang.signalr.chat.constant.app.AppConstants;
+import net.pingfang.signalr.chat.listener.OnGridViewItemClick;
 import net.pingfang.signalr.chat.location.LocationListenerImpl;
 import net.pingfang.signalr.chat.location.LocationNotify;
 import net.pingfang.signalr.chat.net.HttpBaseCallback;
@@ -46,8 +48,10 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
-public class ResourcePostActivity extends AppCompatActivity implements View.OnClickListener, LocationNotify {
+public class ResourcePostActivity extends AppCompatActivity implements View.OnClickListener, LocationNotify, OnGridViewItemClick {
 
     public static final String TAG = ResourcePostActivity.class.getSimpleName();
 
@@ -70,7 +74,10 @@ public class ResourcePostActivity extends AppCompatActivity implements View.OnCl
     private EditText et_resource_contacts;
     private EditText et_resource_phone;
     private EditText et_resource_remark;
-    private ImageView iv_resource_profile;
+    private GridView gv_camera;
+    PhotoGridViewAdapter adapter;
+    private Button btn_add_pic;
+//    private ImageView iv_resource_profile;
     private Button btn_resource_save;
     private Button btn_resource_cancel;
 
@@ -85,6 +92,8 @@ public class ResourcePostActivity extends AppCompatActivity implements View.OnCl
     Uri targetUri;
     String tmpFilePath;
     String fileContent;
+
+    List<String> fileContentList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,8 +115,13 @@ public class ResourcePostActivity extends AppCompatActivity implements View.OnCl
         et_resource_contacts = (EditText) findViewById(R.id.et_resource_contacts);
         et_resource_phone = (EditText) findViewById(R.id.et_resource_phone);
         et_resource_remark = (EditText) findViewById(R.id.et_resource_remark);
-        iv_resource_profile = (ImageView) findViewById(R.id.iv_resource_profile);
-        iv_resource_profile.setOnClickListener(this);
+        gv_camera = (GridView) findViewById(R.id.gv_camera);
+        adapter = new PhotoGridViewAdapter(getApplicationContext(),this);
+        gv_camera.setAdapter(adapter);
+//        iv_resource_profile = (ImageView) findViewById(R.id.iv_resource_profile);
+//        iv_resource_profile.setOnClickListener(this);
+        btn_add_pic = (Button) findViewById(R.id.btn_add_pic);
+        btn_add_pic.setOnClickListener(this);
 
         btn_resource_save = (Button) findViewById(R.id.btn_resource_save);
         btn_resource_save.setOnClickListener(this);
@@ -148,7 +162,7 @@ public class ResourcePostActivity extends AppCompatActivity implements View.OnCl
             case R.id.btn_activity_back:
                 navigateUp();
                 break;
-            case R.id.iv_resource_profile:
+            case R.id.btn_add_pic:
                 showDialog();
                 break;
             case R.id.btn_resource_save:
@@ -241,20 +255,22 @@ public class ResourcePostActivity extends AppCompatActivity implements View.OnCl
             if(requestCode == GlobalApplication.REQUEST_IMAGE_CAPTURE) {
 
                 String filePath = tmpFilePath;
+                adapter.addPhoto(filePath);
                 Bitmap bitmap = MediaFileUtils.decodeBitmapFromPath(filePath,
                         MediaFileUtils.dpToPx(getApplicationContext(), 150),
-                        MediaFileUtils.dpToPx(getApplicationContext(), 150));
-                iv_resource_profile.setImageBitmap(bitmap);
+                        MediaFileUtils.dpToPx(getApplicationContext(), 200));
                 fileContent = CommonTools.bitmapToBase64(bitmap);
+                fileContentList.add(fileContent);
             } else if(requestCode == GlobalApplication.REQUEST_IMAGE_GET) {
                 if(data != null && data.getData() != null) {
                     Uri uri = data.getData();
                     String filePath = FileUtil.getPath(getApplicationContext(), uri);
+                    adapter.addPhoto(filePath);
                     Bitmap bitmap = MediaFileUtils.decodeBitmapFromPath(filePath,
                             MediaFileUtils.dpToPx(getApplicationContext(), 150),
-                            MediaFileUtils.dpToPx(getApplicationContext(), 150));
-                    iv_resource_profile.setImageBitmap(bitmap);
+                            MediaFileUtils.dpToPx(getApplicationContext(), 200));
                     fileContent = CommonTools.bitmapToBase64(bitmap);
+                    fileContentList.add(fileContent);
                 } else if(data == null) {
                     Toast.makeText(getApplicationContext(),getString(R.string.image_get_data_null),Toast.LENGTH_SHORT).show();
                 } else {
@@ -282,8 +298,32 @@ public class ResourcePostActivity extends AppCompatActivity implements View.OnCl
 
     }
 
+    @Override
+    public void onItemClick(String filePath) {
+        Uri uri = Uri.fromFile(new File(filePath));
+        Intent intent =  new Intent(getApplicationContext(),PhotoViewerActivity.class);
+        intent.putExtra("uri",uri);
+        startActivity(intent);
+    }
+
+    @Override
+    public void onLongItemClick(int position) {
+        fileContentList.remove(position);
+    }
+
     private void storeOrPostRes() {
-        if(!TextUtils.isEmpty(fileContent)) {
+
+        StringBuffer sb = new StringBuffer();
+        for(int i = 0; i < fileContentList.size(); i++) {
+            sb.append(fileContentList.get(i));
+            if(i != (fileContentList.size() - 1)) {
+                sb.append(",");
+            }
+        }
+
+        String tmpContent = sb.toString();
+
+        if(!TextUtils.isEmpty(tmpContent)) {
             OkHttpCommonUtil okhtp = OkHttpCommonUtil.newInstance(getApplicationContext());
             okhtp.postRequest(
                     URL_RESOURCE_POST,
@@ -297,7 +337,7 @@ public class ResourcePostActivity extends AppCompatActivity implements View.OnCl
                             new OkHttpCommonUtil.Param(KEY_RESOURCE_POST_REMARK, et_resource_remark.getText().toString().trim()),
                             new OkHttpCommonUtil.Param(KEY_URL_RESOURCE_POST_LOCATION_LAT, currentLatLng.latitude),
                             new OkHttpCommonUtil.Param(KEY_URL_RESOURCE_POST_LOCATION_LNG, currentLatLng.longitude),
-                            new OkHttpCommonUtil.Param(KEY_RESOURCE_POST_PROFILE, fileContent)
+                            new OkHttpCommonUtil.Param(KEY_RESOURCE_POST_PROFILE, tmpContent)
                     },
                     new HttpBaseCallback() {
                         @Override

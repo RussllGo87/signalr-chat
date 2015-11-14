@@ -112,13 +112,24 @@
                       android:layout_marginTop="2dp"
                       android:hint="资源说明"/>
 
-            <ImageView
-                android:id="@+id/iv_resource_profile"
+            <GridView android:id="@+id/gv_camera"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:cacheColorHint="#00000000"
+                android:fadingEdge="none"
+                android:listSelector="#00000000"
+                android:numColumns="3"
+                android:paddingLeft="1dp"
+                android:paddingRight="1dp"
+                android:stretchMode="columnWidth"/>
+
+
+            <Button android:id="@+id/btn_add_pic"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginTop="2dp"
-                android:src="@drawable/ic_empty" />
+                android:text="添加图片"/>
+
 
             <LinearLayout
                 android:layout_width="match_parent"

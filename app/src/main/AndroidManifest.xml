@@ -223,6 +223,8 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="net.pingfang.signalr.chat.activity.HomeActivity" />
         </activity>
+        <activity android:name=".activity.PhotoViewerActivity" >
+        </activity>
 
         <service
             android:name="com.baidu.location.f"
@@ -238,7 +240,6 @@
         <provider
             android:name=".provider.ChatAppProvider"
             android:authorities="net.pingfang.signalr.chat.provider" />
-
     </application>
 
 </manifest>
