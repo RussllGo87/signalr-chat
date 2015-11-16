@@ -174,7 +174,7 @@ public class NearbyActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     private void popupMenu(View view) {
-        ContextThemeWrapper wrapper = new ContextThemeWrapper(getApplicationContext(), R.style.AppTheme);
+        ContextThemeWrapper wrapper = new ContextThemeWrapper(getApplicationContext(), R.style.AppMainTheme);
         PopupMenu popup = new PopupMenu(wrapper, view);
         final MenuInflater inflater = popup.getMenuInflater();
         inflater.inflate(R.menu.menu_nearby, popup.getMenu());
