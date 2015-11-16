@@ -14,7 +14,6 @@ import net.pingfang.signalr.chat.R;
 import net.pingfang.signalr.chat.database.AppContract;
 import net.pingfang.signalr.chat.database.User;
 import net.pingfang.signalr.chat.net.OkHttpCommonUtil;
-import net.pingfang.signalr.chat.util.GlobalApplication;
 
 /**
  * Created by gongguopei87@gmail.com on 2015/10/15.
@@ -39,7 +38,7 @@ public class ChatListCursorAdapter extends CursorAdapter {
         ImageView iv_account_portrait = (ImageView) view.findViewById(R.id.iv_account_portrait);
         String portraitUrl = cursor.getString(cursor.getColumnIndex(AppContract.RecentContactView.COLUMN_NAME_PORTRAIT));
         if (portraitUrl != null && !TextUtils.isEmpty(portraitUrl) && !"null".equals(portraitUrl)) {
-            portraitUrl = GlobalApplication.PORTRAIT_URL_PREFIX + portraitUrl;
+//            portraitUrl = GlobalApplication.PORTRAIT_URL_PREFIX + portraitUrl;
             OkHttpCommonUtil okHttpCommonUtil = OkHttpCommonUtil.newInstance(context);
             okHttpCommonUtil.display(iv_account_portrait, portraitUrl, R.mipmap.ic_launcher);
         } else {

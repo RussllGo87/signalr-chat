@@ -12,7 +12,6 @@ import android.widget.TextView;
 import net.pingfang.signalr.chat.R;
 import net.pingfang.signalr.chat.model.ResourceInfo;
 import net.pingfang.signalr.chat.net.OkHttpCommonUtil;
-import net.pingfang.signalr.chat.util.GlobalApplication;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,7 +60,7 @@ public class ResourceListAdapter extends BaseAdapter {
             ImageView iv_resource_profile = (ImageView) view.findViewById(R.id.iv_resource_profile);
             String url = resourceInfo.getUrl();
             if(!TextUtils.isEmpty(url)) {
-                url = GlobalApplication.RESOURCE_PIC_URL_PREFIX + url;
+//                url = GlobalApplication.RESOURCE_PIC_URL_PREFIX + url;
                 okHttp.display(iv_resource_profile,url,R.mipmap.ic_launcher);
             }
             TextView tv_resource_post_time = (TextView) view.findViewById(R.id.tv_resource_post_time);
@@ -77,7 +76,7 @@ public class ResourceListAdapter extends BaseAdapter {
             ImageView iv_resource_profile = (ImageView) convertView.findViewById(R.id.iv_resource_profile);
             String url = resourceInfo.getUrl();
             if(!TextUtils.isEmpty(url)) {
-                url = GlobalApplication.RESOURCE_PIC_URL_PREFIX + url;
+//                url = GlobalApplication.RESOURCE_PIC_URL_PREFIX + url;
                 okHttp.display(iv_resource_profile,url,R.mipmap.ic_launcher);
             }
             TextView tv_resource_post_time = (TextView) convertView.findViewById(R.id.tv_resource_post_time);

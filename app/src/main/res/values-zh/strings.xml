@@ -122,7 +122,7 @@
     <string name="tv_resource_detail_contact_info">电话:%s</string>
     <string name="tv_resource_detail_address">地址:%s</string>
     <string name="tv_resource_detail_remark">备注:%s</string>
-    <string name="tv_resource_detail_status">审核状态:%s</string>
+    <string name="tv_resource_detail_status">当前状态:%s</string>
     <!-- 周边广告地图展示 -->
     <string name="title_activity_nearby">周边广告</string>
     <string name="action_radius_half">500米</string>

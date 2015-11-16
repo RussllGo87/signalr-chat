@@ -13,7 +13,6 @@ import android.widget.TextView;
 import net.pingfang.signalr.chat.R;
 import net.pingfang.signalr.chat.model.ResourceInfo;
 import net.pingfang.signalr.chat.net.OkHttpCommonUtil;
-import net.pingfang.signalr.chat.util.GlobalApplication;
 
 public class ResourceDetailActivity extends AppCompatActivity implements View.OnClickListener{
 
@@ -69,7 +68,7 @@ public class ResourceDetailActivity extends AppCompatActivity implements View.On
             OkHttpCommonUtil okHttp = OkHttpCommonUtil.newInstance(getApplicationContext());
             String url = resourceInfo.getUrl();
             if(!TextUtils.isEmpty(url)) {
-                url = GlobalApplication.RESOURCE_PIC_URL_PREFIX + url;
+//                url = GlobalApplication.RESOURCE_PIC_URL_PREFIX + url;
                 okHttp.display(iv_resource_detail_profile,url,R.mipmap.ic_launcher);
             }
             tv_resource_detail_width.setText(getString(R.string.tv_resource_detail_width,resourceInfo.getWidth()));

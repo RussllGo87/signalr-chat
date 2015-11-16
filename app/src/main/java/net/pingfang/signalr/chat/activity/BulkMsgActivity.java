@@ -195,7 +195,7 @@ public class BulkMsgActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void popupMenu(View view) {
-        ContextThemeWrapper wrapper = new ContextThemeWrapper(getApplicationContext(), R.style.AppTheme);
+        ContextThemeWrapper wrapper = new ContextThemeWrapper(getApplicationContext(), R.style.AppMainTheme);
         PopupMenu popup = new PopupMenu(wrapper, view);
         MenuInflater inflater = popup.getMenuInflater();
         inflater.inflate(R.menu.menu_message_actions, popup.getMenu());

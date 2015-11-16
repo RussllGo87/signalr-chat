@@ -281,7 +281,7 @@ public class NearbyActivity extends AppCompatActivity implements View.OnClickLis
 
         if(!TextUtils.isEmpty(marker.getTitle())){
             if(!TextUtils.isEmpty(url)) {
-                url = GlobalApplication.PIC_URL_PREFIX + url;
+//                url = GlobalApplication.PIC_URL_PREFIX + url;
                 OkHttpCommonUtil okhttp = OkHttpCommonUtil.newInstance(getApplicationContext());
                 okhttp.display(imageView,url,R.drawable.ic_empty);
             }

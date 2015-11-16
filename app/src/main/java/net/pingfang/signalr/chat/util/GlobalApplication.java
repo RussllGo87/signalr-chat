@@ -16,15 +16,15 @@ public class GlobalApplication extends Application {
     public static final int REQUEST_IMAGE_CAPTURE = 0x01;
     public static final int REQUEST_IMAGE_GET = 0x02;
 
-    public static final String URL_WEB_API_HOST = "http://hale.redstream.cn";
-    public static final String URL_COMMUNICATION_API_HOST = "http://hale.redstream.cn:10086";
+//    public static final String URL_WEB_API_HOST = "http://hale.redstream.cn";
+//    public static final String URL_COMMUNICATION_API_HOST = "http://hale.redstream.cn:10086";
 
-//    public static final String URL_WEB_API_HOST = "http://192.168.1.241";
-//    public static final String URL_COMMUNICATION_API_HOST = "http://192.168.1.241:10086";
+    public static final String URL_WEB_API_HOST = "http://192.168.1.242";
+    public static final String URL_COMMUNICATION_API_HOST = "http://192.168.1.242:10086";
 
-    public static final String PORTRAIT_URL_PREFIX = URL_WEB_API_HOST + "/UpLoad/Head/";
-    public static final String PIC_URL_PREFIX = URL_WEB_API_HOST + "/UpLoad/";
-    public static final String RESOURCE_PIC_URL_PREFIX = PIC_URL_PREFIX + "Resource/";
+//    public static final String PORTRAIT_URL_PREFIX = URL_WEB_API_HOST + "/UpLoad/Head/";
+//    public static final String PIC_URL_PREFIX = URL_WEB_API_HOST + "/UpLoad/";
+//    public static final String RESOURCE_PIC_URL_PREFIX = PIC_URL_PREFIX + "Resource/";
 
 //    public static final String ACTION_INTENT_TEXT_MESSAGE_INCOMING = "ACTION_INTENT_TEXT_MESSAGE_INCOMING";
 //    public static final String ACTION_INTENT_IMAGE_MESSAGE_INCOMING = "ACTION_INTENT_IMAGE_MESSAGE_INCOMING";

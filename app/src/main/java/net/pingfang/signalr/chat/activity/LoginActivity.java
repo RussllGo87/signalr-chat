@@ -79,11 +79,12 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
     public static final String LOGIN_KEY_ACCOUNT = "account";
     public static final String LOGIN_KEY_PASSWORD = "password";
 
+//    public static final String NEW_LOGIN_URL = GlobalApplication.URL_WEB_API_HOST + "/api/WebAPI/User/thirdLogin";
     public static final String NEW_LOGIN_URL = GlobalApplication.URL_WEB_API_HOST + "/api/WebAPI/User/thirdLogin";
     public static final String NEW_LOGIN_KEY_TID = "key";
     public static final String NEW_LOGIN_KEY_WID = "key";
     public static final String NEW_LOGIN_KEY_WXID = "key";
-    public static final String NEW_LOGIN_KEY_NICK_NAME = "nickName";
+    public static final String NEW_LOGIN_KEY_NICK_NAME = "nickname";
     public static final String NEW_LOGIN_KEY_PORTRAIT = "pic";
 
     public static final String NEW_LOGIN_PARAM_PLATFORM_QQ = "qq";
@@ -625,7 +626,7 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
         }
 
         OkHttpCommonUtil okHttp = OkHttpCommonUtil.newInstance(getApplicationContext());
-        okHttp.postRequest(NEW_LOGIN_URL, params, new HttpBaseCallback() {
+        okHttp.getRequest(NEW_LOGIN_URL, params, new HttpBaseCallback() {
             @Override
             public void onFailure(Request request, IOException e) {
                 Log.d("HttpBaseCallback", e.getMessage());
@@ -706,8 +707,14 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    ll_progress_bar_container.setVisibility(View.GONE);
-                    Toast.makeText(getApplicationContext(), getString(R.string.debug_http_response_invalid), Toast.LENGTH_LONG).show();
+                    mDelivery.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            ll_progress_bar_container.setVisibility(View.GONE);
+                            Toast.makeText(getApplicationContext(), getString(R.string.debug_http_response_invalid), Toast.LENGTH_LONG).show();
+                        }
+                    });
+
                     Log.e(TAG, "LOGIN_URL return " + getString(R.string.debug_http_response_invalid));
                     Log.e(TAG, "LOGIN_URL return " + e.getMessage());
                 }

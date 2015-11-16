@@ -26,7 +26,7 @@
                   android:text="@string/title_activity_nearby_friends"
                   android:textSize="@dimen/text_size_activity_title" />
 
-        <TextView android:id="@+id/tv_offline_message"
+        <TextView android:id="@+id/tv_menu_drop_down"
                   android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
                   android:layout_centerVertical="true"

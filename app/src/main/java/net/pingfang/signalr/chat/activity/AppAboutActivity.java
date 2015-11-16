@@ -4,18 +4,20 @@ import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import net.pingfang.signalr.chat.R;
-import net.pingfang.signalr.chat.net.OkHttpCommonUtil;
+import net.pingfang.signalr.chat.util.MediaFileUtils;
 
 import java.io.File;
 
@@ -57,8 +59,14 @@ public class AppAboutActivity extends AppCompatActivity implements View.OnClickL
         tv_about_item_share_apk.setOnClickListener(this);
 
         iv_app_logo = (ImageView) findViewById(R.id.iv_app_logo);
-        OkHttpCommonUtil instance = OkHttpCommonUtil.newInstance(getApplicationContext());
-        instance.display(iv_app_logo,"http://www.baidu.com/img/bd_logo1.png",R.mipmap.ic_launcher);
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.hale_logo);
+        bitmap = Bitmap.createScaledBitmap(bitmap,
+                MediaFileUtils.dpToPx(getApplicationContext(), 150),
+                MediaFileUtils.dpToPx(getApplicationContext(), 120),
+                true);
+        iv_app_logo.setImageBitmap(bitmap);
+//        OkHttpCommonUtil instance = OkHttpCommonUtil.newInstance(getApplicationContext());
+//        instance.display(iv_app_logo,"http://www.baidu.com/img/bd_logo1.png",R.mipmap.ic_launcher);
 
     }
 

@@ -17,7 +17,6 @@ import net.pingfang.signalr.chat.activity.ResourceListActivity;
 import net.pingfang.signalr.chat.activity.SettingsActivity;
 import net.pingfang.signalr.chat.listener.OnFragmentInteractionListener;
 import net.pingfang.signalr.chat.net.OkHttpCommonUtil;
-import net.pingfang.signalr.chat.util.GlobalApplication;
 import net.pingfang.signalr.chat.util.SharedPreferencesHelper;
 
 /**
@@ -78,7 +77,7 @@ public class AccountFragment extends Fragment implements View.OnClickListener{
         }
 
         if(!TextUtils.isEmpty(portrait)) {
-            portrait = GlobalApplication.PORTRAIT_URL_PREFIX + portrait;
+//            portrait = GlobalApplication.PORTRAIT_URL_PREFIX + portrait;
             OkHttpCommonUtil okHttpCommonUtil = OkHttpCommonUtil.newInstance(getContext());
             okHttpCommonUtil.display(iv_account_portrait,portrait,R.mipmap.ic_launcher);
         }
