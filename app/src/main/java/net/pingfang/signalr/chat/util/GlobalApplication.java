@@ -16,11 +16,11 @@ public class GlobalApplication extends Application {
     public static final int REQUEST_IMAGE_CAPTURE = 0x01;
     public static final int REQUEST_IMAGE_GET = 0x02;
 
-//    public static final String URL_WEB_API_HOST = "http://hale.redstream.cn";
-//    public static final String URL_COMMUNICATION_API_HOST = "http://hale.redstream.cn:10086";
+    public static final String URL_WEB_API_HOST = "http://hale.redstream.cn";
+    public static final String URL_COMMUNICATION_API_HOST = "http://hale.redstream.cn:10086";
 
-    public static final String URL_WEB_API_HOST = "http://192.168.1.242";
-    public static final String URL_COMMUNICATION_API_HOST = "http://192.168.1.242:10086";
+//    public static final String URL_WEB_API_HOST = "http://192.168.1.242";
+//    public static final String URL_COMMUNICATION_API_HOST = "http://192.168.1.242:10086";
 
 //    public static final String PORTRAIT_URL_PREFIX = URL_WEB_API_HOST + "/UpLoad/Head/";
 //    public static final String PIC_URL_PREFIX = URL_WEB_API_HOST + "/UpLoad/";
@@ -39,6 +39,8 @@ public class GlobalApplication extends Application {
     public static final String ACTION_INTENT_OFFLINE_MESSAGE_LIST_COUNT_UPDATE = "ACTION_INTENT_OFFLINE_MESSAGE_LIST_COUNT_UPDATE";
     public static final String ACTION_INTENT_BULK_MESSAGE_INCOMING = "ACTION_INTENT_BULK_MESSAGE_INCOMING";
     public static final String ACTION_INTENT_BULK_MESSAGE_SEND = "ACTION_INTENT_BULK_MESSAGE_SEND";
+    public static final String ACTION_INTENT_SHIELD_LIST_UPDATE = "ACTION_INTENT_SHIELD_LIST_UPDATE";
+    ;
 
     public static final String IMAGE_TITLE_NAME_PREFIX = "IMAGE_";
     public static final String VOICE_FILE_NAME_PREFIX = "VOICE_";

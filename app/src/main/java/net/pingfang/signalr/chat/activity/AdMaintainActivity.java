@@ -128,11 +128,12 @@ public class AdMaintainActivity extends AppCompatActivity implements View.OnClic
 
     @Override
     public void updateLoc(BDLocation bdLocation) {
-        if (bdLocation == null)
+        if (bdLocation == null) {
+            Toast.makeText(getApplicationContext(),getString(R.string.toast_location_ok),Toast.LENGTH_LONG).show();
             return;
+        }
 
-        currentLatLng = new LatLng(bdLocation.getLatitude(),
-                bdLocation.getLongitude());
+        currentLatLng = new LatLng(bdLocation.getLatitude(),bdLocation.getLongitude());
         et_ad_maintain_location.setText(bdLocation.getAddrStr());
     }
 
@@ -167,9 +168,8 @@ public class AdMaintainActivity extends AppCompatActivity implements View.OnClic
                             new OkHttpCommonUtil.Param(KEY_URL_AD_MAINTAIN_UID, sharedPreferencesHelper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID)),
                             new OkHttpCommonUtil.Param(KEY_URL_AD_MAINTAIN_CODE, et_ad_maintain_code.getText().toString().trim()),
                             new OkHttpCommonUtil.Param(KEY_URL_AD_MAINTAIN_ADDRESS, et_ad_maintain_location.getText().toString().trim()),
-//                            new OkHttpCommonUtil.Param(KEY_URL_AD_MAINTAIN_CONTENT, et_ad_maintain_slogan.getText().toString().trim()),
-                            new OkHttpCommonUtil.Param(KEY_URL_AD_MAINTAIN_LOCATION_LAT, currentLatLng.latitude),
-                            new OkHttpCommonUtil.Param(KEY_URL_AD_MAINTAIN_LOCATION_LNG, currentLatLng.longitude),
+//                            new OkHttpCommonUtil.Param(KEY_URL_AD_MAINTAIN_LOCATION_LAT, currentLatLng.latitude),
+//                            new OkHttpCommonUtil.Param(KEY_URL_AD_MAINTAIN_LOCATION_LNG, currentLatLng.longitude),
                             new OkHttpCommonUtil.Param(KEY_URL_AD_MAINTAIN_PIC, fileContent)
                     },
                     new HttpBaseCallback() {
@@ -285,10 +285,10 @@ public class AdMaintainActivity extends AppCompatActivity implements View.OnClic
         CustomerIntentResult result = CustomerIntentIntegrator.parseActivityResult(requestCode, resultCode, data);
         if(result != null) {
             if(result.getContents() == null) {
-                Toast.makeText(getApplicationContext(), "Cancelled", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), getString(R.string.btn_ad_maintain_code_scan_cancelled), Toast.LENGTH_LONG).show();
             } else {
                 final String content = result.getContents();
-                Toast.makeText(getApplicationContext(), "Scanned: " + content, Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), getString(R.string.btn_ad_maintain_code_scan_ok), Toast.LENGTH_LONG).show();
                 et_ad_maintain_code.setText(content);
             }
         } else {

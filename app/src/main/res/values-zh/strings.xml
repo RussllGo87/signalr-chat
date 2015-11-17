@@ -151,7 +151,11 @@
     <!-- 广告维护 -->
     <string name="title_activity_ad_maintain">广告维护</string>
     <string name="toast_ad_maintain_ok">广告上传成功</string>
+    <string name="toast_location_ok">地址获取成功</string>
     <string name="btn_ad_maintain_code_scan">扫码</string>
+    <string name="btn_ad_maintain_code_scan_cancelled">扫描已经取消</string>
+    <string name="btn_ad_maintain_code_scan_ok">扫码成功</string>
+    <string name="btn_ad_maintain_code_scan_result">扫码结果:%s</string>
     <!-- 周边可以直接聊天用户地图显示 -->
     <string name="title_activity_nearby_friends">周边人</string>
 

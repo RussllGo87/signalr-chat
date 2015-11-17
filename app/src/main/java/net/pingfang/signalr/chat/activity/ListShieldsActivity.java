@@ -1,8 +1,10 @@
 package net.pingfang.signalr.chat.activity;
 
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.net.Uri;
@@ -27,6 +29,7 @@ import net.pingfang.signalr.chat.database.AppContract;
 import net.pingfang.signalr.chat.database.User;
 import net.pingfang.signalr.chat.message.MessageConstructor;
 import net.pingfang.signalr.chat.service.ChatService;
+import net.pingfang.signalr.chat.util.GlobalApplication;
 import net.pingfang.signalr.chat.util.SharedPreferencesHelper;
 
 public class ListShieldsActivity extends AppCompatActivity implements View.OnClickListener,LoaderManager.LoaderCallbacks<Cursor>{
@@ -41,6 +44,8 @@ public class ListShieldsActivity extends AppCompatActivity implements View.OnCli
 
     ChatService mService;
     boolean mBound = false;
+
+    MessageReceiver messageReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +89,11 @@ public class ListShieldsActivity extends AppCompatActivity implements View.OnCli
 
     private void initCommunicate() {
 
+        messageReceiver = new MessageReceiver();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(GlobalApplication.ACTION_INTENT_SHIELD_LIST_UPDATE);
+        registerReceiver(messageReceiver,filter);
+
         Intent intent = new Intent(this, ChatService.class);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
     }
@@ -91,6 +101,10 @@ public class ListShieldsActivity extends AppCompatActivity implements View.OnCli
     @Override
     protected void onDestroy() {
         super.onDestroy();
+
+        if(messageReceiver != null) {
+            unregisterReceiver(messageReceiver);
+        }
 
         if (mBound) {
             unbindService(mConnection);
@@ -158,6 +172,20 @@ public class ListShieldsActivity extends AppCompatActivity implements View.OnCli
                     .startActivities();
         } else {
             onBackPressed();
+        }
+    }
+
+    private class MessageReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if(action.equals(GlobalApplication.ACTION_INTENT_SHIELD_LIST_UPDATE)) {
+                String uid = sharedPreferencesHelper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID);
+                Bundle args = new Bundle();
+                args.putString(AppConstants.KEY_SYS_CURRENT_UID, uid);
+
+                getSupportLoaderManager().restartLoader(LOADER_ID, args, ListShieldsActivity.this);
+            }
         }
     }
 }

@@ -444,10 +444,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         CustomerIntentResult result = CustomerIntentIntegrator.parseActivityResult(requestCode, resultCode, data);
         if(result != null) {
             if(result.getContents() == null) {
-                Toast.makeText(getApplicationContext(), "Cancelled", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), getString(R.string.btn_ad_maintain_code_scan_cancelled), Toast.LENGTH_LONG).show();
             } else {
                 final String content = result.getContents();
-                Toast.makeText(getApplicationContext(), "Scanned: " + content, Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), getString(R.string.btn_ad_maintain_code_scan_ok), Toast.LENGTH_LONG).show();
                 if(CommonTools.checkUrl(content)) {
                     Log.d(TAG, "CommonTools.checkUrl(content) == " + true);
                     DoubleButtonDialogFragment dialogFragment = DoubleButtonDialogFragment.newInstance(

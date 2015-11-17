@@ -635,7 +635,7 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
             @Override
             public void onResponse(Response response) throws IOException {
                 String json = response.body().string();
-                Log.d(TAG, "LOGIN_URL return " + json);
+                Log.d(TAG, "NEW_LOGIN_URL return " + json);
                 JSONObject jsonObject;
                 try {
                     jsonObject = new JSONObject(json);
@@ -715,8 +715,8 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
                         }
                     });
 
-                    Log.e(TAG, "LOGIN_URL return " + getString(R.string.debug_http_response_invalid));
-                    Log.e(TAG, "LOGIN_URL return " + e.getMessage());
+                    Log.e(TAG, "NEW_LOGIN_URL return " + getString(R.string.debug_http_response_invalid));
+                    Log.e(TAG, "NEW_LOGIN_URL return " + e.getMessage());
                 }
             }
         });

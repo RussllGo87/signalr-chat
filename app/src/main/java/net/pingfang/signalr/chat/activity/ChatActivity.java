@@ -286,12 +286,12 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         String content = et_message.getText().toString().trim();
         et_message.setText("");
         if(!TextUtils.isEmpty(content)) {
-            String datatime = CommonTools.TimeConvertString();
-            String messageBody = MessageConstructor.constructTxtMessage(uid, nickname, portrait, buddyUid, content, datatime);
+            String datetime = CommonTools.TimeConvertString();
+            String messageBody = MessageConstructor.constructTxtMessage(uid, nickname, portrait, buddyUid, content, datetime);
             // 消息发送
             mService.sendMessage("OnlineMsg", messageBody);
             chatMessageProcessor.onSendMessage("OnlineMsg",messageBody);
-            inflaterTxtMessage(nickname, true, content, datatime);
+            inflaterTxtMessage(nickname, true, content, datetime);
         }
     }
 
@@ -337,6 +337,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                 if(requestCode == GlobalApplication.REQUEST_IMAGE_GET) {
                     Uri uri = data.getData();
                     if(uri != null) {
+                        int i = 1;
                         String filePath = FileUtil.getPath(getApplicationContext(), uri);
                         Bitmap bitmap = MediaFileUtils.decodeBitmapFromPath(filePath,
                                 MediaFileUtils.dpToPx(getApplicationContext(), 150),
@@ -347,9 +348,8 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                         if(!TextUtils.isEmpty(fileExtension) && !TextUtils.isEmpty(fileBody)) {
                             String messageBody = MessageConstructor.constructFileMessage(uid,nickname,portrait,
                                     buddyUid,"Picture", fileExtension, fileBody,datetime);
-                            Log.d("ChatActivity", "messageBody = " + messageBody);
                             mService.sendMessage("OnlineMsg", messageBody);
-                            chatMessageProcessor.onSendMessage("OnlineMsg",messageBody);
+                            chatMessageProcessor.onSendMessage("OnlineMsg", messageBody);
                         }
                     } else {
                         Log.d("ChatActivity", "no data");
@@ -363,10 +363,10 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                 inflaterImgMessage(bitmap, targetUri, true, helper.getStringValue(AppConstants.KEY_SYS_CURRENT_NICKNAME), datetime);
                 String fileExtension = MediaFileUtils.getFileExtension(filePath);
                 String fileBody = CommonTools.bitmapToBase64(bitmap);
+                int i = 1;
                 if(!TextUtils.isEmpty(fileExtension) && !TextUtils.isEmpty(fileBody)) {
                     String messageBody = MessageConstructor.constructFileMessage(uid,nickname,portrait,
                             buddyUid,"Picture", fileExtension, fileBody, datetime);
-                    Log.d("ChatActivity", "messageBody = " + messageBody);
                     mService.sendMessage("OnlineMsg", messageBody);
                     chatMessageProcessor.onSendMessage("OnlineMsg", messageBody);
                 }
@@ -416,11 +416,10 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
             String fileExtension = MediaFileUtils.getFileExtension(mFileName);
             String fileBody = CommonTools.fileToBase64(mFileName);
-
+            int i = 1;
             if(!TextUtils.isEmpty(fileExtension) && !TextUtils.isEmpty(fileBody)) {
                 String messageBody = MessageConstructor.constructFileMessage(uid,nickname,portrait,
                         buddyUid, "Audio", fileExtension, fileBody,datetime);
-                Log.d("ChatActivity", "messageBody = " + messageBody);
                 mService.sendMessage("OnlineMsg", messageBody);
                 chatMessageProcessor.onSendMessage("OnlineMsg", messageBody);
             }

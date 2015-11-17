@@ -554,13 +554,17 @@ public class ChatMessageProcessor implements ChatMessageListener {
             String owner = jsonObject.getString("UserId");
             String unshield = jsonObject.getString("ShieldedObjectId");
             String selection =
-                    AppContract.ShieldListView.COLUMN_NAME_UID + " = ? " +
+                    AppContract.ShieldEntry.COLUMN_NAME_SHIELD + " = ? " +
                             "AND " +
-                            AppContract.ShieldListView.COLUMN_NAME_OWNER + " = ?";
+                            AppContract.ShieldEntry.COLUMN_NAME_OWNER + " = ?";
 
             String[] selectionArgs = new String[]{unshield,owner};
-
             context.getContentResolver().delete(AppContract.ShieldEntry.CONTENT_URI,selection,selectionArgs);
+
+            Intent intent = new Intent();
+            intent.setAction(GlobalApplication.ACTION_INTENT_SHIELD_LIST_UPDATE);
+            context.sendBroadcast(intent);
+
         } catch (JSONException e) {
             e.printStackTrace();
         }

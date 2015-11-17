@@ -111,8 +111,16 @@ public class ChatService extends Service {
 
     }
 
+    private long lastSendTime = 0L;
+
     public void sendMessage(String messageType, String message) {
-        new MessageSendTask().execute(messageType, message);
+        long currentTime = System.currentTimeMillis();
+        long delta = currentTime - lastSendTime;
+        if(delta > 300) {
+            new MessageSendTask().execute(messageType, message);
+            lastSendTime = currentTime;
+        }
+
     }
 
     public void destroy() {
