@@ -6,8 +6,8 @@ package net.pingfang.signalr.chat.constant.qq;
 public abstract class TencentConstants {
 
     // 应用配置相关
-    public static final String APP_ID = "1104776883";
-    public static final String APP_KEY = "i3dk0Z3wsOaKhZD4";
+    public static final String APP_ID = "1104874279";
+    public static final String APP_KEY = "HsqddDVBYZ6BinY2";
     public static final String SCOPE = "all";
 
     public static final String KEY_ACCESS_TOKEN = "access_token";

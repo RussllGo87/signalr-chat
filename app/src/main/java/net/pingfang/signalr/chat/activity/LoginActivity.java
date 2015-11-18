@@ -355,6 +355,16 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
                     }
                 }
             }
+
+            @Override
+            public void onIOException(IOException e) {
+                super.onIOException(e);
+            }
+
+            @Override
+            public void onError(WeiboException e) {
+                super.onError(e);
+            }
         });
     }
 
@@ -867,8 +877,14 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
-                        ll_progress_bar_container.setVisibility(View.GONE);
-                        Toast.makeText(getApplicationContext(), R.string.debug_http_response_invalid, Toast.LENGTH_SHORT).show();
+                        mDelivery.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                ll_progress_bar_container.setVisibility(View.GONE);
+                                Toast.makeText(getApplicationContext(), R.string.debug_http_response_invalid, Toast.LENGTH_SHORT).show();
+                            }
+                        });
+
                         Log.d(TAG, "LOGIN_URL return " + e.getMessage());
                     }
 
