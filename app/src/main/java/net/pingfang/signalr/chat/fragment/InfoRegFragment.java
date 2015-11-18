@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 
 import net.pingfang.signalr.chat.R;
 import net.pingfang.signalr.chat.listener.OnRegisterInteractionListener;
@@ -100,6 +101,14 @@ public class InfoRegFragment extends Fragment implements View.OnClickListener{
                 if(!TextUtils.isEmpty(password) && password.equals(passwordR)
                         && CommonTools.checkRegParams(nickname,password)) {
                     mListener.submitInfo(phone,nickname,password,gender);
+                } else if(TextUtils.isEmpty(nickname)) {
+                    Toast.makeText(getContext(),R.string.toast_info_reg_error_nickname_empty,Toast.LENGTH_LONG).show();
+                } else if(TextUtils.isEmpty(password)) {
+                    Toast.makeText(getContext(),R.string.toast_info_reg_error_password_empty,Toast.LENGTH_LONG).show();
+                } else if(TextUtils.isEmpty(passwordR)) {
+                    Toast.makeText(getContext(),R.string.toast_info_reg_error_passwordr_empty,Toast.LENGTH_LONG).show();
+                } else if(!password.equals(passwordR)) {
+                    Toast.makeText(getContext(),R.string.toast_info_reg_error_password_not_same,Toast.LENGTH_LONG).show();
                 }
                 break;
 //            case R.id.btn_address:
@@ -118,6 +127,14 @@ public class InfoRegFragment extends Fragment implements View.OnClickListener{
         if(!TextUtils.isEmpty(password) && password.equals(passwordR)
                 && CommonTools.checkRegParams(nickname,password)) {
             mListener.submitInfo(phone,nickname,password,gender);
+        } else if(TextUtils.isEmpty(nickname)) {
+            Toast.makeText(getContext(),R.string.toast_info_reg_error_nickname_empty,Toast.LENGTH_LONG).show();
+        } else if(TextUtils.isEmpty(password)) {
+            Toast.makeText(getContext(),R.string.toast_info_reg_error_password_empty,Toast.LENGTH_LONG).show();
+        } else if(TextUtils.isEmpty(passwordR)) {
+            Toast.makeText(getContext(),R.string.toast_info_reg_error_passwordr_empty,Toast.LENGTH_LONG).show();
+        } else if(!password.equals(passwordR)) {
+            Toast.makeText(getContext(),R.string.toast_info_reg_error_password_not_same,Toast.LENGTH_LONG).show();
         }
     }
 

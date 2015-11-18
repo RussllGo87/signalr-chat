@@ -359,11 +359,28 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
             @Override
             public void onIOException(IOException e) {
                 super.onIOException(e);
+
+                mDelivery.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        ll_progress_bar_container.setVisibility(View.GONE);
+                        Toast.makeText(getApplicationContext(), "微博个人信息加载失败", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
 
             @Override
             public void onError(WeiboException e) {
                 super.onError(e);
+
+                mDelivery.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        ll_progress_bar_container.setVisibility(View.GONE);
+                        Toast.makeText(getApplicationContext(), "微博个人信息加载失败", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
             }
         });
     }
@@ -523,8 +540,14 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
 
                         } else { // 授权失败
                             Log.d(TAG, "body == " + body);
-                            ll_progress_bar_container.setVisibility(View.GONE);
-                            Toast.makeText(getApplicationContext(), "微信access_token获取异常", Toast.LENGTH_SHORT).show();
+                            mDelivery.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    ll_progress_bar_container.setVisibility(View.GONE);
+                                    Toast.makeText(getApplicationContext(), "微信access_token获取异常", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+
                         }
                     }
                 });
@@ -564,8 +587,14 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
 
                         } catch (Exception e) {  // 加载微信个人信息失败
                             e.printStackTrace();
-                            ll_progress_bar_container.setVisibility(View.GONE);
-                            Toast.makeText(getApplicationContext(), "加载微信个人信息失败", Toast.LENGTH_SHORT).show();
+                            mDelivery.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    ll_progress_bar_container.setVisibility(View.GONE);
+                                    Toast.makeText(getApplicationContext(), "加载微信个人信息失败", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+
                         }
                     }
                 }

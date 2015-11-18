@@ -3,11 +3,13 @@ package net.pingfang.signalr.chat.fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import net.pingfang.signalr.chat.R;
 import net.pingfang.signalr.chat.listener.OnRegisterInteractionListener;
@@ -84,6 +86,12 @@ public class PhoneFragment extends Fragment implements View.OnClickListener{
         String phoneNo = et_phone_reg.getText().toString().trim();
         if(CommonTools.isPhoneNumber(phoneNo)) {
             mListener.validate(phoneNo);
+        } else if(TextUtils.isDigitsOnly(phoneNo)) {
+            Toast.makeText(getContext(),R.string.toast_phone_no_error_txt, Toast.LENGTH_LONG).show();
+        } else if(phoneNo.length() != 11) {
+            Toast.makeText(getContext(),R.string.toast_phone_no_error_length,Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(getContext(),R.string.toast_phone_no_error_invalidate,Toast.LENGTH_LONG).show();
         }
     }
 

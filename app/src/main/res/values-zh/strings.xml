@@ -59,6 +59,9 @@
     <string name="pb_messsage_validate_phone">正在对你的电话号码进行校验</string>
     <string name="pb_message_validate_phone_ok">号码校验成功</string>
     <string name="pb_message_validate_phone_failure">号码校验失败</string>
+    <string name="toast_phone_no_error_txt">电话号码不可以输入非数字</string>
+    <string name="toast_phone_no_error_length">电话号码需要输入11位数字</string>
+    <string name="toast_phone_no_error_invalidate">输入的电话号码不合法</string>
 
     <!-- 注册值个人资料填写 InfoRegFragment -->
     <string name="hint_et_nick_name_reg">昵称</string>
@@ -74,6 +77,10 @@
     <string name="pb_message_submit_infor">正在提交你的注册信息</string>
     <string name="pb_message_submit_infor_ok">注册成功</string>
     <string name="pb_message_submit_infor_failure">注册出错</string>
+    <string name="toast_info_reg_error_nickname_empty">昵称不能留空</string>
+    <string name="toast_info_reg_error_password_empty">密码不能留空</string>
+    <string name="toast_info_reg_error_passwordr_empty">确认密码不能留空</string>
+    <string name="toast_info_reg_error_password_not_same">两次输入的密码要相同</string>
 
     <!-- 地址填写选择对话框 -->
     <string name="dialog_title_address_picker">请选择地址</string>
