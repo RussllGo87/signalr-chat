@@ -152,7 +152,7 @@ public class SharedPreferencesHelper {
         WxOauth2AccessToken token = new WxOauth2AccessToken();
         token.setOpenId(helper.getStringValue(WxConstants.KEY_WX_OPEN_ID, ""));
         token.setToken(helper.getStringValue(WxConstants.KEY_WX_ACCESS_TOKEN, ""));
-        token.setExpiresTime(helper.getLong(WxConstants.KEY_WX_REFRESH_TOKEN, 0));
+        token.setExpiresTime(helper.getLong(WxConstants.KEY_WX_EXPIRES_IN, 0L));
         token.setRefreshToken(helper.getStringValue(WxConstants.KEY_WX_REFRESH_TOKEN, ""));
         return token;
     }
