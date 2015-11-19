@@ -214,6 +214,10 @@
     <string name="tv_about_item_guide">使用帮助</string>
     <string name="tv_about_item_suggestion">意见反馈</string>
     <string name="tv_about_item_share_apk">分享安装包</string>
+    <string name="toast_app_name_version_latest">当前已经是最新版本了</string>
+
+    <!--- 使用帮助 -->
+    <string name="title_activity_guide">使用帮助</string>
 
     <!-- 意见反馈 -->
     <string name="title_activity_feedback">@string/tv_about_item_suggestion</string>

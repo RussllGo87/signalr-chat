@@ -27,6 +27,8 @@ public class AppAboutActivity extends AppCompatActivity implements View.OnClickL
     TextView btn_activity_back;
     ImageView iv_app_logo;
     TextView tv_app_name_version_code;
+    TextView tv_about_item_version;
+    TextView tv_about_item_guide;
     TextView tv_about_item_suggestion;
 
     TextView tv_about_item_share_apk;
@@ -52,6 +54,10 @@ public class AppAboutActivity extends AppCompatActivity implements View.OnClickL
             e.printStackTrace();
         }
 
+        tv_about_item_version = (TextView) findViewById(R.id.tv_about_item_version);
+        tv_about_item_version.setOnClickListener(this);
+        tv_about_item_guide = (TextView) findViewById(R.id.tv_about_item_guide);
+        tv_about_item_guide.setOnClickListener(this);
         tv_about_item_suggestion = (TextView) findViewById(R.id.tv_about_item_suggestion);
         tv_about_item_suggestion.setOnClickListener(this);
 
@@ -76,6 +82,14 @@ public class AppAboutActivity extends AppCompatActivity implements View.OnClickL
         switch(viewId) {
             case R.id.btn_activity_back:
                 navigateUp();
+                break;
+            case R.id.tv_about_item_version:
+                Toast.makeText(getApplicationContext(),R.string.toast_app_name_version_latest,Toast.LENGTH_LONG).show();
+                break;
+            case R.id.tv_about_item_guide:
+                Intent guideIntent = new Intent();
+                guideIntent.setClass(getApplicationContext(),GuideActivity.class);
+                startActivity(guideIntent);
                 break;
             case R.id.tv_about_item_suggestion:
                 Intent intent = new Intent();

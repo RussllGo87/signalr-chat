@@ -149,6 +149,9 @@
     <string name="tv_about_item_version">Check New Version</string>
     <string name="tv_about_item_share_apk">Share Apk Package</string>
 
+    <!--- 使用帮助 -->
+    <string name="title_activity_guide">GuideActivity</string>
+
     <!-- 意见反馈 -->
     <string name="title_activity_feedback">FeedbackActivity</string>
     <string name="btn_feedback_submit">Submit</string>
@@ -162,6 +165,7 @@
 
     <string name="image_get_file_user_canceled">REQUEST_IMAGE_GET canceled</string>
     <string name="image_get_file_user_error">REQUEST_IMAGE_GET error</string>
+    
 
 
 </resources>

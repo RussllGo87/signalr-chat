@@ -156,6 +156,9 @@ public class AdMaintainActivity extends AppCompatActivity implements View.OnClic
             case R.id.btn_ad_maintain_save:
                 storeOrPostAdMaintain();
                 break;
+            case R.id.btn_ad_maintain_cancel:
+                navigateUp();
+                break;
         }
     }
 
