@@ -20,6 +20,8 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,22 +49,28 @@ public class AccountInfoUpdateActivity extends AppCompatActivity implements View
 
     public static final String URL_ACCOUNT_INFO_UPDATE = GlobalApplication.URL_WEB_API_HOST + "/api/WebAPI/User/PerfectInfo";
     public static final String KEY_URL_ACCOUNT_INFO_UPDATE_UID = "id";
-    public static final String KEY_URL_ACCOUNT_INFO_UPDATE_USER_NAME = "userName";
+//    public static final String KEY_URL_ACCOUNT_INFO_UPDATE_USER_NAME = "userName";
     public static final String KEY_URL_ACCOUNT_INFO_UPDATE_NICKNAME = "nickname";
     public static final String KEY_URL_ACCOUNT_INFO_UPDATE_REAL_NAME = "realName";
     public static final String KEY_URL_ACCOUNT_INFO_UPDATE_PHONE = "mobile";
-    public static final String KEY_URL_ACCOUNT_INFO_UPDATE_QQ = "qq";
-    public static final String KEY_URL_ACCOUNT_INFO_UPDATE_PIC = "pic";
     public static final String KEY_URL_ACCOUNT_INFO_UPDATE_ADDRESS = "address";
+    public static final String KEY_URL_ACCOUNT_INFO_UPDATE_BIRTH_DATE = "birthdate";
+    public static final String KEY_URL_ACCOUNT_INFO_UPDATE_GENDER = "sex";
+//    public static final String KEY_URL_ACCOUNT_INFO_UPDATE_QQ = "qq";
+    public static final String KEY_URL_ACCOUNT_INFO_UPDATE_PIC = "pic";
+
 
     TextView btn_activity_back;
 
-    private EditText et_account_username;
+//    private EditText et_account_username;
     private EditText et_account_nickname;
-    private EditText et_account_realname;
+    private EditText et_account_real_name;
     private EditText et_account_address;
     private EditText et_account_phone;
-    private EditText et_account_qq;
+//    private EditText et_account_qq;
+    RadioGroup rg_gender;
+    RadioButton rb_gender_male;
+    RadioButton rb_gender_female;
     private ImageView iv_account_portrait;
 
     private Button btn_account_info_save;
@@ -70,6 +78,7 @@ public class AccountInfoUpdateActivity extends AppCompatActivity implements View
 
     SharedPreferencesHelper sharedPreferencesHelper;
 
+    String gender;
     Dialog dialog;
     Uri targetUri;
     String tmpFilePath;
@@ -88,12 +97,27 @@ public class AccountInfoUpdateActivity extends AppCompatActivity implements View
         btn_activity_back = (TextView) findViewById(R.id.btn_activity_back);
         btn_activity_back.setOnClickListener(this);
 
-        et_account_username = (EditText) findViewById(R.id.et_account_username);
+//        et_account_username = (EditText) findViewById(R.id.et_account_username);
         et_account_nickname = (EditText) findViewById(R.id.et_account_nickname);
-        et_account_realname = (EditText) findViewById(R.id.et_account_realname);
-        et_account_address = (EditText) findViewById(R.id.et_account_address);
+        et_account_real_name = (EditText) findViewById(R.id.et_account_real_name);
         et_account_phone = (EditText) findViewById(R.id.et_account_phone);
-        et_account_qq = (EditText) findViewById(R.id.et_account_qq);
+        et_account_address = (EditText) findViewById(R.id.et_account_address);
+//        et_account_qq = (EditText) findViewById(R.id.et_account_qq);
+
+        rg_gender = (RadioGroup) findViewById(R.id.rg_gender);
+        rb_gender_male = (RadioButton) findViewById(R.id.rb_gender_male);
+        rb_gender_female = (RadioButton) findViewById(R.id.rb_gender_female);
+        rg_gender.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                if(rb_gender_male.getId() == checkedId) {
+                    gender = "1";
+                } else {
+                    gender = "0";
+                }
+            }
+        });
+        gender = "1";
 
         iv_account_portrait = (ImageView) findViewById(R.id.iv_account_portrait);
         iv_account_portrait.setOnClickListener(this);
@@ -101,6 +125,7 @@ public class AccountInfoUpdateActivity extends AppCompatActivity implements View
         btn_account_info_save = (Button) findViewById(R.id.btn_account_info_save);
         btn_account_info_save.setOnClickListener(this);
         btn_account_info_cancel = (Button) findViewById(R.id.btn_account_info_cancel);
+        btn_account_info_cancel.setOnClickListener(this);
     }
 
     private void showDialog() {
@@ -239,6 +264,9 @@ public class AccountInfoUpdateActivity extends AppCompatActivity implements View
             case R.id.btn_account_info_save:
                 saveOrUpdateAccountInfo();
                 break;
+            case R.id.btn_account_info_cancel:
+                navigateUp();
+                break;
         }
     }
 
@@ -247,14 +275,23 @@ public class AccountInfoUpdateActivity extends AppCompatActivity implements View
             OkHttpCommonUtil okHttp = OkHttpCommonUtil.newInstance(getApplicationContext());
             okHttp.postRequest(URL_ACCOUNT_INFO_UPDATE,
                     new OkHttpCommonUtil.Param[] {
-                            new OkHttpCommonUtil.Param(KEY_URL_ACCOUNT_INFO_UPDATE_UID,sharedPreferencesHelper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID)),
-                            new OkHttpCommonUtil.Param(KEY_URL_ACCOUNT_INFO_UPDATE_USER_NAME,et_account_username.getText().toString().trim()),
-                            new OkHttpCommonUtil.Param(KEY_URL_ACCOUNT_INFO_UPDATE_NICKNAME,et_account_nickname.getText().toString().trim()),
-                            new OkHttpCommonUtil.Param(KEY_URL_ACCOUNT_INFO_UPDATE_REAL_NAME,et_account_realname.getText().toString().trim()),
-                            new OkHttpCommonUtil.Param(KEY_URL_ACCOUNT_INFO_UPDATE_PHONE,et_account_phone.getText().toString().trim()),
-                            new OkHttpCommonUtil.Param(KEY_URL_ACCOUNT_INFO_UPDATE_QQ,et_account_qq.getText().toString().trim()),
+                            new OkHttpCommonUtil.Param(KEY_URL_ACCOUNT_INFO_UPDATE_UID,
+                                    sharedPreferencesHelper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID)),
+                            new OkHttpCommonUtil.Param(KEY_URL_ACCOUNT_INFO_UPDATE_NICKNAME,
+                                    et_account_nickname.getText().toString().trim()),
+                            new OkHttpCommonUtil.Param(KEY_URL_ACCOUNT_INFO_UPDATE_REAL_NAME,
+                                    et_account_real_name.getText().toString().trim()),
+                            new OkHttpCommonUtil.Param(KEY_URL_ACCOUNT_INFO_UPDATE_PHONE,
+                                    et_account_phone.getText().toString().trim()),
+                            new OkHttpCommonUtil.Param(KEY_URL_ACCOUNT_INFO_UPDATE_ADDRESS,
+                                    et_account_address.getText().toString().trim()),
+                            new OkHttpCommonUtil.Param(KEY_URL_ACCOUNT_INFO_UPDATE_BIRTH_DATE,
+                                    "1989-08-15"),
+                            new OkHttpCommonUtil.Param(KEY_URL_ACCOUNT_INFO_UPDATE_GENDER,
+                                    gender),
+//                            new OkHttpCommonUtil.Param(KEY_URL_ACCOUNT_INFO_UPDATE_QQ,
+//                                    et_account_qq.getText().toString().trim()),
                             new OkHttpCommonUtil.Param(KEY_URL_ACCOUNT_INFO_UPDATE_PIC,fileContent),
-                            new OkHttpCommonUtil.Param(KEY_URL_ACCOUNT_INFO_UPDATE_ADDRESS,et_account_address.getText().toString().trim())
                     },
                     new HttpBaseCallback() {
                         @Override

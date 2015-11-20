@@ -42,6 +42,7 @@
               android:selectAllOnFocus="false"/>
     -->
 
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -79,6 +80,7 @@
                 android:text="@string/rb_gender_female" />
         </RadioGroup>
     </LinearLayout>
+
 
     <Button android:id="@+id/btn_info_reg_submit"
             android:layout_width="match_parent"

@@ -37,12 +37,14 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <!--
             <EditText
                 android:id="@+id/et_account_username"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:hint="用户名"/>
+            -->
 
             <EditText
                 android:id="@+id/et_account_nickname"
@@ -52,18 +54,11 @@
                 android:hint="昵称"/>
 
             <EditText
-                android:id="@+id/et_account_realname"
+                android:id="@+id/et_account_real_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:hint="真实姓名"/>
-
-            <EditText
-                android:id="@+id/et_account_address"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:hint="地址"/>
 
             <EditText android:id="@+id/et_account_phone"
                       android:layout_width="match_parent"
@@ -74,18 +69,64 @@
                       android:hint="手机号"/>
 
             <EditText
+                android:id="@+id/et_account_address"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:hint="地址"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:paddingLeft="4dp"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:text="@string/tv_label_gender"
+                    android:textSize="18sp"/>
+
+                <RadioGroup
+                    android:id="@+id/rg_gender"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="4"
+                    android:orientation="horizontal" >
+
+                    <RadioButton
+                        android:id="@+id/rb_gender_male"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:checked="true"
+                        android:text="@string/rb_gender_male" />
+
+                    <RadioButton
+                        android:id="@+id/rb_gender_female"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/rb_gender_female" />
+                </RadioGroup>
+            </LinearLayout>
+
+            <!--
+            <EditText
                 android:id="@+id/et_account_qq"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:inputType="number"
                 android:hint="QQ号"/>
-
+            -->
 
             <ImageView
                 android:id="@+id/iv_account_portrait"
-                android:layout_width="74dp"
-                android:layout_height="74dp"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
                 android:layout_centerInParent="true"
                 android:layout_gravity="center"
                 android:src="@drawable/ic_empty"/>

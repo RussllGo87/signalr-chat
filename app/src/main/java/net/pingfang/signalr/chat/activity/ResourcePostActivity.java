@@ -19,7 +19,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
+import android.widget.GridView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,6 +30,7 @@ import com.baidu.mapapi.model.LatLng;
 import com.squareup.okhttp.Response;
 
 import net.pingfang.signalr.chat.R;
+import net.pingfang.signalr.chat.adapter.PhotoGridViewAdapter;
 import net.pingfang.signalr.chat.constant.app.AppConstants;
 import net.pingfang.signalr.chat.listener.OnGridViewItemClick;
 import net.pingfang.signalr.chat.location.LocationListenerImpl;
@@ -47,6 +48,8 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ResourcePostActivity extends AppCompatActivity implements View.OnClickListener, LocationNotify, OnGridViewItemClick {
 
@@ -71,13 +74,12 @@ public class ResourcePostActivity extends AppCompatActivity implements View.OnCl
     private EditText et_resource_contacts;
     private EditText et_resource_phone;
     private EditText et_resource_remark;
-//    private GridView gv_camera;
-//    PhotoGridViewAdapter adapter;
-//    private Button btn_add_pic;
-    private ImageView iv_resource_profile;
+    private GridView gv_camera;
+    PhotoGridViewAdapter adapter;
+    private Button btn_add_pic;
+//    private ImageView iv_resource_profile;
     private Button btn_resource_save;
     private Button btn_resource_cancel;
-
 
     private LocationClient locationClient;
     public LocationListenerImpl locationListener;
@@ -90,7 +92,7 @@ public class ResourcePostActivity extends AppCompatActivity implements View.OnCl
     String tmpFilePath;
     String fileContent;
 
-//    List<String> fileContentList = new ArrayList<>();
+    List<String> fileContentList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,17 +114,18 @@ public class ResourcePostActivity extends AppCompatActivity implements View.OnCl
         et_resource_contacts = (EditText) findViewById(R.id.et_resource_contacts);
         et_resource_phone = (EditText) findViewById(R.id.et_resource_phone);
         et_resource_remark = (EditText) findViewById(R.id.et_resource_remark);
-//        gv_camera = (GridView) findViewById(R.id.gv_camera);
-//        adapter = new PhotoGridViewAdapter(getApplicationContext(),this);
-//        gv_camera.setAdapter(adapter);
-        iv_resource_profile = (ImageView) findViewById(R.id.iv_resource_profile);
-        iv_resource_profile.setOnClickListener(this);
-//        btn_add_pic = (Button) findViewById(R.id.btn_add_pic);
-//        btn_add_pic.setOnClickListener(this);
+        gv_camera = (GridView) findViewById(R.id.gv_camera);
+        adapter = new PhotoGridViewAdapter(getApplicationContext(),this);
+        gv_camera.setAdapter(adapter);
+//        iv_resource_profile = (ImageView) findViewById(R.id.iv_resource_profile);
+//        iv_resource_profile.setOnClickListener(this);
+        btn_add_pic = (Button) findViewById(R.id.btn_add_pic);
+        btn_add_pic.setOnClickListener(this);
 
         btn_resource_save = (Button) findViewById(R.id.btn_resource_save);
         btn_resource_save.setOnClickListener(this);
         btn_resource_cancel = (Button) findViewById(R.id.btn_resource_cancel);
+        btn_resource_cancel.setOnClickListener(this);
     }
 
     /**
@@ -159,7 +162,7 @@ public class ResourcePostActivity extends AppCompatActivity implements View.OnCl
             case R.id.btn_activity_back:
                 navigateUp();
                 break;
-            case R.id.iv_resource_profile:
+            case R.id.btn_add_pic:
                 showDialog();
                 break;
             case R.id.btn_resource_save:
@@ -252,24 +255,24 @@ public class ResourcePostActivity extends AppCompatActivity implements View.OnCl
             if(requestCode == GlobalApplication.REQUEST_IMAGE_CAPTURE) {
 
                 String filePath = tmpFilePath;
-//                adapter.addPhoto(filePath);
+                adapter.addPhoto(filePath);
                 Bitmap bitmap = MediaFileUtils.decodeBitmapFromPath(filePath,
                         MediaFileUtils.dpToPx(getApplicationContext(), 150),
                         MediaFileUtils.dpToPx(getApplicationContext(), 200));
                 fileContent = CommonTools.bitmapToBase64(bitmap);
-//                fileContentList.add(fileContent);
-                iv_resource_profile.setImageBitmap(bitmap);
+                fileContentList.add(fileContent);
+//                iv_resource_profile.setImageBitmap(bitmap);
             } else if(requestCode == GlobalApplication.REQUEST_IMAGE_GET) {
                 if(data != null && data.getData() != null) {
                     Uri uri = data.getData();
                     String filePath = FileUtil.getPath(getApplicationContext(), uri);
-//                    adapter.addPhoto(filePath);
+                    adapter.addPhoto(filePath);
                     Bitmap bitmap = MediaFileUtils.decodeBitmapFromPath(filePath,
                             MediaFileUtils.dpToPx(getApplicationContext(), 150),
                             MediaFileUtils.dpToPx(getApplicationContext(), 200));
                     fileContent = CommonTools.bitmapToBase64(bitmap);
-                    iv_resource_profile.setImageBitmap(bitmap);
-//                    fileContentList.add(fileContent);
+//                    iv_resource_profile.setImageBitmap(bitmap);
+                    fileContentList.add(fileContent);
                 } else if(data == null) {
                     Toast.makeText(getApplicationContext(),getString(R.string.image_get_data_null),Toast.LENGTH_SHORT).show();
                 } else {
@@ -300,45 +303,53 @@ public class ResourcePostActivity extends AppCompatActivity implements View.OnCl
     @Override
     public void onItemClick(String filePath) {
         Uri uri = Uri.fromFile(new File(filePath));
-        Intent intent =  new Intent(getApplicationContext(),PhotoViewerActivity.class);
-        intent.putExtra("uri",uri);
-        startActivity(intent);
+//        Intent intent =  new Intent(getApplicationContext(),PhotoViewerActivity.class);
+//        intent.putExtra("uri",uri);
+//        startActivity(intent);
+
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_VIEW);
+        intent.setData(uri);
+        intent.setDataAndType(uri, "image/*");
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivity(intent);
+        }
     }
 
     @Override
     public void onLongItemClick(int position) {
-//        fileContentList.remove(position);
+        fileContentList.remove(position);
     }
 
     private void storeOrPostRes() {
 
-//        StringBuffer sb = new StringBuffer();
-//        for(int i = 0; i < fileContentList.size(); i++) {
-//            sb.append(fileContentList.get(i));
-//            if(i != (fileContentList.size() - 1)) {
-////                sb.append(",");
-//            }
-//        }
+        StringBuffer sb = new StringBuffer();
+        for(int i = 0; i < fileContentList.size(); i++) {
+            sb.append(fileContentList.get(i));
+            if(i != (fileContentList.size() - 1)) {
+                sb.append(";");
+            }
+        }
 
-//        String tmpContent = sb.toString();
-        String tmpContent = fileContent;
+        String tmpContent = sb.toString();
 
-        if(!TextUtils.isEmpty(tmpContent)) {
-            OkHttpCommonUtil okhtp = OkHttpCommonUtil.newInstance(getApplicationContext());
-            okhtp.postRequest(
+        if(!TextUtils.isEmpty(tmpContent) && fileContentList.size() > 2 && fileContentList.size() < 7) {
+            OkHttpCommonUtil.Param[] params = new OkHttpCommonUtil.Param[]{
+                    new OkHttpCommonUtil.Param(KEY_RESOURCE_POST_UID, sharedPreferencesHelper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID)),
+                    new OkHttpCommonUtil.Param(KEY_RESOURCE_POST_WIDTH, et_resource_width.getText().toString().trim()),
+                    new OkHttpCommonUtil.Param(KEY_RESOURCE_POST_HEIGHT, et_resource_height.getText().toString().trim()),
+                    new OkHttpCommonUtil.Param(KEY_RESOURCE_POST_ADDRESS, et_resource_location.getText().toString().trim()),
+                    new OkHttpCommonUtil.Param(KEY_RESOURCE_POST_CONTACTS, et_resource_contacts.getText().toString().trim()),
+                    new OkHttpCommonUtil.Param(KEY_RESOURCE_POST_PHONE, et_resource_phone.getText().toString().trim()),
+                    new OkHttpCommonUtil.Param(KEY_RESOURCE_POST_REMARK, et_resource_remark.getText().toString().trim()),
+                    new OkHttpCommonUtil.Param(KEY_URL_RESOURCE_POST_LOCATION_LAT, currentLatLng.latitude),
+                    new OkHttpCommonUtil.Param(KEY_URL_RESOURCE_POST_LOCATION_LNG, currentLatLng.longitude),
+                    new OkHttpCommonUtil.Param(KEY_RESOURCE_POST_PROFILE, tmpContent)
+            };
+            OkHttpCommonUtil okHttp = OkHttpCommonUtil.newInstance(getApplicationContext());
+            okHttp.postRequest(
                     URL_RESOURCE_POST,
-                    new OkHttpCommonUtil.Param[]{
-                            new OkHttpCommonUtil.Param(KEY_RESOURCE_POST_UID, sharedPreferencesHelper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID)),
-                            new OkHttpCommonUtil.Param(KEY_RESOURCE_POST_WIDTH, et_resource_width.getText().toString().trim()),
-                            new OkHttpCommonUtil.Param(KEY_RESOURCE_POST_HEIGHT, et_resource_height.getText().toString().trim()),
-                            new OkHttpCommonUtil.Param(KEY_RESOURCE_POST_ADDRESS, et_resource_location.getText().toString().trim()),
-                            new OkHttpCommonUtil.Param(KEY_RESOURCE_POST_CONTACTS, et_resource_contacts.getText().toString().trim()),
-                            new OkHttpCommonUtil.Param(KEY_RESOURCE_POST_PHONE, et_resource_phone.getText().toString().trim()),
-                            new OkHttpCommonUtil.Param(KEY_RESOURCE_POST_REMARK, et_resource_remark.getText().toString().trim()),
-                            new OkHttpCommonUtil.Param(KEY_URL_RESOURCE_POST_LOCATION_LAT, currentLatLng.latitude),
-                            new OkHttpCommonUtil.Param(KEY_URL_RESOURCE_POST_LOCATION_LNG, currentLatLng.longitude),
-                            new OkHttpCommonUtil.Param(KEY_RESOURCE_POST_PROFILE, tmpContent)
-                    },
+                    params,
                     new HttpBaseCallback() {
                         @Override
                         public void onResponse(Response response) throws IOException {
@@ -359,15 +370,36 @@ public class ResourcePostActivity extends AppCompatActivity implements View.OnCl
                                             navigateUp();
                                         }
                                     });
+                                } else {
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Toast.makeText(getApplicationContext(),
+                                                    getString(R.string.toast_resource_posting_error),
+                                                    Toast.LENGTH_SHORT).show();
+                                            navigateUp();
+                                        }
+                                    });
                                 }
                             } catch (JSONException e) {
                                 e.printStackTrace();
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(getApplicationContext(),
+                                                getString(R.string.toast_resource_post_error),
+                                                Toast.LENGTH_SHORT).show();
+                                        navigateUp();
+                                    }
+                                });
                             }
                         }
                     }
             );
+        } else if(fileContentList.size() < 3){
+            Toast.makeText(getApplicationContext(),getString(R.string.toast_resource_post_pic_num_error_1),Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(getApplicationContext(),getString(R.string.image_data_null),Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(),getString(R.string.toast_resource_post_pic_num_error_1),Toast.LENGTH_SHORT).show();
         }
 
     }

@@ -314,7 +314,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 new OkHttpCommonUtil.Param(SUBMIT_REG_INFORMATION_KEY_NICKNAME, nickname),
                 new OkHttpCommonUtil.Param(SUBMIT_REG_INFORMATION_KEY_PASSWORD, password),
                 new OkHttpCommonUtil.Param(SUBMIT_REG_INFORMATION_KEY_GENDER, gender)
-
         }, new HttpBaseCallback() {
 
             @Override

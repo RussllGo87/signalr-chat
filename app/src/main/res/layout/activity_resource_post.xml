@@ -112,6 +112,7 @@
                       android:layout_marginTop="2dp"
                       android:hint="资源说明"/>
 
+            <!--
             <ImageView
                 android:id="@+id/iv_resource_profile"
                 android:layout_width="wrap_content"
@@ -119,8 +120,8 @@
                 android:layout_gravity="center"
                 android:layout_marginTop="2dp"
                 android:src="@drawable/ic_empty" />
+            -->
 
-            <!--
             <GridView android:id="@+id/gv_camera"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -138,7 +139,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:text="添加图片"/>
-            -->
+
 
             <LinearLayout
                 android:layout_width="match_parent"

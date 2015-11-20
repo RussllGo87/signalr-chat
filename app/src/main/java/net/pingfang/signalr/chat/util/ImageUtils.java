@@ -1,10 +1,13 @@
 package net.pingfang.signalr.chat.util;
 
+import android.content.res.Resources;
 import android.graphics.BitmapFactory;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+
+import net.pingfang.signalr.chat.R;
 
 import java.io.InputStream;
 import java.lang.reflect.Field;
@@ -25,6 +28,20 @@ public class ImageUtils
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
         BitmapFactory.decodeStream(imageStream, null, options);
+        return new ImageSize(options.outWidth, options.outHeight);
+    }
+
+    public static ImageSize getImageSize(Resources res, int resId) {
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeResource(res, R.drawable.hale_logo, options);
+        return new ImageSize(options.outWidth, options.outHeight);
+    }
+
+    public static ImageSize getImageSize(String filepath) {
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(filepath,options);
         return new ImageSize(options.outWidth, options.outHeight);
     }
 

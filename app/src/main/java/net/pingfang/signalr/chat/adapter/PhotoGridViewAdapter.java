@@ -11,7 +11,7 @@ import android.widget.ImageView;
 
 import net.pingfang.signalr.chat.R;
 import net.pingfang.signalr.chat.listener.OnGridViewItemClick;
-import net.pingfang.signalr.chat.util.MediaFileUtils;
+import net.pingfang.signalr.chat.util.ImageUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,9 +63,15 @@ public class PhotoGridViewAdapter extends BaseAdapter{
         }
 
         String filePath = pathList.get(position);
-        Bitmap bitmap = BitmapFactory.decodeFile(filePath);
-        bitmap = Bitmap.createScaledBitmap(bitmap, MediaFileUtils.dpToPx(context, 180), MediaFileUtils.dpToPx(context, 200), true);
-        holder.imageView.setImageBitmap(bitmap);
+        ImageUtils.ImageSize actualImageSize = ImageUtils.getImageSize(filePath);
+        ImageUtils.ImageSize imageViewSize = ImageUtils.getImageViewSize(holder.imageView);
+        int inSampleSize = ImageUtils.calculateInSampleSize(actualImageSize, imageViewSize);
+        BitmapFactory.Options ops = new BitmapFactory.Options();
+        ops.inJustDecodeBounds = false;
+        ops.inSampleSize = inSampleSize;
+        final Bitmap bm = BitmapFactory.decodeFile(filePath,ops);
+        holder.imageView.setImageBitmap(bm);
+
         holder.imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
