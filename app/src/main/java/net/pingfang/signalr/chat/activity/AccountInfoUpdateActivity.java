@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.AppCompatActivity;
@@ -29,8 +30,10 @@ import com.squareup.okhttp.Response;
 
 import net.pingfang.signalr.chat.R;
 import net.pingfang.signalr.chat.constant.app.AppConstants;
+import net.pingfang.signalr.chat.listener.OnMyDateSetListener;
 import net.pingfang.signalr.chat.net.HttpBaseCallback;
 import net.pingfang.signalr.chat.net.OkHttpCommonUtil;
+import net.pingfang.signalr.chat.ui.dialog.DatePickerFragment;
 import net.pingfang.signalr.chat.util.CommonTools;
 import net.pingfang.signalr.chat.util.FileUtil;
 import net.pingfang.signalr.chat.util.GlobalApplication;
@@ -43,9 +46,13 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.IOException;
 
-public class AccountInfoUpdateActivity extends AppCompatActivity implements View.OnClickListener{
+public class AccountInfoUpdateActivity extends AppCompatActivity implements View.OnClickListener, OnMyDateSetListener {
 
     public static final String TAG = AccountInfoUpdateActivity.class.getSimpleName();
+
+    public static final String URL_ACCOUNT_INFO_LOAD = GlobalApplication.URL_WEB_API_HOST + "/api/WebAPI/User/GetUser";
+    public static final String KEY_URL_ACCOUNT_INFO_LOAD_UID = "id";
+
 
     public static final String URL_ACCOUNT_INFO_UPDATE = GlobalApplication.URL_WEB_API_HOST + "/api/WebAPI/User/PerfectInfo";
     public static final String KEY_URL_ACCOUNT_INFO_UPDATE_UID = "id";
@@ -65,8 +72,9 @@ public class AccountInfoUpdateActivity extends AppCompatActivity implements View
 //    private EditText et_account_username;
     private EditText et_account_nickname;
     private EditText et_account_real_name;
-    private EditText et_account_address;
     private EditText et_account_phone;
+    private EditText et_account_address;
+    private EditText et_account_birthdate;
 //    private EditText et_account_qq;
     RadioGroup rg_gender;
     RadioButton rb_gender_male;
@@ -78,11 +86,18 @@ public class AccountInfoUpdateActivity extends AppCompatActivity implements View
 
     SharedPreferencesHelper sharedPreferencesHelper;
 
-    String gender;
     Dialog dialog;
     Uri targetUri;
     String tmpFilePath;
     String fileContent;
+
+    String phoneNo;
+    String nickName;
+    String realname;
+    String portraitUrl;
+    String address;
+    String birthdate;
+    String gender;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,6 +106,7 @@ public class AccountInfoUpdateActivity extends AppCompatActivity implements View
 
         sharedPreferencesHelper = SharedPreferencesHelper.newInstance(getApplicationContext());
         initView();
+
     }
 
     private void initView() {
@@ -102,6 +118,7 @@ public class AccountInfoUpdateActivity extends AppCompatActivity implements View
         et_account_real_name = (EditText) findViewById(R.id.et_account_real_name);
         et_account_phone = (EditText) findViewById(R.id.et_account_phone);
         et_account_address = (EditText) findViewById(R.id.et_account_address);
+        et_account_birthdate = (EditText) findViewById(R.id.et_account_birthdate);
 //        et_account_qq = (EditText) findViewById(R.id.et_account_qq);
 
         rg_gender = (RadioGroup) findViewById(R.id.rg_gender);
@@ -126,6 +143,13 @@ public class AccountInfoUpdateActivity extends AppCompatActivity implements View
         btn_account_info_save.setOnClickListener(this);
         btn_account_info_cancel = (Button) findViewById(R.id.btn_account_info_cancel);
         btn_account_info_cancel.setOnClickListener(this);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        loadAccountInfo();
     }
 
     private void showDialog() {
@@ -233,8 +257,8 @@ public class AccountInfoUpdateActivity extends AppCompatActivity implements View
 
     }
 
-    public void on_click(View v) {
-        switch (v.getId()) {
+    public void on_click(View view) {
+        switch (view.getId()) {
             case R.id.openCamera:
                 openCamera();
                 dialog.cancel();
@@ -291,7 +315,7 @@ public class AccountInfoUpdateActivity extends AppCompatActivity implements View
                                     gender),
 //                            new OkHttpCommonUtil.Param(KEY_URL_ACCOUNT_INFO_UPDATE_QQ,
 //                                    et_account_qq.getText().toString().trim()),
-                            new OkHttpCommonUtil.Param(KEY_URL_ACCOUNT_INFO_UPDATE_PIC,fileContent),
+                            new OkHttpCommonUtil.Param(KEY_URL_ACCOUNT_INFO_UPDATE_PIC,fileContent)
                     },
                     new HttpBaseCallback() {
                         @Override
@@ -316,6 +340,15 @@ public class AccountInfoUpdateActivity extends AppCompatActivity implements View
                                 }
                             } catch (JSONException e) {
                                 e.printStackTrace();
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(getApplicationContext(),
+                                                getString(R.string.toast_account_info_update_failure),
+                                                Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+
                             }
                         }
                     });
@@ -324,6 +357,122 @@ public class AccountInfoUpdateActivity extends AppCompatActivity implements View
             Toast.makeText(getApplicationContext(),getString(R.string.image_data_null),Toast.LENGTH_SHORT).show();
         }
 
+    }
+
+    public void loadAccountInfo() {
+        OkHttpCommonUtil okHttp = OkHttpCommonUtil.newInstance(getApplicationContext());
+        okHttp.getRequest(URL_ACCOUNT_INFO_LOAD,
+                new OkHttpCommonUtil.Param[]{
+                        new OkHttpCommonUtil.Param(KEY_URL_ACCOUNT_INFO_LOAD_UID,
+                                sharedPreferencesHelper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID))
+                },
+                new HttpBaseCallback() {
+                    @Override
+                    public void onResponse(Response response) throws IOException {
+                        String result = response.body().string();
+                        Log.d(TAG, "URL_ACCOUNT_INFO_LOAD return " + result);
+                        JSONObject jsonObject = null;
+                        try {
+                            jsonObject = new JSONObject(result);
+                            int status = jsonObject.getInt("status");
+                            String message = jsonObject.getString("message");
+                            if (status == 0) {
+                                JSONObject resultJson = jsonObject.getJSONObject("result");
+                                phoneNo = resultJson.getString("phone");
+                                nickName = resultJson.getString("nickname");
+                                realname = resultJson.getString("realname");
+                                portraitUrl = resultJson.getString("portrait");
+                                address = resultJson.getString("address");
+                                birthdate = resultJson.getString("birthdate");
+                                gender = resultJson.getString("sex");
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(getApplicationContext(),
+                                                getString(R.string.toast_account_info_load_ok),
+                                                Toast.LENGTH_SHORT).show();
+
+                                        if(!TextUtils.isEmpty(phoneNo)) {
+                                            et_account_phone.setText(phoneNo);
+                                        }
+
+                                        if(!TextUtils.isEmpty(nickName)) {
+                                            et_account_nickname.setText(nickName);
+                                        }
+
+                                        if(!TextUtils.isEmpty(realname)) {
+                                            et_account_real_name.setText(realname);
+                                        }
+
+//                                        if(!TextUtils.isEmpty(address)) {
+//                                            et_account_address.setText(address);
+//                                        }
+
+                                        if(!TextUtils.isEmpty(birthdate)) {
+                                            et_account_birthdate.setText(birthdate);
+                                        }
+
+                                        if(!TextUtils.isEmpty(portraitUrl)) {
+                                            OkHttpCommonUtil okHttp = OkHttpCommonUtil.newInstance(getApplicationContext());
+                                            okHttp.display(iv_account_portrait, portraitUrl, R.mipmap.ic_launcher);
+                                        }
+
+                                        if(!TextUtils.isEmpty(gender)) {
+                                            if(gender.equals("1")) {
+                                                rb_gender_male.setChecked(true);
+                                            } else {
+                                                rb_gender_female.setChecked(true);
+                                            }
+                                        }
+                                    }
+                                });
+                            } else {
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(getApplicationContext(),
+                                                getString(R.string.toast_account_info_load_failure),
+                                                Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(getApplicationContext(),
+                                            getString(R.string.toast_account_info_load_failure),
+                                            Toast.LENGTH_SHORT).show();
+
+                                }
+                            });
+
+                        }
+                    }
+                });
+    }
+
+    public void showDatePickerDialog(View view) {
+        DialogFragment newFragment = new DatePickerFragment(this);
+        newFragment.show(getSupportFragmentManager(), "datePicker");
+    }
+
+    @Override
+    public void dateSet(int year, int monthOfYear, int dayOfMonth) {
+        StringBuffer stringBuffer = new StringBuffer();
+        stringBuffer.append(year);
+        stringBuffer.append("-");
+        if(monthOfYear < 10) {
+            stringBuffer.append("0");
+        }
+        stringBuffer.append(monthOfYear);
+        stringBuffer.append("-");
+        if(dayOfMonth < 10) {
+            stringBuffer.append("0");
+        }
+        stringBuffer.append(dayOfMonth);
+        et_account_birthdate.setText(stringBuffer.toString());
     }
 
     public void navigateUp() {

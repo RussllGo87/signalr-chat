@@ -158,6 +158,7 @@
     <string name="toast_resource_posting_error">广告资源上传错误</string>
     <string name="toast_resource_post_error">广告资源上传失败</string>
     <string name="toast_resource_post_pic_num_error_1">只能上传3到6张图片</string>
+    <string name="tv_resource_post_requirement">上传资源说明：1.墙体画面清晰并能看清墙体类型；2.需上传四张照片（三张近景一张正面、二张不同侧面，及一张远景带路的照片）；3.墙体画面要完整并无明显遮挡物。</string>
 
     <!-- 广告维护 -->
     <string name="title_activity_ad_maintain">广告维护</string>
@@ -209,7 +210,10 @@
     <string name="toast_change_pwd_ok">密码修改成功</string>
     <!-- 修改个人信息 -->
     <string name="title_activity_account_info_update">@string/tv_settings_item_update_info</string>
+    <string name="toast_account_info_load_ok">个人资料加载成功</string>
+    <string name="toast_account_info_load_failure">个人资料加载失败</string>
     <string name="toast_account_info_update_ok">个人资料更新成功</string>
+    <string name="toast_account_info_update_failure">个人资料更新失败</string>
 
     <!-- 屏蔽人列表 -->
     <string name="title_activity_filter_list">@string/tv_settings_item_filter_list</string>

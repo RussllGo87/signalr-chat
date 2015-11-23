@@ -78,6 +78,27 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/et_account_birthdate"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginTop="10dp"
+                    android:hint="生日"/>
+
+                <Button android:id="@+id/btn_account_birthday_picker"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="选择日期"
+                    android:onClick="showDatePickerDialog"/>
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="horizontal" >
 
                 <TextView
@@ -125,8 +146,8 @@
 
             <ImageView
                 android:id="@+id/iv_account_portrait"
-                android:layout_width="200dp"
-                android:layout_height="200dp"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
                 android:layout_centerInParent="true"
                 android:layout_gravity="center"
                 android:src="@drawable/ic_empty"/>
