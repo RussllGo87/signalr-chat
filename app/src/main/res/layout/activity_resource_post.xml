@@ -36,7 +36,8 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="0dp"
+        android:layout_weight="1">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -170,6 +171,10 @@
 
     </ScrollView>
 
-
+   <TextView
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:textSize="@dimen/text_size_tv_resource_post_requirement"
+       android:text="@string/tv_resource_post_requirement"/>
 
 </LinearLayout>

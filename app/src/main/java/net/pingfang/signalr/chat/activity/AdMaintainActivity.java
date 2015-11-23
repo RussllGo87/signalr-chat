@@ -171,8 +171,8 @@ public class AdMaintainActivity extends AppCompatActivity implements View.OnClic
                             new OkHttpCommonUtil.Param(KEY_URL_AD_MAINTAIN_UID, sharedPreferencesHelper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID)),
                             new OkHttpCommonUtil.Param(KEY_URL_AD_MAINTAIN_CODE, et_ad_maintain_code.getText().toString().trim()),
                             new OkHttpCommonUtil.Param(KEY_URL_AD_MAINTAIN_ADDRESS, et_ad_maintain_location.getText().toString().trim()),
-//                            new OkHttpCommonUtil.Param(KEY_URL_AD_MAINTAIN_LOCATION_LAT, currentLatLng.latitude),
-//                            new OkHttpCommonUtil.Param(KEY_URL_AD_MAINTAIN_LOCATION_LNG, currentLatLng.longitude),
+                            new OkHttpCommonUtil.Param(KEY_URL_AD_MAINTAIN_LOCATION_LAT, currentLatLng.latitude),
+                            new OkHttpCommonUtil.Param(KEY_URL_AD_MAINTAIN_LOCATION_LNG, currentLatLng.longitude),
                             new OkHttpCommonUtil.Param(KEY_URL_AD_MAINTAIN_PIC, fileContent)
                     },
                     new HttpBaseCallback() {

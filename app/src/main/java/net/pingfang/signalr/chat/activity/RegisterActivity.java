@@ -51,7 +51,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     public static final String SUBMIT_REG_INFORMATION_KEY_PASSWORD = "password";
     public static final String SUBMIT_REG_INFORMATION_KEY_EMAIL = "email";
     public static final String SUBMIT_REG_INFORMATION_KEY_QQ = "qq";
-    public static final String SUBMIT_REG_INFORMATION_KEY_GENDER = "gender";
+    public static final String SUBMIT_REG_INFORMATION_KEY_GENDER = "sex";
 
 
     public static final int STEP_1 = 1;
