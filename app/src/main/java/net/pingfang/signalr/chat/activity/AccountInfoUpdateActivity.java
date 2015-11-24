@@ -36,9 +36,9 @@ import net.pingfang.signalr.chat.net.OkHttpCommonUtil;
 import net.pingfang.signalr.chat.ui.dialog.DatePickerFragment;
 import net.pingfang.signalr.chat.util.CommonTools;
 import net.pingfang.signalr.chat.util.FileUtil;
-import net.pingfang.signalr.chat.util.GlobalApplication;
 import net.pingfang.signalr.chat.util.MediaFileUtils;
 import net.pingfang.signalr.chat.util.SharedPreferencesHelper;
+import net.pingfang.signalr.chat.util.GlobalApplication;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -310,7 +310,7 @@ public class AccountInfoUpdateActivity extends AppCompatActivity implements View
                             new OkHttpCommonUtil.Param(KEY_URL_ACCOUNT_INFO_UPDATE_ADDRESS,
                                     et_account_address.getText().toString().trim()),
                             new OkHttpCommonUtil.Param(KEY_URL_ACCOUNT_INFO_UPDATE_BIRTH_DATE,
-                                    "1989-08-15"),
+                                    et_account_birthdate.getText().toString().trim()),
                             new OkHttpCommonUtil.Param(KEY_URL_ACCOUNT_INFO_UPDATE_GENDER,
                                     gender),
 //                            new OkHttpCommonUtil.Param(KEY_URL_ACCOUNT_INFO_UPDATE_QQ,
