@@ -10,10 +10,7 @@ public abstract class WeiboConstants {
     public static final String APP_KEY = "1321500663";
     public static final String APP_SECRET = "12206d5369ade642409bb97c90684c69";
     public static final String REDIRECT_URL = "https://api.weibo.com/oauth2/default.html";
-    public static final String SCOPE =
-            "email,direct_messages_read,direct_messages_write,"
-                    + "friendships_groups_read,friendships_groups_write,statuses_to_me_read,"
-                    + "follow_app_official_microblog," + "invitation_write";
+    public static final String SCOPE = "all";
 
     // 访问标记(access token)相关
     public static final String KEY_UID           = "wb_uid";

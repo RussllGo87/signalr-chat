@@ -208,6 +208,8 @@
     <!-- 修改密码 -->
     <string name="title_activity_change_pwd">@string/tv_settings_item_change_pwd</string>
     <string name="toast_change_pwd_ok">密码修改成功</string>
+    <string name="toast_change_pwd_failure">密码修改失败</string>
+    <string name="toast_change_pwd_error">密码修改异常</string>
     <!-- 修改个人信息 -->
     <string name="title_activity_account_info_update">@string/tv_settings_item_update_info</string>
     <string name="toast_account_info_load_ok">个人资料加载成功</string>

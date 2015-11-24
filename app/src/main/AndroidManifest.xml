@@ -19,6 +19,16 @@
     <!-- 这个权限用于访问GPS定位 -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
+    <permission
+        android:name="net.pingfang.signalr.chat.permission.MMOAUTH_CALLBACK"
+        android:protectionLevel="normal"/>
+    <permission
+        android:name="net.pingfang.signalr.chat.permission.MM_MESSAGE"
+        android:protectionLevel="normal"/>
+
+    <uses-permission android:name="net.pingfang.signalr.chat.permission.MMOAUTH_CALLBACK" />
+    <uses-permission android:name="net.pingfang.signalr.chat.permission.MM_MESSAGE" />
+
     <application
         android:name=".util.GlobalApplication"
         android:allowBackup="true"
@@ -45,7 +55,7 @@
         </activity>
 
         <activity
-            android:name=".wxapi.WXEntryActivity"
+            android:name=".full.wxapi.WXEntryActivity"
             android:exported="true"
             android:label="@string/app_name" />
         <activity
@@ -242,6 +252,22 @@
         <provider
             android:name=".provider.ChatAppProvider"
             android:authorities="net.pingfang.signalr.chat.provider" />
+
+        <receiver
+            android:name="com.tencent.mm.sdk.plugin.MMPluginOAuth$Receiver"
+            android:permission="com.tencent.mm.oauth.permission.SEND" >
+            <intent-filter>
+                <action android:name="com.tencent.mm.sdk.plugin.Intent.ACTION_RESPONSE" />
+            </intent-filter>
+        </receiver>
+
+        <receiver
+            android:name="com.tencent.mm.sdk.channel.MMessage$Receiver"
+            android:permission="com.tencent.mm.plugin.permission.SEND" >
+            <intent-filter>
+                <action android:name="com.tencent.mm.sdk.channel.Intent.ACTION_MESSAGE" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

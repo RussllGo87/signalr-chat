@@ -1,4 +1,4 @@
-package net.pingfang.signalr.chat.wxapi;
+package net.pingfang.signalr.chat.full.wxapi;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -6,12 +6,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.tencent.mm.sdk.constants.ConstantsAPI;
-import com.tencent.mm.sdk.modelbase.BaseReq;
-import com.tencent.mm.sdk.modelbase.BaseResp;
-import com.tencent.mm.sdk.modelmsg.SendAuth;
+import com.tencent.mm.sdk.openapi.BaseReq;
+import com.tencent.mm.sdk.openapi.BaseResp;
+import com.tencent.mm.sdk.openapi.ConstantsAPI;
 import com.tencent.mm.sdk.openapi.IWXAPI;
 import com.tencent.mm.sdk.openapi.IWXAPIEventHandler;
+import com.tencent.mm.sdk.openapi.SendAuth;
 import com.tencent.mm.sdk.openapi.WXAPIFactory;
 
 import net.pingfang.signalr.chat.R;
@@ -30,6 +30,7 @@ public class WXEntryActivity extends AppCompatActivity implements IWXAPIEventHan
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.layout_wx_entry);
 
         // 通过WXAPIFactory工厂，获取IWXAPI的实例
         api = WXAPIFactory.createWXAPI(this, WxConstants.APP_ID, true);
@@ -43,7 +44,7 @@ public class WXEntryActivity extends AppCompatActivity implements IWXAPIEventHan
 
         setIntent(intent);
         api.handleIntent(intent, this);
-        finish();
+
     }
 
     /**
@@ -78,10 +79,25 @@ public class WXEntryActivity extends AppCompatActivity implements IWXAPIEventHan
             case BaseResp.ErrCode.ERR_OK:
                 if(ConstantsAPI.COMMAND_SENDAUTH == respType) { // 微信第三方登录
                     SendAuth.Resp resp = (SendAuth.Resp) baseResp;
-                    String accessCode = resp.code;
+                    String userName = resp.userName;
+                    String accessToken = resp.token;
+                    int expireDate = resp.expireDate;
+                    String state = resp.state;
+                    String resultUrl = resp.resultUrl;
+
+                    Log.d(TAG,"userName == " + userName);
+                    Log.d(TAG,"accessToken == " + accessToken);
+                    Log.d(TAG,"expireDate == " + expireDate);
+                    Log.d(TAG,"state == " + state);
+                    Log.d(TAG,"resultUrl == " + resultUrl);
 
                     Intent authOKIntent = new Intent(getApplicationContext(), LoginActivity.class);
-                    authOKIntent.putExtra("accessCode", accessCode);
+                    authOKIntent.putExtra("userName", userName);
+                    authOKIntent.putExtra("accessToken", accessToken);
+                    authOKIntent.putExtra("expireDate", expireDate);
+                    authOKIntent.putExtra("state", state);
+                    authOKIntent.putExtra("resultUrl", resultUrl);
+
                     authOKIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(authOKIntent);
                     finish();

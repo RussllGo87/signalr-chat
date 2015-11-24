@@ -9,15 +9,24 @@ android {
         minSdkVersion 9
         targetSdkVersion 22
         versionCode 1
-        versionName "1.0.2"
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
-    }
 
+    }
+    productFlavors {
+        demo {
+            applicationId "net.pingfang.signalr.chat.demo"
+            minSdkVersion 9
+        }
+        full {
+            applicationId "net.pingfang.signalr.chat.full"
+            minSdkVersion 9
+        }
+    }
     packagingOptions {
         exclude 'META-INF/DEPENDENCIES'
         exclude 'META-INF/LICENSE'
@@ -25,18 +34,13 @@ android {
     }
 }
 
-
-
-
-
-
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile files('lib/signalr-client-sdk.jar')
     compile files('lib/signalr-client-sdk-android.jar')
+    compile files('lib/libammsdk.jar')
     compile project(':weibosdk')
     compile project(':zxing-android-embedded')
-    compile files('lib/weixin_base_sdk.jar')
     compile files('lib/open_sdk_r5276.jar')
     compile files('lib/mta-sdk-1.6.2.jar')
     compile files('lib/BaiduLBS_Android.jar')

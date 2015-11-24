@@ -217,9 +217,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                             String value = obj.getString("result");
 
                             if ("true".equalsIgnoreCase(value)) {
-                                // XXX: 考虑是否需要将 AccessTokenKeeper 放到 SDK 中？？
-                                //AccessTokenKeeper.clear(getContext());
-                                // 清空当前 Token
                                 mAccessToken = null;
                                 SharedPreferencesHelper.clearAccessToken();
                                 Toast.makeText(getApplicationContext(),

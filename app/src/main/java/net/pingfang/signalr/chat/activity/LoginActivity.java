@@ -38,8 +38,8 @@ import com.squareup.okhttp.Response;
 import com.tencent.connect.UserInfo;
 import com.tencent.connect.auth.QQAuth;
 import com.tencent.connect.common.Constants;
-import com.tencent.mm.sdk.modelmsg.SendAuth;
 import com.tencent.mm.sdk.openapi.IWXAPI;
+import com.tencent.mm.sdk.openapi.SendAuth;
 import com.tencent.mm.sdk.openapi.WXAPIFactory;
 import com.tencent.tauth.IUiListener;
 import com.tencent.tauth.Tencent;
@@ -123,6 +123,7 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
     // 微信登录相关
     WxOauth2AccessToken mWxOauth2AccessToken;
     IWXAPI api;
+    String accessToken;
 
     int currentClickViewId = 0;
     private LatLng currentLatLng;
@@ -152,9 +153,14 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
 
     private void loadWxLoginCode() {
         Intent intent = getIntent();
-        String accessCode = intent.getStringExtra("accessCode");
-        if(!TextUtils.isEmpty(accessCode)) {
-            getWxAccessToken(accessCode);
+        String userName = intent.getStringExtra("userName");
+        String token = intent.getStringExtra("accessToken");
+        int expireDate = intent.getIntExtra("expireDate",0);
+        String state = intent.getStringExtra("state");
+        String resultUrl = intent.getStringExtra("resultUrl");
+        if(!TextUtils.isEmpty(accessToken)) {
+//            loadWxAccountInfo();
+            accessToken = token;
         }
     }
 
@@ -255,7 +261,6 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
                 currentClickViewId = view.getId();
                 if(api.isWXAppInstalled()) {
                     final SendAuth.Req req = new SendAuth.Req();
-                    req.openId = WxConstants.APP_ID;
                     req.scope = WxConstants.SCOPE;
                     req.state = "signal_r_chat";
                     api.sendReq(req);
@@ -508,57 +513,57 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
         });
     }
 
-    private void getWxAccessToken( String accessCode) {
-
-        ll_progress_bar_container.setVisibility(View.VISIBLE);
-        tv_pb_operation.setText("获取微信access_token");
-
-        OkHttpCommonUtil okHttp = OkHttpCommonUtil.newInstance(getApplicationContext());
-        okHttp.postRequest(
-                "https://api.weixin.qq.com/sns/oauth2/access_token",
-                new OkHttpCommonUtil.Param[]{
-                        new OkHttpCommonUtil.Param("appid", WxConstants.APP_ID),
-                        new OkHttpCommonUtil.Param("secret", WxConstants.APP_SECRET),
-                        new OkHttpCommonUtil.Param("code", accessCode),
-                        new OkHttpCommonUtil.Param("grant_type", "authorization_code")
-                },
-                new HttpBaseCallback() {
-
-                    @Override
-                    public void onResponse(Response response) throws IOException {
-                        String body = response.body().string();
-                        mWxOauth2AccessToken = WxOauth2AccessToken.parseAccessToken(body);
-                        if (mWxOauth2AccessToken != null && mWxOauth2AccessToken.isSessionValid()) {
-                            // 保存 Token 到 SharedPreferences
-                            SharedPreferencesHelper.writeAccessToken(mWxOauth2AccessToken);
-                            mDelivery.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    loadWxAccountInfo();
-                                }
-                            });
-
-                        } else { // 授权失败
-                            Log.d(TAG, "body == " + body);
-                            mDelivery.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    ll_progress_bar_container.setVisibility(View.GONE);
-                                    Toast.makeText(getApplicationContext(), "微信access_token获取异常", Toast.LENGTH_SHORT).show();
-                                }
-                            });
-
-                        }
-                    }
-                });
-    }
+//    private void getWxAccessToken( String accessCode) {
+//
+//        ll_progress_bar_container.setVisibility(View.VISIBLE);
+//        tv_pb_operation.setText("获取微信access_token");
+//
+//        OkHttpCommonUtil okHttp = OkHttpCommonUtil.newInstance(getApplicationContext());
+//        okHttp.postRequest(
+//                "https://api.weixin.qq.com/sns/oauth2/access_token",
+//                new OkHttpCommonUtil.Param[]{
+//                        new OkHttpCommonUtil.Param("appid", WxConstants.APP_ID),
+//                        new OkHttpCommonUtil.Param("secret", WxConstants.APP_SECRET),
+//                        new OkHttpCommonUtil.Param("code", accessCode),
+//                        new OkHttpCommonUtil.Param("grant_type", "authorization_code")
+//                },
+//                new HttpBaseCallback() {
+//
+//                    @Override
+//                    public void onResponse(Response response) throws IOException {
+//                        String body = response.body().string();
+//                        mWxOauth2AccessToken = WxOauth2AccessToken.parseAccessToken(body);
+//                        if (mWxOauth2AccessToken != null && mWxOauth2AccessToken.isSessionValid()) {
+//                            // 保存 Token 到 SharedPreferences
+//                            SharedPreferencesHelper.writeAccessToken(mWxOauth2AccessToken);
+//                            mDelivery.post(new Runnable() {
+//                                @Override
+//                                public void run() {
+//                                    loadWxAccountInfo();
+//                                }
+//                            });
+//
+//                        } else { // 授权失败
+//                            Log.d(TAG, "body == " + body);
+//                            mDelivery.post(new Runnable() {
+//                                @Override
+//                                public void run() {
+//                                    ll_progress_bar_container.setVisibility(View.GONE);
+//                                    Toast.makeText(getApplicationContext(), "微信access_token获取异常", Toast.LENGTH_SHORT).show();
+//                                }
+//                            });
+//
+//                        }
+//                    }
+//                });
+//    }
 
     private void loadWxAccountInfo() {
 
         tv_pb_operation.setText("获取微信用户个人信息");
 
         String openId = mWxOauth2AccessToken.getOpenId();
-        String accessToken = mWxOauth2AccessToken.getToken();
+//        String accessToken = mWxOauth2AccessToken.getToken();
         OkHttpCommonUtil okHttp = OkHttpCommonUtil.newInstance(getApplicationContext());
         okHttp.postRequest("https://api.weixin.qq.com/sns/userinfo",
                 new OkHttpCommonUtil.Param[]{
