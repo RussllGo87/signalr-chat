@@ -16,11 +16,11 @@ public class GlobalApplication extends Application {
     public static final int REQUEST_IMAGE_CAPTURE = 0x01;
     public static final int REQUEST_IMAGE_GET = 0x02;
 
-//    public static final String URL_WEB_API_HOST = "http://hale.redstream.cn";
-//    public static final String URL_COMMUNICATION_API_HOST = "http://hale.redstream.cn:10086";
+    public static final String URL_WEB_API_HOST = "http://hale.redstream.cn";
+    public static final String URL_COMMUNICATION_API_HOST = "http://hale.redstream.cn:10086";
 
-    public static final String URL_WEB_API_HOST = "http://192.168.0.254";
-    public static final String URL_COMMUNICATION_API_HOST = "http://192.168.0.254:10086";
+//    public static final String URL_WEB_API_HOST = "http://192.168.0.254";
+//    public static final String URL_COMMUNICATION_API_HOST = "http://192.168.0.254:10086";
 
 //    public static final String PORTRAIT_URL_PREFIX = URL_WEB_API_HOST + "/UpLoad/Head/";
 //    public static final String PIC_URL_PREFIX = URL_WEB_API_HOST + "/UpLoad/";

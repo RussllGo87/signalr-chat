@@ -61,7 +61,10 @@ public class ResourceListAdapter extends BaseAdapter {
             String url = resourceInfo.getUrl();
             if(!TextUtils.isEmpty(url)) {
 //                url = GlobalApplication.RESOURCE_PIC_URL_PREFIX + url;
-                okHttp.display(iv_resource_profile,url,R.mipmap.ic_launcher);
+                String[] urls = url.split(";");
+                if(urls != null && urls.length > 0) {
+                    okHttp.display(iv_resource_profile,urls[0],R.mipmap.ic_launcher);
+                }
             }
             TextView tv_resource_post_time = (TextView) view.findViewById(R.id.tv_resource_post_time);
             tv_resource_post_time.setText(resourceInfo.getPostTime());
@@ -77,7 +80,10 @@ public class ResourceListAdapter extends BaseAdapter {
             String url = resourceInfo.getUrl();
             if(!TextUtils.isEmpty(url)) {
 //                url = GlobalApplication.RESOURCE_PIC_URL_PREFIX + url;
-                okHttp.display(iv_resource_profile,url,R.mipmap.ic_launcher);
+                String[] urls = url.split(";");
+                if(urls != null && urls.length > 0) {
+                    okHttp.display(iv_resource_profile,urls[0],R.mipmap.ic_launcher);
+                }
             }
             TextView tv_resource_post_time = (TextView) convertView.findViewById(R.id.tv_resource_post_time);
             tv_resource_post_time.setText(resourceInfo.getPostTime());

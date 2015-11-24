@@ -101,7 +101,7 @@ public class ChangePwdActivity extends AppCompatActivity implements View.OnClick
 
         if(CommonUtil.isConnected(getApplicationContext())){
             OkHttpCommonUtil okHttp = OkHttpCommonUtil.newInstance(getApplicationContext());
-            okHttp.postRequest(URL_PWD_UPDATE,
+            okHttp.getRequest(URL_PWD_UPDATE,
                     new OkHttpCommonUtil.Param[] {
                             new OkHttpCommonUtil.Param(KEY_PWD_UPDATE_UID,sharedPreferencesHelper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID)),
                             new OkHttpCommonUtil.Param(KEY_PWD_UPDATE_NOW,pwdNow),
@@ -127,9 +127,26 @@ public class ChangePwdActivity extends AppCompatActivity implements View.OnClick
                                             navigateUp();
                                         }
                                     });
+                                } else {
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Toast.makeText(getApplicationContext(),
+                                                    getString(R.string.toast_change_pwd_failure),
+                                                    Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
                                 }
                             } catch (JSONException e) {
                                 e.printStackTrace();
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(getApplicationContext(),
+                                                getString(R.string.toast_change_pwd_error),
+                                                Toast.LENGTH_SHORT).show();
+                                    }
+                                });
                             }
                         }
                     });

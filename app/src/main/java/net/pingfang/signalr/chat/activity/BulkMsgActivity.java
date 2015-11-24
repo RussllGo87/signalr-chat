@@ -54,9 +54,9 @@ import net.pingfang.signalr.chat.message.MessageConstructor;
 import net.pingfang.signalr.chat.service.ChatService;
 import net.pingfang.signalr.chat.util.CommonTools;
 import net.pingfang.signalr.chat.util.FileUtil;
-import net.pingfang.signalr.chat.util.GlobalApplication;
 import net.pingfang.signalr.chat.util.MediaFileUtils;
 import net.pingfang.signalr.chat.util.SharedPreferencesHelper;
+import net.pingfang.signalr.chat.util.GlobalApplication;
 
 import java.io.File;
 import java.io.IOException;

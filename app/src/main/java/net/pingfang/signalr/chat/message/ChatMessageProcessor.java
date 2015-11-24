@@ -16,9 +16,9 @@ import net.pingfang.signalr.chat.database.AppContract;
 import net.pingfang.signalr.chat.database.ChatMessageManager;
 import net.pingfang.signalr.chat.database.UserManager;
 import net.pingfang.signalr.chat.util.CommonTools;
-import net.pingfang.signalr.chat.util.GlobalApplication;
 import net.pingfang.signalr.chat.util.MediaFileUtils;
 import net.pingfang.signalr.chat.util.SharedPreferencesHelper;
+import net.pingfang.signalr.chat.util.GlobalApplication;
 
 import org.json.JSONArray;
 import org.json.JSONException;

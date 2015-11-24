@@ -20,6 +20,8 @@ public class ResourceDetailActivity extends AppCompatActivity implements View.On
     private TextView tv_menu_drop_down;
 
     private ImageView iv_resource_detail_profile;
+    private ImageView iv_resource_detail_profile_2;
+    private ImageView iv_resource_detail_profile_3;
     private TextView tv_resource_detail_width;
     private TextView tv_resource_detail_height;
     private TextView tv_resource_detail_contact;
@@ -53,6 +55,8 @@ public class ResourceDetailActivity extends AppCompatActivity implements View.On
         tv_menu_drop_down.setOnClickListener(this);
 
         iv_resource_detail_profile = (ImageView) findViewById(R.id.iv_resource_detail_profile);
+        iv_resource_detail_profile_2 = (ImageView) findViewById(R.id.iv_resource_detail_profile_2);
+        iv_resource_detail_profile_3 = (ImageView) findViewById(R.id.iv_resource_detail_profile_3);
         tv_resource_detail_width = (TextView) findViewById(R.id.tv_resource_detail_width);
         tv_resource_detail_height = (TextView) findViewById(R.id.tv_resource_detail_height);
         tv_resource_detail_contact = (TextView) findViewById(R.id.tv_resource_detail_contact);
@@ -69,7 +73,17 @@ public class ResourceDetailActivity extends AppCompatActivity implements View.On
             String url = resourceInfo.getUrl();
             if(!TextUtils.isEmpty(url)) {
 //                url = GlobalApplication.RESOURCE_PIC_URL_PREFIX + url;
-                okHttp.display(iv_resource_detail_profile,url,R.mipmap.ic_launcher);
+//                okHttp.display(iv_resource_detail_profile,url,R.mipmap.ic_launcher);
+                String[] urls = url.split(";");
+                if(urls != null && urls.length > 0) {
+                    okHttp.display(iv_resource_detail_profile,urls[0],R.mipmap.ic_launcher);
+                    if(urls.length > 1) {
+                        okHttp.display(iv_resource_detail_profile_2,urls[1],R.mipmap.ic_launcher);
+                        if(urls.length > 2) {
+                            okHttp.display(iv_resource_detail_profile_3,urls[2],R.mipmap.ic_launcher);
+                        }
+                    }
+                }
             }
             tv_resource_detail_width.setText(getString(R.string.tv_resource_detail_width,resourceInfo.getWidth()));
             tv_resource_detail_height.setText(getString(R.string.tv_resource_detail_height,resourceInfo.getHeight()));

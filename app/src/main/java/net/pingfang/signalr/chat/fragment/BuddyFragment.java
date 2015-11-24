@@ -11,11 +11,11 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.support.v4.widget.CursorAdapter;
 import android.widget.ListView;
 
 import net.pingfang.signalr.chat.R;
@@ -95,11 +95,24 @@ public class BuddyFragment extends Fragment implements LoaderManager.LoaderCallb
             }
         });
 
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
         String uid = sharedPreferencesHelper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID);
         Bundle args = new Bundle();
         args.putString(AppConstants.KEY_SYS_CURRENT_UID,uid);
 
-        getLoaderManager().initLoader(LOADER_ID,args,this);
+        getLoaderManager().initLoader(LOADER_ID, args, this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        getLoaderManager().destroyLoader(LOADER_ID);
     }
 
     @Override
@@ -118,8 +131,9 @@ public class BuddyFragment extends Fragment implements LoaderManager.LoaderCallb
 
         Uri baseUri = AppContract.UserEntry.CONTENT_URI;
 
-        String selection = AppContract.UserEntry.COLUMN_NAME_ENTRY_UID + " != ?";
-        String[] selectionArgs = new String[]{uid};
+        String selection = AppContract.UserEntry.COLUMN_NAME_ENTRY_UID + " != ? AND " +
+                AppContract.UserEntry.COLUMN_NAME_STATUS + " = ?";
+        String[] selectionArgs = new String[]{uid,"1"};
 
         return new CursorLoader(getContext(),baseUri,null,selection,selectionArgs,null);
     }
