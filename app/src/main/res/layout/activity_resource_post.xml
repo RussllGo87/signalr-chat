@@ -6,14 +6,16 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@color/bg_btn_default">
 
         <TextView android:id="@+id/btn_activity_back"
                   android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
                   android:layout_centerVertical="true"
                   android:padding="@dimen/padding_back_button"
-                  android:text="@string/btn_activity_back"/>
+                  android:text="@string/btn_activity_back"
+                  android:textColor="@android:color/white"/>
 
         <TextView android:id="@+id/tv_activity_title"
                   android:layout_width="wrap_content"
@@ -21,13 +23,14 @@
                   android:layout_centerInParent="true"
                   android:padding="@dimen/padding_activity_title"
                   android:text="广告资源发布"
-                  android:textSize="@dimen/text_size_activity_title" />
+                  android:textColor="@android:color/white"
+                  android:textSize="@dimen/text_size_activity_title"/>
 
         <TextView android:id="@+id/tv_offline_message"
                   android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
-                  android:layout_centerVertical="true"
                   android:layout_alignParentRight="true"
+                  android:layout_centerVertical="true"
                   android:padding="@dimen/padding_activity_title"
                   android:text="@string/tv_offline_message"
                   android:visibility="gone"/>
@@ -57,17 +60,17 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="1dp"
+                    android:layout_weight="1"
                     android:hint="长度(米)"
-                    android:inputType="numberDecimal"
-                    android:layout_weight="1"/>
+                    android:inputType="numberDecimal"/>
 
                 <EditText android:id="@+id/et_resource_height"
                           android:layout_width="0dp"
                           android:layout_height="wrap_content"
                           android:layout_marginLeft="1dp"
+                          android:layout_weight="1"
                           android:hint="宽度(米)"
-                          android:inputType="numberDecimal"
-                          android:layout_weight="1"/>
+                          android:inputType="numberDecimal"/>
 
             </LinearLayout>
 
@@ -93,16 +96,16 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="1dp"
-                    android:hint="联系人"
-                    android:layout_weight="2"/>
+                    android:layout_weight="2"
+                    android:hint="联系人"/>
 
                 <EditText android:id="@+id/et_resource_phone"
                           android:layout_width="match_parent"
                           android:layout_height="wrap_content"
                           android:layout_marginLeft="1dp"
+                          android:layout_weight="1"
                           android:hint="联系电话"
-                          android:inputType="phone"
-                          android:layout_weight="1"/>
+                          android:inputType="phone"/>
             </LinearLayout>
 
             <EditText android:id="@+id/et_resource_remark"
@@ -125,22 +128,27 @@
 
             <GridView android:id="@+id/gv_camera"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:minHeight="240dp"
+                      android:layout_height="160dp"
                 android:cacheColorHint="#00000000"
                 android:fadingEdge="none"
                 android:listSelector="#00000000"
+                      android:minHeight="240dp"
                 android:numColumns="3"
                 android:paddingLeft="1dp"
                 android:paddingRight="1dp"
                 android:stretchMode="columnWidth"/>
 
 
-            <Button android:id="@+id/btn_add_pic"
+            <TextView
+                android:id="@+id/tv_add_pic"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="添加图片"/>
+                android:layout_gravity="right"
+                android:layout_marginRight="@dimen/activity_vertical_margin"
+                android:background="@drawable/selector_btn_bg"
+                android:padding="@dimen/padding_vertical_button"
+                android:text="添加图片"
+                android:textColor="@android:color/white"/>
 
 
             <LinearLayout
@@ -155,17 +163,21 @@
                     android:id="@+id/btn_resource_save"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="1dp"
+                    android:layout_marginRight="5dp"
                     android:layout_weight="1"
-                    android:text="确定" />
+                    android:background="@drawable/selector_btn_bg"
+                    android:text="确定"
+                    android:textColor="@android:color/white"/>
 
                 <Button
                     android:id="@+id/btn_resource_cancel"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="1dp"
+                    android:layout_marginLeft="5dp"
                     android:layout_weight="1"
-                    android:text="取消" />
+                    android:background="@drawable/selector_btn_bg"
+                    android:text="取消"
+                    android:textColor="@android:color/white"/>
             </LinearLayout>
 
         </LinearLayout>
@@ -175,7 +187,7 @@
    <TextView
        android:layout_width="match_parent"
        android:layout_height="wrap_content"
-       android:textSize="@dimen/text_size_tv_resource_post_requirement"
-       android:text="@string/tv_resource_post_requirement"/>
+       android:text="@string/tv_resource_post_requirement"
+       android:textSize="@dimen/text_size_tv_resource_post_requirement"/>
 
 </LinearLayout>

@@ -2,47 +2,114 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/bg_btn_default">
+
+        <TextView
+            android:id="@+id/btn_activity_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:padding="@dimen/padding_back_button"
+            android:text="@string/btn_activity_back"
+            android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/tv_activity_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:padding="@dimen/padding_activity_title"
+            android:text="@string/title_activity_login"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/text_size_activity_title"/>
+
+    </RelativeLayout>
+
     <LinearLayout
         android:id="@+id/linearLayout_focus"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:focusable="true"
         android:focusableInTouchMode="true"
-        android:layout_width="0px"
-        android:layout_height="0px"
         android:orientation="vertical"/>
 
     <LinearLayout android:id="@+id/ll_form_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin"
+                  android:layout_centerInParent="true"
         android:orientation="vertical"
-        android:layout_centerInParent="true">
+                  android:paddingLeft="@dimen/padding_horizontal_ll_form_container"
+                  android:paddingRight="@dimen/padding_horizontal_ll_form_container">
 
-        <EditText android:id="@+id/et_login_no"
-                  android:layout_width="match_parent"
-                  android:layout_height="wrap_content"
-                  android:inputType="phone"
-                  android:hint="@string/hint_et_login_no"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
-        <EditText android:id="@+id/et_login_pwd"
-                  android:layout_width="match_parent"
-                  android:layout_height="wrap_content"
-                  android:inputType="textPassword"
-                  android:hint="@string/hint_et_login_pwd"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="@string/tv_label_phone_no"
+                android:textColor="@color/text_color_tv_label_grey"
+                android:textSize="@dimen/text_size_tv_label_phone_no"/>
+
+            <EditText
+                android:id="@+id/et_login_no"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/hint_et_login_no"
+                android:inputType="phone"
+                android:paddingLeft="@dimen/padding_horizontal_et_login_no"/>
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="密        码"
+                android:textColor="@color/text_color_tv_label_grey"
+                android:textSize="@dimen/text_size_tv_label_phone_no"/>
+
+            <EditText
+                android:id="@+id/et_login_pwd"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/hint_et_login_pwd"
+                android:inputType="textPassword"
+                android:paddingLeft="@dimen/padding_horizontal_et_login_no"/>
+
+
+        </LinearLayout>
+
+
     </LinearLayout>
 
     <LinearLayout android:id="@+id/ll_pwd_config"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin"
+                  android:layout_below="@+id/ll_form_container"
         android:orientation="horizontal"
-        android:layout_below="@+id/ll_form_container">
+                  android:paddingLeft="@dimen/activity_horizontal_margin"
+                  android:paddingRight="@dimen/activity_horizontal_margin">
 
         <CheckBox android:id="@+id/cb_show_pwd"
                   android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
-                  android:text="@string/cb_show_pwd"/>
+                  android:layout_marginBottom="@dimen/margin_cb_show_pwd"
+                  android:layout_marginTop="@dimen/margin_cb_show_pwd"
+                  android:text="@string/cb_show_pwd"
+                  android:textColor="@color/text_color_tv_label_grey"/>
 
         <TextView
                   android:layout_width="0dp"
@@ -61,44 +128,63 @@
     <LinearLayout android:id="@+id/ll_button_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+                  android:layout_below="@+id/ll_pwd_config"
+                  android:gravity="center"
         android:orientation="horizontal"
         android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin"
-        android:layout_below="@+id/ll_pwd_config"
-        android:gravity="center">
+                  android:paddingRight="@dimen/activity_horizontal_margin">
 
-        <Button
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:background="@drawable/selector_btn_bg"
+            android:onClick="login"
+            android:paddingBottom="@dimen/padding_vertical_button"
+            android:paddingLeft="@dimen/padding_horizontal_button"
+            android:paddingRight="@dimen/padding_horizontal_button"
+            android:paddingTop="@dimen/padding_vertical_button"
             android:text="@string/btn_login"
-            android:onClick="login"/>
+            android:textColor="@android:color/white"
+            android:textSize="18sp"/>
 
-        <Button
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:background="@drawable/selector_btn_bg"
+            android:onClick="register"
+            android:paddingBottom="@dimen/padding_vertical_button"
+            android:paddingLeft="@dimen/padding_horizontal_button"
+            android:paddingRight="@dimen/padding_horizontal_button"
+            android:paddingTop="@dimen/padding_vertical_button"
             android:text="@string/btn_register"
-            android:onClick="register"/>
+            android:textColor="@android:color/white"
+            android:textSize="18sp"/>
 
     </LinearLayout>
 
     <TextView android:id="@+id/tv_label_login_pattern"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+              android:layout_below="@+id/ll_button_container"
+              android:layout_marginBottom="@dimen/activity_vertical_margin"
+              android:layout_marginTop="@dimen/margin_tv_label_login_pattern"
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:paddingRight="@dimen/activity_horizontal_margin"
-        android:layout_marginTop="@dimen/margin_tv_label_login_pattern"
-        android:layout_marginBottom="@dimen/activity_vertical_margin"
         android:text="@string/tv_label_login_pattern"
-        android:layout_below="@+id/ll_button_container"/>
+              android:textColor="@color/text_color_tv_label_grey"
+
+        />
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/tv_label_login_pattern"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin"
         android:gravity="center"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin">
 
 
         <ImageView android:id="@+id/btn_login_pattern_qq"
@@ -125,9 +211,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/bg_progress_bar_container"
-        android:visibility="gone"
         android:gravity="center"
-        android:orientation="vertical">
+                  android:orientation="vertical"
+                  android:visibility="gone">
 
         <ProgressBar android:id="@+id/pb_operation"
             android:layout_width="100dp"

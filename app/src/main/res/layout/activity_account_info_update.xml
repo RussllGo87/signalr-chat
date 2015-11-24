@@ -7,7 +7,8 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@drawable/selector_btn_bg">
 
         <TextView
             android:id="@+id/btn_activity_back"
@@ -15,7 +16,8 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:padding="@dimen/padding_back_button"
-            android:text="@string/btn_activity_back"/>
+            android:text="@string/btn_activity_back"
+            android:textColor="@android:color/white"/>
 
         <TextView
             android:id="@+id/tv_activity_title"
@@ -24,7 +26,8 @@
             android:layout_centerInParent="true"
             android:padding="@dimen/padding_activity_title"
             android:text="@string/title_activity_account_info_update"
-            android:textSize="@dimen/text_size_activity_title" />
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/text_size_activity_title"/>
 
     </RelativeLayout>
 
@@ -64,9 +67,9 @@
                       android:layout_width="match_parent"
                       android:layout_height="wrap_content"
                       android:layout_marginTop="10dp"
+                      android:hint="手机号"
                       android:inputType="phone"
-                      android:singleLine="true"
-                      android:hint="手机号"/>
+                      android:singleLine="true"/>
 
             <EditText
                 android:id="@+id/et_account_address"
@@ -84,15 +87,22 @@
                     android:id="@+id/et_account_birthdate"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:layout_marginTop="10dp"
+                    android:layout_weight="1"
                     android:hint="生日"/>
 
-                <Button android:id="@+id/btn_account_birthday_picker"
+                <TextView
+                    android:id="@+id/btn_account_birthday_picker"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:background="@drawable/selector_btn_bg"
+                    android:onClick="showDatePickerDialog"
+                    android:paddingBottom="12dp"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp"
+                    android:paddingTop="12dp"
                     android:text="选择日期"
-                    android:onClick="showDatePickerDialog"/>
+                    android:textColor="@android:color/white"/>
             </LinearLayout>
 
 
@@ -104,9 +114,9 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:paddingLeft="4dp"
                     android:layout_weight="1"
                     android:gravity="center_vertical"
+                    android:paddingLeft="4dp"
                     android:text="@string/tv_label_gender"
                     android:textSize="18sp"/>
 
@@ -156,27 +166,34 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="3dp"
-                android:text="点击图片进行图片切换"
                 android:gravity="center"
+                android:text="点击图片进行图片切换"
                 android:textSize="16sp"/>
 
             <LinearLayout android:layout_width="match_parent"
                           android:layout_height="wrap_content"
-                          android:orientation="horizontal" >
+                          android:layout_gravity="center_horizontal"
+                          android:orientation="horizontal">
 
                 <Button android:id="@+id/btn_account_info_save"
-                        android:layout_width="0dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginRight="5dp"
                         android:layout_weight="1"
-                        android:layout_marginRight="1dp"
-                        android:text="确定"/>
+                        android:background="@drawable/selector_btn_bg"
+                        android:gravity="center"
+                        android:text="确定"
+                        android:textColor="@android:color/white"/>
 
                 <Button android:id="@+id/btn_account_info_cancel"
-                        android:layout_width="0dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
                         android:layout_weight="1"
-                        android:layout_marginLeft="1dp"
-                        android:text="取消"/>
+                        android:background="@drawable/selector_btn_bg"
+                        android:gravity="center"
+                        android:text="取消"
+                        android:textColor="@android:color/white"/>
             </LinearLayout>
 
         </LinearLayout>

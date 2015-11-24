@@ -2,20 +2,22 @@
       xmlns:tools="http://schemas.android.com/tools"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
-      android:orientation="vertical"
       android:gravity="center_horizontal"
+              android:orientation="vertical"
       tools:context="net.pingfang.signalr.chat.activity.SettingsActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@drawable/selector_btn_bg">
 
         <TextView android:id="@+id/btn_activity_back"
                   android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
                   android:layout_centerVertical="true"
                   android:padding="@dimen/padding_back_button"
-                  android:text="@string/btn_activity_back"/>
+                  android:text="@string/btn_activity_back"
+                  android:textColor="@android:color/white"/>
 
         <TextView android:id="@+id/tv_activity_title"
                   android:layout_width="wrap_content"
@@ -23,7 +25,8 @@
                   android:layout_centerInParent="true"
                   android:padding="@dimen/padding_activity_title"
                   android:text="@string/title_activity_settings"
-                  android:textSize="@dimen/text_size_activity_title" />
+                  android:textColor="@android:color/white"
+                  android:textSize="@dimen/text_size_activity_title"/>
 
     </RelativeLayout>
 
@@ -31,32 +34,32 @@
               style="@style/SettingItemStyle"
               android:layout_marginTop="@dimen/activity_vertical_margin"
               android:background="@drawable/selector_settings_item"
-              android:text="@string/tv_settings_item_account"
+              android:drawableEnd="@drawable/setting_view_arrow"
               android:drawableRight="@drawable/setting_view_arrow"
-              android:drawableEnd="@drawable/setting_view_arrow"/>
+              android:text="@string/tv_settings_item_account"/>
 
     <TextView android:id="@+id/tv_settings_item_filter_list"
               style="@style/SettingItemStyle"
               android:layout_marginBottom="@dimen/activity_vertical_margin"
               android:background="@drawable/selector_settings_item"
-              android:text="@string/tv_settings_item_filter_list"
+              android:drawableEnd="@drawable/setting_view_arrow"
               android:drawableRight="@drawable/setting_view_arrow"
-              android:drawableEnd="@drawable/setting_view_arrow"/>
+              android:text="@string/tv_settings_item_filter_list"/>
 
     <TextView android:id="@+id/tv_settings_item_about"
               style="@style/SettingItemStyle"
               android:layout_marginTop="@dimen/activity_vertical_margin"
               android:background="@drawable/selector_settings_item"
-              android:text="@string/tv_settings_item_about"
+              android:drawableEnd="@drawable/setting_view_arrow"
               android:drawableRight="@drawable/setting_view_arrow"
-              android:drawableEnd="@drawable/setting_view_arrow"/>
+              android:text="@string/tv_settings_item_about"/>
 
     <TextView android:id="@+id/tv_settings_item_exit"
               style="@style/SettingItemStyle"
               android:layout_marginBottom="@dimen/activity_vertical_margin"
               android:background="@drawable/selector_settings_item"
-              android:text="@string/tv_settings_item_exit"
+              android:drawableEnd="@drawable/setting_view_arrow"
               android:drawableRight="@drawable/setting_view_arrow"
-              android:drawableEnd="@drawable/setting_view_arrow"/>
+              android:text="@string/tv_settings_item_exit"/>
 
 </LinearLayout>

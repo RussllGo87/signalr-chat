@@ -2,20 +2,22 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:gravity="center_horizontal"
+              android:orientation="vertical"
     tools:context="net.pingfang.signalr.chat.activity.AppAboutActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@color/bg_btn_default">
 
         <TextView android:id="@+id/btn_activity_back"
                   android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
                   android:layout_centerVertical="true"
                   android:padding="@dimen/padding_back_button"
-                  android:text="@string/btn_activity_back"/>
+                  android:text="@string/btn_activity_back"
+                  android:textColor="@android:color/white"/>
 
         <TextView android:id="@+id/tv_activity_title"
                   android:layout_width="wrap_content"
@@ -23,7 +25,8 @@
                   android:layout_centerInParent="true"
                   android:padding="@dimen/padding_activity_title"
                   android:text="@string/title_activity_about"
-                  android:textSize="@dimen/text_size_activity_title" />
+                  android:textColor="@android:color/white"
+                  android:textSize="@dimen/text_size_activity_title"/>
 
     </RelativeLayout>
 
@@ -35,8 +38,8 @@
     <TextView android:id="@+id/tv_app_name_version_code"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/app_name"
-        android:layout_marginBottom="@dimen/activity_vertical_margin"/>
+              android:layout_marginBottom="@dimen/activity_vertical_margin"
+              android:text="@string/app_name"/>
 
     <TextView android:id="@+id/tv_about_item_version"
               style="@style/SettingItemStyle"
@@ -46,23 +49,23 @@
     <TextView android:id="@+id/tv_about_item_guide"
               style="@style/SettingItemStyle"
               android:background="@drawable/selector_settings_item"
-              android:text="@string/tv_about_item_guide"
+              android:drawableEnd="@drawable/setting_view_arrow"
               android:drawableRight="@drawable/setting_view_arrow"
-              android:drawableEnd="@drawable/setting_view_arrow"/>
+              android:text="@string/tv_about_item_guide"/>
 
     <TextView android:id="@+id/tv_about_item_suggestion"
               style="@style/SettingItemStyle"
               android:background="@drawable/selector_settings_item"
-              android:text="@string/tv_about_item_suggestion"
+              android:drawableEnd="@drawable/setting_view_arrow"
               android:drawableRight="@drawable/setting_view_arrow"
-              android:drawableEnd="@drawable/setting_view_arrow"/>
+              android:text="@string/tv_about_item_suggestion"/>
 
     <TextView android:id="@+id/tv_about_item_share_apk"
               style="@style/SettingItemStyle"
               android:background="@drawable/selector_settings_item"
-              android:text="@string/tv_about_item_share_apk"
+              android:drawableEnd="@drawable/setting_view_arrow"
               android:drawableRight="@drawable/setting_view_arrow"
-              android:drawableEnd="@drawable/setting_view_arrow"/>
+              android:text="@string/tv_about_item_share_apk"/>
 
 
 </LinearLayout>

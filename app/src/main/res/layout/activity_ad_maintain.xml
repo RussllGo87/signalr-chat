@@ -1,20 +1,21 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="center_horizontal">
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:gravity="center_horizontal"
+              android:orientation="vertical">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@drawable/selector_btn_bg">
 
         <TextView android:id="@+id/btn_activity_back"
                   android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
                   android:layout_centerVertical="true"
                   android:padding="@dimen/padding_back_button"
-                  android:text="@string/btn_activity_back"/>
+                  android:text="@string/btn_activity_back"
+                  android:textColor="@android:color/white"/>
 
         <TextView android:id="@+id/tv_activity_title"
                   android:layout_width="wrap_content"
@@ -22,7 +23,8 @@
                   android:layout_centerInParent="true"
                   android:padding="@dimen/padding_activity_title"
                   android:text="@string/title_activity_ad_maintain"
-                  android:textSize="@dimen/text_size_activity_title" />
+                  android:textColor="@android:color/white"
+                  android:textSize="@dimen/text_size_activity_title"/>
 
     </RelativeLayout>
 
@@ -37,8 +39,8 @@
 
             <LinearLayout android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="2dp">
+                          android:layout_marginTop="2dp"
+                          android:orientation="horizontal">
 
                 <EditText android:id="@+id/et_ad_maintain_code"
                           android:layout_width="0dp"
@@ -47,10 +49,17 @@
                           android:enabled="false"
                           android:hint="广告编码"/>
 
-                <Button android:id="@+id/btn_ad_maintain_code_scan"
+                <TextView
+                    android:id="@+id/btn_ad_maintain_code_scan"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/btn_ad_maintain_code_scan"/>
+                    android:background="@drawable/selector_btn_bg"
+                    android:paddingBottom="8dp"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp"
+                    android:paddingTop="8dp"
+                    android:text="@string/btn_ad_maintain_code_scan"
+                    android:textColor="@android:color/white"/>
 
             </LinearLayout>
 
@@ -58,8 +67,8 @@
             <EditText android:id="@+id/et_ad_maintain_location"
                       android:layout_width="match_parent"
                       android:layout_height="wrap_content"
-                      android:hint="广告位置"
-                      android:layout_marginTop="2dp"/>
+                      android:layout_marginTop="2dp"
+                      android:hint="广告位置"/>
 
             <ImageView
                 android:id="@+id/iv_ad_maintain_pic"
@@ -83,17 +92,21 @@
                     android:id="@+id/btn_ad_maintain_save"
                     android:layout_width="0dp"
                     android:layout_height="40dp"
-                    android:layout_marginRight="1dp"
+                    android:layout_marginRight="5dp"
                     android:layout_weight="1"
-                    android:text="确定" />
+                    android:background="@drawable/selector_btn_bg"
+                    android:text="确定"
+                    android:textColor="@android:color/white"/>
 
                 <Button
                     android:id="@+id/btn_ad_maintain_cancel"
                     android:layout_width="0dp"
                     android:layout_height="40dp"
-                    android:layout_marginLeft="1dp"
+                    android:layout_marginLeft="5dp"
                     android:layout_weight="1"
-                    android:text="取消" />
+                    android:background="@drawable/selector_btn_bg"
+                    android:text="取消"
+                    android:textColor="@android:color/white"/>
 
             </LinearLayout>
 

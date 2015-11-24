@@ -7,14 +7,16 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@drawable/selector_btn_bg">
 
         <TextView android:id="@+id/btn_activity_back"
                   android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
                   android:layout_centerVertical="true"
                   android:padding="@dimen/padding_back_button"
-                  android:text="@string/btn_activity_back"/>
+                  android:text="@string/btn_activity_back"
+                  android:textColor="@android:color/white"/>
 
         <TextView android:id="@+id/tv_activity_title"
                   android:layout_width="wrap_content"
@@ -22,7 +24,8 @@
                   android:layout_centerInParent="true"
                   android:padding="@dimen/padding_activity_title"
                   android:text="@string/title_activity_nearby_ad_detail"
-                  android:textSize="@dimen/text_size_activity_title" />
+                  android:textColor="@android:color/white"
+                  android:textSize="@dimen/text_size_activity_title"/>
 
     </RelativeLayout>
 
@@ -39,8 +42,8 @@
                 android:id="@+id/iv_ad_image"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="200dp"
-                android:layout_gravity="center_horizontal"/>
+                android:layout_gravity="center_horizontal"
+                android:minHeight="200dp"/>
 
             <TextView
                 android:id="@+id/tv_ad_content"
