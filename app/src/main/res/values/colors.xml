@@ -13,4 +13,10 @@
 
     <!-- 进度条 -->
     <color name="bg_progress_bar_container">#44000000</color>
+
+    <color name="bg_btn_pressed">#d84b00</color>
+    <color name="bg_btn_default">#f95e0b</color>
+
+    <color name="text_color_tv_label_grey">#333</color>
+    <color name="bottom_button_group_border_color">#aaa</color>
 </resources>
