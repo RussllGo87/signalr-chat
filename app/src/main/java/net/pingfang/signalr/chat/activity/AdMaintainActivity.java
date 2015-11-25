@@ -39,9 +39,9 @@ import net.pingfang.signalr.chat.net.HttpBaseCallback;
 import net.pingfang.signalr.chat.net.OkHttpCommonUtil;
 import net.pingfang.signalr.chat.util.CommonTools;
 import net.pingfang.signalr.chat.util.FileUtil;
+import net.pingfang.signalr.chat.util.GlobalApplication;
 import net.pingfang.signalr.chat.util.MediaFileUtils;
 import net.pingfang.signalr.chat.util.SharedPreferencesHelper;
-import net.pingfang.signalr.chat.util.GlobalApplication;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -63,24 +63,20 @@ public class AdMaintainActivity extends AppCompatActivity implements View.OnClic
     public static final String KEY_URL_AD_MAINTAIN_PIC = "pic";
 
     TextView btn_activity_back;
-
-    private EditText et_ad_maintain_code;
-    private Button btn_ad_maintain_code_scan;
-    private EditText et_ad_maintain_location;
-    private ImageView iv_ad_maintain_pic;
-    private Button btn_ad_maintain_save;
-    private Button btn_ad_maintain_cancel;
-
-    private LocationClient locationClient;
-    private LocationListenerImpl locationListener;
-    private LatLng currentLatLng;
-
     SharedPreferencesHelper sharedPreferencesHelper;
-
     Dialog dialog;
     Uri targetUri;
     String tmpFilePath;
     String fileContent;
+    private EditText et_ad_maintain_code;
+    private TextView btn_ad_maintain_code_scan;
+    private EditText et_ad_maintain_location;
+    private ImageView iv_ad_maintain_pic;
+    private Button btn_ad_maintain_save;
+    private Button btn_ad_maintain_cancel;
+    private LocationClient locationClient;
+    private LocationListenerImpl locationListener;
+    private LatLng currentLatLng;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,7 +94,7 @@ public class AdMaintainActivity extends AppCompatActivity implements View.OnClic
         btn_activity_back.setOnClickListener(this);
 
         et_ad_maintain_code = (EditText) findViewById(R.id.et_ad_maintain_code);
-        btn_ad_maintain_code_scan = (Button) findViewById(R.id.btn_ad_maintain_code_scan);
+        btn_ad_maintain_code_scan = (TextView) findViewById(R.id.btn_ad_maintain_code_scan);
         btn_ad_maintain_code_scan.setOnClickListener(this);
         et_ad_maintain_location = (EditText) findViewById(R.id.et_ad_maintain_location);
         iv_ad_maintain_pic = (ImageView) findViewById(R.id.iv_ad_maintain_pic);

@@ -102,33 +102,100 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
     LinearLayout ll_progress_bar_container;
     ProgressBar pb_operation;
     TextView tv_pb_operation;
-
-    private Handler mDelivery;
-
     SharedPreferencesHelper sharedPreferencesHelper;
     String savedAccount;
-
-    // 微博登录相关参数
-    /** 微博 Web 授权类，提供登陆等功能  */
-    private WeiboAuth mWeiboAuth;
-    /** 封装了 "access_token"，"expires_in"，"refresh_token"，并提供了他们的管理功能  */
-    private Oauth2AccessToken mAccessToken;
-    /** 注意：SsoHandler 仅当 SDK 支持 SSO 时有效 */
-    private SsoHandler mWeiboSsoHandler;
-
     // 腾讯qq登录相关
     // 腾讯qq实例
     Tencent mTencent;
 
+    // 微博登录相关参数
     // 微信登录相关
     WxOauth2AccessToken mWxOauth2AccessToken;
     IWXAPI api;
-    String accessToken;
-
     int currentClickViewId = 0;
+    private Handler mDelivery;
+    /**
+     * 微博 Web 授权类，提供登陆等功能
+     */
+    private WeiboAuth mWeiboAuth;
+    /**
+     * 封装了 "access_token"，"expires_in"，"refresh_token"，并提供了他们的管理功能
+     */
+    private Oauth2AccessToken mAccessToken;
+    /**
+     * 注意：SsoHandler 仅当 SDK 支持 SSO 时有效
+     */
+    private SsoHandler mWeiboSsoHandler;
     private LatLng currentLatLng;
     private LocationClient locationClient;
     private LocationListenerImpl locationListener;
+    private IUiListener loginListener = new IUiListener() {
+        @Override
+        public void onComplete(Object response) {
+            if (null == response) {
+                ll_progress_bar_container.setVisibility(View.GONE);
+                SingleButtonDialogFragment dialogFragment = SingleButtonDialogFragment.newInstance("登录失败", "返回为空");
+                dialogFragment.show(getSupportFragmentManager(), "SingleButtonDialogFragment");
+                return;
+            }
+
+            JSONObject jsonResponse = (JSONObject) response;
+            if (jsonResponse.length() == 0) {
+                ll_progress_bar_container.setVisibility(View.GONE);
+                SingleButtonDialogFragment dialogFragment = SingleButtonDialogFragment.newInstance("登录失败", "返回为空");
+                dialogFragment.show(getSupportFragmentManager(), "SingleButtonDialogFragment");
+                return;
+            }
+
+            tv_pb_operation.setText("登录qq成功");
+            Toast.makeText(getApplicationContext(), getString(R.string.weibosdk_demo_toast_auth_success), Toast.LENGTH_SHORT).show();
+            doComplete(jsonResponse);
+        }
+
+        public void doComplete(JSONObject jsonObject) {
+            try {
+                String token = jsonObject.getString(Constants.PARAM_ACCESS_TOKEN);
+                String expires = jsonObject.getString(Constants.PARAM_EXPIRES_IN);
+                String openId = jsonObject.getString(Constants.PARAM_OPEN_ID);
+                if (!TextUtils.isEmpty(token) && !TextUtils.isEmpty(expires)
+                        && !TextUtils.isEmpty(openId)) {
+
+                    SharedPreferencesHelper.writeAccessToken(token, expires, openId);
+
+                    mTencent.setAccessToken(token, expires);
+                    mTencent.setOpenId(openId);
+
+                    tv_pb_operation.setText("获取qq个人信息");
+                    loadQQAccountInfo();
+
+                }
+            } catch (Exception e) {
+                //                Toast.makeText(getApplicationContext(),getString(R.string.weibosdk_demo_toast_auth_failed),Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        @Override
+        public void onError(UiError uiError) {
+            mDelivery.post(new Runnable() {
+                @Override
+                public void run() {
+                    ll_progress_bar_container.setVisibility(View.GONE);
+                    Toast.makeText(getApplicationContext(), getString(R.string.weibosdk_demo_toast_auth_failed), Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+
+        @Override
+        public void onCancel() {
+            mDelivery.post(new Runnable() {
+                @Override
+                public void run() {
+                    ll_progress_bar_container.setVisibility(View.GONE);
+                    Toast.makeText(getApplicationContext(), getString(R.string.weibosdk_demo_toast_auth_canceled), Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -147,20 +214,20 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
         // 注册微信API
         api = WXAPIFactory.createWXAPI(getApplicationContext(), WxConstants.APP_ID, true);
         api.registerApp(WxConstants.APP_ID);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
 
         loadWxLoginCode();
     }
 
     private void loadWxLoginCode() {
         Intent intent = getIntent();
-        String userName = intent.getStringExtra("userName");
-        String token = intent.getStringExtra("accessToken");
-        int expireDate = intent.getIntExtra("expireDate",0);
-        String state = intent.getStringExtra("state");
-        String resultUrl = intent.getStringExtra("resultUrl");
-        if(!TextUtils.isEmpty(accessToken)) {
-//            loadWxAccountInfo();
-            accessToken = token;
+        String code = intent.getStringExtra("accessCode");
+        if (!TextUtils.isEmpty(code)) {
+            getWxAccessToken(code);
         }
     }
 
@@ -390,74 +457,6 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
         });
     }
 
-    private IUiListener loginListener = new IUiListener() {
-        @Override
-        public void onComplete(Object response) {
-            if (null == response) {
-                ll_progress_bar_container.setVisibility(View.GONE);
-                SingleButtonDialogFragment dialogFragment = SingleButtonDialogFragment.newInstance("登录失败","返回为空");
-                dialogFragment.show(getSupportFragmentManager(),"SingleButtonDialogFragment");
-                return;
-            }
-
-            JSONObject jsonResponse = (JSONObject) response;
-            if(jsonResponse.length() == 0) {
-                ll_progress_bar_container.setVisibility(View.GONE);
-                SingleButtonDialogFragment dialogFragment = SingleButtonDialogFragment.newInstance("登录失败","返回为空");
-                dialogFragment.show(getSupportFragmentManager(),"SingleButtonDialogFragment");
-                return;
-            }
-
-            tv_pb_operation.setText("登录qq成功");
-            Toast.makeText(getApplicationContext(),getString(R.string.weibosdk_demo_toast_auth_success),Toast.LENGTH_SHORT).show();
-            doComplete(jsonResponse);
-        }
-
-        public void doComplete(JSONObject jsonObject) {
-            try {
-                String token = jsonObject.getString(Constants.PARAM_ACCESS_TOKEN);
-                String expires = jsonObject.getString(Constants.PARAM_EXPIRES_IN);
-                String openId = jsonObject.getString(Constants.PARAM_OPEN_ID);
-                if (!TextUtils.isEmpty(token) && !TextUtils.isEmpty(expires)
-                        && !TextUtils.isEmpty(openId)) {
-
-                    SharedPreferencesHelper.writeAccessToken(token, expires, openId);
-
-                    mTencent.setAccessToken(token, expires);
-                    mTencent.setOpenId(openId);
-
-                    tv_pb_operation.setText("获取qq个人信息");
-                    loadQQAccountInfo();
-
-                }
-            } catch(Exception e) {
-//                Toast.makeText(getApplicationContext(),getString(R.string.weibosdk_demo_toast_auth_failed),Toast.LENGTH_SHORT).show();
-            }
-        }
-
-        @Override
-        public void onError(UiError uiError) {
-            mDelivery.post(new Runnable() {
-                @Override
-                public void run() {
-                    ll_progress_bar_container.setVisibility(View.GONE);
-                    Toast.makeText(getApplicationContext(),getString(R.string.weibosdk_demo_toast_auth_failed),Toast.LENGTH_SHORT).show();
-                }
-            });
-        }
-
-        @Override
-        public void onCancel() {
-            mDelivery.post(new Runnable() {
-                @Override
-                public void run() {
-                    ll_progress_bar_container.setVisibility(View.GONE);
-                    Toast.makeText(getApplicationContext(),getString(R.string.weibosdk_demo_toast_auth_canceled),Toast.LENGTH_SHORT).show();
-                }
-            });
-        }
-    };
-
     private void loadQQAccountInfo() {
         UserInfo userInfo = new UserInfo(getApplicationContext(),
                 QQAuth.createInstance(TencentConstants.APP_ID, getApplicationContext()),
@@ -513,57 +512,57 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
         });
     }
 
-//    private void getWxAccessToken( String accessCode) {
-//
-//        ll_progress_bar_container.setVisibility(View.VISIBLE);
-//        tv_pb_operation.setText("获取微信access_token");
-//
-//        OkHttpCommonUtil okHttp = OkHttpCommonUtil.newInstance(getApplicationContext());
-//        okHttp.postRequest(
-//                "https://api.weixin.qq.com/sns/oauth2/access_token",
-//                new OkHttpCommonUtil.Param[]{
-//                        new OkHttpCommonUtil.Param("appid", WxConstants.APP_ID),
-//                        new OkHttpCommonUtil.Param("secret", WxConstants.APP_SECRET),
-//                        new OkHttpCommonUtil.Param("code", accessCode),
-//                        new OkHttpCommonUtil.Param("grant_type", "authorization_code")
-//                },
-//                new HttpBaseCallback() {
-//
-//                    @Override
-//                    public void onResponse(Response response) throws IOException {
-//                        String body = response.body().string();
-//                        mWxOauth2AccessToken = WxOauth2AccessToken.parseAccessToken(body);
-//                        if (mWxOauth2AccessToken != null && mWxOauth2AccessToken.isSessionValid()) {
-//                            // 保存 Token 到 SharedPreferences
-//                            SharedPreferencesHelper.writeAccessToken(mWxOauth2AccessToken);
-//                            mDelivery.post(new Runnable() {
-//                                @Override
-//                                public void run() {
-//                                    loadWxAccountInfo();
-//                                }
-//                            });
-//
-//                        } else { // 授权失败
-//                            Log.d(TAG, "body == " + body);
-//                            mDelivery.post(new Runnable() {
-//                                @Override
-//                                public void run() {
-//                                    ll_progress_bar_container.setVisibility(View.GONE);
-//                                    Toast.makeText(getApplicationContext(), "微信access_token获取异常", Toast.LENGTH_SHORT).show();
-//                                }
-//                            });
-//
-//                        }
-//                    }
-//                });
-//    }
+    private void getWxAccessToken(String accessCode) {
+
+        ll_progress_bar_container.setVisibility(View.VISIBLE);
+        tv_pb_operation.setText("获取微信access_token");
+
+        OkHttpCommonUtil okHttp = OkHttpCommonUtil.newInstance(getApplicationContext());
+        okHttp.postRequest(
+                "https://api.weixin.qq.com/sns/oauth2/access_token",
+                new OkHttpCommonUtil.Param[]{
+                        new OkHttpCommonUtil.Param("appid", WxConstants.APP_ID),
+                        new OkHttpCommonUtil.Param("secret", WxConstants.APP_SECRET),
+                        new OkHttpCommonUtil.Param("code", accessCode),
+                        new OkHttpCommonUtil.Param("grant_type", "authorization_code")
+                },
+                new HttpBaseCallback() {
+
+                    @Override
+                    public void onResponse(Response response) throws IOException {
+                        String body = response.body().string();
+                        mWxOauth2AccessToken = WxOauth2AccessToken.parseAccessToken(body);
+                        if (mWxOauth2AccessToken != null && mWxOauth2AccessToken.isSessionValid()) {
+                            // 保存 Token 到 SharedPreferences
+                            SharedPreferencesHelper.writeAccessToken(mWxOauth2AccessToken);
+                            mDelivery.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    loadWxAccountInfo();
+                                }
+                            });
+
+                        } else { // 授权失败
+                            Log.d(TAG, "body == " + body);
+                            mDelivery.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    ll_progress_bar_container.setVisibility(View.GONE);
+                                    Toast.makeText(getApplicationContext(), "微信access_token获取异常", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+
+                        }
+                    }
+                });
+    }
 
     private void loadWxAccountInfo() {
 
         tv_pb_operation.setText("获取微信用户个人信息");
 
-        String openId = mWxOauth2AccessToken.getOpenId();
-//        String accessToken = mWxOauth2AccessToken.getToken();
+        String openId = WxConstants.APP_ID;
+        String accessToken = mWxOauth2AccessToken.getToken();
         OkHttpCommonUtil okHttp = OkHttpCommonUtil.newInstance(getApplicationContext());
         okHttp.postRequest("https://api.weixin.qq.com/sns/userinfo",
                 new OkHttpCommonUtil.Param[]{
@@ -574,6 +573,7 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
                     @Override
                     public void onResponse(Response response) throws IOException {
                         String body = response.body().string();
+                        Log.d(TAG, " WX ACCOUNT INFO return == " + body);
                         JSONObject jsonObject;
                         try {
                             jsonObject = new JSONObject(body);

@@ -6,9 +6,25 @@
     <dimen name="padding_back_button">8dp</dimen>
     <dimen name="padding_activity_title">8dp</dimen>
     <dimen name="text_size_activity_title">20sp</dimen>
-    
-    <dimen name="margin_tv_label_login_pattern">32dp</dimen>
+
+    <dimen name="margin_tv_label_login_pattern">24dp</dimen>
     <dimen name="margin_portrait">8dp</dimen>
+
+    <!-- MainActivity引导页 -->
+    <dimen name="height_ll_container_buttons">150dp</dimen>
+    <dimen name="padding_horizontal_button">32dp</dimen>
+    <dimen name="padding_vertical_button">8dp</dimen>
+    <dimen name="text_size_button">24sp</dimen>
+
+    <!-- 用户登录 -->
+    <dimen name="margin_cb_show_pwd">4dp</dimen>
+    <dimen name="padding_horizontal_ll_form_container">16dp</dimen>
+    <dimen name="text_size_tv_label_phone_no">18sp</dimen>
+    <dimen name="padding_horizontal_et_login_no">8dp</dimen>
+
+    <!-- Home主页 -->
+    <dimen name="height_vertical_bottom_group_button_container">50dp</dimen>
+    <dimen name="padding_vertical_bottom_group_button_container">5dp</dimen>
 
     <!-- 消息列表与聊天用户列表 -->
     <dimen name="iv_user_portrait_width">48dp</dimen>

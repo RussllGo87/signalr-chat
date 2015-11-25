@@ -6,6 +6,8 @@
         <item name="android:popupBackground">#0F213F</item>
         <item name="android:disabledAlpha">0.5</item>
         <item name="android:textColor">@android:color/black</item>
+        <item name="colorPrimary">@color/bg_btn_default</item>
+        <item name="colorPrimaryDark">@color/bg_btn_default</item>
     </style>
 
     <style name="CaptureThemeFullScreen" parent="Theme.AppCompat.Light.DarkActionBar"/>

@@ -8,8 +8,8 @@
     <EditText android:id="@+id/et_phone_reg"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="phone"
-        android:enabled="false"/>
+              android:enabled="false"
+              android:inputType="phone"/>
 
     <EditText android:id="@+id/et_nick_name_reg"
               android:layout_width="match_parent"
@@ -19,14 +19,14 @@
     <EditText android:id="@+id/et_pwd_reg"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:inputType="textPassword"
-              android:hint="@string/hint_et_pwd_reg"/>
+              android:hint="@string/hint_et_pwd_reg"
+              android:inputType="textPassword"/>
 
     <EditText android:id="@+id/et_pwd_retype_reg"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:inputType="textPassword"
-              android:hint="@string/hint_et_pwd_retype_reg"/>
+              android:hint="@string/hint_et_pwd_retype_reg"
+              android:inputType="textPassword"/>
 
     <!--
     <EditText android:id="@+id/et_qq_reg"
@@ -51,9 +51,9 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:paddingLeft="4dp"
             android:layout_weight="1"
             android:gravity="center_vertical"
+            android:paddingLeft="4dp"
             android:text="@string/tv_label_gender"
             android:textSize="18sp"/>
 
@@ -85,6 +85,8 @@
     <Button android:id="@+id/btn_info_reg_submit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/btn_info_reg_submit"/>
+            android:background="@drawable/selector_btn_bg"
+            android:text="@string/btn_info_reg_submit"
+            android:textColor="@android:color/white"/>
 
 </LinearLayout>

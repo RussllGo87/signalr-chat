@@ -19,8 +19,8 @@ import android.view.ContextThemeWrapper;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -75,30 +75,64 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     DiscoveryFragment discoveryFragment;
     AccountFragment accountFragment;
 
-    Button btn_discovery;
-    Button btn_list_chat;
-    Button btn_list_friend;
-    Button btn_account_management;
+    ImageView iv_discovery;
+    ImageView iv_list_chat;
+    ImageView iv_list_friend;
+    ImageView iv_account_management;
 
     CollectionPagerAdapter adapter;
-
-    private Handler mDelivery;
     SharedPreferencesHelper helper;
-
-    private boolean mReturningWithResult = false;
-
-    /** 微博相关参数,封装了 "access_token"，"expires_in"，"refresh_token"，并提供了他们的管理功能  */
-    private Oauth2AccessToken mAccessToken;
-
     // qq 登录配置
     Tencent mTencent;
-
-    // 微信登录配置
-    private WxOauth2AccessToken mWxOauth2AccessToken;
-
-//    ChatService chatService;
+    //    ChatService chatService;
     ChatService mService;
     boolean mBound = false;
+    private Handler mDelivery;
+    private boolean mReturningWithResult = false;
+    /** 微博相关参数,封装了 "access_token"，"expires_in"，"refresh_token"，并提供了他们的管理功能  */
+    private Oauth2AccessToken mAccessToken;
+    // 微信登录配置
+    private WxOauth2AccessToken mWxOauth2AccessToken;
+    /**
+     * Defines callbacks for service binding, passed to bindService()
+     */
+    private ServiceConnection mConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName className,
+                                       IBinder service) {
+            // We've bound to LocalService, cast the IBinder and get LocalService instance
+            ChatService.ChatBinder binder = (ChatService.ChatBinder) service;
+            mService = binder.getService();
+            mBound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName className) {
+            mBound = false;
+        }
+    };
+    private OnFragmentInteractionListener onFragmentInteractionListener = new OnFragmentInteractionListener() {
+
+        @Override
+        public void loadAccountInfo() {
+            String nickname = helper.getStringValue(AppConstants.KEY_SYS_CURRENT_NICKNAME);
+            String portrait = helper.getStringValue(AppConstants.KEY_SYS_CURRENT_PORTRAIT);
+
+            AccountFragment fragment = (AccountFragment) adapter.getItem(3);
+            fragment.updateAccountInfo(nickname, portrait);
+        }
+
+        @Override
+        public void shield(User user) {
+            if (mBound) {
+                mService.sendMessage("Shield",
+                        MessageConstructor.constructShieldMsgReq(
+                                helper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID),
+                                user.getUid()));
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -155,7 +189,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             });
         }
 
-        mTencent = Tencent.createInstance(TencentConstants.APP_ID,getApplicationContext());
+        mTencent = Tencent.createInstance(TencentConstants.APP_ID, getApplicationContext());
         String token = helper.getStringValue(TencentConstants.KEY_ACCESS_TOKEN);
         String expires = helper.getStringValue(TencentConstants.KEY_EXPIRES_IN);
         String openId = helper.getStringValue(TencentConstants.KEY_OPEN_ID);
@@ -266,14 +300,14 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         fl_container = (FrameLayout) findViewById(R.id.fl_container);
         fl_container = (FrameLayout) findViewById(R.id.fl_container);
         pager = (ViewPager) findViewById(R.id.pager);
-        btn_discovery = (Button) findViewById(R.id.btn_discovery);
-        btn_discovery.setOnClickListener(this);
-        btn_list_chat = (Button) findViewById(R.id.btn_list_chat);
-        btn_list_chat.setOnClickListener(this);
-        btn_list_friend = (Button) findViewById(R.id.btn_list_friend);
-        btn_list_friend.setOnClickListener(this);
-        btn_account_management = (Button) findViewById(R.id.btn_account_management);
-        btn_account_management.setOnClickListener(this);
+        iv_discovery = (ImageView) findViewById(R.id.iv_discovery);
+        iv_discovery.setOnClickListener(this);
+        iv_list_chat = (ImageView) findViewById(R.id.iv_list_chat);
+        iv_list_chat.setOnClickListener(this);
+        iv_list_friend = (ImageView) findViewById(R.id.iv_list_friend);
+        iv_list_friend.setOnClickListener(this);
+        iv_account_management = (ImageView) findViewById(R.id.iv_account_management);
+        iv_account_management.setOnClickListener(this);
     }
 
     private void initAdapter() {
@@ -287,27 +321,56 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         adapter.add(buddyFragment);
         adapter.add(accountFragment);
         pager.setAdapter(adapter);
-
+        setImageViewGroupSelected(0);
         pager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
             public void onPageSelected(int position) {
                 switch (position) {
                     case 1:
                         tv_activity_title.setText(R.string.tv_activity_title_message);
+                        setImageViewGroupSelected(1);
                         break;
                     case 2:
                         tv_activity_title.setText(R.string.tv_activity_title_roster);
-
+                        setImageViewGroupSelected(2);
                         break;
                     case 3:
                         tv_activity_title.setText(R.string.tv_activity_title_account);
+                        setImageViewGroupSelected(3);
                         break;
                     case 0:
                         tv_activity_title.setText(R.string.tv_activity_title_discovery);
+                        setImageViewGroupSelected(0);
                         break;
                 }
             }
         });
+    }
+
+    private void setImageViewGroupSelected(int index) {
+        if (index == 0) {
+            iv_discovery.setSelected(true);
+        } else {
+            iv_discovery.setSelected(false);
+        }
+
+        if (index == 1) {
+            iv_list_chat.setSelected(true);
+        } else {
+            iv_list_chat.setSelected(false);
+        }
+
+        if (index == 2) {
+            iv_list_friend.setSelected(true);
+        } else {
+            iv_list_friend.setSelected(false);
+        }
+
+        if (index == 3) {
+            iv_account_management.setSelected(true);
+        } else {
+            iv_account_management.setSelected(false);
+        }
     }
 
     private void initCommunicate() {
@@ -336,46 +399,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    /** Defines callbacks for service binding, passed to bindService() */
-    private ServiceConnection mConnection = new ServiceConnection() {
-
-        @Override
-        public void onServiceConnected(ComponentName className,
-                                       IBinder service) {
-            // We've bound to LocalService, cast the IBinder and get LocalService instance
-            ChatService.ChatBinder binder = (ChatService.ChatBinder) service;
-            mService = (ChatService) binder.getService();
-            mBound = true;
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName className) {
-            mBound = false;
-        }
-    };
-
-    private OnFragmentInteractionListener onFragmentInteractionListener = new OnFragmentInteractionListener() {
-
-        @Override
-        public void loadAccountInfo() {
-            String nickname = helper.getStringValue(AppConstants.KEY_SYS_CURRENT_NICKNAME);
-            String portrait = helper.getStringValue(AppConstants.KEY_SYS_CURRENT_PORTRAIT);
-
-            AccountFragment fragment = (AccountFragment) adapter.getItem(3);
-            fragment.updateAccountInfo(nickname, portrait);
-        }
-
-        @Override
-        public void shield(User user) {
-            if(mBound) {
-                mService.sendMessage("Shield",
-                        MessageConstructor.constructShieldMsgReq(
-                                helper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID),
-                                user.getUid()));
-            }
-        }
-    };
-
     @Override
     public void onClick(View view) {
         int viewId = view.getId();
@@ -383,17 +406,21 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.tv_menu_drop_down:
                 popupMenu(view);
                 break;
-            case R.id.btn_discovery:
+            case R.id.iv_discovery:
                 pager.setCurrentItem(0);
+                setImageViewGroupSelected(0);
                 break;
-            case R.id.btn_list_chat:
+            case R.id.iv_list_chat:
                 pager.setCurrentItem(1);
+                setImageViewGroupSelected(1);
                 break;
-            case R.id.btn_list_friend:
+            case R.id.iv_list_friend:
                 pager.setCurrentItem(2);
+                setImageViewGroupSelected(2);
                 break;
-            case R.id.btn_account_management:
+            case R.id.iv_account_management:
                 pager.setCurrentItem(3);
+                setImageViewGroupSelected(3);
                 break;
         }
     }

@@ -2,8 +2,8 @@
              xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
-             android:orientation="vertical"
              android:gravity="center_horizontal"
+              android:orientation="vertical"
              tools:context="net.pingfang.signalr.chat.fragment.PhoneFragment">
 
     <RelativeLayout
@@ -14,17 +14,19 @@
         <EditText android:id="@+id/et_phone_reg"
                   android:layout_width="match_parent"
                   android:layout_height="wrap_content"
+                  android:hint="@string/hint_et_phone_reg"
                   android:inputType="phone|numberDecimal"
-                  android:singleLine="true"
                   android:minWidth="200dp"
-                  android:hint="@string/hint_et_phone_reg"/>
+                  android:singleLine="true"/>
 
         <Button android:id="@+id/btn_validate_phone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"
-                android:text="@string/btn_validate_phone"/>
+                android:layout_alignParentRight="true"
+                android:background="@drawable/selector_btn_bg"
+                android:text="@string/btn_validate_phone"
+                android:textColor="@android:color/white"/>
 
 
         <!--

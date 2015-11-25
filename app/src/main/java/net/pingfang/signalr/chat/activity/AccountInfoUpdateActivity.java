@@ -36,9 +36,9 @@ import net.pingfang.signalr.chat.net.OkHttpCommonUtil;
 import net.pingfang.signalr.chat.ui.dialog.DatePickerFragment;
 import net.pingfang.signalr.chat.util.CommonTools;
 import net.pingfang.signalr.chat.util.FileUtil;
+import net.pingfang.signalr.chat.util.GlobalApplication;
 import net.pingfang.signalr.chat.util.MediaFileUtils;
 import net.pingfang.signalr.chat.util.SharedPreferencesHelper;
-import net.pingfang.signalr.chat.util.GlobalApplication;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -68,29 +68,15 @@ public class AccountInfoUpdateActivity extends AppCompatActivity implements View
 
 
     TextView btn_activity_back;
-
-//    private EditText et_account_username;
-    private EditText et_account_nickname;
-    private EditText et_account_real_name;
-    private EditText et_account_phone;
-    private EditText et_account_address;
-    private EditText et_account_birthdate;
 //    private EditText et_account_qq;
     RadioGroup rg_gender;
     RadioButton rb_gender_male;
     RadioButton rb_gender_female;
-    private ImageView iv_account_portrait;
-
-    private Button btn_account_info_save;
-    private Button btn_account_info_cancel;
-
     SharedPreferencesHelper sharedPreferencesHelper;
-
     Dialog dialog;
     Uri targetUri;
     String tmpFilePath;
     String fileContent;
-
     String phoneNo;
     String nickName;
     String realname;
@@ -98,6 +84,15 @@ public class AccountInfoUpdateActivity extends AppCompatActivity implements View
     String address;
     String birthdate;
     String gender;
+    //    private EditText et_account_username;
+    private EditText et_account_nickname;
+    private EditText et_account_real_name;
+    private EditText et_account_phone;
+    private EditText et_account_address;
+    private EditText et_account_birthdate;
+    private ImageView iv_account_portrait;
+    private Button btn_account_info_save;
+    private Button btn_account_info_cancel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,7 +101,7 @@ public class AccountInfoUpdateActivity extends AppCompatActivity implements View
 
         sharedPreferencesHelper = SharedPreferencesHelper.newInstance(getApplicationContext());
         initView();
-
+        loadAccountInfo();
     }
 
     private void initView() {
@@ -145,12 +140,6 @@ public class AccountInfoUpdateActivity extends AppCompatActivity implements View
         btn_account_info_cancel.setOnClickListener(this);
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-        loadAccountInfo();
-    }
 
     private void showDialog() {
         View view = getLayoutInflater().inflate(R.layout.photo_choose_dialog,
@@ -414,6 +403,9 @@ public class AccountInfoUpdateActivity extends AppCompatActivity implements View
 
                                         if(!TextUtils.isEmpty(portraitUrl)) {
                                             OkHttpCommonUtil okHttp = OkHttpCommonUtil.newInstance(getApplicationContext());
+                                            if (!portraitUrl.startsWith("http")) {
+                                                portraitUrl = "http://hale.redstream.cn/UpLoad/Head/" + portraitUrl;
+                                            }
                                             okHttp.display(iv_account_portrait, portraitUrl, R.mipmap.ic_launcher);
                                         }
 

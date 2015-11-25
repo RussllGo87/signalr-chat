@@ -1,18 +1,18 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="center_horizontal"
+              android:layout_marginBottom="@dimen/activity_vertical_margin"
     android:layout_marginTop="@dimen/activity_vertical_margin"
-    android:layout_marginBottom="@dimen/activity_vertical_margin">
+              android:gravity="center_horizontal"
+              android:orientation="vertical">
 
     <LinearLayout android:id="@+id/ll_container_settings_item_me"
         style="@style/SettingItemStyle"
+                  android:layout_marginTop="@dimen/activity_vertical_margin"
+                  android:background="@drawable/selector_settings_item"
         android:orientation="horizontal"
         android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        android:background="@drawable/selector_settings_item"
-        android:layout_marginBottom="@dimen/activity_vertical_margin">
+                  android:paddingRight="16dp">
 
         <ImageView android:id="@+id/iv_account_portrait"
             android:layout_width="@dimen/btn_qr_code_width"
@@ -29,30 +29,31 @@
         <ImageView android:id="@+id/btn_qr_code"
             android:layout_width="@dimen/btn_qr_code_width"
             android:layout_height="@dimen/btn_qr_code_height"
-            android:src="@drawable/selector_qr_code"/>
+                   android:src="@drawable/selector_qr_code"
+                   android:visibility="gone"/>
 
     </LinearLayout>
 
     <TextView android:id="@+id/tv_account_item_uploaded"
               style="@style/SettingItemStyle"
               android:background="@drawable/selector_settings_item"
-              android:text="@string/tv_account_item_uploaded"
+              android:drawableEnd="@drawable/setting_view_arrow"
               android:drawableRight="@drawable/setting_view_arrow"
-              android:drawableEnd="@drawable/setting_view_arrow"/>
+              android:text="@string/tv_account_item_uploaded"/>
 
     <TextView android:id="@+id/tv_account_item_nearby"
               style="@style/SettingItemStyle"
               android:layout_marginBottom="@dimen/activity_vertical_margin"
               android:background="@drawable/selector_settings_item"
-              android:text="@string/tv_account_item_ads"
+              android:drawableEnd="@drawable/setting_view_arrow"
               android:drawableRight="@drawable/setting_view_arrow"
-              android:drawableEnd="@drawable/setting_view_arrow"/>
+              android:text="@string/tv_account_item_ads"/>
 
     <TextView android:id="@+id/tv_account_item_settings"
         style="@style/SettingItemStyle"
         android:background="@drawable/selector_settings_item"
-        android:text="@string/tv_account_item_settings"
+              android:drawableEnd="@drawable/setting_view_arrow"
         android:drawableRight="@drawable/setting_view_arrow"
-        android:drawableEnd="@drawable/setting_view_arrow"/>
+              android:text="@string/tv_account_item_settings"/>
 
 </LinearLayout>

@@ -66,7 +66,14 @@ public class ResourcePostActivity extends AppCompatActivity implements View.OnCl
     public static final String KEY_RESOURCE_POST_PROFILE = "pic";
     public static final String KEY_URL_RESOURCE_POST_LOCATION_LAT = "lat";
     public static final String KEY_URL_RESOURCE_POST_LOCATION_LNG = "lng";
-
+    public LocationListenerImpl locationListener;
+    PhotoGridViewAdapter adapter;
+    SharedPreferencesHelper sharedPreferencesHelper;
+    Dialog dialog;
+    Uri targetUri;
+    String tmpFilePath;
+    String fileContent;
+    List<String> fileContentList = new ArrayList<>();
     private TextView btn_activity_back;
     private EditText et_resource_width;
     private EditText et_resource_height;
@@ -75,24 +82,12 @@ public class ResourcePostActivity extends AppCompatActivity implements View.OnCl
     private EditText et_resource_phone;
     private EditText et_resource_remark;
     private GridView gv_camera;
-    PhotoGridViewAdapter adapter;
-    private Button btn_add_pic;
+    private TextView tv_add_pic;
 //    private ImageView iv_resource_profile;
     private Button btn_resource_save;
     private Button btn_resource_cancel;
-
     private LocationClient locationClient;
-    public LocationListenerImpl locationListener;
     private LatLng currentLatLng;
-
-    SharedPreferencesHelper sharedPreferencesHelper;
-
-    Dialog dialog;
-    Uri targetUri;
-    String tmpFilePath;
-    String fileContent;
-
-    List<String> fileContentList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,8 +114,8 @@ public class ResourcePostActivity extends AppCompatActivity implements View.OnCl
         gv_camera.setAdapter(adapter);
 //        iv_resource_profile = (ImageView) findViewById(R.id.iv_resource_profile);
 //        iv_resource_profile.setOnClickListener(this);
-        btn_add_pic = (Button) findViewById(R.id.btn_add_pic);
-        btn_add_pic.setOnClickListener(this);
+        tv_add_pic = (TextView) findViewById(R.id.tv_add_pic);
+        tv_add_pic.setOnClickListener(this);
 
         btn_resource_save = (Button) findViewById(R.id.btn_resource_save);
         btn_resource_save.setOnClickListener(this);
@@ -162,8 +157,14 @@ public class ResourcePostActivity extends AppCompatActivity implements View.OnCl
             case R.id.btn_activity_back:
                 navigateUp();
                 break;
-            case R.id.btn_add_pic:
-                showDialog();
+            case R.id.tv_add_pic:
+                if (fileContentList.size() < 4) {
+                    showDialog();
+                } else {
+                    Toast.makeText(getApplicationContext(),
+                            getString(R.string.toast_resource_post_pic_num_error_2),
+                            Toast.LENGTH_SHORT).show();
+                }
                 break;
             case R.id.btn_resource_save:
                 storeOrPostRes();
@@ -333,7 +334,7 @@ public class ResourcePostActivity extends AppCompatActivity implements View.OnCl
 
         String tmpContent = sb.toString();
 
-        if(!TextUtils.isEmpty(tmpContent) && fileContentList.size() > 2 && fileContentList.size() < 7) {
+        if (!TextUtils.isEmpty(tmpContent) && fileContentList.size() > 2 && fileContentList.size() < 5) {
             OkHttpCommonUtil.Param[] params = new OkHttpCommonUtil.Param[]{
                     new OkHttpCommonUtil.Param(KEY_RESOURCE_POST_UID, sharedPreferencesHelper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID)),
                     new OkHttpCommonUtil.Param(KEY_RESOURCE_POST_WIDTH, et_resource_width.getText().toString().trim()),

@@ -18,8 +18,9 @@
 
     <!-- 登录页 -->
     <string name="title_activity_login">登录</string>
-    <string name="hint_et_login_no">手机号码</string>
-    <string name="hint_et_login_pwd">密码</string>
+    <string name="tv_label_phone_no">手机号码</string>
+    <string name="hint_et_login_no">请输入11位手机号码</string>
+    <string name="hint_et_login_pwd">请输入密码</string>
     <string name="cb_show_pwd">显示密码</string>
     <string name="tv_pwd_forget">忘记密码</string>
     <string name="tv_label_login_pattern">用以下方式登录</string>
@@ -157,7 +158,8 @@
     <string name="toast_resource_post_ok">广告资源上传成功</string>
     <string name="toast_resource_posting_error">广告资源上传错误</string>
     <string name="toast_resource_post_error">广告资源上传失败</string>
-    <string name="toast_resource_post_pic_num_error_1">只能上传3到6张图片</string>
+    <string name="toast_resource_post_pic_num_error_1">只能上传3到4张图片</string>
+    <string name="toast_resource_post_pic_num_error_2">最多只能拍4张图</string>
     <string name="tv_resource_post_requirement">上传资源说明：1.墙体画面清晰并能看清墙体类型；2.需上传四张照片（三张近景一张正面、二张不同侧面，及一张远景带路的照片）；3.墙体画面要完整并无明显遮挡物。</string>
 
     <!-- 广告维护 -->
