@@ -21,10 +21,12 @@ android {
         demo {
             applicationId "net.pingfang.signalr.chat.demo"
             minSdkVersion 9
+            versionName "1.0.9alpha"
         }
         full {
             applicationId "net.pingfang.signalr.chat.full"
             minSdkVersion 9
+            versionName "1.0.9beta"
         }
     }
     packagingOptions {

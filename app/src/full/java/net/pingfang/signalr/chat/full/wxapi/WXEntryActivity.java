@@ -43,7 +43,7 @@ public class WXEntryActivity extends AppCompatActivity implements IWXAPIEventHan
 
         setIntent(intent);
         api.handleIntent(intent, this);
-
+        finish();
     }
 
     /**
@@ -78,24 +78,12 @@ public class WXEntryActivity extends AppCompatActivity implements IWXAPIEventHan
             case BaseResp.ErrCode.ERR_OK:
                 if(ConstantsAPI.COMMAND_SENDAUTH == respType) { // 微信第三方登录
                     SendAuth.Resp resp = (SendAuth.Resp) baseResp;
-                    String userName = resp.userName;
-                    String accessToken = resp.token;
-                    int expireDate = resp.expireDate;
-                    String state = resp.state;
-                    String resultUrl = resp.resultUrl;
+                    String code = resp.token;
 
-                    Log.d(TAG,"userName == " + userName);
-                    Log.d(TAG,"accessToken == " + accessToken);
-                    Log.d(TAG,"expireDate == " + expireDate);
-                    Log.d(TAG,"state == " + state);
-                    Log.d(TAG,"resultUrl == " + resultUrl);
+                    Log.d(TAG, "accessCode == " + code);
 
                     Intent authOKIntent = new Intent(getApplicationContext(), LoginActivity.class);
-                    authOKIntent.putExtra("userName", userName);
-                    authOKIntent.putExtra("accessToken", accessToken);
-                    authOKIntent.putExtra("expireDate", expireDate);
-                    authOKIntent.putExtra("state", state);
-                    authOKIntent.putExtra("resultUrl", resultUrl);
+                    authOKIntent.putExtra("accessCode", code);
 
                     authOKIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(authOKIntent);
