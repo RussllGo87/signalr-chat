@@ -393,9 +393,9 @@ public class AccountInfoUpdateActivity extends AppCompatActivity implements View
                                             et_account_real_name.setText(realname);
                                         }
 
-//                                        if(!TextUtils.isEmpty(address)) {
-//                                            et_account_address.setText(address);
-//                                        }
+                                        if (!TextUtils.isEmpty(address)) {
+                                            et_account_address.setText(address);
+                                        }
 
                                         if(!TextUtils.isEmpty(birthdate)) {
                                             et_account_birthdate.setText(birthdate);
@@ -403,9 +403,9 @@ public class AccountInfoUpdateActivity extends AppCompatActivity implements View
 
                                         if(!TextUtils.isEmpty(portraitUrl)) {
                                             OkHttpCommonUtil okHttp = OkHttpCommonUtil.newInstance(getApplicationContext());
-                                            if (!portraitUrl.startsWith("http")) {
-                                                portraitUrl = "http://hale.redstream.cn/UpLoad/Head/" + portraitUrl;
-                                            }
+                                            //                                            if (!portraitUrl.startsWith("http")) {
+                                            //                                                portraitUrl = "http://hale.redstream.cn/UpLoad/Head/" + portraitUrl;
+                                            //                                            }
                                             okHttp.display(iv_account_portrait, portraitUrl, R.mipmap.ic_launcher);
                                         }
 
