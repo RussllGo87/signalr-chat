@@ -51,37 +51,99 @@
     </ScrollView>
 
     <LinearLayout
+        android:id="@+id/ll_msg_form_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/margin_vertical_ll_msg_form_container"
+        android:layout_marginTop="@dimen/margin_vertical_ll_msg_form_container"
         android:orientation="horizontal">
 
+        <ImageView
+            android:id="@+id/iv_quick_voice_txt_switcher"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="10dp"
+            android:src="@drawable/selector_iv_quick_switcher"/>
+
         <Button android:id="@+id/btn_voice_record"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-                android:layout_marginRight="10dp"
-            android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_weight="1"
                 android:background="@drawable/selector_btn_bg"
-            android:text="@string/btn_voice_record"
+                android:text="@string/btn_voice_record"
                 android:textColor="@android:color/white"
-            android:visibility="gone"/>
+                android:visibility="gone"/>
 
         <EditText android:id="@+id/et_message"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
+                  android:layout_width="0dp"
+                  android:layout_height="wrap_content"
                   android:layout_marginRight="10dp"
-            android:layout_weight="1"
+                  android:layout_weight="1"
                   android:imeOptions="actionSend"
-            android:inputType="text"
-                  android:visibility="visible"/>
+                  android:inputType="text"/>
 
-        <Button android:id="@+id/btn_send"
+        <TextView
+            android:id="@+id/btn_send"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-                android:background="@drawable/selector_btn_bg"
-                android:text="@string/btn_send"
-                android:textColor="@android:color/white"/>
+            android:layout_marginRight="10dp"
+            android:background="@drawable/selector_btn_bg"
+            android:paddingBottom="@dimen/padding_vertical_button_chat"
+            android:paddingLeft="@dimen/padding_horizontal_button_chat"
+            android:paddingRight="@dimen/padding_horizontal_button_chat"
+            android:paddingTop="@dimen/padding_vertical_button_chat"
+            android:text="@string/btn_send"
+            android:textColor="@android:color/white"/>
+
+        <ImageView
+            android:id="@+id/iv_msg_type_chooser"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginRight="10dp"
+            android:src="@drawable/iv_msg_type_chooser"
+            android:visibility="gone"/>
 
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/ll_msg_type_buttons_container"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:visibility="gone">
 
+        <ImageView
+            android:id="@+id/iv_msg_type_txt"
+            android:layout_width="0dp"
+            android:layout_height="80dp"
+            android:layout_weight="1"
+            android:src="@drawable/iv_icon_msg_type_txt"/>
+
+        <ImageView
+            android:id="@+id/iv_msg_type_camera"
+            android:layout_width="0dp"
+            android:layout_height="80dp"
+            android:layout_weight="1"
+            android:src="@drawable/iv_icon_msg_type_camera"/>
+
+        <ImageView
+            android:id="@+id/iv_msg_type_pic"
+            android:layout_width="0dp"
+            android:layout_height="80dp"
+            android:layout_weight="1"
+            android:src="@drawable/iv_icon_msg_type_pic"/>
+
+        <ImageView
+            android:id="@+id/iv_msg_type_voice"
+            android:layout_width="0dp"
+            android:layout_height="80dp"
+            android:layout_weight="1"
+            android:src="@drawable/iv_icon_msg_type_voice"/>
+
+    </LinearLayout>
 </LinearLayout>

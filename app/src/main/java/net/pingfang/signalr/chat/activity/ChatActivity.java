@@ -21,14 +21,10 @@ import android.provider.MediaStore;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.PopupMenu;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.ContextThemeWrapper;
 import android.view.Gravity;
 import android.view.KeyEvent;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -70,7 +66,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     LinearLayout ll_message_container;
     EditText et_message;
     Button btn_voice_record;
-    Button btn_send;
+    TextView btn_send;
 
     MessageReceiver receiver;
 
@@ -94,6 +90,30 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     String tmpFilePath;
 
     ChatMessageProcessor chatMessageProcessor;
+    /**
+     * Defines callbacks for service binding, passed to bindService()
+     */
+    private ServiceConnection mConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName className,
+                                       IBinder service) {
+            // We've bound to LocalService, cast the IBinder and get LocalService instance
+            ChatService.ChatBinder binder = (ChatService.ChatBinder) service;
+            mService = binder.getService();
+            mBound = true;
+
+            String offlineMessageReq = MessageConstructor.constructOfflineMsgReq(buddyUid, uid, 1, 5);
+            Log.d("ChatActivity", offlineMessageReq);
+
+            mService.sendMessage("RequestOfflineMsg", offlineMessageReq);
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName className) {
+            mBound = false;
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -159,15 +179,15 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
 
-        btn_send = (Button) findViewById(R.id.btn_send);
+        btn_send = (TextView) findViewById(R.id.btn_send);
         btn_send.setOnClickListener(this);
-        btn_send.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                popupMenu(view);
-                return true;
-            }
-        });
+        //        btn_send.setOnLongClickListener(new View.OnLongClickListener() {
+        //            @Override
+        //            public boolean onLongClick(View view) {
+        //                popupMenu(view);
+        //                return true;
+        //            }
+        //        });
     }
 
     private void loadLocalMessage() {
@@ -181,6 +201,40 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
     }
 
+    //    private void popupMenu(View view) {
+    //        ContextThemeWrapper wrapper = new ContextThemeWrapper(getApplicationContext(), R.style.AppMainTheme);
+    //        PopupMenu popup = new PopupMenu(wrapper, view);
+    //        MenuInflater inflater = popup.getMenuInflater();
+    //        inflater.inflate(R.menu.menu_message_actions, popup.getMenu());
+    //        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+    //            @Override
+    //            public boolean onMenuItemClick(MenuItem item) {
+    //                switch (item.getItemId()) {
+    //                    case R.id.action_text:
+    //                        btn_voice_record.setVisibility(View.GONE);
+    //                        et_message.setVisibility(View.VISIBLE);
+    //                        break;
+    //                    case R.id.action_photo:
+    //                        btn_voice_record.setVisibility(View.GONE);
+    //                        et_message.setVisibility(View.VISIBLE);
+    //                        openCamera();
+    //                        break;
+    //                    case R.id.action_image:
+    //                        btn_voice_record.setVisibility(View.GONE);
+    //                        et_message.setVisibility(View.VISIBLE);
+    //                        sendImage();
+    //                        break;
+    //                    case R.id.action_voice:
+    //                        btn_voice_record.setVisibility(View.VISIBLE);
+    //                        et_message.setVisibility(View.GONE);
+    //                        break;
+    //                }
+    //                return true;
+    //            }
+    //        });
+    //        popup.show();
+    //    }
+
     public void registerReceiver() {
         receiver = new MessageReceiver();
         IntentFilter filter = new IntentFilter();
@@ -188,63 +242,6 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         filter.addAction(GlobalApplication.ACTION_INTENT_OFFLINE_MESSAGE_LIST_INCOMING);
         registerReceiver(receiver, filter);
     }
-
-    private void popupMenu(View view) {
-        ContextThemeWrapper wrapper = new ContextThemeWrapper(getApplicationContext(), R.style.AppMainTheme);
-        PopupMenu popup = new PopupMenu(wrapper, view);
-        MenuInflater inflater = popup.getMenuInflater();
-        inflater.inflate(R.menu.menu_message_actions, popup.getMenu());
-        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.action_text:
-                        btn_voice_record.setVisibility(View.GONE);
-                        et_message.setVisibility(View.VISIBLE);
-                        break;
-                    case R.id.action_photo:
-                        btn_voice_record.setVisibility(View.GONE);
-                        et_message.setVisibility(View.VISIBLE);
-                        openCamera();
-                        break;
-                    case R.id.action_image:
-                        btn_voice_record.setVisibility(View.GONE);
-                        et_message.setVisibility(View.VISIBLE);
-                        sendImage();
-                        break;
-                    case R.id.action_voice:
-                        btn_voice_record.setVisibility(View.VISIBLE);
-                        et_message.setVisibility(View.GONE);
-                        break;
-                }
-                return true;
-            }
-        });
-        popup.show();
-    }
-
-    /** Defines callbacks for service binding, passed to bindService() */
-    private ServiceConnection mConnection = new ServiceConnection() {
-
-        @Override
-        public void onServiceConnected(ComponentName className,
-                                       IBinder service) {
-            // We've bound to LocalService, cast the IBinder and get LocalService instance
-            ChatService.ChatBinder binder = (ChatService.ChatBinder) service;
-            mService = (ChatService) binder.getService();
-            mBound = true;
-
-            String offlineMessageReq = MessageConstructor.constructOfflineMsgReq(buddyUid,uid , 1, 5);
-            Log.d("ChatActivity",offlineMessageReq);
-
-            mService.sendMessage("RequestOfflineMsg",offlineMessageReq);
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName className) {
-            mBound = false;
-        }
-    };
 
     @Override
     public void onClick(View view) {
@@ -500,12 +497,12 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
         ImageView imageView = new ImageView(getApplicationContext());
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(MediaFileUtils.dpToPx(getApplicationContext(),150),
-                MediaFileUtils.dpToPx(getApplicationContext(),150));
+                MediaFileUtils.dpToPx(getApplicationContext(), 150));
         imageView.setLayoutParams(params);
-        imageView.setPadding(MediaFileUtils.dpToPx(getApplicationContext(),10),
-                MediaFileUtils.dpToPx(getApplicationContext(),10),
-                MediaFileUtils.dpToPx(getApplicationContext(),10),
-                MediaFileUtils.dpToPx(getApplicationContext(),10));
+        imageView.setPadding(MediaFileUtils.dpToPx(getApplicationContext(), 10),
+                MediaFileUtils.dpToPx(getApplicationContext(), 10),
+                MediaFileUtils.dpToPx(getApplicationContext(), 10),
+                MediaFileUtils.dpToPx(getApplicationContext(), 10));
         imageView.setImageBitmap(bitmap);
         if(direction) {
             imageView.setBackgroundResource(R.drawable.msg_me);
@@ -600,6 +597,17 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         ll_message_container.addView(ll);
 
         sv_message_container.fullScroll(View.FOCUS_DOWN);
+    }
+
+    public void navigateUp() {
+        Intent upIntent = NavUtils.getParentActivityIntent(this);
+        if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
+            TaskStackBuilder.create(this)
+                    .addNextIntentWithParentStack(upIntent)
+                    .startActivities();
+        } else {
+            onBackPressed();
+        }
     }
 
     private class MessageReceiver extends BroadcastReceiver {
@@ -753,17 +761,6 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                     inflaterTxtMessage(buddyName,false,content, newDatetime);
                 }
             }
-        }
-    }
-
-    public void navigateUp() {
-        Intent upIntent = NavUtils.getParentActivityIntent(this);
-        if(NavUtils.shouldUpRecreateTask(this, upIntent)) {
-            TaskStackBuilder.create(this)
-                    .addNextIntentWithParentStack(upIntent)
-                    .startActivities();
-        } else {
-            onBackPressed();
         }
     }
 
