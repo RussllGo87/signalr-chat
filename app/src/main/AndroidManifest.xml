@@ -119,6 +119,14 @@
                 android:value="net.pingfang.signalr.chat.activity.HomeActivity" />
         </activity>
         <activity
+            android:name=".activity.ListShieldsActivity"
+            android:label="@string/title_activity_filter_list"
+            android:parentActivityName=".activity.HomeActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="net.pingfang.signalr.chat.activity.HomeActivity"/>
+        </activity>
+        <activity
             android:name=".activity.NearbyFriendsActivity"
             android:label="@string/title_activity_nearby_friends"
             android:parentActivityName=".activity.HomeActivity" >
@@ -126,6 +134,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="net.pingfang.signalr.chat.activity.HomeActivity" />
         </activity>
+
 
         <activity
             android:name=".activity.ChatActivity"
@@ -154,8 +163,8 @@
         </activity>
 
         <activity
-            android:name=".activity.NearbyActivity"
-            android:label="@string/title_activity_nearby"
+            android:name=".activity.NearbyAdsActivity"
+            android:label="@string/title_activity_nearby_ads"
             android:parentActivityName=".activity.HomeActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -164,10 +173,10 @@
         <activity
             android:name=".activity.NearbyAdDetailActivity"
             android:label="@string/title_activity_nearby_ad_detail"
-            android:parentActivityName=".activity.NearbyActivity" >
+            android:parentActivityName=".activity.NearbyAdsActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="net.pingfang.signalr.chat.activity.NearbyActivity" />
+                android:value=".activity.NearbyAdsActivity"/>
         </activity>
 
         <activity
@@ -202,14 +211,6 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="net.pingfang.signalr.chat.activity.AccountSettingsActivity" />
-        </activity>
-        <activity
-            android:name=".activity.ListShieldsActivity"
-            android:label="@string/title_activity_filter_list"
-            android:parentActivityName=".activity.SettingsActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="net.pingfang.signalr.chat.activity.SettingsActivity" />
         </activity>
         <activity
             android:name=".activity.AppAboutActivity"
@@ -269,6 +270,7 @@
                 <action android:name="com.tencent.mm.sdk.channel.Intent.ACTION_MESSAGE" />
             </intent-filter>
         </receiver>
+
     </application>
 
 </manifest>

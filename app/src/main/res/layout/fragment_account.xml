@@ -6,20 +6,22 @@
               android:gravity="center_horizontal"
               android:orientation="vertical">
 
-    <LinearLayout android:id="@+id/ll_container_settings_item_me"
+    <LinearLayout
+        android:id="@+id/ll_container_account_item_me"
         style="@style/SettingItemStyle"
-                  android:layout_marginTop="@dimen/activity_vertical_margin"
-                  android:background="@drawable/selector_settings_item"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:background="@drawable/selector_settings_item"
         android:orientation="horizontal"
         android:paddingLeft="16dp"
-                  android:paddingRight="16dp">
+        android:paddingRight="16dp">
 
         <ImageView android:id="@+id/iv_account_portrait"
             android:layout_width="@dimen/btn_qr_code_width"
             android:layout_height="@dimen/btn_qr_code_width"
             android:src="@mipmap/ic_launcher"/>
 
-        <TextView android:id="@+id/tv_settings_item_me"
+        <TextView
+            android:id="@+id/tv_account_item_me"
             style="@style/SettingItemStyle"
             android:layout_width="0dp"
             android:layout_weight="1"
@@ -41,13 +43,14 @@
               android:drawableRight="@drawable/setting_view_arrow"
               android:text="@string/tv_account_item_uploaded"/>
 
-    <TextView android:id="@+id/tv_account_item_nearby"
+    <TextView
+        android:id="@+id/tv_account_item_filter_list"
               style="@style/SettingItemStyle"
               android:layout_marginBottom="@dimen/activity_vertical_margin"
               android:background="@drawable/selector_settings_item"
               android:drawableEnd="@drawable/setting_view_arrow"
               android:drawableRight="@drawable/setting_view_arrow"
-              android:text="@string/tv_account_item_ads"/>
+        android:text="@string/tv_account_item_filter_list"/>
 
     <TextView android:id="@+id/tv_account_item_settings"
         style="@style/SettingItemStyle"

@@ -173,9 +173,7 @@
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:paddingRight="@dimen/activity_horizontal_margin"
         android:text="@string/tv_label_login_pattern"
-              android:textColor="@color/text_color_tv_label_grey"
-
-        />
+              android:textColor="@color/text_color_tv_label_grey"/>
 
     <LinearLayout
         android:layout_width="wrap_content"

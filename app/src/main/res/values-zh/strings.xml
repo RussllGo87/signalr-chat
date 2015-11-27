@@ -90,21 +90,33 @@
 
     <!-- Home页 -->
     <string name="title_activity_home">个人中心</string>
-    <string name="tv_activity_title_message">消息</string>
-    <string name="tv_activity_title_roster">好友</string>
     <string name="tv_activity_title_discovery">发现</string>
+    <string name="tv_activity_title_message">消息</string>
+    <string name="tv_activity_title_roster">附近</string>
     <string name="tv_activity_title_account">我</string>
-    <string name="tv_list_chat">消息</string>
-    <string name="tv_list_friend">好友</string>
     <string name="tv_discovery">发现</string>
+    <string name="tv_list_chat">消息</string>
+    <string name="tv_list_friend">附近</string>
     <string name="tv_account_management">我</string>
     <string name="tv_menu_drop_down">下拉菜单</string>
+    <string name="resp_return_empty">返回为空</string>
+
+    <!---发现界面DiscoveryFragment,原来的下拉菜单列表 -->
     <string name="menu_action_scan">扫一扫</string>
     <string name="menu_action_resource">资源上传</string>
     <string name="menu_action_maintain">广告维护</string>
     <string name="menu_action_nearby_friends">附近的人</string>
+    <string name="menu_action_nearby_ads">周边广告</string>
     <string name="menu_action_share_apk">分享</string>
-    <string name="resp_return_empty">返回为空</string>
+    <!-- 周边广告地图展示 -->
+    <string name="title_activity_nearby_ads">周边广告</string>
+    <string name="action_radius_half">500米</string>
+    <string name="action_radius_kilometer">1公里</string>
+    <string name="action_radius_kilometer_2">2公里</string>
+    <string name="action_radius_kilometer_5">5公里</string>
+    <string name="action_radius_all">所有</string>
+    <!-- 周边广告详细展示 -->
+    <string name="title_activity_nearby_ad_detail">周边广告详情</string>
 
     <!-- BuddyFragment -->
     <string name="tv_fragment_buddy">好友</string>
@@ -115,7 +127,7 @@
     <string name="tv_account_item_settings">@string/title_activity_settings</string>
     <string name="tv_fragment_account">我</string>
     <string name="tv_account_item_uploaded">我的资源</string>
-    <string name="tv_account_item_ads">周边广告</string>
+    <string name="tv_account_item_filter_list">屏蔽人列表</string>
     <!-- 我的资源上传记录 -->
     <string name="title_activity_resource_list">我的资源</string>
     <string name="action_range_all">全部</string>
@@ -131,18 +143,10 @@
     <string name="tv_resource_detail_address">地址:%s</string>
     <string name="tv_resource_detail_remark">备注:%s</string>
     <string name="tv_resource_detail_status">当前状态:%s</string>
-    <!-- 周边广告地图展示 -->
-    <string name="title_activity_nearby">周边广告</string>
-    <string name="action_radius_half">500米</string>
-    <string name="action_radius_kilometer">1公里</string>
-    <string name="action_radius_kilometer_2">2公里</string>
-    <string name="action_radius_kilometer_5">5公里</string>
-    <string name="action_radius_all">所有</string>
-    <!-- 周边广告详细展示 -->
-    <string name="title_activity_nearby_ad_detail">周边广告详情</string>
+    <!-- 屏蔽人列表 -->
+    <string name="title_activity_filter_list">@string/tv_account_item_filter_list</string>
 
-
-    <!--- 下拉菜单列表 -->
+    <!--- 下拉菜单列表 ,发现界面DiscoveryFragment-->
     <!-- 菜单项 之 扫码 -->
     <string name="dialog_message_url">是否用浏览器打开链接?</string>
     <!-- 资源上传 -->
@@ -195,13 +199,13 @@
 
     <!-- 设置页 -->
     <string name="title_activity_settings">@string/action_settings</string>
-    <string name="tv_settings_item_account">账号设置</string>
-    <string name="tv_settings_item_filter_list">屏蔽人列表</string>
+    <string name="tv_settings_item_account">帐号设置</string>
+    <string name="tv_settings_item_msg">消息设置</string>
     <string name="tv_settings_item_about">关于哈乐</string>
-    <!--
     <string name="tv_settings_item_exit">退出</string>
-    -->
+    <!--
     <string name="tv_settings_item_exit">注销</string>
+    -->
 
     <!-- 帐号设置 -->
     <string name="title_activity_account_settings">@string/tv_settings_item_account</string>
@@ -218,9 +222,6 @@
     <string name="toast_account_info_load_failure">个人资料加载失败</string>
     <string name="toast_account_info_update_ok">个人资料更新成功</string>
     <string name="toast_account_info_update_failure">个人资料更新失败</string>
-
-    <!-- 屏蔽人列表 -->
-    <string name="title_activity_filter_list">@string/tv_settings_item_filter_list</string>
 
     <!-- 关于 -->
     <string name="title_activity_about">@string/tv_settings_item_about</string>

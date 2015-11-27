@@ -42,6 +42,11 @@
     <dimen name="padding_left_list_item_buddy_container">12dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
 
+    <!-- ChatActivity聊天界面 -->
+    <dimen name="margin_vertical_ll_msg_form_container">8dp</dimen>
+    <dimen name="padding_horizontal_button_chat">16dp</dimen>
+    <dimen name="padding_vertical_button_chat">8dp</dimen>
+
     <!-- 照片栅格 -->
     <dimen name="padding_grid_item_photo">1dp</dimen>
 

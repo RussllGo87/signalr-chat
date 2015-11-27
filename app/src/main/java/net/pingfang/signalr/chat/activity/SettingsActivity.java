@@ -35,22 +35,40 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
 
     TextView btn_activity_back;
     TextView tv_settings_item_account;
-    TextView tv_settings_item_filter_list;
     TextView tv_settings_item_about;
     TextView tv_settings_item_exit;
 
     SharedPreferencesHelper sharedPreferencesHelper;
-
-    /** Access Token 实例  */
-    private Oauth2AccessToken wbAccessToken;
     // qq 登录配置
     Tencent mTencent;
-    // 微信登录配置
-    private WxOauth2AccessToken mWxOauth2AccessToken;
-
 //    ChatService chatService;
     ChatService mService;
     boolean mBound = false;
+    /**
+     * Access Token 实例
+     */
+    private Oauth2AccessToken wbAccessToken;
+    // 微信登录配置
+    private WxOauth2AccessToken mWxOauth2AccessToken;
+    /**
+     * Defines callbacks for service binding, passed to bindService()
+     */
+    private ServiceConnection mConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName className,
+                                       IBinder service) {
+            // We've bound to LocalService, cast the IBinder and get LocalService instance
+            ChatService.ChatBinder binder = (ChatService.ChatBinder) service;
+            mService = binder.getService();
+            mBound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName className) {
+            mBound = false;
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,8 +86,6 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
 
         tv_settings_item_account = (TextView) findViewById(R.id.tv_settings_item_account);
         tv_settings_item_account.setOnClickListener(this);
-        tv_settings_item_filter_list = (TextView) findViewById(R.id.tv_settings_item_filter_list);
-        tv_settings_item_filter_list.setOnClickListener(this);
 
         tv_settings_item_about = (TextView) findViewById(R.id.tv_settings_item_about);
         tv_settings_item_about.setOnClickListener(this);
@@ -94,24 +110,6 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         }
     }
 
-    /** Defines callbacks for service binding, passed to bindService() */
-    private ServiceConnection mConnection = new ServiceConnection() {
-
-        @Override
-        public void onServiceConnected(ComponentName className,
-                                       IBinder service) {
-            // We've bound to LocalService, cast the IBinder and get LocalService instance
-            ChatService.ChatBinder binder = (ChatService.ChatBinder) service;
-            mService = (ChatService) binder.getService();
-            mBound = true;
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName className) {
-            mBound = false;
-        }
-    };
-
     @Override
     public void onClick(View view) {
         int viewId = view.getId();
@@ -123,11 +121,6 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                 Intent AccountSettingsIntent = new Intent();
                 AccountSettingsIntent.setClass(getApplicationContext(),AccountSettingsActivity.class);
                 startActivity(AccountSettingsIntent);
-                break;
-            case R.id.tv_settings_item_filter_list:
-                Intent shieldsListIntent = new Intent();
-                shieldsListIntent.setClass(getApplicationContext(),ListShieldsActivity.class);
-                startActivity(shieldsListIntent);
                 break;
             case R.id.tv_settings_item_about:
                 Intent intent = new Intent();

@@ -5,31 +5,34 @@
      android:orientation="vertical"
      tools:context="net.pingfang.signalr.chat.fragment.DiscoveryFragment">
 
-    <TextView android:id="@+id/tv_account_item_scan"
+    <TextView
+        android:id="@+id/tv_discovery_item_scan"
         style="@style/SettingItemStyle"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
         android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
         android:background="@drawable/selector_settings_item"
-        android:text="@string/menu_action_scan"
+        android:drawableEnd="@drawable/setting_view_arrow"
         android:drawableRight="@drawable/setting_view_arrow"
-        android:drawableEnd="@drawable/setting_view_arrow"/>
+        android:text="@string/menu_action_scan"/>
 
-    <TextView android:id="@+id/tv_account_item_resource"
+    <TextView
+        android:id="@+id/tv_discovery_item_resource"
               style="@style/SettingItemStyle"
               android:background="@drawable/selector_settings_item"
-              android:text="@string/menu_action_resource"
+        android:drawableEnd="@drawable/setting_view_arrow"
               android:drawableRight="@drawable/setting_view_arrow"
-              android:drawableEnd="@drawable/setting_view_arrow"/>
+        android:text="@string/menu_action_resource"/>
 
-    <TextView android:id="@+id/tv_account_item_maintain"
+    <TextView
+        android:id="@+id/tv_discovery_item_maintain"
               style="@style/SettingItemStyle"
               android:background="@drawable/selector_settings_item"
-              android:text="@string/menu_action_maintain"
+        android:drawableEnd="@drawable/setting_view_arrow"
               android:drawableRight="@drawable/setting_view_arrow"
-              android:drawableEnd="@drawable/setting_view_arrow"/>
+        android:text="@string/menu_action_maintain"/>
 
     <!--
-    <TextView android:id="@+id/tv_account_item_nearby_friends"
+    <TextView android:id="@+id/tv_discovery_item_nearby_friends"
               style="@style/SettingItemStyle"
               android:layout_marginTop="@dimen/activity_vertical_margin"
               android:background="@drawable/selector_settings_item"
@@ -38,12 +41,22 @@
               android:drawableEnd="@drawable/setting_view_arrow"/>
     -->
 
-    <TextView android:id="@+id/tv_account_item_share_apk"
+    <TextView
+        android:id="@+id/tv_discovery_item_nearby_ads"
               style="@style/SettingItemStyle"
               android:layout_marginTop="@dimen/activity_vertical_margin"
               android:background="@drawable/selector_settings_item"
-              android:text="@string/menu_action_share_apk"
+        android:drawableEnd="@drawable/setting_view_arrow"
               android:drawableRight="@drawable/setting_view_arrow"
-              android:drawableEnd="@drawable/setting_view_arrow"/>
+        android:text="@string/menu_action_nearby_ads"/>
+
+    <TextView
+        android:id="@+id/tv_discovery_item_share_apk"
+        style="@style/SettingItemStyle"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:background="@drawable/selector_settings_item"
+        android:drawableEnd="@drawable/setting_view_arrow"
+        android:drawableRight="@drawable/setting_view_arrow"
+        android:text="@string/menu_action_share_apk"/>
 
 </LinearLayout>

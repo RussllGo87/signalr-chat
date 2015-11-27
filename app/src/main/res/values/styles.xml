@@ -10,6 +10,7 @@
         <item name="colorPrimaryDark">@color/bg_btn_default</item>
     </style>
 
+
     <style name="CaptureThemeFullScreen" parent="Theme.AppCompat.Light.DarkActionBar"/>
 
     <style name="SettingItemStyle">

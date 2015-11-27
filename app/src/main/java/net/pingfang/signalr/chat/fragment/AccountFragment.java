@@ -12,7 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import net.pingfang.signalr.chat.R;
-import net.pingfang.signalr.chat.activity.NearbyActivity;
+import net.pingfang.signalr.chat.activity.ListShieldsActivity;
 import net.pingfang.signalr.chat.activity.ResourceListActivity;
 import net.pingfang.signalr.chat.activity.SettingsActivity;
 import net.pingfang.signalr.chat.listener.OnFragmentInteractionListener;
@@ -26,16 +26,14 @@ import net.pingfang.signalr.chat.util.SharedPreferencesHelper;
  */
 public class AccountFragment extends Fragment implements View.OnClickListener{
 
-    private OnFragmentInteractionListener mListener;
-
     ImageView iv_account_portrait;
-    TextView tv_settings_item_me;
+    TextView tv_account_item_me;
     ImageView btn_qr_code;
     TextView tv_account_item_uploaded;
-    TextView tv_account_item_nearby;
+    TextView tv_account_item_filter_list;
     TextView tv_account_item_settings;
-
     SharedPreferencesHelper helper;
+    private OnFragmentInteractionListener mListener;
 
     public static AccountFragment newInstance(OnFragmentInteractionListener mListener) {
         AccountFragment fragment = new AccountFragment();
@@ -50,10 +48,10 @@ public class AccountFragment extends Fragment implements View.OnClickListener{
         iv_account_portrait = (ImageView) view.findViewById(R.id.iv_account_portrait);
         tv_account_item_uploaded = (TextView) view.findViewById(R.id.tv_account_item_uploaded);
         tv_account_item_uploaded.setOnClickListener(this);
-        tv_account_item_nearby = (TextView) view.findViewById(R.id.tv_account_item_nearby);
-        tv_account_item_nearby.setOnClickListener(this);
+        tv_account_item_filter_list = (TextView) view.findViewById(R.id.tv_account_item_filter_list);
+        tv_account_item_filter_list.setOnClickListener(this);
 
-        tv_settings_item_me = (TextView) view.findViewById(R.id.tv_settings_item_me);
+        tv_account_item_me = (TextView) view.findViewById(R.id.tv_account_item_me);
         btn_qr_code = (ImageView) view.findViewById(R.id.btn_qr_code);
         btn_qr_code.setOnClickListener(this);
         tv_account_item_settings = (TextView) view.findViewById(R.id.tv_account_item_settings);
@@ -73,7 +71,7 @@ public class AccountFragment extends Fragment implements View.OnClickListener{
 
     public void updateAccountInfo(String nickname,String portrait) {
         if (!TextUtils.isEmpty(nickname)) {
-            tv_settings_item_me.setText(nickname);
+            tv_account_item_me.setText(nickname);
         }
 
         if(!TextUtils.isEmpty(portrait)) {
@@ -95,10 +93,10 @@ public class AccountFragment extends Fragment implements View.OnClickListener{
                 resourceListIntent.setClass(getContext(), ResourceListActivity.class);
                 getContext().startActivity(resourceListIntent);
                 break;
-            case R.id.tv_account_item_nearby:
-                Intent nearbyIntent = new Intent();
-                nearbyIntent.setClass(getContext(), NearbyActivity.class);
-                getContext().startActivity(nearbyIntent);
+            case R.id.tv_account_item_filter_list:
+                Intent shieldsListIntent = new Intent();
+                shieldsListIntent.setClass(getContext(), ListShieldsActivity.class);
+                startActivity(shieldsListIntent);
                 break;
             case R.id.tv_account_item_settings:
                 Intent intent = new Intent();
