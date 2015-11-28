@@ -161,6 +161,7 @@
     <string name="tv_photos">相关照片</string>
     <string name="toast_resource_post_ok">广告资源上传成功</string>
     <string name="toast_resource_posting_error">广告资源上传错误</string>
+    <string name="toast_resource_posting_error_pic_no">第 %d 张 图片没有添加</string>
     <string name="toast_resource_post_error">广告资源上传失败</string>
     <string name="toast_resource_post_pic_num_error_1">只能上传3到4张图片</string>
     <string name="toast_resource_post_pic_num_error_2">最多只能拍4张图</string>

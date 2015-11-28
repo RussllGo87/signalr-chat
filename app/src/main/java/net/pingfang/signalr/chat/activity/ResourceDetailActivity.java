@@ -16,12 +16,13 @@ import net.pingfang.signalr.chat.net.OkHttpCommonUtil;
 
 public class ResourceDetailActivity extends AppCompatActivity implements View.OnClickListener{
 
+    ResourceInfo resourceInfo;
     private TextView btn_activity_back;
     private TextView tv_menu_drop_down;
-
     private ImageView iv_resource_detail_profile;
     private ImageView iv_resource_detail_profile_2;
     private ImageView iv_resource_detail_profile_3;
+    private ImageView iv_resource_detail_profile_4;
     private TextView tv_resource_detail_width;
     private TextView tv_resource_detail_height;
     private TextView tv_resource_detail_contact;
@@ -30,8 +31,6 @@ public class ResourceDetailActivity extends AppCompatActivity implements View.On
     private TextView tv_resource_detail_update_time;
     private TextView tv_resource_detail_status;
     private TextView tv_resource_detail_remark;
-
-    ResourceInfo resourceInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +56,7 @@ public class ResourceDetailActivity extends AppCompatActivity implements View.On
         iv_resource_detail_profile = (ImageView) findViewById(R.id.iv_resource_detail_profile);
         iv_resource_detail_profile_2 = (ImageView) findViewById(R.id.iv_resource_detail_profile_2);
         iv_resource_detail_profile_3 = (ImageView) findViewById(R.id.iv_resource_detail_profile_3);
+        iv_resource_detail_profile_4 = (ImageView) findViewById(R.id.iv_resource_detail_profile_4);
         tv_resource_detail_width = (TextView) findViewById(R.id.tv_resource_detail_width);
         tv_resource_detail_height = (TextView) findViewById(R.id.tv_resource_detail_height);
         tv_resource_detail_contact = (TextView) findViewById(R.id.tv_resource_detail_contact);
@@ -81,7 +81,11 @@ public class ResourceDetailActivity extends AppCompatActivity implements View.On
                         okHttp.display(iv_resource_detail_profile_2,urls[1],R.mipmap.ic_launcher);
                         if(urls.length > 2) {
                             okHttp.display(iv_resource_detail_profile_3,urls[2],R.mipmap.ic_launcher);
+                            if (urls.length > 3) {
+                                okHttp.display(iv_resource_detail_profile_4, urls[3], R.mipmap.ic_launcher);
+                            }
                         }
+
                     }
                 }
             }
