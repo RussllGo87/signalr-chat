@@ -21,7 +21,9 @@ import android.provider.MediaStore;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -64,9 +66,19 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     TextView tv_offline_message;
     ScrollView sv_message_container;
     LinearLayout ll_message_container;
-    EditText et_message;
+
+    ImageView iv_quick_voice_txt_switcher;
     Button btn_voice_record;
+    EditText et_message;
     TextView btn_send;
+    ImageView iv_msg_type_chooser;
+
+    LinearLayout ll_msg_type_buttons_container;
+    ImageView iv_msg_type_txt;
+    ImageView iv_msg_type_camera;
+    ImageView iv_msg_type_pic;
+    ImageView iv_msg_type_voice;
+
 
     MessageReceiver receiver;
 
@@ -147,19 +159,11 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
         sv_message_container = (ScrollView) findViewById(R.id.sv_message_container);
         ll_message_container = (LinearLayout) findViewById(R.id.ll_message_container);
+        ll_message_container.setOnClickListener(this);
 
-        et_message = (EditText) findViewById(R.id.et_message);
-        et_message.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                boolean handled = false;
-                if (actionId == EditorInfo.IME_ACTION_SEND) {
-                    sendMessage();
-                    handled = true;
-                }
-                return handled;
-            }
-        });
+        iv_quick_voice_txt_switcher = (ImageView) findViewById(R.id.iv_quick_voice_txt_switcher);
+        iv_quick_voice_txt_switcher.setOnClickListener(this);
+        iv_quick_voice_txt_switcher.setSelected(false);
 
         btn_voice_record = (Button) findViewById(R.id.btn_voice_record);
         btn_voice_record.setOnTouchListener(new View.OnTouchListener() {
@@ -179,15 +183,58 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
 
+        et_message = (EditText) findViewById(R.id.et_message);
+        et_message.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                boolean handled = false;
+                if (actionId == EditorInfo.IME_ACTION_SEND) {
+                    sendMessage();
+                    handled = true;
+                }
+                return handled;
+            }
+        });
+        et_message.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.length() > 0) {
+                    iv_msg_type_chooser.setVisibility(View.GONE);
+                    btn_send.setVisibility(View.VISIBLE);
+                } else {
+                    iv_msg_type_chooser.setVisibility(View.VISIBLE);
+                    btn_send.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
         btn_send = (TextView) findViewById(R.id.btn_send);
         btn_send.setOnClickListener(this);
-        //        btn_send.setOnLongClickListener(new View.OnLongClickListener() {
-        //            @Override
-        //            public boolean onLongClick(View view) {
-        //                popupMenu(view);
-        //                return true;
-        //            }
-        //        });
+
+        iv_msg_type_chooser = (ImageView) findViewById(R.id.iv_msg_type_chooser);
+        iv_msg_type_chooser.setOnClickListener(this);
+        iv_msg_type_chooser.setSelected(false);
+
+        ll_msg_type_buttons_container = (LinearLayout) findViewById(R.id.ll_msg_type_buttons_container);
+
+        iv_msg_type_txt = (ImageView) findViewById(R.id.iv_msg_type_txt);
+        iv_msg_type_txt.setOnClickListener(this);
+        iv_msg_type_camera = (ImageView) findViewById(R.id.iv_msg_type_camera);
+        iv_msg_type_camera.setOnClickListener(this);
+        iv_msg_type_pic = (ImageView) findViewById(R.id.iv_msg_type_pic);
+        iv_msg_type_pic.setOnClickListener(this);
+        iv_msg_type_voice = (ImageView) findViewById(R.id.iv_msg_type_voice);
+        iv_msg_type_voice.setOnClickListener(this);
     }
 
     private void loadLocalMessage() {
@@ -201,40 +248,6 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
     }
 
-    //    private void popupMenu(View view) {
-    //        ContextThemeWrapper wrapper = new ContextThemeWrapper(getApplicationContext(), R.style.AppMainTheme);
-    //        PopupMenu popup = new PopupMenu(wrapper, view);
-    //        MenuInflater inflater = popup.getMenuInflater();
-    //        inflater.inflate(R.menu.menu_message_actions, popup.getMenu());
-    //        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-    //            @Override
-    //            public boolean onMenuItemClick(MenuItem item) {
-    //                switch (item.getItemId()) {
-    //                    case R.id.action_text:
-    //                        btn_voice_record.setVisibility(View.GONE);
-    //                        et_message.setVisibility(View.VISIBLE);
-    //                        break;
-    //                    case R.id.action_photo:
-    //                        btn_voice_record.setVisibility(View.GONE);
-    //                        et_message.setVisibility(View.VISIBLE);
-    //                        openCamera();
-    //                        break;
-    //                    case R.id.action_image:
-    //                        btn_voice_record.setVisibility(View.GONE);
-    //                        et_message.setVisibility(View.VISIBLE);
-    //                        sendImage();
-    //                        break;
-    //                    case R.id.action_voice:
-    //                        btn_voice_record.setVisibility(View.VISIBLE);
-    //                        et_message.setVisibility(View.GONE);
-    //                        break;
-    //                }
-    //                return true;
-    //            }
-    //        });
-    //        popup.show();
-    //    }
-
     public void registerReceiver() {
         receiver = new MessageReceiver();
         IntentFilter filter = new IntentFilter();
@@ -244,30 +257,107 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
-    public void onClick(View view) {
-        int viewId = view.getId();
-        switch(viewId) {
-            case R.id.btn_activity_back:
-                navigateUp();
-                break;
-            case R.id.btn_send:
-                sendMessage();
-                hideKeyboard();
-                break;
-        }
-    }
-
-    @Override
     protected void onDestroy() {
         super.onDestroy();
 
-        if(receiver != null) {
+        if (receiver != null) {
             unregisterReceiver(receiver);
         }
 
         if (mBound) {
             unbindService(mConnection);
             mBound = false;
+        }
+    }
+
+    @Override
+    public void onClick(View view) {
+        int viewId = view.getId();
+        switch(viewId) {
+            case R.id.btn_activity_back:
+                navigateUp();
+                break;
+            case R.id.ll_message_container:
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(et_message.getWindowToken(), 0);
+                break;
+            case R.id.iv_quick_voice_txt_switcher:
+                onVoiceTxtSwitchClick(iv_quick_voice_txt_switcher.isSelected());
+                break;
+            case R.id.btn_send:
+                sendMessage();
+                hideKeyboard();
+                break;
+            case R.id.iv_msg_type_chooser:
+                onMsgTypeChooserClick();
+                break;
+            case R.id.iv_msg_type_txt:
+                onVoiceTxtSwitchClick(true);
+                break;
+            case R.id.iv_msg_type_camera:
+                openCamera();
+                onVoiceTxtSwitchClick(true);
+                break;
+            case R.id.iv_msg_type_pic:
+                sendImage();
+                onVoiceTxtSwitchClick(true);
+                break;
+            case R.id.iv_msg_type_voice:
+                onVoiceTxtSwitchClick(false);
+                break;
+        }
+    }
+
+    private void onMsgTypeChooserClick() {
+        iv_quick_voice_txt_switcher.setSelected(false);
+        btn_voice_record.setVisibility(View.GONE);
+        et_message.setVisibility(View.VISIBLE);
+        if (ll_msg_type_buttons_container.getVisibility() == View.VISIBLE) {
+            ll_msg_type_buttons_container.setVisibility(View.GONE);
+        } else if (ll_msg_type_buttons_container.getVisibility() == View.GONE) {
+            ll_msg_type_buttons_container.setVisibility(View.VISIBLE);
+        }
+
+        if (et_message.isFocused()) {
+            hideKeyboard();
+        } else {
+            et_message.requestFocus();
+            showKeyboard();
+        }
+    }
+
+    private void onVoiceTxtSwitchClick(boolean selectedState) {
+        if (!selectedState) {
+            iv_quick_voice_txt_switcher.setSelected(true);
+            btn_voice_record.setVisibility(View.VISIBLE);
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(et_message.getWindowToken(), 0);
+            et_message.setVisibility(View.GONE);
+            btn_send.setVisibility(View.GONE);
+            iv_msg_type_chooser.setVisibility(View.VISIBLE);
+            ll_msg_type_buttons_container.setVisibility(View.GONE);
+        } else {
+            iv_quick_voice_txt_switcher.setSelected(false);
+            btn_voice_record.setVisibility(View.GONE);
+            et_message.setVisibility(View.VISIBLE);
+            et_message.requestFocus();
+            showKeyboard();
+            if (!TextUtils.isEmpty(et_message.getText().toString().trim())) {
+                btn_send.setVisibility(View.VISIBLE);
+                iv_msg_type_chooser.setVisibility(View.GONE);
+            } else {
+                btn_send.setVisibility(View.GONE);
+                iv_msg_type_chooser.setVisibility(View.VISIBLE);
+            }
+            ll_msg_type_buttons_container.setVisibility(View.GONE);
+        }
+    }
+
+    private void showKeyboard() {
+        View view = this.getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.showSoftInputFromInputMethod(view.getWindowToken(), 0);
         }
     }
 

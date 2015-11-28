@@ -34,7 +34,8 @@
                   android:layout_centerVertical="true"
                   android:padding="@dimen/padding_activity_title"
                   android:text="@string/tv_offline_message"
-                  android:visibility="gone"/>
+                  android:visibility="gone"
+            />
 
     </RelativeLayout>
 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">乐传播</string>
+    <string name="app_name">哈乐桥</string>
     <string name="action_settings">设置</string>
     <string name="btn_activity_back">返回</string>
 
@@ -196,6 +196,7 @@
 
     <!-- 群发消息 -->
     <string name="title_activity_bulk_msg">群发消息</string>
+    <string name="tv_activity_bulk_msg_menu_drop_down">选择范围</string>
 
     <!-- 设置页 -->
     <string name="title_activity_settings">@string/action_settings</string>
@@ -225,7 +226,7 @@
 
     <!-- 关于 -->
     <string name="title_activity_about">@string/tv_settings_item_about</string>
-    <string name="tv_app_name_version_code">乐传播 V%s</string>
+    <string name="tv_app_name_version_code">哈乐桥 V%s</string>
     <string name="tv_about_item_version">检查更新</string>
     <string name="tv_about_item_guide">使用帮助</string>
     <string name="tv_about_item_suggestion">意见反馈</string>

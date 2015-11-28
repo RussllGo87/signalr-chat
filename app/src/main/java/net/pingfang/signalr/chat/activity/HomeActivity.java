@@ -77,7 +77,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     ImageView iv_discovery;
     ImageView iv_list_chat;
-    ImageView iv_list_friend;
+    ImageView iv_list_nearby_people;
     ImageView iv_account_management;
 
     CollectionPagerAdapter adapter;
@@ -304,8 +304,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         iv_discovery.setOnClickListener(this);
         iv_list_chat = (ImageView) findViewById(R.id.iv_list_chat);
         iv_list_chat.setOnClickListener(this);
-        iv_list_friend = (ImageView) findViewById(R.id.iv_list_friend);
-        iv_list_friend.setOnClickListener(this);
+        iv_list_nearby_people = (ImageView) findViewById(R.id.iv_list_nearby_people);
+        iv_list_nearby_people.setOnClickListener(this);
         iv_account_management = (ImageView) findViewById(R.id.iv_account_management);
         iv_account_management.setOnClickListener(this);
     }
@@ -361,9 +361,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         if (index == 2) {
-            iv_list_friend.setSelected(true);
+            iv_list_nearby_people.setSelected(true);
         } else {
-            iv_list_friend.setSelected(false);
+            iv_list_nearby_people.setSelected(false);
         }
 
         if (index == 3) {
@@ -414,7 +414,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 pager.setCurrentItem(1);
                 setImageViewGroupSelected(1);
                 break;
-            case R.id.iv_list_friend:
+            case R.id.iv_list_nearby_people:
                 pager.setCurrentItem(2);
                 setImageViewGroupSelected(2);
                 break;

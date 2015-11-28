@@ -84,11 +84,11 @@
             android:src="@drawable/selector_home_chat"/>
 
         <ImageView
-            android:id="@+id/iv_list_friend"
+            android:id="@+id/iv_list_nearby_people"
                 android:layout_width="0dp"
             android:layout_height="wrap_content"
                 android:layout_weight="1"
-            android:src="@drawable/selector_home_friend"/>
+            android:src="@drawable/selector_home_nearby_people"/>
 
         <ImageView
             android:id="@+id/iv_account_management"

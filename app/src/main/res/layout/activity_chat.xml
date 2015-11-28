@@ -26,13 +26,14 @@
                   android:textSize="@dimen/text_size_activity_title"/>
 
         <TextView android:id="@+id/tv_offline_message"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:layout_alignParentRight="true"
                   android:layout_centerVertical="true"
-            android:padding="@dimen/padding_activity_title"
-            android:text="@string/tv_offline_message"
-            android:visibility="gone"/>
+                  android:padding="@dimen/padding_activity_title"
+                  android:text="@string/tv_offline_message"
+                  android:textColor="@android:color/white"
+                  android:visibility="gone"/>
 
     </RelativeLayout>
 
@@ -96,7 +97,8 @@
             android:paddingRight="@dimen/padding_horizontal_button_chat"
             android:paddingTop="@dimen/padding_vertical_button_chat"
             android:text="@string/btn_send"
-            android:textColor="@android:color/white"/>
+            android:textColor="@android:color/white"
+            android:visibility="gone"/>
 
         <ImageView
             android:id="@+id/iv_msg_type_chooser"
@@ -104,8 +106,7 @@
             android:layout_height="30dp"
             android:layout_gravity="center_vertical"
             android:layout_marginRight="10dp"
-            android:src="@drawable/iv_msg_type_chooser"
-            android:visibility="gone"/>
+            android:src="@drawable/iv_msg_type_chooser"/>
 
     </LinearLayout>
 
