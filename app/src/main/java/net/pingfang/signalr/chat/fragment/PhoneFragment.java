@@ -7,8 +7,8 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import net.pingfang.signalr.chat.R;
@@ -30,17 +30,17 @@ public class PhoneFragment extends Fragment implements View.OnClickListener{
 //    EditText et_validate_code;
 //    Button btn_captcha_submit;
 
-    Button btn_validate_phone;
+    TextView btn_validate_phone;
 
     private OnRegisterInteractionListener mListener;
+
+    public PhoneFragment() {
+        // Required empty public constructor
+    }
 
     public static PhoneFragment newInstance() {
         PhoneFragment fragment = new PhoneFragment();
         return fragment;
-    }
-
-    public PhoneFragment() {
-        // Required empty public constructor
     }
 
     @Override
@@ -53,7 +53,7 @@ public class PhoneFragment extends Fragment implements View.OnClickListener{
 //        et_validate_code = (EditText) view.findViewById(R.id.et_validate_code);
 //        btn_captcha_submit = (Button) view.findViewById(R.id.btn_captcha_submit);
 //        btn_captcha_submit.setOnClickListener(this);
-        btn_validate_phone = (Button) view.findViewById(R.id.btn_validate_phone);
+        btn_validate_phone = (TextView) view.findViewById(R.id.btn_validate_phone);
         btn_validate_phone.setOnClickListener(this);
         return view;
     }

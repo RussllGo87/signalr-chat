@@ -1,13 +1,13 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:tools="http://schemas.android.com/tools"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent"
-             android:orientation="vertical"
-             tools:context="net.pingfang.signalr.chat.fragment.InfoRegFragment">
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical"
+              tools:context="net.pingfang.signalr.chat.fragment.InfoRegFragment">
 
     <EditText android:id="@+id/et_phone_reg"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
               android:enabled="false"
               android:inputType="phone"/>
 
@@ -82,11 +82,17 @@
     </LinearLayout>
 
 
-    <Button android:id="@+id/btn_info_reg_submit"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/selector_btn_bg"
-            android:text="@string/btn_info_reg_submit"
-            android:textColor="@android:color/white"/>
+    <TextView
+        android:id="@+id/btn_info_reg_submit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/activity_horizontal_margin"
+        android:background="@drawable/selector_btn_bg"
+        android:gravity="center"
+        android:paddingBottom="@dimen/padding_vertical_button_info_reg_submit"
+        android:paddingTop="@dimen/padding_vertical_button_info_reg_submit"
+        android:text="@string/btn_info_reg_submit"
+        android:textColor="@android:color/white"
+        android:textSize="18sp"/>
 
 </LinearLayout>

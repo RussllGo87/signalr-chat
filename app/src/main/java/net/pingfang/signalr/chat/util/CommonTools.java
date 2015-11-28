@@ -26,7 +26,7 @@ public class CommonTools {
 
     public static boolean isPhoneNumber(String phoneNumber) {
         if(!TextUtils.isEmpty(phoneNumber)) {
-            String regex="1([\\d]{10})|((\\+[0-9]{2,4})?\\(?[0-9]+\\)?-?)?[0-9]{7,8}";
+            String regex = "((^(13|15|18)[0-9]{9}$)|(^0[1,2]{1}\\d{1}-?\\d{8}$)|(^0[3-9] {1}\\d{2}-?\\d{7,8}$)|(^0[1,2]{1}\\d{1}-?\\d{8}-(\\d{1,4})$)|(^0[3-9]{1}\\d{2}-? \\d{7,8}-(\\d{1,4})$))";
             Pattern p = Pattern.compile(regex);
             Matcher matcher = p.matcher(phoneNumber);
             return matcher.find();
@@ -40,19 +40,12 @@ public class CommonTools {
             return false;
         }
 
-        if(password.length() < 5 || password.length() > 16) {
-            return false;
-        }
+        return !(password.length() < 5 || password.length() > 16);
 
-        return true;
     }
 
     public static boolean isAvailableVc(String vc) {
-        if(!TextUtils.isEmpty(vc) && TextUtils.isDigitsOnly(vc) && vc.length() == 6) {
-            return true;
-        } else {
-            return false;
-        }
+        return !TextUtils.isEmpty(vc) && TextUtils.isDigitsOnly(vc) && vc.length() == 6;
     }
 
     public static boolean isAvailableEmail(String email) {
@@ -69,11 +62,7 @@ public class CommonTools {
     public static boolean checkRegParams(String... args) {
         String nick = args[0];
         String password = args[1];
-        if(!TextUtils.isEmpty(nick) && !TextUtils.isEmpty(password)) {
-            return true;
-        } else {
-            return false;
-        }
+        return !TextUtils.isEmpty(nick) && !TextUtils.isEmpty(password);
     }
 
     public static boolean checkUrl(String url) {

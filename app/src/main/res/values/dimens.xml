@@ -16,11 +16,18 @@
     <dimen name="padding_vertical_button">8dp</dimen>
     <dimen name="text_size_button">24sp</dimen>
 
+    <!-- 用户注册 -->
+    <dimen name="padding_horizontal_button_reg_phone">8dp</dimen>
+    <dimen name="padding_vertical_button_reg_phone">8dp</dimen>
+    <dimen name="margin_vertical_button_reg_phone">8dp</dimen>
+    <dimen name="padding_vertical_button_info_reg_submit">12dp</dimen>
+
     <!-- 用户登录 -->
     <dimen name="margin_cb_show_pwd">4dp</dimen>
     <dimen name="padding_horizontal_ll_form_container">16dp</dimen>
     <dimen name="text_size_tv_label_phone_no">18sp</dimen>
     <dimen name="padding_horizontal_et_login_no">8dp</dimen>
+
 
     <!-- Home主页 -->
     <dimen name="height_vertical_bottom_group_button_container">50dp</dimen>

@@ -80,6 +80,7 @@
     <string name="pb_message_submit_infor_failure">注册出错</string>
     <string name="toast_info_reg_error_nickname_empty">昵称不能留空</string>
     <string name="toast_info_reg_error_password_empty">密码不能留空</string>
+    <string name="toast_info_reg_error_password_length_less_than_6">密码不能少于6位</string>
     <string name="toast_info_reg_error_passwordr_empty">确认密码不能留空</string>
     <string name="toast_info_reg_error_password_not_same">两次输入的密码要相同</string>
 
