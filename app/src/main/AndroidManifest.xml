@@ -54,7 +54,6 @@
             android:label="@string/title_activity_login"
             android:windowSoftInputMode="adjustResize" >
         </activity>
-
         <activity
             android:name=".full.wxapi.WXEntryActivity"
             android:exported="true"
@@ -77,7 +76,6 @@
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
-
         <activity
             android:name=".activity.RegisterActivity"
             android:label="@string/title_activity_register" >
@@ -86,7 +84,6 @@
             android:name=".activity.HomeActivity"
             android:label="@string/title_activity_home" >
         </activity>
-
         <activity
             android:name=".activity.CaptureActivityAnyOrientation"
             android:screenOrientation="portrait"
@@ -134,8 +131,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="net.pingfang.signalr.chat.activity.HomeActivity" />
         </activity>
-
-
         <activity
             android:name=".activity.ChatActivity"
             android:label="@string/app_name"
@@ -144,7 +139,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activity.HomeActivity" />
         </activity>
-
         <activity
             android:name=".activity.ResourceListActivity"
             android:label="@string/title_activity_resource_list"
@@ -161,7 +155,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="net.pingfang.signalr.chat.activity.ResourceListActivity" />
         </activity>
-
         <activity
             android:name=".activity.NearbyAdsActivity"
             android:label="@string/title_activity_nearby_ads"
@@ -178,7 +171,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activity.NearbyAdsActivity"/>
         </activity>
-
         <activity
             android:name=".activity.SettingsActivity"
             android:label="@string/title_activity_settings"
@@ -187,7 +179,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="net.pingfang.signalr.chat.activity.HomeActivity" />
         </activity>
-
         <activity
             android:name=".activity.AccountSettingsActivity"
             android:label="@string/title_activity_account_settings"
@@ -236,7 +227,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="net.pingfang.signalr.chat.activity.AppAboutActivity" />
         </activity>
-
         <activity android:name=".activity.PhotoViewerActivity" >
         </activity>
 
@@ -262,7 +252,6 @@
                 <action android:name="com.tencent.mm.sdk.plugin.Intent.ACTION_RESPONSE" />
             </intent-filter>
         </receiver>
-
         <receiver
             android:name="com.tencent.mm.sdk.channel.MMessage$Receiver"
             android:permission="com.tencent.mm.plugin.permission.SEND" >
@@ -271,6 +260,15 @@
             </intent-filter>
         </receiver>
 
+        <activity
+            android:name=".activity.AccountInfoActivity"
+            android:label="@string/title_activity_account_info"
+            android:parentActivityName=".activity.HomeActivity"
+            android:theme="@style/AppMainTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="net.pingfang.signalr.chat.activity.HomeActivity"/>
+        </activity>
     </application>
 
 </manifest>

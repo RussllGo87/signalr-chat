@@ -19,4 +19,7 @@
 
     <color name="text_color_tv_label_grey">#333</color>
     <color name="bottom_button_group_border_color">#aaa</color>
+
+    <!-- 个人资料 -->
+    <color name="holo_red_dark">#ffcc0000</color>
 </resources>

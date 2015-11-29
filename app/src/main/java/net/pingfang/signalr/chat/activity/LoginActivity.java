@@ -2,7 +2,6 @@ package net.pingfang.signalr.chat.activity;
 
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -52,8 +51,6 @@ import net.pingfang.signalr.chat.constant.wechat.WxConstants;
 import net.pingfang.signalr.chat.constant.wechat.WxOauth2AccessToken;
 import net.pingfang.signalr.chat.constant.weibo.WeiboConstants;
 import net.pingfang.signalr.chat.constant.weibo.WeiboRequestListener;
-import net.pingfang.signalr.chat.database.AppContract;
-import net.pingfang.signalr.chat.database.UserManager;
 import net.pingfang.signalr.chat.location.LocationListenerImpl;
 import net.pingfang.signalr.chat.location.LocationNotify;
 import net.pingfang.signalr.chat.net.HttpBaseCallback;
@@ -65,7 +62,6 @@ import net.pingfang.signalr.chat.util.GlobalApplication;
 import net.pingfang.signalr.chat.util.MediaFileUtils;
 import net.pingfang.signalr.chat.util.SharedPreferencesHelper;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -90,6 +86,9 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
     public static final String NEW_LOGIN_PARAM_PLATFORM_QQ = "qq";
     public static final String NEW_LOGIN_PARAM_PLATFORM_WEIBO = "weibo";
     public static final String NEW_LOGIN_PARAM_PLATFORM_WECHAT = "wechat";
+
+    public static final String URL_ACCOUNT_INFO_LOAD = GlobalApplication.URL_WEB_API_HOST + "/api/WebAPI/User/GetUser";
+    public static final String KEY_URL_ACCOUNT_INFO_LOAD_UID = "id";
 
     LinearLayout ll_form_container;
     EditText et_login_no;
@@ -689,57 +688,69 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
                     if (status == 0) {
                         JSONObject result = jsonObject.getJSONObject("result");
                         final String id = result.getString("id");
-
-                        UserManager userManager = new UserManager(getApplicationContext());
-                        JSONArray list = jsonObject.getJSONArray("list");
-                        if (list != null && list.length() > 0) {
-                            for (int i = 0; i < list.length(); i++) {
-                                JSONObject tmpJson = list.getJSONObject(i);
-                                String item_uid = tmpJson.getString("id");
-                                String item_nickname = tmpJson.getString("nickname");
-                                String item_portrait = tmpJson.getString("portrait");
-                                if (item_portrait != null && !TextUtils.isEmpty(item_portrait) && !"null".equals(item_portrait)) {
-                                    userManager.addRecord(item_uid, item_nickname, item_portrait);
-                                } else {
-                                    userManager.addRecord(item_uid, item_nickname, "");
-                                }
+                        mDelivery.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                tv_pb_operation.setText(R.string.pb_message_login_now);
+                                tv_pb_operation.setText(R.string.pb_message_load_info);
+                                loadAccountInfo(id, false);
                             }
-                        }
+                        });
 
-                        Cursor cursor = userManager.queryByUid(id);
 
-                        if (cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {
-                            final String nickname = cursor.getString(cursor.getColumnIndex(AppContract.UserEntry.COLUMN_NAME_NICK_NAME));
-                            final String portrait = cursor.getString(cursor.getColumnIndex(AppContract.UserEntry.COLUMN_NAME_PORTRAIT));
-                            mDelivery.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    ll_progress_bar_container.setVisibility(View.GONE);
-                                    Toast.makeText(getApplicationContext(), R.string.pb_message_login_ok, Toast.LENGTH_SHORT).show();
-
-                                    sharedPreferencesHelper.putStringValue(AppConstants.KEY_SYS_CURRENT_UID, id);
-                                    sharedPreferencesHelper.putStringValue(AppConstants.KEY_SYS_CURRENT_NICKNAME, nickname);
-                                    sharedPreferencesHelper.putStringValue(AppConstants.KEY_SYS_CURRENT_PORTRAIT, portrait);
-
-                                    sharedPreferencesHelper.clearKey(AppConstants.KEY_SYS_CURRENT_USER_PHONE);
-
-                                    Intent intent = new Intent();
-                                    intent.setClass(getApplicationContext(), HomeActivity.class);
-                                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | IntentCompat.FLAG_ACTIVITY_CLEAR_TASK);
-                                    startActivity(intent);
-                                    finish();
-
-                                }
-                            });
-                        } else {
-                            mDelivery.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    ll_progress_bar_container.setVisibility(View.GONE);
-                                    Toast.makeText(getApplicationContext(), R.string.pb_message_login_failure, Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                        }
+                        //                        final int exp = result.getInt("exp");
+                        //
+                        //                        UserManager userManager = new UserManager(getApplicationContext());
+                        //                        JSONArray list = jsonObject.getJSONArray("list");
+                        //                        if (list != null && list.length() > 0) {
+                        //                            for (int i = 0; i < list.length(); i++) {
+                        //                                JSONObject tmpJson = list.getJSONObject(i);
+                        //                                String item_uid = tmpJson.getString("id");
+                        //                                String item_nickname = tmpJson.getString("nickname");
+                        //                                String item_portrait = tmpJson.getString("portrait");
+                        //                                if (item_portrait != null && !TextUtils.isEmpty(item_portrait) && !"null".equals(item_portrait)) {
+                        //                                    userManager.addRecord(item_uid, item_nickname, item_portrait);
+                        //                                } else {
+                        //                                    userManager.addRecord(item_uid, item_nickname, "");
+                        //                                }
+                        //                            }
+                        //                        }
+                        //
+                        //                        Cursor cursor = userManager.queryByUid(id);
+                        //
+                        //                        if (cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {
+                        //                            final String nickname = cursor.getString(cursor.getColumnIndex(AppContract.UserEntry.COLUMN_NAME_NICK_NAME));
+                        //                            final String portrait = cursor.getString(cursor.getColumnIndex(AppContract.UserEntry.COLUMN_NAME_PORTRAIT));
+                        //                            mDelivery.post(new Runnable() {
+                        //                                @Override
+                        //                                public void run() {
+                        //                                    ll_progress_bar_container.setVisibility(View.GONE);
+                        //                                    Toast.makeText(getApplicationContext(), R.string.pb_message_login_ok, Toast.LENGTH_SHORT).show();
+                        //
+                        //                                    sharedPreferencesHelper.putStringValue(AppConstants.KEY_SYS_CURRENT_UID, id);
+                        //                                    sharedPreferencesHelper.putStringValue(AppConstants.KEY_SYS_CURRENT_NICKNAME, nickname);
+                        //                                    sharedPreferencesHelper.putStringValue(AppConstants.KEY_SYS_CURRENT_PORTRAIT, portrait);
+                        //                                    sharedPreferencesHelper.putInt(AppConstants.KEY_SYS_CURRENT_USER_EXP, exp);
+                        //
+                        //                                    sharedPreferencesHelper.clearKey(AppConstants.KEY_SYS_CURRENT_USER_PHONE);
+                        //
+                        //                                    Intent intent = new Intent();
+                        //                                    intent.setClass(getApplicationContext(), HomeActivity.class);
+                        //                                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | IntentCompat.FLAG_ACTIVITY_CLEAR_TASK);
+                        //                                    startActivity(intent);
+                        //                                    finish();
+                        //
+                        //                                }
+                        //                            });
+                        //                        } else {
+                        //                            mDelivery.post(new Runnable() {
+                        //                                @Override
+                        //                                public void run() {
+                        //                                    ll_progress_bar_container.setVisibility(View.GONE);
+                        //                                    Toast.makeText(getApplicationContext(), R.string.pb_message_login_failure, Toast.LENGTH_SHORT).show();
+                        //                                }
+                        //                            });
+                        //                        }
                     } else {
                         mDelivery.post(new Runnable() {
                             @Override
@@ -850,56 +861,69 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
                         if (status == 0) {
                             JSONObject result = jsonObject.getJSONObject("result");
                             final String id = result.getString("id");
-
-                            UserManager userManager = new UserManager(getApplicationContext());
-                            JSONArray list = jsonObject.getJSONArray("list");
-                            if (list != null && list.length() > 0) {
-                                for (int i = 0; i < list.length(); i++) {
-                                    JSONObject tmpJson = list.getJSONObject(i);
-                                    String item_uid = tmpJson.getString("id");
-                                    String item_nickname = tmpJson.getString("nickname");
-                                    String item_portrait = tmpJson.getString("portrait");
-                                    if (item_portrait != null && !TextUtils.isEmpty(item_portrait) && !"null".equals(item_portrait)) {
-                                        userManager.addRecord(item_uid, item_nickname, item_portrait);
-                                    } else {
-                                        userManager.addRecord(item_uid, item_nickname, "");
-                                    }
+                            mDelivery.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    tv_pb_operation.setText(R.string.pb_message_login_now);
+                                    tv_pb_operation.setText(R.string.pb_message_load_info);
+                                    loadAccountInfo(id, true);
                                 }
-                            }
+                            });
 
-                            Cursor cursor = userManager.queryByUid(id);
 
-                            if (cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {
-                                final String nickname = cursor.getString(cursor.getColumnIndex(AppContract.UserEntry.COLUMN_NAME_NICK_NAME));
-                                final String portrait = cursor.getString(cursor.getColumnIndex(AppContract.UserEntry.COLUMN_NAME_PORTRAIT));
-                                mDelivery.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        ll_progress_bar_container.setVisibility(View.GONE);
-                                        Toast.makeText(getApplicationContext(), R.string.pb_message_login_ok, Toast.LENGTH_SHORT).show();
-
-                                        sharedPreferencesHelper.putStringValue(AppConstants.KEY_SYS_CURRENT_UID, id);
-                                        sharedPreferencesHelper.putStringValue(AppConstants.KEY_SYS_CURRENT_NICKNAME, nickname);
-                                        sharedPreferencesHelper.putStringValue(AppConstants.KEY_SYS_CURRENT_PORTRAIT, portrait);
-
-                                        sharedPreferencesHelper.putStringValue(AppConstants.KEY_SYS_CURRENT_USER_PHONE,account);
-
-                                        Intent intent = new Intent();
-                                        intent.setClass(getApplicationContext(), HomeActivity.class);
-                                        startActivity(intent);
-                                        finish();
-
-                                    }
-                                });
-                            } else {
-                                mDelivery.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        ll_progress_bar_container.setVisibility(View.GONE);
-                                        Toast.makeText(getApplicationContext(), R.string.pb_message_login_failure, Toast.LENGTH_SHORT).show();
-                                    }
-                                });
-                            }
+                            //                            final int exp = result.getInt("exp");
+                            //                            UserManager userManager = new UserManager(getApplicationContext());
+                            //                            JSONArray list = jsonObject.getJSONArray("list");
+                            //                            if (list != null && list.length() > 0) {
+                            //                                for (int i = 0; i < list.length(); i++) {
+                            //                                    JSONObject tmpJson = list.getJSONObject(i);
+                            //                                    String item_uid = tmpJson.getString("id");
+                            //                                    String item_nickname = tmpJson.getString("nickname");
+                            //                                    String item_portrait = tmpJson.getString("portrait");
+                            //
+                            //                                    if(item_uid.equals(id)) {
+                            //                                        if (item_portrait != null && !TextUtils.isEmpty(item_portrait) && !"null".equals(item_portrait)) {
+                            //                                            userManager.addRecord(item_uid, item_nickname, item_portrait);
+                            //                                        } else {
+                            //                                            userManager.addRecord(item_uid, item_nickname, "");
+                            //                                        }
+                            //                                    }
+                            //                                }
+                            //                            }
+                            //
+                            //                            Cursor cursor = userManager.queryByUid(id);
+                            //                            if (cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {
+                            //                                final String nickname = cursor.getString(cursor.getColumnIndex(AppContract.UserEntry.COLUMN_NAME_NICK_NAME));
+                            //                                final String portrait = cursor.getString(cursor.getColumnIndex(AppContract.UserEntry.COLUMN_NAME_PORTRAIT));
+                            //                                mDelivery.post(new Runnable() {
+                            //                                    @Override
+                            //                                    public void run() {
+                            //                                        ll_progress_bar_container.setVisibility(View.GONE);
+                            //                                        Toast.makeText(getApplicationContext(), R.string.pb_message_login_ok, Toast.LENGTH_SHORT).show();
+                            //
+                            //                                        sharedPreferencesHelper.putStringValue(AppConstants.KEY_SYS_CURRENT_UID, id);
+                            //                                        sharedPreferencesHelper.putStringValue(AppConstants.KEY_SYS_CURRENT_NICKNAME, nickname);
+                            //                                        sharedPreferencesHelper.putStringValue(AppConstants.KEY_SYS_CURRENT_PORTRAIT, portrait);
+                            //                                        sharedPreferencesHelper.putInt(AppConstants.KEY_SYS_CURRENT_USER_EXP, exp);
+                            //
+                            //                                        sharedPreferencesHelper.putStringValue(AppConstants.KEY_SYS_CURRENT_USER_PHONE,account);
+                            //
+                            //                                        Intent intent = new Intent();
+                            //                                        intent.setClass(getApplicationContext(), HomeActivity.class);
+                            //                                        startActivity(intent);
+                            //                                        finish();
+                            //
+                            //                                    }
+                            //                                });
+                            //                            } else {
+                            //                                mDelivery.post(new Runnable() {
+                            //                                    @Override
+                            //                                    public void run() {
+                            //                                        ll_progress_bar_container.setVisibility(View.GONE);
+                            //                                        Toast.makeText(getApplicationContext(), R.string.pb_message_login_failure, Toast.LENGTH_SHORT).show();
+                            //                                    }
+                            //                                });
+                            //                            }
                         } else {
                             mDelivery.post(new Runnable() {
                                 @Override
@@ -925,6 +949,85 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
                 }
             });
         }
+    }
+
+    public void loadAccountInfo(final String uid, final boolean normalLogin) {
+        OkHttpCommonUtil okHttp = OkHttpCommonUtil.newInstance(getApplicationContext());
+        okHttp.getRequest(URL_ACCOUNT_INFO_LOAD,
+                new OkHttpCommonUtil.Param[]{
+                        new OkHttpCommonUtil.Param(KEY_URL_ACCOUNT_INFO_LOAD_UID,
+                                uid)
+                },
+                new HttpBaseCallback() {
+                    @Override
+                    public void onResponse(Response response) throws IOException {
+                        String result = response.body().string();
+                        Log.d(TAG, "URL_ACCOUNT_INFO_LOAD return " + result);
+                        JSONObject jsonObject = null;
+                        try {
+                            jsonObject = new JSONObject(result);
+                            int status = jsonObject.getInt("status");
+                            String message = jsonObject.getString("message");
+                            if (status == 0) {
+                                JSONObject resultJson = jsonObject.getJSONObject("result");
+                                String tmpPhoneNo = "";
+                                if (normalLogin) {
+                                    tmpPhoneNo = resultJson.getString("phone");
+                                }
+                                final String phoneNo = tmpPhoneNo;
+                                final String nickName = resultJson.getString("nickname");
+                                final String portraitUrl = resultJson.getString("portrait");
+                                final int exp = resultJson.getInt("exp");
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        tv_pb_operation.setText(R.string.toast_account_info_load_ok);
+                                        ll_progress_bar_container.setVisibility(View.GONE);
+
+                                        sharedPreferencesHelper.putStringValue(AppConstants.KEY_SYS_CURRENT_UID, uid);
+                                        sharedPreferencesHelper.putStringValue(AppConstants.KEY_SYS_CURRENT_NICKNAME, nickName);
+                                        sharedPreferencesHelper.putStringValue(AppConstants.KEY_SYS_CURRENT_PORTRAIT, portraitUrl);
+                                        sharedPreferencesHelper.putInt(AppConstants.KEY_SYS_CURRENT_USER_EXP, exp);
+
+                                        if (normalLogin) {
+                                            sharedPreferencesHelper.putStringValue(AppConstants.KEY_SYS_CURRENT_USER_PHONE, phoneNo);
+                                        } else {
+                                            sharedPreferencesHelper.clearKey(AppConstants.KEY_SYS_CURRENT_USER_PHONE);
+                                        }
+
+
+                                        Intent intent = new Intent();
+                                        intent.setClass(getApplicationContext(), HomeActivity.class);
+                                        startActivity(intent);
+                                        finish();
+
+                                    }
+                                });
+                            } else {
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(getApplicationContext(),
+                                                getString(R.string.toast_account_info_load_failure),
+                                                Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(getApplicationContext(),
+                                            getString(R.string.toast_account_info_load_failure),
+                                            Toast.LENGTH_SHORT).show();
+
+                                }
+                            });
+
+                        }
+                    }
+                });
     }
 
 

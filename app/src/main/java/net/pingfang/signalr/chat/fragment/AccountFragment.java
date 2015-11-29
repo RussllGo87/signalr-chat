@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import net.pingfang.signalr.chat.R;
@@ -26,8 +27,10 @@ import net.pingfang.signalr.chat.util.SharedPreferencesHelper;
  */
 public class AccountFragment extends Fragment implements View.OnClickListener{
 
+    LinearLayout ll_container_account_item_me;
     ImageView iv_account_portrait;
     TextView tv_account_item_me;
+    TextView tv_account_current_exp;
     ImageView btn_qr_code;
     TextView tv_account_item_uploaded;
     TextView tv_account_item_filter_list;
@@ -51,9 +54,12 @@ public class AccountFragment extends Fragment implements View.OnClickListener{
         tv_account_item_filter_list = (TextView) view.findViewById(R.id.tv_account_item_filter_list);
         tv_account_item_filter_list.setOnClickListener(this);
 
+        ll_container_account_item_me = (LinearLayout) view.findViewById(R.id.ll_container_account_item_me);
+        ll_container_account_item_me.setOnClickListener(this);
         tv_account_item_me = (TextView) view.findViewById(R.id.tv_account_item_me);
         btn_qr_code = (ImageView) view.findViewById(R.id.btn_qr_code);
         btn_qr_code.setOnClickListener(this);
+        tv_account_current_exp = (TextView) view.findViewById(R.id.tv_account_current_exp);
         tv_account_item_settings = (TextView) view.findViewById(R.id.tv_account_item_settings);
         tv_account_item_settings.setOnClickListener(this);
         return view;
@@ -69,7 +75,7 @@ public class AccountFragment extends Fragment implements View.OnClickListener{
         }
     }
 
-    public void updateAccountInfo(String nickname,String portrait) {
+    public void updateAccountInfo(String nickname, String portrait, int exp) {
         if (!TextUtils.isEmpty(nickname)) {
             tv_account_item_me.setText(nickname);
         }
@@ -79,6 +85,8 @@ public class AccountFragment extends Fragment implements View.OnClickListener{
             OkHttpCommonUtil okHttpCommonUtil = OkHttpCommonUtil.newInstance(getContext());
             okHttpCommonUtil.display(iv_account_portrait,portrait,R.mipmap.ic_launcher);
         }
+
+        tv_account_current_exp.setText(getString(R.string.tv_account_current_exp, exp));
     }
 
     @Override
@@ -87,6 +95,11 @@ public class AccountFragment extends Fragment implements View.OnClickListener{
         switch (viewId) {
             case R.id.btn_qr_code:
                 showQrCodeInfo();
+                break;
+            case R.id.ll_container_account_item_me:
+                //                Intent accountInfoIntent = new Intent();
+                //                accountInfoIntent.setClass(getContext(), AccountInfoActivity.class);
+                //                getContext().startActivity(accountInfoIntent);
                 break;
             case R.id.tv_account_item_uploaded:
                 Intent resourceListIntent = new Intent();

@@ -21,8 +21,6 @@ import java.util.HashMap;
  */
 public class ChatAppProvider extends ContentProvider {
 
-    AppDbHelper dbHelper;
-
     // Uri工具类
     private static final UriMatcher sUriMatcher;
     // 查询、更新条件
@@ -38,7 +36,6 @@ public class ChatAppProvider extends ContentProvider {
     private static final int SHIELD_COLUMN_ID = 10;
     private static final int SHIELD_VIEW = 11;
     private static final int SHIELD_VIEW_COLUMN_ID = 12;
-
     // 查询列集合
     private static HashMap<String, String> userProjectionMap;
     private static HashMap<String, String> messageProjectionMap;
@@ -71,7 +68,9 @@ public class ChatAppProvider extends ContentProvider {
         userProjectionMap.put(AppContract.UserEntry.COLUMN_NAME_ENTRY_UID, AppContract.UserEntry.COLUMN_NAME_ENTRY_UID);
         userProjectionMap.put(AppContract.UserEntry.COLUMN_NAME_NICK_NAME, AppContract.UserEntry.COLUMN_NAME_NICK_NAME);
         userProjectionMap.put(AppContract.UserEntry.COLUMN_NAME_PORTRAIT, AppContract.UserEntry.COLUMN_NAME_PORTRAIT);
+        userProjectionMap.put(AppContract.UserEntry.COLUMN_NAME_REMARK, AppContract.UserEntry.COLUMN_NAME_REMARK);
         userProjectionMap.put(AppContract.UserEntry.COLUMN_NAME_STATUS,AppContract.UserEntry.COLUMN_NAME_STATUS);
+        userProjectionMap.put(AppContract.UserEntry.COLUMN_NAME_EXP, AppContract.UserEntry.COLUMN_NAME_EXP);
 
         messageProjectionMap = new HashMap<String, String>();
         messageProjectionMap.put(AppContract.ChatMessageEntry._ID, AppContract.ChatMessageEntry._ID);
@@ -116,6 +115,8 @@ public class ChatAppProvider extends ContentProvider {
         vShieldProjectionMap.put(AppContract.ShieldListView.COLUMN_NAME_STATUS, AppContract.ShieldListView.COLUMN_NAME_STATUS);
         vShieldProjectionMap.put(AppContract.ShieldListView.COLUMN_NAME_OWNER, AppContract.ShieldListView.COLUMN_NAME_OWNER);
     }
+
+    AppDbHelper dbHelper;
 
     @Override
     public boolean onCreate() {

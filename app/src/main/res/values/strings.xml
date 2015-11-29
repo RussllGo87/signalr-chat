@@ -97,6 +97,7 @@
     <string name="title_activity_resource_detail">ResourceDetailActivity</string>
     <!-- 屏蔽人列表 -->
     <string name="title_activity_filter_list">@string/tv_account_item_filter_list</string>
+    <string name="title_activity_account_info">AccountInfoActivity</string>
 
 
     <!--- 下拉菜单列表,发现界面DiscoveryFragment -->

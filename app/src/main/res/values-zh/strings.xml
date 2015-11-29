@@ -28,7 +28,8 @@
     <string name="btn_login_pattern_wechat">微信</string>
     <string name="btn_login_pattern_weibo">微博</string>
     <string name="pb_message_login_now">登录校验中</string>
-    <string name="pb_message_login_ok">登录成功</string>
+    <string name="pb_message_login_ok">登录校验成功</string>
+    <string name="pb_message_load_info">正在加载个人信息</string>
     <string name="pb_message_login_failure">登录失败</string>
 
     <!-- 授权相关  -->
@@ -146,6 +147,10 @@
     <string name="tv_resource_detail_status">当前状态:%s</string>
     <!-- 屏蔽人列表 -->
     <string name="title_activity_filter_list">@string/tv_account_item_filter_list</string>
+    <!-- 个人资料AccountInfoActivity -->
+    <string name="title_activity_account_info">个人资料</string>
+    <string name="tv_account_current_exp">当前积分: %d</string>
+
 
     <!--- 下拉菜单列表 ,发现界面DiscoveryFragment-->
     <!-- 菜单项 之 扫码 -->

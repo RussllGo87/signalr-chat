@@ -13,7 +13,7 @@
         android:background="@drawable/selector_settings_item"
         android:orientation="horizontal"
         android:paddingLeft="16dp"
-        android:paddingRight="16dp">
+        android:paddingRight="30dp">
 
         <ImageView android:id="@+id/iv_account_portrait"
             android:layout_width="@dimen/btn_qr_code_width"
@@ -27,6 +27,13 @@
             android:layout_weight="1"
             android:paddingLeft="@dimen/padding_tv_settings_item_me"
             android:text="我的昵称"/>
+
+        <TextView
+            android:id="@+id/tv_account_current_exp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="当前积分:0"
+            android:textColor="@color/holo_red_dark"/>
 
         <ImageView android:id="@+id/btn_qr_code"
             android:layout_width="@dimen/btn_qr_code_width"

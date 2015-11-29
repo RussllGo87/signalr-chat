@@ -41,7 +41,7 @@ public class UserManager {
 
         ContentResolver contentResolver = context.getContentResolver();
 
-        Cursor cursor = context.getContentResolver().query(AppContract.UserEntry.CONTENT_URI, null, selection, selectionArgs, null);
+        Cursor cursor = contentResolver.query(AppContract.UserEntry.CONTENT_URI, null, selection, selectionArgs, null);
 
         return cursor;
     }
@@ -95,11 +95,8 @@ public class UserManager {
 
     public boolean isExist(String uid) {
         Cursor cursor = queryByUid(uid);
-        if(cursor != null && cursor.getCount() > 0) {
-            return true;
-        }
+        return cursor != null && cursor.getCount() > 0;
 
-        return false;
     }
 
     public void addRecord(String uid, String nickname, String portrait) {

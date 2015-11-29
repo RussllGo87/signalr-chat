@@ -8,10 +8,11 @@ import android.provider.BaseColumns;
  */
 public final class AppContract {
 
-    public AppContract() {}
-
-
     public static final String AUTHORITY = "net.pingfang.signalr.chat.provider";
+
+
+    public AppContract() {
+    }
 
     public static abstract class UserEntry implements BaseColumns {
 
@@ -29,7 +30,9 @@ public final class AppContract {
         public static final String COLUMN_NAME_ENTRY_UID = "uid";
         public static final String COLUMN_NAME_NICK_NAME = "nickname";
         public static final String COLUMN_NAME_PORTRAIT = "portrait";
+        public static final String COLUMN_NAME_REMARK = "remark";
         public static final String COLUMN_NAME_STATUS = "status";
+        public static final String COLUMN_NAME_EXP = "experience";
     }
 
     public static abstract class ChatMessageEntry implements BaseColumns {

@@ -118,9 +118,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         public void loadAccountInfo() {
             String nickname = helper.getStringValue(AppConstants.KEY_SYS_CURRENT_NICKNAME);
             String portrait = helper.getStringValue(AppConstants.KEY_SYS_CURRENT_PORTRAIT);
+            int exp = helper.getInt(AppConstants.KEY_SYS_CURRENT_USER_EXP, 0);
 
             AccountFragment fragment = (AccountFragment) adapter.getItem(3);
-            fragment.updateAccountInfo(nickname, portrait);
+            fragment.updateAccountInfo(nickname, portrait, exp);
         }
 
         @Override

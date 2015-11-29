@@ -229,14 +229,16 @@
                     android:textColor="@android:color/white"/>
             </LinearLayout>
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:text="@string/tv_resource_post_requirement"
+                android:textSize="@dimen/text_size_tv_resource_post_requirement"/>
+
         </LinearLayout>
 
     </ScrollView>
 
-   <TextView
-       android:layout_width="match_parent"
-       android:layout_height="wrap_content"
-       android:text="@string/tv_resource_post_requirement"
-       android:textSize="@dimen/text_size_tv_resource_post_requirement"/>
 
 </LinearLayout>
