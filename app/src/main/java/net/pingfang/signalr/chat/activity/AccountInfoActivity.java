@@ -108,7 +108,7 @@ public class AccountInfoActivity extends AppCompatActivity implements View.OnCli
 
                                         if (!TextUtils.isEmpty(portraitUrl)) {
                                             OkHttpCommonUtil okHttp = OkHttpCommonUtil.newInstance(getApplicationContext());
-                                            okHttp.display(iv_account_portrait, portraitUrl, R.mipmap.ic_launcher);
+                                            okHttp.display(iv_account_portrait, portraitUrl, R.drawable.hale_default_user_portrait);
                                         }
 
 

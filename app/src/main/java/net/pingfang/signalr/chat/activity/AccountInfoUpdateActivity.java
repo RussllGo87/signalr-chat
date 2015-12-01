@@ -406,7 +406,7 @@ public class AccountInfoUpdateActivity extends AppCompatActivity implements View
                                             //                                            if (!portraitUrl.startsWith("http")) {
                                             //                                                portraitUrl = "http://hale.redstream.cn/UpLoad/Head/" + portraitUrl;
                                             //                                            }
-                                            okHttp.display(iv_account_portrait, portraitUrl, R.mipmap.ic_launcher);
+                                            okHttp.display(iv_account_portrait, portraitUrl, R.drawable.hale_default_user_portrait);
                                         }
 
                                         if(!TextUtils.isEmpty(gender)) {

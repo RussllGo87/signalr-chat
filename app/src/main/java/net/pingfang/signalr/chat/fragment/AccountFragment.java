@@ -83,7 +83,9 @@ public class AccountFragment extends Fragment implements View.OnClickListener{
         if(!TextUtils.isEmpty(portrait)) {
 //            portrait = GlobalApplication.PORTRAIT_URL_PREFIX + portrait;
             OkHttpCommonUtil okHttpCommonUtil = OkHttpCommonUtil.newInstance(getContext());
-            okHttpCommonUtil.display(iv_account_portrait,portrait,R.mipmap.ic_launcher);
+            okHttpCommonUtil.display(iv_account_portrait, portrait, R.drawable.hale_default_user_portrait);
+        } else {
+            iv_account_portrait.setImageResource(R.drawable.hale_default_user_portrait);
         }
 
         tv_account_current_exp.setText(getString(R.string.tv_account_current_exp, exp));
