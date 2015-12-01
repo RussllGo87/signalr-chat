@@ -31,8 +31,13 @@ public final class AppContract {
         public static final String COLUMN_NAME_NICK_NAME = "nickname";
         public static final String COLUMN_NAME_PORTRAIT = "portrait";
         public static final String COLUMN_NAME_REMARK = "remark";
-        public static final String COLUMN_NAME_STATUS = "status";
+        public static final String COLUMN_NAME_GENDER = "gender";
+        public static final String COLUMN_NAME_STATUS_MSG_LIST = "status_msg_list";
+        public static final String COLUMN_NAME_STATUS_NEARBY_LIST = "status_nearby_list";
         public static final String COLUMN_NAME_EXP = "experience";
+        //        public static final String COLUMN_NAME_LNG = "lng";
+        //        public static final String COLUMN_NAME_LAT = "lat";
+        public static final String COLUMN_NAME_DISTANCE = "distance";
     }
 
     public static abstract class ChatMessageEntry implements BaseColumns {
@@ -92,7 +97,8 @@ public final class AppContract {
         public static final String COLUMN_NAME_UID = "uid";
         public static final String COLUMN_NAME_NICKNAME ="nickname";
         public static final String COLUMN_NAME_PORTRAIT = "portrait";
-        public static final String COLUMN_NAME_STATUS = "status";
+        public static final String COLUMN_NAME_STATUS_MSG_LIST = "status_msg_list";
+        public static final String COLUMN_NAME_STATUS_NEARBY_LIST = "status_nearby_list";
         public static final String COLUMN_NAME_OWNER = "owner";
         public static final String COLUMN_NAME_CONTENT = "content";
         public static final String COLUMN_NAME_UPDATE_TIME = "update_time";
@@ -131,7 +137,8 @@ public final class AppContract {
         public static final String COLUMN_NAME_UID = "uid";
         public static final String COLUMN_NAME_NICKNAME ="nickname";
         public static final String COLUMN_NAME_PORTRAIT = "portrait";
-        public static final String COLUMN_NAME_STATUS = "status";
+        public static final String COLUMN_NAME_STATUS_MSG_LIST = "status_msg_list";
+        public static final String COLUMN_NAME_STATUS_NEARBY_LIST = "status_nearby_list";
         public static final String COLUMN_NAME_OWNER = "owner";
     }
 }

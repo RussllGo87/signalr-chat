@@ -8,11 +8,19 @@ import android.os.Parcelable;
  */
 public class User implements Parcelable {
 
-    public static final int USER_STATUS_ONLINE = 0x01;
-    public static final int USER_STATUS_OFFLINE = 0x00;
+    public static final int USER_STATUS_MSG_LIST_IN = 0x01;
+    public static final int USER_STATUS_MSG_LIST_OUT = 0x00;
 
+    public static final int USER_STATUS_NEARBY_LIST_IN = 0x01;
+    public static final int USER_STATUS_NEARBY_LIST_OUT = 0x00;
+
+    public static final int USER_GENDER_MALE = 0x01;
+    public static final int USER_GENDER_FEMALE = 0x00;
+
+    public static final String USER_DEFAULT_DISTANCE = "0.0";
     public static final int USER_DEFAULT_EXP = 0;
     public static final String USER_DEFAULT_REMARK = "";
+
     public static final Parcelable.Creator<User> CREATOR = new Parcelable.Creator<User>() {
         @Override
         public User createFromParcel(Parcel source) {
@@ -24,32 +32,40 @@ public class User implements Parcelable {
             return new User[size];
         }
     };
+
     String uid;
     String nickname;
     String portrait;
     String remark;
-    int status;
+    int gender;
+    int msgListStatus;
+    int nearbyListStatus;
     int exp;
+    String distance;
 
     public User(String uid, String nickname, String portrait) {
-        this(uid, nickname, portrait, USER_STATUS_OFFLINE);
+        this(uid, nickname, portrait, USER_DEFAULT_REMARK, USER_GENDER_MALE,
+                USER_STATUS_MSG_LIST_OUT, USER_STATUS_NEARBY_LIST_OUT, USER_DEFAULT_EXP,
+                USER_DEFAULT_DISTANCE);
     }
 
-    public User(String uid, String nickname, String portrait, int status) {
-        this(uid, nickname, portrait, status, USER_DEFAULT_EXP);
+    public User(String uid, String nickname, String portrait, String remark) {
+        this(uid, nickname, portrait, remark, USER_GENDER_MALE,
+                USER_STATUS_MSG_LIST_OUT, USER_STATUS_NEARBY_LIST_OUT, USER_DEFAULT_EXP,
+                USER_DEFAULT_DISTANCE);
     }
 
-    public User(String uid, String nickname, String portrait, int status, int exp) {
-        this(uid, nickname, portrait, USER_DEFAULT_REMARK, status, exp);
-    }
-
-    public User(String uid, String nickname, String portrait, String remark, int status, int exp) {
+    public User(String uid, String nickname, String portrait, String remark, int gender,
+                int msgListStatus, int nearbyListStatus, int exp, String distance) {
         this.uid = uid;
         this.nickname = nickname;
         this.portrait = portrait;
         this.remark = remark;
-        this.status = status;
+        this.gender = gender;
+        this.msgListStatus = msgListStatus;
+        this.nearbyListStatus = nearbyListStatus;
         this.exp = exp;
+        this.distance = distance;
     }
 
     public User(Parcel in) {
@@ -57,8 +73,11 @@ public class User implements Parcelable {
         nickname = in.readString();
         portrait = in.readString();
         remark = in.readString();
-        status = in.readInt();
+        msgListStatus = in.readInt();
+        nearbyListStatus = in.readInt();
         exp = in.readInt();
+        distance = in.readString();
+        gender = in.readInt();
     }
 
     @Override
@@ -72,8 +91,11 @@ public class User implements Parcelable {
         dest.writeString(nickname);
         dest.writeString(portrait);
         dest.writeString(remark);
-        dest.writeInt(status);
+        dest.writeInt(msgListStatus);
+        dest.writeInt(nearbyListStatus);
         dest.writeInt(exp);
+        dest.writeString(distance);
+        dest.writeInt(gender);
     }
 
     public String getUid() {
@@ -100,12 +122,20 @@ public class User implements Parcelable {
         this.portrait = portrait;
     }
 
-    public int getStatus() {
-        return status;
+    public int getMsgListStatus() {
+        return msgListStatus;
     }
 
-    public void setStatus(int status) {
-        this.status = status;
+    public void setMsgListStatus(int msgListStatus) {
+        this.msgListStatus = msgListStatus;
+    }
+
+    public int getNearbyListStatus() {
+        return nearbyListStatus;
+    }
+
+    public void setNearbyListStatus(int nearbyListStatus) {
+        this.nearbyListStatus = nearbyListStatus;
     }
 
     public int getExp() {
@@ -114,5 +144,29 @@ public class User implements Parcelable {
 
     public void setExp(int exp) {
         this.exp = exp;
+    }
+
+    public String getDistance() {
+        return distance;
+    }
+
+    public void setDistance(String distance) {
+        this.distance = distance;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
+
+    public int getGender() {
+        return gender;
+    }
+
+    public void setGender(int gender) {
+        this.gender = gender;
     }
 }

@@ -21,7 +21,6 @@ public class AppDbHelper extends SQLiteOpenHelper {
     private static final String UNIQUE = " UNIQUE";
     private static final String COMMA_SEP = ",";
 
-
     private static final String SQL_CREATE_ENTRY_USER =
             "CREATE TABLE " + AppContract.UserEntry.TABLE_NAME + " (" +
             AppContract.UserEntry._ID + INTEGER_TYPE + PRIMARY_KEY + COMMA_SEP +
@@ -29,8 +28,11 @@ public class AppDbHelper extends SQLiteOpenHelper {
             AppContract.UserEntry.COLUMN_NAME_NICK_NAME + TEXT_TYPE + NOT_NULL + COMMA_SEP +
             AppContract.UserEntry.COLUMN_NAME_PORTRAIT + TEXT_TYPE + COMMA_SEP +
                     AppContract.UserEntry.COLUMN_NAME_REMARK + TEXT_TYPE + COMMA_SEP +
-                    AppContract.UserEntry.COLUMN_NAME_STATUS + INTEGER_TYPE + COMMA_SEP +
-                    AppContract.UserEntry.COLUMN_NAME_EXP + INTEGER_TYPE +
+                    AppContract.UserEntry.COLUMN_NAME_GENDER + INTEGER_TYPE + COMMA_SEP +
+                    AppContract.UserEntry.COLUMN_NAME_STATUS_MSG_LIST + INTEGER_TYPE + COMMA_SEP +
+                    AppContract.UserEntry.COLUMN_NAME_STATUS_NEARBY_LIST + INTEGER_TYPE + COMMA_SEP +
+                    AppContract.UserEntry.COLUMN_NAME_EXP + INTEGER_TYPE + COMMA_SEP +
+                    AppContract.UserEntry.COLUMN_NAME_DISTANCE + INTEGER_TYPE +
             " )";
     private static final String SQL_DELETE_ENTRY_USER =
             "DROP TABLE IF EXISTS " + AppContract.UserEntry.TABLE_NAME;
@@ -71,7 +73,8 @@ public class AppDbHelper extends SQLiteOpenHelper {
             "user." + AppContract.UserEntry.COLUMN_NAME_ENTRY_UID + " AS " + AppContract.RecentContactView.COLUMN_NAME_UID + COMMA_SEP +
             "user." + AppContract.UserEntry.COLUMN_NAME_NICK_NAME + " AS " + AppContract.RecentContactView.COLUMN_NAME_NICKNAME + COMMA_SEP +
             "user." + AppContract.UserEntry.COLUMN_NAME_PORTRAIT + " AS " + AppContract.RecentContactView.COLUMN_NAME_PORTRAIT + COMMA_SEP +
-            "user." + AppContract.UserEntry.COLUMN_NAME_STATUS + " AS " + AppContract.RecentContactView.COLUMN_NAME_STATUS + COMMA_SEP +
+                    "user." + AppContract.UserEntry.COLUMN_NAME_STATUS_MSG_LIST + " AS " + AppContract.RecentContactView.COLUMN_NAME_STATUS_MSG_LIST + COMMA_SEP +
+                    "user." + AppContract.UserEntry.COLUMN_NAME_STATUS_NEARBY_LIST + " AS " + AppContract.RecentContactView.COLUMN_NAME_STATUS_NEARBY_LIST + COMMA_SEP +
             "recent." + AppContract.RecentContactEntry.COLUMN_NAME_CONTENT + " AS " + AppContract.RecentContactView.COLUMN_NAME_CONTENT + COMMA_SEP +
             "recent." + AppContract.RecentContactEntry.COLUMN_NAME_UPDATE_TIME + " AS " + AppContract.RecentContactView.COLUMN_NAME_UPDATE_TIME + COMMA_SEP +
             "recent." + AppContract.RecentContactEntry.COLUMN_NAME_COUNT + " AS " + AppContract.RecentContactView.COLUMN_NAME_COUNT + COMMA_SEP +
@@ -105,7 +108,8 @@ public class AppDbHelper extends SQLiteOpenHelper {
             "user." + AppContract.UserEntry.COLUMN_NAME_ENTRY_UID + " AS " + AppContract.ShieldListView.COLUMN_NAME_UID + COMMA_SEP +
             "user." + AppContract.UserEntry.COLUMN_NAME_NICK_NAME + " AS " + AppContract.ShieldListView.COLUMN_NAME_NICKNAME + COMMA_SEP +
             "user." + AppContract.UserEntry.COLUMN_NAME_PORTRAIT + " AS " + AppContract.ShieldListView.COLUMN_NAME_PORTRAIT + COMMA_SEP +
-            "user." + AppContract.UserEntry.COLUMN_NAME_STATUS + " AS " + AppContract.ShieldListView.COLUMN_NAME_STATUS + COMMA_SEP +
+                    "user." + AppContract.UserEntry.COLUMN_NAME_STATUS_MSG_LIST + " AS " + AppContract.ShieldListView.COLUMN_NAME_STATUS_MSG_LIST + COMMA_SEP +
+                    "user." + AppContract.UserEntry.COLUMN_NAME_STATUS_NEARBY_LIST + " AS " + AppContract.ShieldListView.COLUMN_NAME_STATUS_NEARBY_LIST + COMMA_SEP +
             "shield." + AppContract.ShieldEntry.COLUMN_NAME_OWNER + " AS " + AppContract.ShieldListView.COLUMN_NAME_OWNER + " " +
             "FROM " +
             AppContract.UserEntry.TABLE_NAME + " AS user, " +

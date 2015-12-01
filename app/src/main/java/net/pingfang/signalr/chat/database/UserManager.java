@@ -29,7 +29,7 @@ public class UserManager {
         values.put(AppContract.UserEntry.COLUMN_NAME_ENTRY_UID,uid);
         values.put(AppContract.UserEntry.COLUMN_NAME_NICK_NAME,nickname);
         values.put(AppContract.UserEntry.COLUMN_NAME_PORTRAIT,portrait);
-        values.put(AppContract.UserEntry.COLUMN_NAME_STATUS, status);
+        //        values.put(AppContract.UserEntry.COLUMN_NAME_STATUS, status);
 
         Uri uri = contentResolver.insert(AppContract.UserEntry.CONTENT_URI, values);
         return uri;
@@ -53,8 +53,8 @@ public class UserManager {
             if(cursor.moveToNext()) {
                 String nickname = cursor.getString(cursor.getColumnIndex(AppContract.UserEntry.COLUMN_NAME_NICK_NAME));
                 String portrait = cursor.getString(cursor.getColumnIndex(AppContract.UserEntry.COLUMN_NAME_PORTRAIT));
-                int status = cursor.getInt(cursor.getColumnIndex(AppContract.UserEntry.COLUMN_NAME_STATUS));
-                User user = new User(uid,nickname,portrait,status);
+                //                int status = cursor.getInt(cursor.getColumnIndex(AppContract.UserEntry.COLUMN_NAME_STATUS));
+                User user = new User(uid, nickname, portrait);
                 return user;
             }
         }
@@ -81,7 +81,7 @@ public class UserManager {
     public int updateStatus(String uid, int status) {
 
         ContentValues values = new ContentValues();
-        values.put(AppContract.UserEntry.COLUMN_NAME_STATUS,status);
+        //        values.put(AppContract.UserEntry.COLUMN_NAME_STATUS,status);
 
         String selection = AppContract.UserEntry.COLUMN_NAME_ENTRY_UID + " = ?";
         String[] selectionArgs = new String[]{uid};

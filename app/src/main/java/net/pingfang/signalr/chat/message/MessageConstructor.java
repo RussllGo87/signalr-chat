@@ -197,22 +197,22 @@ public class MessageConstructor {
         stringBuffer.append(uid);
         stringBuffer.append("\"");
         stringBuffer.append(",");
-//        stringBuffer.append("\"");
-//        stringBuffer.append("SenderName");
-//        stringBuffer.append("\"");
-//        stringBuffer.append(":");
-//        stringBuffer.append("\"");
-//        stringBuffer.append(nickname);
-//        stringBuffer.append("\"");
-//        stringBuffer.append(",");
-//        stringBuffer.append("\"");
-//        stringBuffer.append("SenderPortrait");
-//        stringBuffer.append("\"");
-//        stringBuffer.append(":");
-//        stringBuffer.append("\"");
-//        stringBuffer.append(portrait);
-//        stringBuffer.append("\"");
-//        stringBuffer.append(",");
+        stringBuffer.append("\"");
+        stringBuffer.append("SenderName");
+        stringBuffer.append("\"");
+        stringBuffer.append(":");
+        stringBuffer.append("\"");
+        stringBuffer.append(nickname);
+        stringBuffer.append("\"");
+        stringBuffer.append(",");
+        stringBuffer.append("\"");
+        stringBuffer.append("SenderPortrait");
+        stringBuffer.append("\"");
+        stringBuffer.append(":");
+        stringBuffer.append("\"");
+        stringBuffer.append(portrait);
+        stringBuffer.append("\"");
+        stringBuffer.append(",");
         stringBuffer.append("\"");
         stringBuffer.append("MessageType");
         stringBuffer.append("\"");
@@ -356,6 +356,44 @@ public class MessageConstructor {
         stringBuffer.append("\"");
         stringBuffer.append(":");
         stringBuffer.append(uid);
+        stringBuffer.append("}");
+
+        return stringBuffer.toString();
+    }
+
+    public static String constructRequestNearbyPeople(String uid, int currentPage, int size, String latitude, String longitude) {
+        StringBuffer stringBuffer = new StringBuffer();
+        stringBuffer.append("{");
+        stringBuffer.append("\"");
+        stringBuffer.append("Page");
+        stringBuffer.append("\"");
+        stringBuffer.append(":");
+        stringBuffer.append(currentPage);
+        stringBuffer.append(",");
+
+        stringBuffer.append("\"");
+        stringBuffer.append("Rows");
+        stringBuffer.append("\"");
+        stringBuffer.append(":");
+        stringBuffer.append(size);
+        stringBuffer.append(",");
+
+        stringBuffer.append("\"");
+        stringBuffer.append("Longitude");
+        stringBuffer.append("\"");
+        stringBuffer.append(":");
+        stringBuffer.append("\"");
+        stringBuffer.append(longitude);
+        stringBuffer.append("\"");
+        stringBuffer.append(",");
+
+        stringBuffer.append("\"");
+        stringBuffer.append("Latitude");
+        stringBuffer.append("\"");
+        stringBuffer.append(":");
+        stringBuffer.append("\"");
+        stringBuffer.append(latitude);
+        stringBuffer.append("\"");
         stringBuffer.append("}");
 
         return stringBuffer.toString();
