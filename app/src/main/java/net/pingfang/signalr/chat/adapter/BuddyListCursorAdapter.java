@@ -40,26 +40,34 @@ public class BuddyListCursorAdapter extends CursorAdapter {
         if(portraitUrl != null && !TextUtils.isEmpty(portraitUrl) && !"null".equals(portraitUrl)) {
 //            portraitUrl = GlobalApplication.PORTRAIT_URL_PREFIX + portraitUrl;
             OkHttpCommonUtil okHttpCommonUtil = OkHttpCommonUtil.newInstance(context);
-            okHttpCommonUtil.display(iv_user_portrait,portraitUrl,R.mipmap.ic_launcher);
+            okHttpCommonUtil.display(iv_user_portrait, portraitUrl, R.drawable.hale_default_user_portrait);
         } else {
-            iv_user_portrait.setImageResource(R.mipmap.ic_launcher);
+            iv_user_portrait.setImageResource(R.drawable.hale_default_user_portrait);
         }
 
         TextView tv_user_nickname = (TextView) view.findViewById(R.id.tv_user_nickname);
         tv_user_nickname.setText(cursor.getString(cursor.getColumnIndex(AppContract.UserEntry.COLUMN_NAME_NICK_NAME)));
 
-        TextView tv_user_status = (TextView) view.findViewById(R.id.tv_user_status);
-        int status = cursor.getInt(cursor.getColumnIndex(AppContract.UserEntry.COLUMN_NAME_STATUS));
-        if(status == 1) {
-            tv_user_status.setText(R.string.tv_user_status_online);
+        ImageView iv_user_gener = (ImageView) view.findViewById(R.id.iv_user_gener);
+        int gender = cursor.getInt(cursor.getColumnIndex(AppContract.UserEntry.COLUMN_NAME_GENDER));
+        if (gender == User.USER_GENDER_MALE) {
+            iv_user_gener.setImageResource(R.drawable.icon_hale_male);
         } else {
-            tv_user_status.setText(R.string.tv_user_status_offline);
+            iv_user_gener.setImageResource(R.drawable.icon_hale_female);
         }
+
+        TextView tv_user_distance = (TextView) view.findViewById(R.id.tv_user_distance);
+        String distance = cursor.getString(cursor.getColumnIndex(AppContract.UserEntry.COLUMN_NAME_DISTANCE));
+        tv_user_distance.setText(context.getResources().getString(R.string.tv_user_distance, distance));
 
         String uid = cursor.getString(cursor.getColumnIndex(AppContract.UserEntry.COLUMN_NAME_ENTRY_UID));
         String nickname = cursor.getString(cursor.getColumnIndex(AppContract.UserEntry.COLUMN_NAME_NICK_NAME));
+        String remark = cursor.getString(cursor.getColumnIndex(AppContract.UserEntry.COLUMN_NAME_REMARK));
+        int msgListStatus = cursor.getInt(cursor.getColumnIndex(AppContract.UserEntry.COLUMN_NAME_STATUS_MSG_LIST));
+        int nearbyStatus = cursor.getInt(cursor.getColumnIndex(AppContract.UserEntry.COLUMN_NAME_STATUS_NEARBY_LIST));
 
-        User user = new User(uid,nickname,portraitUrl,status);
+        User user = new User(uid, nickname, portraitUrl, remark, gender,
+                msgListStatus, nearbyStatus, 0, distance);
         view.setTag(user);
     }
 

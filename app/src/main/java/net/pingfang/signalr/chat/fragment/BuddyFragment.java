@@ -7,6 +7,8 @@ import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -18,13 +20,16 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.orangegangsters.github.swipyrefreshlayout.library.SwipyRefreshLayout;
+import com.orangegangsters.github.swipyrefreshlayout.library.SwipyRefreshLayoutDirection;
+
 import net.pingfang.signalr.chat.R;
 import net.pingfang.signalr.chat.activity.ChatActivity;
 import net.pingfang.signalr.chat.adapter.BuddyListCursorAdapter;
 import net.pingfang.signalr.chat.constant.app.AppConstants;
 import net.pingfang.signalr.chat.database.AppContract;
 import net.pingfang.signalr.chat.database.User;
-import net.pingfang.signalr.chat.listener.OnFragmentInteractionListener;
+import net.pingfang.signalr.chat.listener.OnBuddyFragmentInteractionListener;
 import net.pingfang.signalr.chat.util.GlobalApplication;
 import net.pingfang.signalr.chat.util.SharedPreferencesHelper;
 
@@ -36,21 +41,24 @@ import net.pingfang.signalr.chat.util.SharedPreferencesHelper;
 public class BuddyFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
 
     private static final int LOADER_ID = 0x01;
-
-    private ListView list_user;
-
-    private BuddyListCursorAdapter listCursorAdapter;
-
-    private OnFragmentInteractionListener mListener;
-
     SharedPreferencesHelper sharedPreferencesHelper;
-
     MessageReceiver receiver;
+    private SwipyRefreshLayout swipe_refresh_layout;
+    private ListView list_user;
+    private BuddyListCursorAdapter listCursorAdapter;
+    private OnBuddyFragmentInteractionListener mListener;
+    private Handler mDelivery = new Handler(Looper.getMainLooper());
 
-    public static BuddyFragment newInstance(OnFragmentInteractionListener mListener) {
+    private int currentPage = 1;
+
+    public static BuddyFragment newInstance(OnBuddyFragmentInteractionListener mListener) {
         BuddyFragment fragment = new BuddyFragment();
         fragment.mListener = mListener;
         return fragment;
+    }
+
+    public int getCurrentPage() {
+        return currentPage;
     }
 
     @Override
@@ -73,6 +81,26 @@ public class BuddyFragment extends Fragment implements LoaderManager.LoaderCallb
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_buddy, container, false);
+        swipe_refresh_layout = (SwipyRefreshLayout) view.findViewById(R.id.swipe_refresh_layout);
+        swipe_refresh_layout.setOnRefreshListener(new SwipyRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh(SwipyRefreshLayoutDirection direction) {
+                boolean loadNextPage = !(direction == SwipyRefreshLayoutDirection.TOP);
+                if (loadNextPage) {
+                    currentPage = currentPage + 1;
+                    mListener.loadBottom();
+                } else {
+                    mListener.loadTop();
+                }
+
+                mDelivery.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        swipe_refresh_layout.setRefreshing(false);
+                    }
+                }, 8000);
+            }
+        });
         list_user = (ListView) view.findViewById(R.id.list_user);
         return view;
     }
@@ -130,10 +158,10 @@ public class BuddyFragment extends Fragment implements LoaderManager.LoaderCallb
         String uid = args.getString(AppConstants.KEY_SYS_CURRENT_UID);
 
         Uri baseUri = AppContract.UserEntry.CONTENT_URI;
-
-        String selection = AppContract.UserEntry.COLUMN_NAME_ENTRY_UID + " != ? AND " +
-                AppContract.UserEntry.COLUMN_NAME_STATUS + " = ?";
-        String[] selectionArgs = new String[]{uid,"1"};
+        String selection = AppContract.UserEntry.COLUMN_NAME_ENTRY_UID + " != ? " +
+                "AND " +
+                AppContract.UserEntry.COLUMN_NAME_STATUS_NEARBY_LIST + " = ?";
+        String[] selectionArgs = new String[]{uid, String.valueOf(User.USER_STATUS_NEARBY_LIST_IN)};
 
         return new CursorLoader(getContext(),baseUri,null,selection,selectionArgs,null);
     }
@@ -151,6 +179,9 @@ public class BuddyFragment extends Fragment implements LoaderManager.LoaderCallb
     private class MessageReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
+
+            swipe_refresh_layout.setRefreshing(false);
+
             String uid = sharedPreferencesHelper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID);
             Bundle args = new Bundle();
             args.putString(AppConstants.KEY_SYS_CURRENT_UID,uid);

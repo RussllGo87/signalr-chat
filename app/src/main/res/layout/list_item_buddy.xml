@@ -1,20 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingBottom="12dp"
     android:paddingLeft="@dimen/padding_left_list_item_buddy_container"
     android:paddingRight="@dimen/padding_left_list_item_buddy_container"
-    android:gravity="center">
+                android:paddingTop="12dp">
 
     <ImageView android:id="@+id/iv_user_portrait"
         android:layout_width="@dimen/iv_user_portrait_width"
         android:layout_height="@dimen/iv_user_portrait_width"
-        android:src="@mipmap/ic_launcher"/>
+               android:src="@drawable/hale_default_user_portrait"/>
 
+    <TextView
+        android:id="@+id/tv_user_nickname"
+        style="@style/SettingItemStyle"
+        android:layout_width="wrap_content"
+        android:layout_toRightOf="@+id/iv_user_portrait"
+        android:minHeight="18dp"
+        android:paddingBottom="4dp"
+        android:text="朋友昵称"
+        android:textColor="@color/material_grey_600"
+        android:textSize="@dimen/text_size_activity_title"/>
+
+    <ImageView
+        android:id="@+id/iv_user_gener"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/tv_user_nickname"
+        android:layout_below="@+id/tv_user_nickname"
+        android:layout_marginLeft="30dp"
+        android:src="@drawable/icon_hale_male"/>
+
+    <ImageView
+        android:id="@+id/iv_user_distance_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_user_nickname"
+        android:layout_toRightOf="@+id/iv_user_gener"
+        android:src="@drawable/icon_hale_distance"/>
+
+    <TextView
+        android:id="@+id/tv_user_distance"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_user_nickname"
+        android:layout_toRightOf="@+id/iv_user_distance_icon"
+        android:text="200米以内"
+        android:textColor="@color/material_grey_600"/>
+
+    <!--
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_paddingTop="6dp"
+        android:layout_marginBottom="6dp"
         android:orientation="vertical">
 
         <TextView android:id="@+id/tv_user_nickname"
@@ -31,8 +72,7 @@
             android:paddingLeft="@dimen/padding_tv_settings_item_me"
             android:text="在线"/>
 
-
     </LinearLayout>
+    -->
 
-
-</LinearLayout>
+</RelativeLayout>
