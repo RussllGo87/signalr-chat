@@ -40,7 +40,7 @@ public class ShieldListCursorAdapter extends CursorAdapter {
         if(portraitUrl != null && !TextUtils.isEmpty(portraitUrl) && !"null".equals(portraitUrl)) {
 //            portraitUrl = GlobalApplication.PORTRAIT_URL_PREFIX + portraitUrl;
             OkHttpCommonUtil okHttpCommonUtil = OkHttpCommonUtil.newInstance(context);
-            okHttpCommonUtil.display(iv_shield_portrait,portraitUrl,R.mipmap.ic_launcher);
+            okHttpCommonUtil.display(iv_shield_portrait, portraitUrl, R.drawable.hale_default_user_portrait);
         } else {
             iv_shield_portrait.setImageResource(R.mipmap.ic_launcher);
         }
@@ -48,12 +48,12 @@ public class ShieldListCursorAdapter extends CursorAdapter {
         TextView tv_shield_nickname = (TextView) view.findViewById(R.id.tv_shield_nickname);
         tv_shield_nickname.setText(cursor.getString(cursor.getColumnIndex(AppContract.ShieldListView.COLUMN_NAME_NICKNAME)));
 
-        int status = cursor.getInt(cursor.getColumnIndex(AppContract.ShieldListView.COLUMN_NAME_STATUS));
+        //        int status = cursor.getInt(cursor.getColumnIndex(AppContract.ShieldListView.COLUMN_NAME_STATUS));
 
         String uid = cursor.getString(cursor.getColumnIndex(AppContract.ShieldListView.COLUMN_NAME_UID));
         String nickname = cursor.getString(cursor.getColumnIndex(AppContract.ShieldListView.COLUMN_NAME_NICKNAME));
 
-        User user = new User(uid,nickname,portraitUrl,status);
+        User user = new User(uid, nickname, portraitUrl);
         view.setTag(user);
     }
 }
