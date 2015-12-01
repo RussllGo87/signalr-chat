@@ -1,17 +1,5 @@
 package net.pingfang.signalr.chat.util;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.UUID;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
@@ -24,6 +12,18 @@ import android.os.Environment;
 import android.provider.MediaStore.Images.ImageColumns;
 import android.util.Base64;
 import android.util.Log;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class CommonUtil {
     /**
@@ -89,7 +89,7 @@ public class CommonUtil {
     /**
      * 格式化byte
      * 将bitmap转换成base64字符串
-     * @param b
+     * @param bitmap
      * @return
      */
     public static String bitmapToBase64(Bitmap bitmap) {
@@ -127,11 +127,7 @@ public class CommonUtil {
      */
     public static boolean hasSdcard() {
         String state = Environment.getExternalStorageState();
-        if (state.equals(Environment.MEDIA_MOUNTED)) {
-            return true;
-        } else {
-            return false;
-        }
+        return state.equals(Environment.MEDIA_MOUNTED);
     }
 
 
@@ -293,5 +289,6 @@ public class CommonUtil {
         }
         return true;
     }
+
 
 }

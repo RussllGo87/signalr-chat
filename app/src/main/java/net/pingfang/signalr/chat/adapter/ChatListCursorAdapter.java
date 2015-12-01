@@ -40,9 +40,9 @@ public class ChatListCursorAdapter extends CursorAdapter {
         if (portraitUrl != null && !TextUtils.isEmpty(portraitUrl) && !"null".equals(portraitUrl)) {
 //            portraitUrl = GlobalApplication.PORTRAIT_URL_PREFIX + portraitUrl;
             OkHttpCommonUtil okHttpCommonUtil = OkHttpCommonUtil.newInstance(context);
-            okHttpCommonUtil.display(iv_account_portrait, portraitUrl, R.mipmap.ic_launcher);
+            okHttpCommonUtil.display(iv_account_portrait, portraitUrl, R.drawable.hale_default_user_portrait);
         } else {
-            iv_account_portrait.setImageResource(R.mipmap.ic_launcher);
+            iv_account_portrait.setImageResource(R.drawable.hale_default_user_portrait);
         }
 
         TextView tv_friends_name = (TextView) view.findViewById(R.id.tv_friends_name);
@@ -63,9 +63,8 @@ public class ChatListCursorAdapter extends CursorAdapter {
 
         String uid = cursor.getString(cursor.getColumnIndex(AppContract.RecentContactView.COLUMN_NAME_UID));
         String nickname = cursor.getString(cursor.getColumnIndex(AppContract.RecentContactView.COLUMN_NAME_NICKNAME));
-        int status = cursor.getInt(cursor.getColumnIndex(AppContract.RecentContactView.COLUMN_NAME_STATUS));
 
-        User user = new User(uid,nickname,portraitUrl,status);
+        User user = new User(uid, nickname, portraitUrl);
         view.setTag(user);
     }
 }

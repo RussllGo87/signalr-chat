@@ -46,7 +46,7 @@ import net.pingfang.signalr.chat.fragment.AccountFragment;
 import net.pingfang.signalr.chat.fragment.BuddyFragment;
 import net.pingfang.signalr.chat.fragment.DiscoveryFragment;
 import net.pingfang.signalr.chat.fragment.MessageFragment;
-import net.pingfang.signalr.chat.listener.OnFragmentInteractionListener;
+import net.pingfang.signalr.chat.listener.OnBuddyFragmentInteractionListener;
 import net.pingfang.signalr.chat.message.MessageConstructor;
 import net.pingfang.signalr.chat.net.HttpBaseCallback;
 import net.pingfang.signalr.chat.net.OkHttpCommonUtil;
@@ -93,26 +93,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private Oauth2AccessToken mAccessToken;
     // 微信登录配置
     private WxOauth2AccessToken mWxOauth2AccessToken;
-    /**
-     * Defines callbacks for service binding, passed to bindService()
-     */
-    private ServiceConnection mConnection = new ServiceConnection() {
 
-        @Override
-        public void onServiceConnected(ComponentName className,
-                                       IBinder service) {
-            // We've bound to LocalService, cast the IBinder and get LocalService instance
-            ChatService.ChatBinder binder = (ChatService.ChatBinder) service;
-            mService = binder.getService();
-            mBound = true;
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName className) {
-            mBound = false;
-        }
-    };
-    private OnFragmentInteractionListener onFragmentInteractionListener = new OnFragmentInteractionListener() {
+    private OnBuddyFragmentInteractionListener onFragmentInteractionListener = new OnBuddyFragmentInteractionListener() {
 
         @Override
         public void loadAccountInfo() {
@@ -132,6 +114,40 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                                 helper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID),
                                 user.getUid()));
             }
+        }
+
+        @Override
+        public void loadTop() {
+            if (mBound) {
+                loadNearbyPeople(1, 5);
+            }
+        }
+
+        @Override
+        public void loadBottom() {
+            int currentPage = buddyFragment.getCurrentPage();
+            loadNearbyPeople(currentPage, 5);
+        }
+    };
+    /**
+     * Defines callbacks for service binding, passed to bindService()
+     */
+    private ServiceConnection mConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName className,
+                                       IBinder service) {
+            // We've bound to LocalService, cast the IBinder and get LocalService instance
+            ChatService.ChatBinder binder = (ChatService.ChatBinder) service;
+            mService = binder.getService();
+            mBound = true;
+
+            loadNearbyPeople(1, 5);
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName className) {
+            mBound = false;
         }
     };
 
@@ -388,6 +404,17 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private void bindChatService() {
         Intent intent = new Intent(this, ChatService.class);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+    }
+
+    private void loadNearbyPeople(int currentPage, int size) {
+        String requestType = "RequestOnlineList";
+        String requestContent = MessageConstructor.constructRequestNearbyPeople(
+                helper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID),
+                currentPage,
+                size,
+                helper.getStringValue(AppConstants.KEY_SYS_LOCATION_LAT),
+                helper.getStringValue(AppConstants.KEY_SYS_LOCATION_LNG));
+        mService.sendMessage(requestType, requestContent);
     }
 
     @Override

@@ -14,6 +14,8 @@ import org.apache.commons.io.FileUtils;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.regex.Matcher;
@@ -103,10 +105,32 @@ public class CommonTools {
         return grayScaleBitmap;
     }
 
+
+    /**
+     * 处理服务器返回的时间
+     *
+     * @param datetime
+     * @return
+     */
+    public static String convertServerTime(String datetime) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSSZ");
+        Date out;
+        try {
+            out = sdf.parse(datetime);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            out = new Date();
+        }
+
+        return TimeConvertString(out);
+    }
+
     public static String TimeConvertString() {
-        long currentTimeMillis = System.currentTimeMillis();
         Date date = new Date();
-        date.setTime(currentTimeMillis);
+        return TimeConvertString(date);
+    }
+
+    public static String TimeConvertString(Date date) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
 

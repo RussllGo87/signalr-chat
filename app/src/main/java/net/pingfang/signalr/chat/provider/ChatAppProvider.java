@@ -69,8 +69,12 @@ public class ChatAppProvider extends ContentProvider {
         userProjectionMap.put(AppContract.UserEntry.COLUMN_NAME_NICK_NAME, AppContract.UserEntry.COLUMN_NAME_NICK_NAME);
         userProjectionMap.put(AppContract.UserEntry.COLUMN_NAME_PORTRAIT, AppContract.UserEntry.COLUMN_NAME_PORTRAIT);
         userProjectionMap.put(AppContract.UserEntry.COLUMN_NAME_REMARK, AppContract.UserEntry.COLUMN_NAME_REMARK);
-        userProjectionMap.put(AppContract.UserEntry.COLUMN_NAME_STATUS,AppContract.UserEntry.COLUMN_NAME_STATUS);
+        userProjectionMap.put(AppContract.UserEntry.COLUMN_NAME_GENDER, AppContract.UserEntry.COLUMN_NAME_GENDER);
+        userProjectionMap.put(AppContract.UserEntry.COLUMN_NAME_STATUS_MSG_LIST, AppContract.UserEntry.COLUMN_NAME_STATUS_MSG_LIST);
+        userProjectionMap.put(AppContract.UserEntry.COLUMN_NAME_STATUS_NEARBY_LIST, AppContract.UserEntry.COLUMN_NAME_STATUS_NEARBY_LIST);
         userProjectionMap.put(AppContract.UserEntry.COLUMN_NAME_EXP, AppContract.UserEntry.COLUMN_NAME_EXP);
+        userProjectionMap.put(AppContract.UserEntry.COLUMN_NAME_DISTANCE, AppContract.UserEntry.COLUMN_NAME_DISTANCE);
+
 
         messageProjectionMap = new HashMap<String, String>();
         messageProjectionMap.put(AppContract.ChatMessageEntry._ID, AppContract.ChatMessageEntry._ID);
@@ -96,7 +100,8 @@ public class ChatAppProvider extends ContentProvider {
         vRecentProjectionMap.put(AppContract.RecentContactView.COLUMN_NAME_UID, AppContract.RecentContactView.COLUMN_NAME_UID);
         vRecentProjectionMap.put(AppContract.RecentContactView.COLUMN_NAME_NICKNAME, AppContract.RecentContactView.COLUMN_NAME_NICKNAME);
         vRecentProjectionMap.put(AppContract.RecentContactView.COLUMN_NAME_PORTRAIT, AppContract.RecentContactView.COLUMN_NAME_PORTRAIT);
-        vRecentProjectionMap.put(AppContract.RecentContactView.COLUMN_NAME_STATUS, AppContract.RecentContactView.COLUMN_NAME_STATUS);
+        vRecentProjectionMap.put(AppContract.RecentContactView.COLUMN_NAME_STATUS_MSG_LIST, AppContract.RecentContactView.COLUMN_NAME_STATUS_MSG_LIST);
+        vRecentProjectionMap.put(AppContract.RecentContactView.COLUMN_NAME_STATUS_NEARBY_LIST, AppContract.RecentContactView.COLUMN_NAME_STATUS_NEARBY_LIST);
         vRecentProjectionMap.put(AppContract.RecentContactView.COLUMN_NAME_CONTENT, AppContract.RecentContactView.COLUMN_NAME_CONTENT);
         vRecentProjectionMap.put(AppContract.RecentContactView.COLUMN_NAME_UPDATE_TIME, AppContract.RecentContactView.COLUMN_NAME_UPDATE_TIME);
         vRecentProjectionMap.put(AppContract.RecentContactView.COLUMN_NAME_OWNER, AppContract.RecentContactView.COLUMN_NAME_OWNER);
@@ -112,7 +117,8 @@ public class ChatAppProvider extends ContentProvider {
         vShieldProjectionMap.put(AppContract.ShieldListView.COLUMN_NAME_UID, AppContract.ShieldListView.COLUMN_NAME_UID);
         vShieldProjectionMap.put(AppContract.ShieldListView.COLUMN_NAME_NICKNAME, AppContract.ShieldListView.COLUMN_NAME_NICKNAME);
         vShieldProjectionMap.put(AppContract.ShieldListView.COLUMN_NAME_PORTRAIT, AppContract.ShieldListView.COLUMN_NAME_PORTRAIT);
-        vShieldProjectionMap.put(AppContract.ShieldListView.COLUMN_NAME_STATUS, AppContract.ShieldListView.COLUMN_NAME_STATUS);
+        vShieldProjectionMap.put(AppContract.ShieldListView.COLUMN_NAME_STATUS_MSG_LIST, AppContract.ShieldListView.COLUMN_NAME_STATUS_MSG_LIST);
+        vShieldProjectionMap.put(AppContract.ShieldListView.COLUMN_NAME_STATUS_MSG_LIST, AppContract.ShieldListView.COLUMN_NAME_STATUS_MSG_LIST);
         vShieldProjectionMap.put(AppContract.ShieldListView.COLUMN_NAME_OWNER, AppContract.ShieldListView.COLUMN_NAME_OWNER);
     }
 

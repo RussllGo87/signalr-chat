@@ -710,7 +710,6 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                 String fromUid = args.getString("fromUid");
                 if(buddyUid.equals(fromUid)) {
                     new ProcessMessageTask().execute(messageUri);
-
                 } else {
                     // build an notification on status bar when new online message is coming
 

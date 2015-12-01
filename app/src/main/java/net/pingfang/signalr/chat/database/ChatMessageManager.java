@@ -41,35 +41,19 @@ public class ChatMessageManager {
 
         ContentResolver contentResolver = context.getContentResolver();
 
-        Cursor cursor = context.getContentResolver().query(AppContract.UserEntry.CONTENT_URI, null, selection, selectionArgs, null);
+        Cursor cursor = context.getContentResolver().query(AppContract.ChatMessageEntry.CONTENT_URI, null, selection, selectionArgs, null);
 
         return cursor;
-    }
-
-    public int updateStatus(String uid, int status) {
-
-        ContentValues values = new ContentValues();
-        values.put(AppContract.UserEntry.COLUMN_NAME_STATUS,status);
-
-        String selection = AppContract.UserEntry.COLUMN_NAME_ENTRY_UID + " = ?";
-        String[] selectionArgs = new String[]{uid};
-
-        ContentResolver contentResolver = context.getContentResolver();
-
-        int count = contentResolver.update(AppContract.UserEntry.CONTENT_URI, values, selection, selectionArgs);
-
-        return count;
     }
 
     public int updateStatus(Uri uri, int status) {
 
         ContentValues values = new ContentValues();
-        values.put(AppContract.UserEntry.COLUMN_NAME_STATUS,status);
-
+        values.put(AppContract.ChatMessageEntry.COLUMN_NAME_M_STATUS, status);
 
         ContentResolver contentResolver = context.getContentResolver();
 
-        int count = contentResolver.update(AppContract.UserEntry.CONTENT_URI, values, null, null);
+        int count = contentResolver.update(AppContract.ChatMessageEntry.CONTENT_URI, values, null, null);
 
         return count;
     }

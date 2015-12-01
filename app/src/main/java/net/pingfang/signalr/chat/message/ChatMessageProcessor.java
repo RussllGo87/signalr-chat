@@ -14,11 +14,12 @@ import net.pingfang.signalr.chat.R;
 import net.pingfang.signalr.chat.constant.app.AppConstants;
 import net.pingfang.signalr.chat.database.AppContract;
 import net.pingfang.signalr.chat.database.ChatMessageManager;
+import net.pingfang.signalr.chat.database.User;
 import net.pingfang.signalr.chat.database.UserManager;
 import net.pingfang.signalr.chat.util.CommonTools;
+import net.pingfang.signalr.chat.util.GlobalApplication;
 import net.pingfang.signalr.chat.util.MediaFileUtils;
 import net.pingfang.signalr.chat.util.SharedPreferencesHelper;
-import net.pingfang.signalr.chat.util.GlobalApplication;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -30,6 +31,9 @@ import java.util.ArrayList;
  * Created by gongguopei87@gmail.com on 2015/9/25.
  */
 public class ChatMessageProcessor implements ChatMessageListener {
+
+    public static final boolean MSG_ACTION_SEND = true;
+    public static final boolean MSG_ACTION_REC = false;
 
     Context context;
 
@@ -53,27 +57,60 @@ public class ChatMessageProcessor implements ChatMessageListener {
      */
     private void processOnlineList(String message) {
 
-        String selection = AppContract.UserEntry.COLUMN_NAME_ENTRY_UID + " = ?";
-
         JSONArray jsonArray;
 
         try {
             jsonArray = new JSONArray(message);
+            UserManager userManager = new UserManager(context);
+            ContentValues values = new ContentValues();
             for(int i = 0; i < jsonArray.length(); i++) {
                 JSONObject object = jsonArray.getJSONObject(i);
                 String uid = object.getString("UserId");
-                ContentValues values = new ContentValues();
-                values.put(AppContract.UserEntry.COLUMN_NAME_STATUS,1);
-                context.getContentResolver().update(AppContract.UserEntry.CONTENT_URI,
-                        values,
-                        selection,
-                        new String[]{uid});
+                String nickName = object.getString("NickName");
+                String headPortrait = object.getString("HeadPortrait");
+                String distance = object.getString("Distance");
+                int gender = User.USER_GENDER_MALE;
+                boolean sex = object.getBoolean("Sex");
+                if (sex) {
+                    gender = User.USER_GENDER_MALE;
+                } else {
+                    gender = User.USER_GENDER_FEMALE;
+                }
+
+                boolean isExist = userManager.isExist(uid);
+                if (isExist) {
+                    String selection = AppContract.UserEntry.COLUMN_NAME_ENTRY_UID + " = ?";
+                    values.put(AppContract.UserEntry.COLUMN_NAME_NICK_NAME, nickName);
+                    values.put(AppContract.UserEntry.COLUMN_NAME_PORTRAIT, headPortrait);
+                    values.put(AppContract.UserEntry.COLUMN_NAME_GENDER, gender);
+                    values.put(AppContract.UserEntry.COLUMN_NAME_DISTANCE, distance);
+                    // 将用户附近状态标记设置为开启状态
+                    values.put(AppContract.UserEntry.COLUMN_NAME_STATUS_NEARBY_LIST, User.USER_STATUS_NEARBY_LIST_IN);
+
+                    context.getContentResolver().update(AppContract.UserEntry.CONTENT_URI,
+                            values,
+                            selection,
+                            new String[]{uid});
+                } else {
+                    values.put(AppContract.UserEntry.COLUMN_NAME_ENTRY_UID, uid);
+                    values.put(AppContract.UserEntry.COLUMN_NAME_NICK_NAME, nickName);
+                    values.put(AppContract.UserEntry.COLUMN_NAME_PORTRAIT, headPortrait);
+                    values.put(AppContract.UserEntry.COLUMN_NAME_GENDER, gender);
+                    //当前添加用户为新创建用户，不可能在出现在消息列表里
+                    values.put(AppContract.UserEntry.COLUMN_NAME_STATUS_MSG_LIST, User.USER_STATUS_MSG_LIST_OUT);
+                    // 将用户附近状态标记设置为开启状态
+                    values.put(AppContract.UserEntry.COLUMN_NAME_STATUS_NEARBY_LIST, User.USER_STATUS_NEARBY_LIST_IN);
+                    values.put(AppContract.UserEntry.COLUMN_NAME_DISTANCE, distance);
+
+                    context.getContentResolver().insert(AppContract.UserEntry.CONTENT_URI, values);
+                }
             }
             Intent intent = new Intent();
             intent.setAction(GlobalApplication.ACTION_INTENT_UPDATE_ONLINE_LIST);
             context.sendBroadcast(intent);
         } catch (JSONException e) {
             e.printStackTrace();
+            Log.d("ChatMessageProcessor", "processOnlineList() parse json error");
         }
     }
 
@@ -91,7 +128,7 @@ public class ChatMessageProcessor implements ChatMessageListener {
             if(uid != null && !TextUtils.isEmpty(uid) && !uid.equals("0")) {
                 UserManager userManager = new UserManager(context);
                 boolean isExist = userManager.isExist(uid);
-                values.put(AppContract.UserEntry.COLUMN_NAME_STATUS,status);
+                //                values.put(AppContract.UserEntry.COLUMN_NAME_STATUS,status);
                 if(isExist) {
                     context.getContentResolver().update(AppContract.UserEntry.CONTENT_URI,
                             values,
@@ -124,11 +161,17 @@ public class ChatMessageProcessor implements ChatMessageListener {
 
     /** 用户退出应用状态更新 **/
     private void exitApp() {
-        ContentValues values = new ContentValues();
-        values.put(AppContract.UserEntry.COLUMN_NAME_STATUS,0);
-        context.getContentResolver().update(AppContract.UserEntry.CONTENT_URI, values, null, null);
+        //        ContentValues values = new ContentValues();
+        //        values.put(AppContract.UserEntry.COLUMN_NAME_STATUS,0);
+        //        context.getContentResolver().update(AppContract.UserEntry.CONTENT_URI, values, null, null);
     }
 
+    /**
+     * 处理在线消息的收发
+     *
+     * @param message   消息内容
+     * @param direction true发送,false接收
+     */
     private void processOnlineMessage(String message,boolean direction) {
         JSONObject object;
         try {
@@ -138,29 +181,47 @@ public class ChatMessageProcessor implements ChatMessageListener {
             String buddy = from;
             String owner = to;
             int status = MessageConstant.MESSAGE_STATUS_NOT_READ;
+
+            // 如果是发送消息,消息状态设为已读
             if(direction) {
                 buddy = to;
                 owner = from;
                 status = MessageConstant.MESSAGE_STATUS_READ;
             }
+
             String fromNickname = object.getString("SenderName");
             String fromPortrait = object.getString("SenderPortrait");
             String content = object.getString("Contents");
             String datetime = object.getString("SendTime");
             String contentType = object.getString("MessageType");
-
-            if(!direction) {
-                UserManager userManager = new UserManager(context);
-                Cursor cursor = userManager.queryByUid(from);
-                if(cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {
-                    fromNickname = cursor.getString(cursor.getColumnIndex(AppContract.UserEntry.COLUMN_NAME_NICK_NAME));
-                    fromPortrait = cursor.getString(cursor.getColumnIndex(AppContract.UserEntry.COLUMN_NAME_PORTRAIT));
-                    cursor.close();
-                } else {
-                    userManager.addRecord(from,fromNickname,fromPortrait);
-                }
+            if (!direction) {
+                datetime = CommonTools.convertServerTime(datetime);
             }
 
+            // 如果是接收消息,需要添加用户信息到数据库用户表
+            if(!direction) {
+                UserManager userManager = new UserManager(context);
+                boolean isExist = userManager.isExist(from);
+                ContentValues values = new ContentValues();
+                if (isExist) {
+                    String selection = AppContract.UserEntry.COLUMN_NAME_ENTRY_UID + " = ?";
+                    values.put(AppContract.UserEntry.COLUMN_NAME_NICK_NAME, fromNickname);
+                    values.put(AppContract.UserEntry.COLUMN_NAME_PORTRAIT, fromPortrait);
+                    values.put(AppContract.UserEntry.COLUMN_NAME_STATUS_MSG_LIST, User.USER_STATUS_MSG_LIST_IN);
+                    context.getContentResolver().update(AppContract.UserEntry.CONTENT_URI,
+                            values,
+                            selection,
+                            new String[]{from});
+                } else {
+                    values.put(AppContract.UserEntry.COLUMN_NAME_ENTRY_UID, from);
+                    values.put(AppContract.UserEntry.COLUMN_NAME_NICK_NAME, fromNickname);
+                    values.put(AppContract.UserEntry.COLUMN_NAME_PORTRAIT, fromPortrait);
+                    values.put(AppContract.UserEntry.COLUMN_NAME_STATUS_MSG_LIST, User.USER_STATUS_MSG_LIST_IN);
+                    values.put(AppContract.UserEntry.COLUMN_NAME_STATUS_NEARBY_LIST, User.USER_STATUS_NEARBY_LIST_OUT);
+
+                    context.getContentResolver().insert(AppContract.UserEntry.CONTENT_URI, values);
+                }
+            }
 
             ChatMessageManager chatMessageManager = new ChatMessageManager(context);
             Uri messageUri = null;
@@ -170,15 +231,17 @@ public class ChatMessageProcessor implements ChatMessageListener {
                    messageUri = chatMessageManager.insert(from, to, owner, MessageConstant.MESSAGE_TYPE_ON_LINE,
                             contentType, content, datetime, status);
                     values.put(AppContract.RecentContactEntry.COLUMN_NAME_CONTENT, content);
-                } else if(contentType.equals("Picture")){
-                    String fileExtension = object.getString("fileExtension");
+                } else if (contentType.equals("Picture")) {
+                    //                    String fileExtension = object.getString("fileExtensionn");
+                    String fileExtension = "jpg";
                     String filePath = MediaFileUtils.processReceiveFile(context, content,
                             MessageConstant.MESSAGE_FILE_TYPE_IMG, fileExtension);
                     messageUri = chatMessageManager.insert(from, to, owner, MessageConstant.MESSAGE_TYPE_ON_LINE,
                             contentType, filePath, datetime, status);
                     values.put(AppContract.RecentContactEntry.COLUMN_NAME_CONTENT, context.getResources().getString(R.string.content_type_pic));
                 } else if(contentType.equals("Audio")) {
-                    String fileExtension = object.getString("fileExtension");
+                    //                    String fileExtension = object.getString("fileExtension");
+                    String fileExtension = "3gp";
                     String filePath = MediaFileUtils.processReceiveFile(context, content,
                             MessageConstant.MESSAGE_FILE_TYPE_AUDIO, fileExtension);
                     messageUri = chatMessageManager.insert(from, to, owner, MessageConstant.MESSAGE_TYPE_ON_LINE,
@@ -236,31 +299,9 @@ public class ChatMessageProcessor implements ChatMessageListener {
                 }
 
             }
-//            args.putString("fromUid",from);
-//            args.putString("nameFrom", fromNickname);
-//            args.putString("content", content);
-//            args.putString("datetime", datetime);
-//            args.putString("messageType", contentType);
-
-//            Intent intent = new Intent();
-//            if(!TextUtils.isEmpty(contentType)) {
-//                if(contentType.equals("Text")) {
-//                    intent.setAction(GlobalApplication.ACTION_INTENT_TEXT_MESSAGE_INCOMING);
-//                } else if(contentType.equals("Picture")){
-//                    intent.setAction(GlobalApplication.ACTION_INTENT_IMAGE_MESSAGE_INCOMING);
-//                    String fileExtension = object.getString("fileExtension");
-//                    args.putString("fileExtension", fileExtension);
-//                } else if(contentType.equals("Audio")) {
-//                    intent.setAction(GlobalApplication.ACTION_INTENT_VOICE_MESSAGE_INCOMING);
-//                    String fileExtension = object.getString("fileExtension");
-//                    args.putString("fileExtension", fileExtension);
-//                }
-//            }
-//            intent.putExtra("message", args);
-//            context.sendBroadcast(intent);
-
         } catch (JSONException e) {
             e.printStackTrace();
+            Log.d("ChatMessageProcessor", "processOnlineMessage() parse json error");
         }
 
     }
@@ -327,6 +368,7 @@ public class ChatMessageProcessor implements ChatMessageListener {
                 String contentType = jsonObject.getString("MessageType");
                 String content = jsonObject.getString("Contents");
                 String datetime = jsonObject.getString("SendTime");
+                datetime = CommonTools.convertServerTime(datetime);
 
                 // 消息存储
                 ChatMessageManager chatMessageManager = new ChatMessageManager(context);

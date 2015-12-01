@@ -69,14 +69,16 @@
 
         <Button android:id="@+id/btn_voice_record"
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
                 android:layout_weight="1"
                 android:background="@drawable/selector_btn_bg"
+                android:paddingBottom="8dp"
+                android:paddingTop="8dp"
                 android:text="@string/btn_voice_record"
                 android:textColor="@android:color/white"
-                android:visibility="gone"/>
+                android:textSize="18sp"/>
 
         <EditText android:id="@+id/et_message"
                   android:layout_width="0dp"
@@ -84,7 +86,8 @@
                   android:layout_marginRight="10dp"
                   android:layout_weight="1"
                   android:imeOptions="actionSend"
-                  android:inputType="text"/>
+                  android:inputType="text"
+                  android:visibility="gone"/>
 
         <TextView
             android:id="@+id/btn_send"
