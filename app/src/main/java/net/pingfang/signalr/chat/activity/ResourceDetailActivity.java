@@ -76,13 +76,13 @@ public class ResourceDetailActivity extends AppCompatActivity implements View.On
 //                okHttp.display(iv_resource_detail_profile,url,R.mipmap.ic_launcher);
                 String[] urls = url.split(";");
                 if(urls != null && urls.length > 0) {
-                    okHttp.display(iv_resource_detail_profile,urls[0],R.mipmap.ic_launcher);
+                    okHttp.display(iv_resource_detail_profile, urls[0], R.drawable.ic_empty);
                     if(urls.length > 1) {
-                        okHttp.display(iv_resource_detail_profile_2,urls[1],R.mipmap.ic_launcher);
+                        okHttp.display(iv_resource_detail_profile_2, urls[1], R.drawable.ic_empty);
                         if(urls.length > 2) {
-                            okHttp.display(iv_resource_detail_profile_3,urls[2],R.mipmap.ic_launcher);
+                            okHttp.display(iv_resource_detail_profile_3, urls[2], R.drawable.ic_empty);
                             if (urls.length > 3) {
-                                okHttp.display(iv_resource_detail_profile_4, urls[3], R.mipmap.ic_launcher);
+                                okHttp.display(iv_resource_detail_profile_4, urls[3], R.drawable.ic_empty);
                             }
                         }
 
