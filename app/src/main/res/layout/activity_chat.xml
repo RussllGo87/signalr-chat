@@ -78,16 +78,17 @@
                 android:paddingTop="8dp"
                 android:text="@string/btn_voice_record"
                 android:textColor="@android:color/white"
-                android:textSize="18sp"/>
+                android:textSize="18sp"
+                android:visibility="gone"/>
 
         <EditText android:id="@+id/et_message"
                   android:layout_width="0dp"
                   android:layout_height="wrap_content"
+                  android:layout_marginLeft="10dp"
                   android:layout_marginRight="10dp"
                   android:layout_weight="1"
                   android:imeOptions="actionSend"
-                  android:inputType="text"
-                  android:visibility="gone"/>
+                  android:inputType="text"/>
 
         <TextView
             android:id="@+id/btn_send"

@@ -205,6 +205,12 @@
     <!-- 群发消息 -->
     <string name="title_activity_bulk_msg">群发消息</string>
     <string name="tv_activity_bulk_msg_menu_drop_down">选择范围</string>
+    <string name="menu_bulk_action_radius_meter_100">100米</string>
+    <string name="menu_bulk_action_radius_kilometer_1">1公里</string>
+    <string name="menu_bulk_action_radius_kilometer_5">5公里</string>
+    <string name="menu_bulk_action_radius_kilometer_10">10公里</string>
+    <string name="menu_bulk_action_radius_kilometer_100">100公里</string>
+    <string name="menu_bulk_action_radius_kilometer_1000">1000公里</string>
 
     <!-- 设置页 -->
     <string name="title_activity_settings">@string/action_settings</string>

@@ -186,7 +186,9 @@ public class MessageConstructor {
         return stringBuffer.toString();
     }
 
-    public static String constructBulkTxtMsgReq(String uid, String nickname, String portrait,String content, String datetime) {
+    public static String constructBulkTxtMsgReq(String uid, String nickname, String portrait,
+                                                String content, String datetime, String longitude, String latitude,
+                                                int integration, double distance, int maxMassTimes) {
         StringBuffer stringBuffer = new StringBuffer();
         stringBuffer.append("{");
         stringBuffer.append("\"");
@@ -236,12 +238,53 @@ public class MessageConstructor {
         stringBuffer.append("\"");
         stringBuffer.append(datetime);
         stringBuffer.append("\"");
+        stringBuffer.append(",");
+        stringBuffer.append("\"");
+        stringBuffer.append("Longitude");
+        stringBuffer.append("\"");
+        stringBuffer.append(":");
+        stringBuffer.append("\"");
+        stringBuffer.append(longitude);
+        stringBuffer.append("\"");
+        stringBuffer.append(",");
+        stringBuffer.append("\"");
+        stringBuffer.append("Latitude");
+        stringBuffer.append("\"");
+        stringBuffer.append(":");
+        stringBuffer.append("\"");
+        stringBuffer.append(latitude);
+        stringBuffer.append("\"");
+        stringBuffer.append(",");
+        stringBuffer.append("\"");
+        stringBuffer.append("Integration");
+        stringBuffer.append("\"");
+        stringBuffer.append(":");
+        stringBuffer.append("\"");
+        stringBuffer.append(integration);
+        stringBuffer.append("\"");
+        stringBuffer.append(",");
+        stringBuffer.append("\"");
+        stringBuffer.append("Distance");
+        stringBuffer.append("\"");
+        stringBuffer.append(":");
+        stringBuffer.append("\"");
+        stringBuffer.append(distance);
+        stringBuffer.append("\"");
+        stringBuffer.append(",");
+        stringBuffer.append("\"");
+        stringBuffer.append("MaxMassTimes");
+        stringBuffer.append("\"");
+        stringBuffer.append(":");
+        stringBuffer.append("\"");
+        stringBuffer.append(maxMassTimes);
+        stringBuffer.append("\"");
         stringBuffer.append("}");
         return stringBuffer.toString();
     }
 
     public static String constructBulkFileMsgReq(String uid, String nickname, String portrait,String messageType,
-                                                 String fileExtension, String fileBody, String datetime) {
+                                                 String fileExtension, String fileBody, String datetime, String longitude, String latitude,
+                                                 int integration, double distance, int maxMassTimes) {
         StringBuffer stringBuffer = new StringBuffer();
         stringBuffer.append("{");
         stringBuffer.append("\"");
@@ -251,22 +294,22 @@ public class MessageConstructor {
         stringBuffer.append("\"");
         stringBuffer.append(uid);
         stringBuffer.append("\"");
-//        stringBuffer.append(",");
-//        stringBuffer.append("\"");
-//        stringBuffer.append("SenderName");
-//        stringBuffer.append("\"");
-//        stringBuffer.append(":");
-//        stringBuffer.append("\"");
-//        stringBuffer.append(nickname);
-//        stringBuffer.append("\"");
-//        stringBuffer.append(",");
-//        stringBuffer.append("\"");
-//        stringBuffer.append("SenderPortrait");
-//        stringBuffer.append("\"");
-//        stringBuffer.append(":");
-//        stringBuffer.append("\"");
-//        stringBuffer.append(portrait);
-//        stringBuffer.append("\"");
+        stringBuffer.append(",");
+        stringBuffer.append("\"");
+        stringBuffer.append("SenderName");
+        stringBuffer.append("\"");
+        stringBuffer.append(":");
+        stringBuffer.append("\"");
+        stringBuffer.append(nickname);
+        stringBuffer.append("\"");
+        stringBuffer.append(",");
+        stringBuffer.append("\"");
+        stringBuffer.append("SenderPortrait");
+        stringBuffer.append("\"");
+        stringBuffer.append(":");
+        stringBuffer.append("\"");
+        stringBuffer.append(portrait);
+        stringBuffer.append("\"");
         stringBuffer.append(",");
         stringBuffer.append("\"");
         stringBuffer.append("MessageType");
@@ -302,6 +345,47 @@ public class MessageConstructor {
         stringBuffer.append(":");
         stringBuffer.append("\"");
         stringBuffer.append(datetime);
+        stringBuffer.append("\"");
+
+        stringBuffer.append(",");
+        stringBuffer.append("\"");
+        stringBuffer.append("Longitude");
+        stringBuffer.append("\"");
+        stringBuffer.append(":");
+        stringBuffer.append("\"");
+        stringBuffer.append(longitude);
+        stringBuffer.append("\"");
+        stringBuffer.append(",");
+        stringBuffer.append("\"");
+        stringBuffer.append("Latitude");
+        stringBuffer.append("\"");
+        stringBuffer.append(":");
+        stringBuffer.append("\"");
+        stringBuffer.append(latitude);
+        stringBuffer.append("\"");
+        stringBuffer.append(",");
+        stringBuffer.append("\"");
+        stringBuffer.append("Integration");
+        stringBuffer.append("\"");
+        stringBuffer.append(":");
+        stringBuffer.append("\"");
+        stringBuffer.append(integration);
+        stringBuffer.append("\"");
+        stringBuffer.append(",");
+        stringBuffer.append("\"");
+        stringBuffer.append("Distance");
+        stringBuffer.append("\"");
+        stringBuffer.append(":");
+        stringBuffer.append("\"");
+        stringBuffer.append(distance);
+        stringBuffer.append("\"");
+        stringBuffer.append(",");
+        stringBuffer.append("\"");
+        stringBuffer.append("MaxMassTimes");
+        stringBuffer.append("\"");
+        stringBuffer.append(":");
+        stringBuffer.append("\"");
+        stringBuffer.append(maxMassTimes);
         stringBuffer.append("\"");
         stringBuffer.append("}");
         return stringBuffer.toString();

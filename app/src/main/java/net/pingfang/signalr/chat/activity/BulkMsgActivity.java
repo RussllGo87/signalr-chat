@@ -67,6 +67,8 @@ public class BulkMsgActivity extends AppCompatActivity implements View.OnClickLi
 
     public static final String TAG = BulkMsgActivity.class.getSimpleName();
 
+    public static final String URL_BULK_MSG_RULE = GlobalApplication.URL_WEB_API_HOST + "/api/WebAPI/BroadcastIntegralDistance/GetBroadcastIntegralDistances";
+
     TextView btn_activity_back;
     TextView tv_activity_title;
     TextView tv_menu_drop_down;
@@ -101,6 +103,11 @@ public class BulkMsgActivity extends AppCompatActivity implements View.OnClickLi
     ChatMessageProcessor chatMessageProcessor;
     Uri targetUri;
     String tmpFilePath;
+
+    int currentIntegration = 0;
+    int currentDistance = 1000;
+    int currentMaxMassTimes = 1500;
+
     /**
      * Defines callbacks for service binding, passed to bindService()
      */
@@ -235,7 +242,7 @@ public class BulkMsgActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void loadLocalMessage() {
-        new LoadLocalMessageTask().execute(uid, Integer.toString(MessageConstant.MESSAGE_TYPE_BULK));
+        new LoadLocalMessageTask().execute(uid, String.valueOf(MessageConstant.MESSAGE_TYPE_BULK));
     }
 
     private void initCommunicate() {
@@ -244,6 +251,7 @@ public class BulkMsgActivity extends AppCompatActivity implements View.OnClickLi
         Intent intent = new Intent(this, ChatService.class);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
     }
+
 
     public void registerReceiver() {
         receiver = new MessageReceiver();
@@ -371,25 +379,25 @@ public class BulkMsgActivity extends AppCompatActivity implements View.OnClickLi
         ContextThemeWrapper wrapper = new ContextThemeWrapper(getApplicationContext(), R.style.AppMainTheme);
         PopupMenu popup = new PopupMenu(wrapper, view);
         final MenuInflater inflater = popup.getMenuInflater();
-        inflater.inflate(R.menu.menu_nearby, popup.getMenu());
+        inflater.inflate(R.menu.menu_bulk_msg, popup.getMenu());
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
-                    case R.id.action_radius_half:
-                        tv_menu_drop_down.setText(R.string.action_radius_half);
+                    case R.id.menu_bulk_action_radius_meter_100:
+                        tv_menu_drop_down.setText(R.string.menu_bulk_action_radius_meter_100);
                         break;
-                    case R.id.action_radius_kilometer:
-                        tv_menu_drop_down.setText(R.string.action_radius_kilometer);
+                    case R.id.menu_bulk_action_radius_kilometer_1:
+                        tv_menu_drop_down.setText(R.string.menu_bulk_action_radius_kilometer_1);
                         break;
-                    case R.id.action_radius_kilometer_2:
-                        tv_menu_drop_down.setText(R.string.action_radius_kilometer_2);
+                    case R.id.menu_bulk_action_radius_kilometer_5:
+                        tv_menu_drop_down.setText(R.string.menu_bulk_action_radius_kilometer_5);
                         break;
-                    case R.id.action_radius_kilometer_5:
-                        tv_menu_drop_down.setText(R.string.action_radius_kilometer_5);
+                    case R.id.menu_bulk_action_radius_kilometer_10:
+                        tv_menu_drop_down.setText(R.string.menu_bulk_action_radius_kilometer_10);
                         break;
-                    case R.id.action_radius_all:
-                        tv_menu_drop_down.setText(R.string.action_radius_all);
+                    case R.id.menu_bulk_action_radius_kilometer_1000:
+                        tv_menu_drop_down.setText(R.string.menu_bulk_action_radius_kilometer_1000);
                         break;
                 }
                 return true;
@@ -403,7 +411,17 @@ public class BulkMsgActivity extends AppCompatActivity implements View.OnClickLi
         et_message.setText("");
         if(!TextUtils.isEmpty(content)) {
             String datetime = CommonTools.TimeConvertString();
-            String messageBody = MessageConstructor.constructBulkTxtMsgReq(uid,nickname,portrait,content,datetime);
+            String messageBody = MessageConstructor.constructBulkTxtMsgReq(
+                    uid,
+                    nickname,
+                    portrait,
+                    content,
+                    datetime,
+                    helper.getStringValue(AppConstants.KEY_SYS_LOCATION_LNG),
+                    helper.getStringValue(AppConstants.KEY_SYS_LOCATION_LAT),
+                    currentIntegration,
+                    currentDistance,
+                    currentMaxMassTimes);
             // 消息发送
             mService.sendMessage("BulkMssaging", messageBody);
             chatMessageProcessor.onSendMessage("BulkMssaging",messageBody);
@@ -509,7 +527,12 @@ public class BulkMsgActivity extends AppCompatActivity implements View.OnClickLi
                         String fileBody = CommonTools.bitmapToBase64(bitmap);
                         if(!TextUtils.isEmpty(fileExtension) && !TextUtils.isEmpty(fileBody)) {
                             String messageBody = MessageConstructor.constructBulkFileMsgReq(
-                                    uid,nickname,portrait,"Picture",fileExtension,fileBody,datetime);
+                                    uid, nickname, portrait, "Picture", fileExtension, fileBody, datetime,
+                                    helper.getStringValue(AppConstants.KEY_SYS_LOCATION_LNG),
+                                    helper.getStringValue(AppConstants.KEY_SYS_LOCATION_LAT),
+                                    currentIntegration,
+                                    currentDistance,
+                                    currentMaxMassTimes);
                             Log.d(TAG, "messageBody = " + messageBody);
                             mService.sendMessage("BulkMssaging", messageBody);
                             chatMessageProcessor.onSendMessage("BulkMssaging", messageBody);
@@ -528,7 +551,12 @@ public class BulkMsgActivity extends AppCompatActivity implements View.OnClickLi
                 String fileBody = CommonTools.bitmapToBase64(bitmap);
                 if(!TextUtils.isEmpty(fileExtension) && !TextUtils.isEmpty(fileBody)) {
                     String messageBody = MessageConstructor.constructBulkFileMsgReq(
-                            uid, nickname, portrait, "Picture", fileExtension, fileBody, datetime);
+                            uid, nickname, portrait, "Picture", fileExtension, fileBody, datetime,
+                            helper.getStringValue(AppConstants.KEY_SYS_LOCATION_LNG),
+                            helper.getStringValue(AppConstants.KEY_SYS_LOCATION_LAT),
+                            currentIntegration,
+                            currentDistance,
+                            currentMaxMassTimes);
                     Log.d(TAG, "messageBody = " + messageBody);
                     mService.sendMessage("BulkMssaging", messageBody);
                     chatMessageProcessor.onSendMessage("BulkMssaging", messageBody);
@@ -644,7 +672,12 @@ public class BulkMsgActivity extends AppCompatActivity implements View.OnClickLi
 
             if(!TextUtils.isEmpty(fileExtension) && !TextUtils.isEmpty(fileBody)) {
                 String messageBody = MessageConstructor.constructBulkFileMsgReq(uid, nickname, portrait,
-                        "Audio", fileExtension, fileBody, datetime);
+                        "Audio", fileExtension, fileBody, datetime,
+                        helper.getStringValue(AppConstants.KEY_SYS_LOCATION_LNG),
+                        helper.getStringValue(AppConstants.KEY_SYS_LOCATION_LAT),
+                        currentIntegration,
+                        currentDistance,
+                        currentMaxMassTimes);
                 Log.d(TAG, "messageBody = " + messageBody);
                 mService.sendMessage("BulkMssaging", messageBody);
                 chatMessageProcessor.onSendMessage("BulkMssaging", messageBody);
@@ -754,8 +787,10 @@ public class BulkMsgActivity extends AppCompatActivity implements View.OnClickLi
             String owner = params[0];
             String msgType = params[1];
             String[] selectionArgs = new String[] {owner, msgType};
+
             Cursor cursor = getApplicationContext().getContentResolver().query(AppContract.ChatMessageEntry.CONTENT_URI,
                     null, selection, selectionArgs, null);
+
             UserManager userManager = new UserManager(getApplicationContext());
             if(cursor != null && cursor.getCount() > 0) {
                 cursor.moveToPrevious();
@@ -819,7 +854,6 @@ public class BulkMsgActivity extends AppCompatActivity implements View.OnClickLi
         protected String doInBackground(Uri... params) {
             Uri messageUri = params[0];
             ChatMessageManager chatMessageManager = new ChatMessageManager(getApplicationContext());
-            chatMessageManager.updateStatus(messageUri, MessageConstant.MESSAGE_STATUS_READ);
             Cursor cursor = null;
             if(messageUri != null) {
                 chatMessageManager.updateStatus(messageUri, MessageConstant.MESSAGE_STATUS_READ);
