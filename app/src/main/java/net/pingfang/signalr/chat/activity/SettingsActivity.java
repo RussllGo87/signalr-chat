@@ -187,9 +187,8 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                     SharedPreferencesHelper.clearWxAccessToken();
                 }
 
-
-                mService.destroy();
                 if (mBound) {
+                    mService.destroy();
                     unbindService(mConnection);
                     mBound = false;
                 }

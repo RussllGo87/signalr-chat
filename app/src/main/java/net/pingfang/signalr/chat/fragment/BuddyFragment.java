@@ -90,6 +90,7 @@ public class BuddyFragment extends Fragment implements LoaderManager.LoaderCallb
                     currentPage = currentPage + 1;
                     mListener.loadBottom();
                 } else {
+                    currentPage = 1;
                     mListener.loadTop();
                 }
 
@@ -160,10 +161,11 @@ public class BuddyFragment extends Fragment implements LoaderManager.LoaderCallb
         Uri baseUri = AppContract.UserEntry.CONTENT_URI;
         String selection = AppContract.UserEntry.COLUMN_NAME_ENTRY_UID + " != ? " +
                 "AND " +
-                AppContract.UserEntry.COLUMN_NAME_STATUS_NEARBY_LIST + " = ?";
+                AppContract.UserEntry.COLUMN_NAME_STATUS_NEARBY_LIST + " = ? ";
         String[] selectionArgs = new String[]{uid, String.valueOf(User.USER_STATUS_NEARBY_LIST_IN)};
+        String sortOrder = AppContract.UserEntry.COLUMN_NAME_DISTANCE + " ASC ";
 
-        return new CursorLoader(getContext(),baseUri,null,selection,selectionArgs,null);
+        return new CursorLoader(getContext(), baseUri, null, selection, selectionArgs, sortOrder);
     }
 
     @Override

@@ -69,7 +69,8 @@ public class BulkMsgActivity extends AppCompatActivity implements View.OnClickLi
 
     public static final String TAG = BulkMsgActivity.class.getSimpleName();
 
-    public static final String URL_BULK_MSG_RULE = GlobalApplication.URL_WEB_API_HOST + "/api/WebAPI/BroadcastIntegralDistance/GetBroadcastIntegralDistances";
+    public static final String URL_BULK_MSG_RULE =
+            GlobalApplication.URL_WEB_API_HOST + "/api/WebAPI/BroadcastIntegralDistance/GetBroadcastIntegralDistances";
 
     TextView btn_activity_back;
     TextView tv_activity_title;

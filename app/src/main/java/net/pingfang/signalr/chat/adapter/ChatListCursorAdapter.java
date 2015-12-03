@@ -24,6 +24,7 @@ public class ChatListCursorAdapter extends CursorAdapter {
 
     public ChatListCursorAdapter(Context context, Cursor c, int flags) {
         super(context, c, flags);
+        this.context = context;
         cursorInflater = (LayoutInflater) context.getSystemService(
                 Context.LAYOUT_INFLATER_SERVICE);
     }
