@@ -18,7 +18,7 @@
         <ImageView android:id="@+id/iv_account_portrait"
             android:layout_width="@dimen/btn_qr_code_width"
             android:layout_height="@dimen/btn_qr_code_width"
-            android:src="@mipmap/ic_launcher"/>
+                   android:src="@drawable/hale_default_user_portrait"/>
 
         <TextView
             android:id="@+id/tv_account_item_me"

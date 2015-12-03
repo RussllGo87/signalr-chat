@@ -30,6 +30,7 @@
 
     </RelativeLayout>
 
+    <!---
     <TextView android:id="@+id/tv_settings_item_account"
               style="@style/SettingItemStyle"
               android:layout_marginTop="@dimen/activity_vertical_margin"
@@ -37,7 +38,9 @@
               android:drawableEnd="@drawable/setting_view_arrow"
               android:drawableRight="@drawable/setting_view_arrow"
               android:text="@string/tv_settings_item_account"/>
+    -->
 
+    <!--
     <TextView
         android:id="@+id/tv_settings_item_msg"
               style="@style/SettingItemStyle"
@@ -45,6 +48,26 @@
               android:drawableEnd="@drawable/setting_view_arrow"
               android:drawableRight="@drawable/setting_view_arrow"
         android:text="@string/tv_settings_item_msg"/>
+    -->
+
+    <TextView
+        android:id="@+id/tv_settings_item_change_pwd"
+        style="@style/SettingItemStyle"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:background="@drawable/selector_settings_item"
+        android:drawableEnd="@drawable/setting_view_arrow"
+        android:drawableRight="@drawable/setting_view_arrow"
+        android:text="@string/tv_settings_item_change_pwd"/>
+
+    <TextView
+        android:id="@+id/tv_settings_item_update_info"
+        style="@style/SettingItemStyle"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:background="@drawable/selector_settings_item"
+        android:drawableEnd="@drawable/setting_view_arrow"
+        android:drawableRight="@drawable/setting_view_arrow"
+        android:text="@string/tv_settings_item_update_info"/>
+
 
     <TextView android:id="@+id/tv_settings_item_about"
               style="@style/SettingItemStyle"

@@ -9,7 +9,7 @@
     <ImageView android:id="@+id/iv_shield_portrait"
         android:layout_width="32dp"
         android:layout_height="32dp"
-        android:src="@mipmap/ic_launcher"/>
+               android:src="@drawable/hale_default_user_portrait"/>
 
     <TextView android:id="@+id/tv_shield_nickname"
         style="@style/SettingItemStyle"

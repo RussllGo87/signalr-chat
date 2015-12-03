@@ -34,7 +34,10 @@ import org.json.JSONObject;
 public class SettingsActivity extends AppCompatActivity implements View.OnClickListener{
 
     TextView btn_activity_back;
-    TextView tv_settings_item_account;
+    //    TextView tv_settings_item_account;
+
+    TextView tv_settings_item_change_pwd;
+    TextView tv_settings_item_update_info;
     TextView tv_settings_item_about;
     TextView tv_settings_item_exit;
 
@@ -84,8 +87,12 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         btn_activity_back = (TextView) findViewById(R.id.btn_activity_back);
         btn_activity_back.setOnClickListener(this);
 
-        tv_settings_item_account = (TextView) findViewById(R.id.tv_settings_item_account);
-        tv_settings_item_account.setOnClickListener(this);
+        //        tv_settings_item_account = (TextView) findViewById(R.id.tv_settings_item_account);
+        //        tv_settings_item_account.setOnClickListener(this);
+        tv_settings_item_change_pwd = (TextView) findViewById(R.id.tv_settings_item_change_pwd);
+        tv_settings_item_change_pwd.setOnClickListener(this);
+        tv_settings_item_update_info = (TextView) findViewById(R.id.tv_settings_item_update_info);
+        tv_settings_item_update_info.setOnClickListener(this);
 
         tv_settings_item_about = (TextView) findViewById(R.id.tv_settings_item_about);
         tv_settings_item_about.setOnClickListener(this);
@@ -117,10 +124,20 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
             case R.id.btn_activity_back:
                 navigateUp();
                 break;
-            case R.id.tv_settings_item_account:
-                Intent AccountSettingsIntent = new Intent();
-                AccountSettingsIntent.setClass(getApplicationContext(),AccountSettingsActivity.class);
-                startActivity(AccountSettingsIntent);
+            //            case R.id.tv_settings_item_account:
+            //                Intent AccountSettingsIntent = new Intent();
+            //                AccountSettingsIntent.setClass(getApplicationContext(),AccountSettingsActivity.class);
+            //                startActivity(AccountSettingsIntent);
+            //                break;
+            case R.id.tv_settings_item_change_pwd:
+                Intent changePwdIntent = new Intent();
+                changePwdIntent.setClass(getApplicationContext(), ChangePwdActivity.class);
+                startActivity(changePwdIntent);
+                break;
+            case R.id.tv_settings_item_update_info:
+                Intent updateInfoIntent = new Intent();
+                updateInfoIntent.setClass(getApplicationContext(), AccountInfoUpdateActivity.class);
+                startActivity(updateInfoIntent);
                 break;
             case R.id.tv_settings_item_about:
                 Intent intent = new Intent();

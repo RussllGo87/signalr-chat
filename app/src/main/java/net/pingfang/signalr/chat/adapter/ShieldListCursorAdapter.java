@@ -42,7 +42,7 @@ public class ShieldListCursorAdapter extends CursorAdapter {
             OkHttpCommonUtil okHttpCommonUtil = OkHttpCommonUtil.newInstance(context);
             okHttpCommonUtil.display(iv_shield_portrait, portraitUrl, R.drawable.hale_default_user_portrait);
         } else {
-            iv_shield_portrait.setImageResource(R.mipmap.ic_launcher);
+            iv_shield_portrait.setImageResource(R.drawable.hale_default_user_portrait);
         }
 
         TextView tv_shield_nickname = (TextView) view.findViewById(R.id.tv_shield_nickname);

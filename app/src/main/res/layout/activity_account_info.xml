@@ -70,7 +70,7 @@
             android:layout_width="150dp"
             android:layout_height="150dp"
             android:layout_centerInParent="true"
-            android:src="@mipmap/ic_launcher"/>
+            android:src="@drawable/hale_default_user_portrait"/>
 
     </RelativeLayout>
 
