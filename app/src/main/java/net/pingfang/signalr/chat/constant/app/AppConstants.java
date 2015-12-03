@@ -16,4 +16,6 @@ public class AppConstants {
     public static final String KEY_SYS_LOCATION_LAT = "lat";
     public static final String KEY_SYS_LOCATION_LNG = "lng";
 
+    public static final String KEY_SYS_BULK_MSG_RULE = "KEY_SYS_BULK_MSG_RULE";
+
 }

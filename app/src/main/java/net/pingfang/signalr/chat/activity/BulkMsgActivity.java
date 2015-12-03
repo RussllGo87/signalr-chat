@@ -45,6 +45,10 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
 
 import net.pingfang.signalr.chat.R;
 import net.pingfang.signalr.chat.constant.app.AppConstants;
@@ -55,6 +59,8 @@ import net.pingfang.signalr.chat.database.UserManager;
 import net.pingfang.signalr.chat.message.ChatMessageProcessor;
 import net.pingfang.signalr.chat.message.MessageConstant;
 import net.pingfang.signalr.chat.message.MessageConstructor;
+import net.pingfang.signalr.chat.net.HttpBaseCallback;
+import net.pingfang.signalr.chat.net.OkHttpCommonUtil;
 import net.pingfang.signalr.chat.service.ChatService;
 import net.pingfang.signalr.chat.util.CommonTools;
 import net.pingfang.signalr.chat.util.FileUtil;
@@ -110,6 +116,7 @@ public class BulkMsgActivity extends AppCompatActivity implements View.OnClickLi
     int currentIntegration = 0;
     int currentDistance = 1000;
     int currentMaxMassTimes = 1500;
+
     Handler mHandler = new Handler(Looper.getMainLooper());
 
     /**
@@ -144,6 +151,7 @@ public class BulkMsgActivity extends AppCompatActivity implements View.OnClickLi
         portrait = helper.getStringValue(AppConstants.KEY_SYS_CURRENT_PORTRAIT);
 
         initView();
+        loadBulkRule();
         loadLocalMessage();
         initCommunicate();
     }
@@ -243,6 +251,35 @@ public class BulkMsgActivity extends AppCompatActivity implements View.OnClickLi
         iv_msg_type_pic.setOnClickListener(this);
         iv_msg_type_voice = (ImageView) findViewById(R.id.iv_msg_type_voice);
         iv_msg_type_voice.setOnClickListener(this);
+    }
+
+    private void loadBulkRule() {
+        OkHttpCommonUtil okHttpCommon = OkHttpCommonUtil.newInstance(getApplicationContext());
+        okHttpCommon.getRequest(URL_BULK_MSG_RULE, null, new HttpBaseCallback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+                super.onFailure(request, e);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getApplicationContext(), R.string.toast_load_bulk_msg_rule_error, Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+
+            @Override
+            public void onResponse(Response response) throws IOException {
+                String jsonResponse = response.body().string();
+                helper.putStringValue(AppConstants.KEY_SYS_BULK_MSG_RULE, jsonResponse);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getApplicationContext(), R.string.toast_load_bulk_msg_rule_ok, Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+        });
+
     }
 
     private void loadLocalMessage() {
@@ -411,6 +448,9 @@ public class BulkMsgActivity extends AppCompatActivity implements View.OnClickLi
                         break;
                     case R.id.menu_bulk_action_radius_kilometer_10:
                         tv_menu_drop_down.setText(R.string.menu_bulk_action_radius_kilometer_10);
+                        break;
+                    case R.id.menu_bulk_action_radius_kilometer_100:
+                        tv_menu_drop_down.setText(R.string.menu_bulk_action_radius_kilometer_100);
                         break;
                     case R.id.menu_bulk_action_radius_kilometer_1000:
                         tv_menu_drop_down.setText(R.string.menu_bulk_action_radius_kilometer_1000);

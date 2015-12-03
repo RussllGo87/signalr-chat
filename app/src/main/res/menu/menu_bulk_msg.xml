@@ -27,9 +27,15 @@
           android:title="@string/menu_bulk_action_radius_kilometer_10"
           app:showAsAction="never"/>
 
+    <item
+        android:id="@+id/menu_bulk_action_radius_kilometer_100"
+        android:orderInCategory="104"
+        android:title="@string/menu_bulk_action_radius_kilometer_100"
+        app:showAsAction="never"/>
+
       <item
           android:id="@+id/menu_bulk_action_radius_kilometer_1000"
-          android:orderInCategory="103"
+          android:orderInCategory="105"
           android:title="@string/menu_bulk_action_radius_kilometer_1000"
           app:showAsAction="never"/>
 </menu>
