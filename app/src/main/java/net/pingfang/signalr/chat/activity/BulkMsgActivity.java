@@ -16,7 +16,9 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.provider.MediaStore;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
@@ -107,6 +109,7 @@ public class BulkMsgActivity extends AppCompatActivity implements View.OnClickLi
     int currentIntegration = 0;
     int currentDistance = 1000;
     int currentMaxMassTimes = 1500;
+    Handler mHandler = new Handler(Looper.getMainLooper());
 
     /**
      * Defines callbacks for service binding, passed to bindService()
@@ -329,6 +332,12 @@ public class BulkMsgActivity extends AppCompatActivity implements View.OnClickLi
         } else {
             et_message.requestFocus();
             showKeyboard();
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    sv_message_container.fullScroll(ScrollView.FOCUS_DOWN);
+                }
+            });
         }
     }
 
@@ -348,6 +357,12 @@ public class BulkMsgActivity extends AppCompatActivity implements View.OnClickLi
             et_message.setVisibility(View.VISIBLE);
             et_message.requestFocus();
             showKeyboard();
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    sv_message_container.fullScroll(ScrollView.FOCUS_DOWN);
+                }
+            });
             if (!TextUtils.isEmpty(et_message.getText().toString().trim())) {
                 btn_send.setVisibility(View.VISIBLE);
                 iv_msg_type_chooser.setVisibility(View.GONE);
@@ -473,7 +488,12 @@ public class BulkMsgActivity extends AppCompatActivity implements View.OnClickLi
 
         ll_message_container.addView(ll);
 
-        sv_message_container.fullScroll(View.FOCUS_DOWN);
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                sv_message_container.fullScroll(ScrollView.FOCUS_DOWN);
+            }
+        });
     }
 
     private void sendImage() {
@@ -624,7 +644,12 @@ public class BulkMsgActivity extends AppCompatActivity implements View.OnClickLi
 
         ll_message_container.addView(ll);
 
-        sv_message_container.fullScroll(View.FOCUS_DOWN);
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                sv_message_container.fullScroll(ScrollView.FOCUS_DOWN);
+            }
+        });
     }
 
     private void startRecording() {
@@ -749,7 +774,12 @@ public class BulkMsgActivity extends AppCompatActivity implements View.OnClickLi
 
         ll_message_container.addView(ll);
 
-        sv_message_container.fullScroll(View.FOCUS_DOWN);
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                sv_message_container.fullScroll(ScrollView.FOCUS_DOWN);
+            }
+        });
     }
 
     public void navigateUp() {
@@ -845,6 +875,13 @@ public class BulkMsgActivity extends AppCompatActivity implements View.OnClickLi
                     inflaterTxtMessage(nameFrom,direction,content, newDatetime);
                 }
             }
+
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    sv_message_container.fullScroll(ScrollView.FOCUS_DOWN);
+                }
+            });
         }
     }
 
@@ -902,6 +939,13 @@ public class BulkMsgActivity extends AppCompatActivity implements View.OnClickLi
                     inflaterTxtMessage(nickname,false,content, newDatetime);
                 }
             }
+
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    sv_message_container.fullScroll(ScrollView.FOCUS_DOWN);
+                }
+            });
         }
     }
 }

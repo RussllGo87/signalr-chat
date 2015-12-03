@@ -16,7 +16,9 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.provider.MediaStore;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
@@ -100,6 +102,8 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
     Uri targetUri;
     String tmpFilePath;
+
+    Handler mHandler = new Handler(Looper.getMainLooper());
 
     ChatMessageProcessor chatMessageProcessor;
     /**
@@ -253,6 +257,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         IntentFilter filter = new IntentFilter();
         filter.addAction(GlobalApplication.ACTION_INTENT_ONLINE_MESSAGE_INCOMING);
         filter.addAction(GlobalApplication.ACTION_INTENT_OFFLINE_MESSAGE_LIST_INCOMING);
+        filter.addAction(GlobalApplication.ACTION_INTENT_BULK_MESSAGE_INCOMING);
         registerReceiver(receiver, filter);
     }
 
@@ -323,6 +328,12 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         } else {
             et_message.requestFocus();
             showKeyboard();
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    sv_message_container.fullScroll(ScrollView.FOCUS_DOWN);
+                }
+            });
         }
     }
 
@@ -342,6 +353,12 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             et_message.setVisibility(View.VISIBLE);
             et_message.requestFocus();
             showKeyboard();
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    sv_message_container.fullScroll(ScrollView.FOCUS_DOWN);
+                }
+            });
             if (!TextUtils.isEmpty(et_message.getText().toString().trim())) {
                 btn_send.setVisibility(View.VISIBLE);
                 iv_msg_type_chooser.setVisibility(View.GONE);
@@ -558,7 +575,12 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
         ll_message_container.addView(ll);
 
-        sv_message_container.fullScroll(View.FOCUS_DOWN);
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                sv_message_container.fullScroll(ScrollView.FOCUS_DOWN);
+            }
+        });
     }
 
     private void inflaterImgMessage(Bitmap bitmap,Uri uri,boolean direction,String from,String datetime) {
@@ -620,7 +642,12 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
         ll_message_container.addView(ll);
 
-        sv_message_container.fullScroll(View.FOCUS_DOWN);
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                sv_message_container.fullScroll(ScrollView.FOCUS_DOWN);
+            }
+        });
     }
 
     private void inflaterVoiceMessage(Uri uri,boolean direction,String from, String datetime) {
@@ -686,7 +713,12 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
         ll_message_container.addView(ll);
 
-        sv_message_container.fullScroll(View.FOCUS_DOWN);
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                sv_message_container.fullScroll(ScrollView.FOCUS_DOWN);
+            }
+        });
     }
 
     public void navigateUp() {
@@ -724,6 +756,13 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                 newIntent.setAction(GlobalApplication.ACTION_INTENT_OFFLINE_MESSAGE_LIST_COUNT_UPDATE);
                 newIntent.putExtra("message","update offline message count");
                 context.sendBroadcast(newIntent);
+            } else if (action.equals(GlobalApplication.ACTION_INTENT_BULK_MESSAGE_INCOMING)) {
+                Bundle args = intent.getBundleExtra("message");
+                Uri messageUri = args.getParcelable("messageUri");
+                String fromUid = args.getString("fromUid");
+                if (buddyUid.equals(fromUid)) {
+                    new ProcessMessageTask().execute(messageUri);
+                }
             }
         }
     }
@@ -751,15 +790,16 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                     String contentType = cursor.getString(cursor.getColumnIndex(AppContract.ChatMessageEntry.COLUMN_NAME_M_CONTENT_TYPE));
                     String datetime = cursor.getString(cursor.getColumnIndex(AppContract.ChatMessageEntry.COLUMN_NAME_M_DATETIME));
                     String from = cursor.getString(cursor.getColumnIndex(AppContract.ChatMessageEntry.COLUMN_NAME_ENTRY_M_FROM));
+                    int messageType = cursor.getInt(cursor.getColumnIndex(AppContract.ChatMessageEntry.COLUMN_NAME_M_TYPE));
                     if(contentType.equals("Text")) {
                         String content = cursor.getString(cursor.getColumnIndex(AppContract.ChatMessageEntry.COLUMN_NAME_M_CONTENT));
-                        publishProgress(from,contentType,content,datetime);
+                        publishProgress(from, contentType, content, datetime, String.valueOf(messageType));
                     } else if(contentType.equals("Picture")){
                         String content = cursor.getString(cursor.getColumnIndex(AppContract.ChatMessageEntry.COLUMN_NAME_M_CONTENT));
-                        publishProgress(from,contentType,content,datetime);
+                        publishProgress(from, contentType, content, datetime, String.valueOf(messageType));
                     } else if(contentType.equals("Audio")) {
                         String content = cursor.getString(cursor.getColumnIndex(AppContract.ChatMessageEntry.COLUMN_NAME_M_CONTENT));
-                        publishProgress(from,contentType,content,datetime);
+                        publishProgress(from, contentType, content, datetime, String.valueOf(messageType));
                     }
                 }
             }
@@ -773,6 +813,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             String contentType = values[1];
             String content = values[2];
             String newDatetime = values[3];
+            int messageType = Integer.valueOf(values[4]);
 
             String nameFrom = nickname;
             boolean direction = true;
@@ -788,12 +829,30 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                             MediaFileUtils.dpToPx(getApplicationContext(),150));
 
                     Uri uri = Uri.fromFile(new File(content));
-                    inflaterImgMessage(bitmap,uri,direction, nameFrom, newDatetime);
+                    if (messageType == MessageConstant.MESSAGE_TYPE_BULK) {
+                        String newBuddyName = buddyName + "(群)";
+                        inflaterImgMessage(bitmap, uri, direction, newBuddyName, newDatetime);
+                    } else {
+                        inflaterImgMessage(bitmap, uri, direction, buddyName, newDatetime);
+                    }
+                    //                    inflaterImgMessage(bitmap,uri,direction, nameFrom, newDatetime);
                 } else if(contentType.equals("Audio")) {
                     Uri uri = Uri.fromFile(new File(content));
-                    inflaterVoiceMessage(uri,direction, nameFrom, newDatetime);
+                    if (messageType == MessageConstant.MESSAGE_TYPE_BULK) {
+                        String newBuddyName = buddyName + "(群)";
+                        inflaterVoiceMessage(uri, direction, newBuddyName, newDatetime);
+                    } else {
+                        inflaterVoiceMessage(uri, direction, buddyName, newDatetime);
+                    }
+                    //                    inflaterVoiceMessage(uri,direction, nameFrom, newDatetime);
                 } else if(contentType.equals("Text")) {
-                    inflaterTxtMessage(nameFrom,direction,content, newDatetime);
+                    if (messageType == MessageConstant.MESSAGE_TYPE_BULK) {
+                        String newBuddyName = buddyName + "(群)";
+                        inflaterTxtMessage(newBuddyName, direction, content, newDatetime);
+                    } else {
+                        inflaterTxtMessage(buddyName, direction, content, newDatetime);
+                    }
+                    //                    inflaterTxtMessage(nameFrom,direction,content, newDatetime);
                 }
             }
         }
@@ -814,15 +873,16 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             if(cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {
                 String contentType = cursor.getString(cursor.getColumnIndex(AppContract.ChatMessageEntry.COLUMN_NAME_M_CONTENT_TYPE));
                 String datetime = cursor.getString(cursor.getColumnIndex(AppContract.ChatMessageEntry.COLUMN_NAME_M_DATETIME));
+                int messageType = cursor.getInt(cursor.getColumnIndex(AppContract.ChatMessageEntry.COLUMN_NAME_M_TYPE));
                 if(contentType.equals("Text")) {
                     String content = cursor.getString(cursor.getColumnIndex(AppContract.ChatMessageEntry.COLUMN_NAME_M_CONTENT));
-                    publishProgress(contentType,content,datetime);
+                    publishProgress(contentType, content, datetime, String.valueOf(messageType));
                 } else if(contentType.equals("Picture")){
                     String content = cursor.getString(cursor.getColumnIndex(AppContract.ChatMessageEntry.COLUMN_NAME_M_CONTENT));
-                    publishProgress(contentType,content,datetime);
+                    publishProgress(contentType, content, datetime, String.valueOf(messageType));
                 } else if(contentType.equals("Audio")) {
                     String content = cursor.getString(cursor.getColumnIndex(AppContract.ChatMessageEntry.COLUMN_NAME_M_CONTENT));
-                    publishProgress(contentType,content,datetime);
+                    publishProgress(contentType, content, datetime, String.valueOf(messageType));
                 }
                 cursor.close();
             }
@@ -834,6 +894,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             String contentType = values[0];
             String content = values[1];
             String newDatetime = values[2];
+            int messageType = Integer.valueOf(values[3]);
 
             if(!TextUtils.isEmpty(contentType)) {
                 if(contentType.equals("Picture")) {
@@ -842,14 +903,36 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                             MediaFileUtils.dpToPx(getApplicationContext(),150));
 
                     Uri uri = Uri.fromFile(new File(content));
-                    inflaterImgMessage(bitmap,uri,false, buddyName, newDatetime);
+                    if (messageType == MessageConstant.MESSAGE_TYPE_BULK) {
+                        String newBuddyName = buddyName + "(群)";
+                        inflaterImgMessage(bitmap, uri, false, newBuddyName, newDatetime);
+                    } else {
+                        inflaterImgMessage(bitmap, uri, false, buddyName, newDatetime);
+                    }
                 } else if(contentType.equals("Audio")) {
                     Uri uri = Uri.fromFile(new File(content));
-                    inflaterVoiceMessage(uri,false, buddyName, newDatetime);
+                    if (messageType == MessageConstant.MESSAGE_TYPE_BULK) {
+                        String newBuddyName = buddyName + "(群)";
+                        inflaterVoiceMessage(uri, false, newBuddyName, newDatetime);
+                    } else {
+                        inflaterVoiceMessage(uri, false, buddyName, newDatetime);
+                    }
                 } else if(contentType.equals("Text")) {
-                    inflaterTxtMessage(buddyName,false,content, newDatetime);
+                    if (messageType == MessageConstant.MESSAGE_TYPE_BULK) {
+                        String newBuddyName = buddyName + "(群)";
+                        inflaterTxtMessage(newBuddyName, false, content, newDatetime);
+                    } else {
+                        inflaterTxtMessage(buddyName, false, content, newDatetime);
+                    }
                 }
             }
+
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    sv_message_container.fullScroll(ScrollView.FOCUS_DOWN);
+                }
+            });
         }
     }
 

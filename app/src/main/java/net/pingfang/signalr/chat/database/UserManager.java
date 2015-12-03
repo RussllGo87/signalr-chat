@@ -47,7 +47,9 @@ public class UserManager {
     }
 
     public User queryUserByUid(String uid) {
-        Cursor cursor = queryByUid(uid);
+        String selection = AppContract.UserEntry.COLUMN_NAME_ENTRY_UID + " = ?";
+        String[] selectionArgs = new String[]{uid};
+        Cursor cursor = context.getContentResolver().query(AppContract.UserEntry.CONTENT_URI, null, selection, selectionArgs, null);
         if(cursor != null && cursor.getCount() > 0) {
             cursor.moveToPrevious();
             if(cursor.moveToNext()) {
@@ -95,7 +97,7 @@ public class UserManager {
 
     public boolean isExist(String uid) {
         Cursor cursor = queryByUid(uid);
-        return cursor != null && cursor.getCount() > 0;
+        return cursor != null && cursor.getCount() == 1;
 
     }
 

@@ -1,5 +1,6 @@
 package net.pingfang.signalr.chat.activity;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -51,6 +52,9 @@ import net.pingfang.signalr.chat.constant.wechat.WxConstants;
 import net.pingfang.signalr.chat.constant.wechat.WxOauth2AccessToken;
 import net.pingfang.signalr.chat.constant.weibo.WeiboConstants;
 import net.pingfang.signalr.chat.constant.weibo.WeiboRequestListener;
+import net.pingfang.signalr.chat.database.AppContract;
+import net.pingfang.signalr.chat.database.User;
+import net.pingfang.signalr.chat.database.UserManager;
 import net.pingfang.signalr.chat.location.LocationListenerImpl;
 import net.pingfang.signalr.chat.location.LocationNotify;
 import net.pingfang.signalr.chat.net.HttpBaseCallback;
@@ -978,6 +982,30 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
                                 final String nickName = resultJson.getString("nickname");
                                 final String portraitUrl = resultJson.getString("portrait");
                                 final int exp = resultJson.getInt("exp");
+
+                                UserManager userManager = new UserManager(getApplicationContext());
+                                boolean isExist = userManager.isExist(uid);
+                                ContentValues values = new ContentValues();
+                                if (isExist) {
+                                    String selection = AppContract.UserEntry.COLUMN_NAME_ENTRY_UID + " = ?";
+                                    values.put(AppContract.UserEntry.COLUMN_NAME_NICK_NAME, nickName);
+                                    values.put(AppContract.UserEntry.COLUMN_NAME_PORTRAIT, portraitUrl);
+                                    values.put(AppContract.UserEntry.COLUMN_NAME_STATUS_MSG_LIST, User.USER_STATUS_MSG_LIST_OUT);
+                                    values.put(AppContract.UserEntry.COLUMN_NAME_STATUS_NEARBY_LIST, User.USER_STATUS_NEARBY_LIST_OUT);
+                                    getApplicationContext().getContentResolver().update(AppContract.UserEntry.CONTENT_URI,
+                                            values,
+                                            selection,
+                                            new String[]{uid});
+                                } else {
+                                    values.put(AppContract.UserEntry.COLUMN_NAME_ENTRY_UID, uid);
+                                    values.put(AppContract.UserEntry.COLUMN_NAME_NICK_NAME, nickName);
+                                    values.put(AppContract.UserEntry.COLUMN_NAME_PORTRAIT, portraitUrl);
+                                    values.put(AppContract.UserEntry.COLUMN_NAME_STATUS_MSG_LIST, User.USER_STATUS_MSG_LIST_OUT);
+                                    values.put(AppContract.UserEntry.COLUMN_NAME_STATUS_NEARBY_LIST, User.USER_STATUS_NEARBY_LIST_OUT);
+
+                                    getApplicationContext().getContentResolver().insert(AppContract.UserEntry.CONTENT_URI, values);
+                                }
+
                                 runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {

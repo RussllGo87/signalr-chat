@@ -161,9 +161,10 @@ public class ChatMessageProcessor implements ChatMessageListener {
 
     /** 用户退出应用状态更新 **/
     private void exitApp() {
-        //        ContentValues values = new ContentValues();
-        //        values.put(AppContract.UserEntry.COLUMN_NAME_STATUS,0);
-        //        context.getContentResolver().update(AppContract.UserEntry.CONTENT_URI, values, null, null);
+        ContentValues values = new ContentValues();
+        values.put(AppContract.UserEntry.COLUMN_NAME_STATUS_MSG_LIST, User.USER_STATUS_MSG_LIST_OUT);
+        values.put(AppContract.UserEntry.COLUMN_NAME_STATUS_NEARBY_LIST, User.USER_STATUS_NEARBY_LIST_OUT);
+        context.getContentResolver().update(AppContract.UserEntry.CONTENT_URI, values, null, null);
     }
 
     /**
@@ -502,24 +503,52 @@ public class ChatMessageProcessor implements ChatMessageListener {
                 if(contentType.equals("Text")) {
                     messageUri = chatMessageManager.insert(from, to, owner, MessageConstant.MESSAGE_TYPE_BULK,
                             contentType, content, datetime, status);
-                    values.put(AppContract.RecentContactEntry.COLUMN_NAME_CONTENT, content);
+                    values.put(AppContract.RecentContactEntry.COLUMN_NAME_CONTENT, "(群)" + content);
                 } else if(contentType.equals("Picture")){
                     String fileExtension = "jpg";
                     String filePath = MediaFileUtils.processReceiveFile(context, content,
                             MessageConstant.MESSAGE_FILE_TYPE_IMG, fileExtension);
                     messageUri = chatMessageManager.insert(from, to, owner, MessageConstant.MESSAGE_TYPE_BULK,
                             contentType, filePath, datetime, status);
-                    values.put(AppContract.RecentContactEntry.COLUMN_NAME_CONTENT, context.getResources().getString(R.string.content_type_pic));
+                    values.put(AppContract.RecentContactEntry.COLUMN_NAME_CONTENT, "(群)" + context.getResources().getString(R.string.content_type_pic));
                 } else if(contentType.equals("Audio")) {
                     String fileExtension = "3gp";
                     String filePath = MediaFileUtils.processReceiveFile(context, content,
                             MessageConstant.MESSAGE_FILE_TYPE_AUDIO, fileExtension);
                     messageUri = chatMessageManager.insert(from, to, owner, MessageConstant.MESSAGE_TYPE_BULK,
                             contentType, filePath, datetime, status);
-                    values.put(AppContract.RecentContactEntry.COLUMN_NAME_CONTENT, context.getResources().getString(R.string.content_type_voice));
+                    values.put(AppContract.RecentContactEntry.COLUMN_NAME_CONTENT, "(群)" + context.getResources().getString(R.string.content_type_voice));
                 }
 
                 if(messageUri != null) {
+
+                    if (!direction) {
+                        String selection =
+                                AppContract.RecentContactEntry.COLUMN_NAME_BUDDY + " = ? " +
+                                        "AND " +
+                                        AppContract.RecentContactEntry.COLUMN_NAME_OWNER + " = ?";
+                        String[] selectionArgs = new String[]{from, owner};
+
+                        Cursor newCursor = context.getContentResolver().query(AppContract.RecentContactEntry.CONTENT_URI,
+                                null, selection, selectionArgs, null);
+
+                        if (newCursor != null && newCursor.getCount() > 0 && newCursor.moveToFirst()) {
+                            int rowId = newCursor.getInt(newCursor.getColumnIndex(AppContract.RecentContactEntry._ID));
+                            Uri appendUri = Uri.withAppendedPath(AppContract.RecentContactEntry.CONTENT_URI, Integer.toString(rowId));
+
+                            values.put(AppContract.RecentContactEntry.COLUMN_NAME_UPDATE_TIME, datetime);
+                            context.getContentResolver().update(appendUri, values, null, null);
+
+                            newCursor.close();
+                        } else {
+                            values.put(AppContract.RecentContactEntry.COLUMN_NAME_BUDDY, from);
+                            values.put(AppContract.RecentContactEntry.COLUMN_NAME_UPDATE_TIME, datetime);
+                            values.put(AppContract.RecentContactEntry.COLUMN_NAME_OWNER, owner);
+                            values.put(AppContract.RecentContactEntry.COLUMN_NAME_COUNT, 0);
+                            context.getContentResolver().insert(AppContract.RecentContactEntry.CONTENT_URI, values);
+                        }
+                    }
+
                     if (!direction) {
                         Bundle args = new Bundle();
                         args.putParcelable("messageUri", messageUri);

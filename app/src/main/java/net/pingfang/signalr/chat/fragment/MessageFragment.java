@@ -33,14 +33,11 @@ import net.pingfang.signalr.chat.util.SharedPreferencesHelper;
 public class MessageFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
 
     private static final int LOADER_ID = 0x02;
-
+    SharedPreferencesHelper sharedPreferencesHelper;
+    MessageReceiver receiver;
     private OnFragmentInteractionListener mListener;
     private ListView mListView;
     private ChatListCursorAdapter chatListCursorAdapter;
-
-    SharedPreferencesHelper sharedPreferencesHelper;
-
-    MessageReceiver receiver;
 
     public static MessageFragment newInstance(OnFragmentInteractionListener mListener) {
         MessageFragment fragment = new MessageFragment();
@@ -63,6 +60,7 @@ public class MessageFragment extends Fragment implements LoaderManager.LoaderCal
         filter.addAction(GlobalApplication.ACTION_INTENT_ONLINE_MESSAGE_SEND);
         filter.addAction(GlobalApplication.ACTION_INTENT_OFFLINE_MESSAGE_LIST_COUNT_UPDATE);
         filter.addAction(GlobalApplication.ACTION_INTENT_OFFLINE_USER_LIST_INCOMING);
+        filter.addAction(GlobalApplication.ACTION_INTENT_BULK_MESSAGE_INCOMING);
         getContext().registerReceiver(receiver, filter);
     }
 

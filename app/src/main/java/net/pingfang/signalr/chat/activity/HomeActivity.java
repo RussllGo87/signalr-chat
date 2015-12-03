@@ -292,6 +292,12 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             SharedPreferencesHelper.clearWxAccessToken();
         }
 
+        mService.destroy();
+        if (mBound) {
+            unbindService(mConnection);
+            mBound = false;
+        }
+        stopService(new Intent(getApplicationContext(), ChatService.class));
 
         Intent exitIntent = new Intent();
         exitIntent.setClass(getApplicationContext(), LoginActivity.class);
@@ -421,6 +427,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     protected void onDestroy() {
         super.onDestroy();
 
+        mService.destroy();
         if (mBound) {
             unbindService(mConnection);
             mBound = false;
