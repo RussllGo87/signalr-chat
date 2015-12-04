@@ -605,6 +605,7 @@ public class ChatMessageProcessor implements ChatMessageListener {
 
         } catch (JSONException e) {
             e.printStackTrace();
+            Log.d("ChatMessageProcessor", "processShieldMsg() parse json error");
         }
     }
 
@@ -637,6 +638,7 @@ public class ChatMessageProcessor implements ChatMessageListener {
             }
         } catch (JSONException e) {
             e.printStackTrace();
+            Log.d("ChatMessageProcessor", "processShieldListMsg() parse json error");
         }
     }
 
@@ -660,6 +662,20 @@ public class ChatMessageProcessor implements ChatMessageListener {
 
         } catch (JSONException e) {
             e.printStackTrace();
+            Log.d("ChatMessageProcessor", "processUnShieldMsg() parse json error");
+        }
+    }
+
+    private void processRemainingMessage(String message) {
+        JSONObject jsonObject;
+        try {
+            jsonObject = new JSONObject(message);
+            int exp = jsonObject.getInt("Integration");
+            SharedPreferencesHelper helper = SharedPreferencesHelper.newInstance(context);
+            helper.putInt(AppConstants.KEY_SYS_CURRENT_USER_EXP, exp);
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.d("ChatMessageProcessor", "processRemainingMessage() parse json error");
         }
     }
 
@@ -691,6 +707,8 @@ public class ChatMessageProcessor implements ChatMessageListener {
                 processUnShieldMsg(message);
             } else if(messageType.equals("BulkMssaging")) {
                 processBulkMessage(message, false);
+            } else if (messageType.equals("Remaining")) {
+                processRemainingMessage(message);
             }
 
             return "ok";

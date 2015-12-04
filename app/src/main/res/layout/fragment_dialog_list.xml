@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/selector_btn_bg"
+        android:gravity="center"
+        android:paddingBottom="@dimen/padding_vertical_dialog_title"
+        android:paddingTop="@dimen/padding_vertical_dialog_title"
+        android:text="选择范围"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/text_size_dialog_title"/>
+
+    <ListView
+        android:id="@+id/lv_dialog_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+</LinearLayout>

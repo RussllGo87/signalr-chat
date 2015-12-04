@@ -56,22 +56,31 @@ import net.pingfang.signalr.chat.database.AppContract;
 import net.pingfang.signalr.chat.database.ChatMessageManager;
 import net.pingfang.signalr.chat.database.User;
 import net.pingfang.signalr.chat.database.UserManager;
+import net.pingfang.signalr.chat.listener.OnDialogListItemListener;
 import net.pingfang.signalr.chat.message.ChatMessageProcessor;
 import net.pingfang.signalr.chat.message.MessageConstant;
 import net.pingfang.signalr.chat.message.MessageConstructor;
+import net.pingfang.signalr.chat.model.BulkRule;
 import net.pingfang.signalr.chat.net.HttpBaseCallback;
 import net.pingfang.signalr.chat.net.OkHttpCommonUtil;
 import net.pingfang.signalr.chat.service.ChatService;
+import net.pingfang.signalr.chat.ui.dialog.ListDialogFragment;
 import net.pingfang.signalr.chat.util.CommonTools;
 import net.pingfang.signalr.chat.util.FileUtil;
 import net.pingfang.signalr.chat.util.GlobalApplication;
 import net.pingfang.signalr.chat.util.MediaFileUtils;
 import net.pingfang.signalr.chat.util.SharedPreferencesHelper;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
-public class BulkMsgActivity extends AppCompatActivity implements View.OnClickListener{
+public class BulkMsgActivity extends AppCompatActivity implements View.OnClickListener, OnDialogListItemListener {
 
     public static final String TAG = BulkMsgActivity.class.getSimpleName();
 
@@ -114,8 +123,10 @@ public class BulkMsgActivity extends AppCompatActivity implements View.OnClickLi
     String tmpFilePath;
 
     int currentIntegration = 0;
-    int currentDistance = 1000;
-    int currentMaxMassTimes = 1500;
+    double currentDistance = 0.0d;
+    int currentMaxMassTimes = 1;
+    List<BulkRule> rulelist = new ArrayList<BulkRule>();
+    List<String> listRuleString = new ArrayList<>();
 
     Handler mHandler = new Handler(Looper.getMainLooper());
 
@@ -169,7 +180,8 @@ public class BulkMsgActivity extends AppCompatActivity implements View.OnClickLi
         tv_menu_drop_down.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                popupMenu(view);
+                //                popupMenu(view);
+                loadBulkRule();
             }
         });
 
@@ -271,15 +283,65 @@ public class BulkMsgActivity extends AppCompatActivity implements View.OnClickLi
             public void onResponse(Response response) throws IOException {
                 String jsonResponse = response.body().string();
                 helper.putStringValue(AppConstants.KEY_SYS_BULK_MSG_RULE, jsonResponse);
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(getApplicationContext(), R.string.toast_load_bulk_msg_rule_ok, Toast.LENGTH_LONG).show();
+                rulelist.clear();
+                try {
+                    JSONArray jsonArray = new JSONArray(jsonResponse);
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject jsonObject = jsonArray.getJSONObject(i);
+                        int id = jsonObject.getInt("BroadcastIntegralDistanceId");
+                        int integration = jsonObject.getInt("Integration");
+                        double distance = jsonObject.getDouble("Distance");
+                        int maxMassTimes = jsonObject.getInt("MaxMassTimes");
+
+                        BulkRule bulkRule = new BulkRule(id, integration, distance, maxMassTimes);
+                        rulelist.add(bulkRule);
                     }
-                });
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getApplicationContext(), R.string.toast_load_bulk_msg_rule_ok, Toast.LENGTH_LONG).show();
+                            showRuleList();
+                        }
+                    });
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getApplicationContext(), R.string.toast_parse_bulk_msg_rule_error, Toast.LENGTH_LONG).show();
+                        }
+                    });
+                }
+
             }
         });
 
+    }
+
+    private void showRuleList() {
+        listRuleString.clear();
+        for (BulkRule rule : rulelist) {
+            if (rule.getDistance() < 1000) {
+                listRuleString.add(rule.getDistance() + "米");
+            } else {
+                listRuleString.add((rule.getDistance() / 1000.0) + "公里");
+            }
+        }
+
+        ListDialogFragment listDialogFragment = ListDialogFragment.newInstance(this, listRuleString);
+        listDialogFragment.show(getSupportFragmentManager(), "ListDialogFragment");
+    }
+
+    @Override
+    public void onDialogItemClick(int position) {
+        BulkRule rule = rulelist.get(position);
+        currentIntegration = rule.getIntegration();
+        currentDistance = rule.getDistance();
+        currentMaxMassTimes = rule.getMaxMassTimes();
+
+        Toast.makeText(getApplicationContext(), listRuleString.get(position), Toast.LENGTH_LONG).show();
     }
 
     private void loadLocalMessage() {
