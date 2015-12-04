@@ -443,7 +443,7 @@ public class AccountInfoUpdateActivity extends AppCompatActivity implements View
     }
 
     public void showDatePickerDialog(View view) {
-        DialogFragment newFragment = new DatePickerFragment(this);
+        DialogFragment newFragment = DatePickerFragment.newInstance(this);
         newFragment.show(getSupportFragmentManager(), "datePicker");
     }
 
