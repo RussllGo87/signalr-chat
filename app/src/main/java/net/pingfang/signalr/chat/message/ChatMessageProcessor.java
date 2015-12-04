@@ -263,9 +263,14 @@ public class ChatMessageProcessor implements ChatMessageListener {
 
                     if(newCursor != null && newCursor.getCount() > 0 && newCursor.moveToFirst()){
                         int rowId = newCursor.getInt(newCursor.getColumnIndex(AppContract.RecentContactEntry._ID));
+                        int count = newCursor.getInt(newCursor.getColumnIndex(AppContract.RecentContactEntry.COLUMN_NAME_COUNT));
                         Uri appendUri = Uri.withAppendedPath(AppContract.RecentContactEntry.CONTENT_URI, Integer.toString(rowId));
 
                         values.put(AppContract.RecentContactEntry.COLUMN_NAME_UPDATE_TIME, datetime);
+                        if (status == MessageConstant.MESSAGE_STATUS_NOT_READ) {
+                            count = count + 1;
+                        }
+                        values.put(AppContract.RecentContactEntry.COLUMN_NAME_COUNT, count);
                         context.getContentResolver().update(appendUri, values, null, null);
 
                         newCursor.close();
@@ -273,14 +278,18 @@ public class ChatMessageProcessor implements ChatMessageListener {
                         values.put(AppContract.RecentContactEntry.COLUMN_NAME_BUDDY,buddy);
                         values.put(AppContract.RecentContactEntry.COLUMN_NAME_UPDATE_TIME, datetime);
                         values.put(AppContract.RecentContactEntry.COLUMN_NAME_OWNER,owner);
-                        values.put(AppContract.RecentContactEntry.COLUMN_NAME_COUNT,0);
+                        if (status == MessageConstant.MESSAGE_STATUS_NOT_READ) {
+                            values.put(AppContract.RecentContactEntry.COLUMN_NAME_COUNT, 1);
+                        } else {
+                            values.put(AppContract.RecentContactEntry.COLUMN_NAME_COUNT, 0);
+                        }
                         context.getContentResolver().insert(AppContract.RecentContactEntry.CONTENT_URI,values);
                     }
 
                     if(!direction) {
                         Bundle args =  new Bundle();
                         args.putParcelable("messageUri", messageUri);
-                        args.putString("fromUid",buddy);
+                        args.putString("fromUid", buddy);
 
                         Intent intent = new Intent();
                         intent.setAction(GlobalApplication.ACTION_INTENT_ONLINE_MESSAGE_INCOMING);
@@ -289,7 +298,7 @@ public class ChatMessageProcessor implements ChatMessageListener {
                     } else {
                         Bundle args =  new Bundle();
                         args.putParcelable("messageUri", messageUri);
-                        args.putString("fromUid",buddy);
+                        args.putString("fromUid", buddy);
 
                         Intent intent = new Intent();
                         intent.setAction(GlobalApplication.ACTION_INTENT_ONLINE_MESSAGE_SEND);
@@ -449,13 +458,15 @@ public class ChatMessageProcessor implements ChatMessageListener {
         JSONObject object;
         try {
             object = new JSONObject(message);
-            // 接收到群消息
-            String from = object.getString("Sender");
-            String to = helper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID);
-            String owner = helper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID);
-            int status = MessageConstant.MESSAGE_STATUS_NOT_READ;
             // 发送群消息
-            if(direction) {
+            String from = helper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID);
+            String to = "0";
+            String owner = helper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID);
+            int status = MessageConstant.MESSAGE_STATUS_READ;
+
+
+            // 接收群消息
+            if (!direction) {
                 from = helper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID);
                 to = "0";
                 owner = helper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID);
@@ -534,9 +545,13 @@ public class ChatMessageProcessor implements ChatMessageListener {
 
                         if (newCursor != null && newCursor.getCount() > 0 && newCursor.moveToFirst()) {
                             int rowId = newCursor.getInt(newCursor.getColumnIndex(AppContract.RecentContactEntry._ID));
+                            int count = newCursor.getInt(newCursor.getColumnIndex(AppContract.RecentContactEntry.COLUMN_NAME_COUNT));
                             Uri appendUri = Uri.withAppendedPath(AppContract.RecentContactEntry.CONTENT_URI, Integer.toString(rowId));
 
                             values.put(AppContract.RecentContactEntry.COLUMN_NAME_UPDATE_TIME, datetime);
+                            //                            count = count + 1;
+                            //                            values.put(AppContract.RecentContactEntry.COLUMN_NAME_COUNT, count);
+
                             context.getContentResolver().update(appendUri, values, null, null);
 
                             newCursor.close();
