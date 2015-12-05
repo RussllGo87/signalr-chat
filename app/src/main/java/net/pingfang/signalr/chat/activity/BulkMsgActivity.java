@@ -3,6 +3,7 @@ package net.pingfang.signalr.chat.activity;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -931,17 +932,20 @@ public class BulkMsgActivity extends AppCompatActivity implements View.OnClickLi
                     String contentType = cursor.getString(cursor.getColumnIndex(AppContract.ChatMessageEntry.COLUMN_NAME_M_CONTENT_TYPE));
                     String datetime = cursor.getString(cursor.getColumnIndex(AppContract.ChatMessageEntry.COLUMN_NAME_M_DATETIME));
                     String from = cursor.getString(cursor.getColumnIndex(AppContract.ChatMessageEntry.COLUMN_NAME_ENTRY_M_FROM));
+                    String messageType = cursor.getString(cursor.getColumnIndex(AppContract.ChatMessageEntry.COLUMN_NAME_M_TYPE));
+                    String messageStatus = cursor.getString(cursor.getColumnIndex(AppContract.ChatMessageEntry.COLUMN_NAME_M_STATUS));
+
                     User user = userManager.queryUserByUid(from);
                     if(user != null) {
                         if(contentType.equals("Text")) {
                             String content = cursor.getString(cursor.getColumnIndex(AppContract.ChatMessageEntry.COLUMN_NAME_M_CONTENT));
-                            publishProgress(from,user.getNickname(),contentType,content,datetime);
+                            publishProgress(from, user.getNickname(), contentType, content, datetime, messageType, messageStatus);
                         } else if(contentType.equals("Picture")){
                             String content = cursor.getString(cursor.getColumnIndex(AppContract.ChatMessageEntry.COLUMN_NAME_M_CONTENT));
-                            publishProgress(from,user.getNickname(),contentType,content,datetime);
+                            publishProgress(from, user.getNickname(), contentType, content, datetime, messageType, messageStatus);
                         } else if(contentType.equals("Audio")) {
                             String content = cursor.getString(cursor.getColumnIndex(AppContract.ChatMessageEntry.COLUMN_NAME_M_CONTENT));
-                            publishProgress(from,user.getNickname(),contentType,content,datetime);
+                            publishProgress(from, user.getNickname(), contentType, content, datetime, messageType, messageStatus);
                         }
                     }
                 }
@@ -957,10 +961,17 @@ public class BulkMsgActivity extends AppCompatActivity implements View.OnClickLi
             String contentType = values[2];
             String content = values[3];
             String newDatetime = values[4];
+            String msgType = values[5];
+            String msgStatus = values[6];
 
             boolean direction = true;
             if(!uid.equals(from)) {
                 direction = false;
+                int msgTypeInt = Integer.valueOf(msgType);
+                int msgStatusInt = Integer.valueOf(msgStatus);
+                if (msgTypeInt == MessageConstant.MESSAGE_TYPE_BULK && msgStatusInt == MessageConstant.MESSAGE_STATUS_NOT_READ) {
+                    new UpdateMsgListStatus().execute(uid, from);
+                }
             }
 
             if(!TextUtils.isEmpty(contentType)) {
@@ -988,6 +999,75 @@ public class BulkMsgActivity extends AppCompatActivity implements View.OnClickLi
         }
     }
 
+    private class UpdateMsgListStatus extends AsyncTask<String, String, String> {
+        @Override
+        protected String doInBackground(String... params) {
+            String selection =
+                    AppContract.ChatMessageEntry.COLUMN_NAME_M_OWNER + " = ? " +
+                            " AND " +
+                            AppContract.ChatMessageEntry.COLUMN_NAME_ENTRY_M_FROM + " = ? " +
+                            " AND " +
+                            AppContract.ChatMessageEntry.COLUMN_NAME_M_TYPE + " = ? " +
+                            " AND " +
+                            AppContract.ChatMessageEntry.COLUMN_NAME_M_STATUS + " = ? ";
+            String owner = params[0];
+            String buddy = params[1];
+
+            // 更新消息表状态
+            ContentValues values = new ContentValues();
+            values.put(AppContract.ChatMessageEntry.COLUMN_NAME_M_STATUS, MessageConstant.MESSAGE_STATUS_READ);
+            int update = getApplicationContext().getContentResolver().update(AppContract.ChatMessageEntry.CONTENT_URI,
+                    values,
+                    selection,
+                    new String[]{
+                            owner,
+                            buddy,
+                            String.valueOf(MessageConstant.MESSAGE_TYPE_BULK),
+                            String.valueOf(MessageConstant.MESSAGE_STATUS_NOT_READ)});
+
+            // 获取最近消息表未读消息数
+            String selectionRecent = AppContract.RecentContactView.COLUMN_NAME_OWNER + " = ? " +
+                    "AND " +
+                    AppContract.RecentContactView.COLUMN_NAME_UID + " = ?";
+            Cursor cursor = getApplicationContext().getContentResolver().query(AppContract.RecentContactView.CONTENT_URI,
+                    null, selectionRecent, new String[]{owner, buddy}, null);
+            int count = 0;
+            if (cursor != null && cursor.moveToNext()) {
+                count = cursor.getInt(cursor.getColumnIndex(AppContract.RecentContactView.COLUMN_NAME_COUNT));
+                cursor.close();
+            }
+
+            // 更新最近消息列表未读消息数
+            int total = count - update;
+            String selectionUpdate = AppContract.RecentContactEntry.COLUMN_NAME_OWNER + " = ? " +
+                    "AND " +
+                    AppContract.RecentContactEntry.COLUMN_NAME_BUDDY + " = ?";
+            if (count > update) {
+                ContentValues updateValues = new ContentValues();
+                updateValues.put(AppContract.RecentContactEntry.COLUMN_NAME_COUNT, total);
+                getApplicationContext().getContentResolver().update(AppContract.RecentContactEntry.CONTENT_URI,
+                        updateValues, selectionUpdate, new String[]{owner, buddy});
+            } else {
+                ContentValues updateValues = new ContentValues();
+                updateValues.put(AppContract.RecentContactEntry.COLUMN_NAME_COUNT, 0);
+                getApplicationContext().getContentResolver().update(AppContract.RecentContactEntry.CONTENT_URI,
+                        updateValues, selectionUpdate, new String[]{owner, buddy});
+            }
+
+            return "ok";
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            if (!TextUtils.isEmpty(s) && s.equals("ok")) {
+                Intent newIntent = new Intent();
+                newIntent.setAction(GlobalApplication.ACTION_INTENT_MSG_UPDATE);
+                newIntent.putExtra("message", "update offline message count");
+                getApplicationContext().sendBroadcast(newIntent);
+            }
+        }
+    }
+
     // 接收到的消息处理
     private class ProcessMessageTask extends AsyncTask<Uri,String,String> {
         @Override
@@ -1004,16 +1084,20 @@ public class BulkMsgActivity extends AppCompatActivity implements View.OnClickLi
                 String from = cursor.getString(cursor.getColumnIndex(AppContract.ChatMessageEntry.COLUMN_NAME_ENTRY_M_FROM));
                 String contentType = cursor.getString(cursor.getColumnIndex(AppContract.ChatMessageEntry.COLUMN_NAME_M_CONTENT_TYPE));
                 String datetime = cursor.getString(cursor.getColumnIndex(AppContract.ChatMessageEntry.COLUMN_NAME_M_DATETIME));
+
+                String messageType = cursor.getString(cursor.getColumnIndex(AppContract.ChatMessageEntry.COLUMN_NAME_M_TYPE));
+                String messageStatus = cursor.getString(cursor.getColumnIndex(AppContract.ChatMessageEntry.COLUMN_NAME_M_STATUS));
+
                 User user = userManager.queryUserByUid(from);
                 if(contentType.equals("Text")) {
                     String content = cursor.getString(cursor.getColumnIndex(AppContract.ChatMessageEntry.COLUMN_NAME_M_CONTENT));
-                    publishProgress(user.getNickname(),contentType,content,datetime);
+                    publishProgress(from, user.getNickname(), contentType, content, datetime, messageType, messageStatus);
                 } else if(contentType.equals("Picture")){
                     String content = cursor.getString(cursor.getColumnIndex(AppContract.ChatMessageEntry.COLUMN_NAME_M_CONTENT));
-                    publishProgress(user.getNickname(),contentType,content,datetime);
+                    publishProgress(from, user.getNickname(), contentType, content, datetime, messageType, messageStatus);
                 } else if(contentType.equals("Audio")) {
                     String content = cursor.getString(cursor.getColumnIndex(AppContract.ChatMessageEntry.COLUMN_NAME_M_CONTENT));
-                    publishProgress(user.getNickname(),contentType,content,datetime);
+                    publishProgress(from, user.getNickname(), contentType, content, datetime, messageType, messageStatus);
                 }
                 cursor.close();
             }
@@ -1022,10 +1106,23 @@ public class BulkMsgActivity extends AppCompatActivity implements View.OnClickLi
 
         @Override
         protected void onProgressUpdate(String... values) {
-            String nickname = values[0];
-            String contentType = values[1];
-            String content = values[2];
-            String newDatetime = values[3];
+            String from = values[0];
+            String nickname = values[1];
+            String contentType = values[2];
+            String content = values[3];
+            String newDatetime = values[4];
+            String msgType = values[5];
+            String msgStatus = values[6];
+
+            boolean direction = true;
+            if (!uid.equals(from)) {
+                direction = false;
+                int msgTypeInt = Integer.valueOf(msgType);
+                int msgStatusInt = Integer.valueOf(msgStatus);
+                if (msgTypeInt == MessageConstant.MESSAGE_TYPE_BULK && msgStatusInt == MessageConstant.MESSAGE_STATUS_NOT_READ) {
+                    new UpdateMsgListStatus().execute(uid, from);
+                }
+            }
 
             if(!TextUtils.isEmpty(contentType)) {
                 if(contentType.equals("Picture")) {
@@ -1034,12 +1131,12 @@ public class BulkMsgActivity extends AppCompatActivity implements View.OnClickLi
                             MediaFileUtils.dpToPx(getApplicationContext(),150));
 
                     Uri uri = Uri.fromFile(new File(content));
-                    inflaterImgMessage(bitmap,uri,false, nickname, newDatetime);
+                    inflaterImgMessage(bitmap, uri, direction, nickname, newDatetime);
                 } else if(contentType.equals("Audio")) {
                     Uri uri = Uri.fromFile(new File(content));
-                    inflaterVoiceMessage(uri,false, nickname, newDatetime);
+                    inflaterVoiceMessage(uri, direction, nickname, newDatetime);
                 } else if(contentType.equals("Text")) {
-                    inflaterTxtMessage(nickname,false,content, newDatetime);
+                    inflaterTxtMessage(nickname, direction, content, newDatetime);
                 }
             }
 

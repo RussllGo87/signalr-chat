@@ -250,6 +250,7 @@ public class ChatMessageProcessor implements ChatMessageListener {
                     values.put(AppContract.RecentContactEntry.COLUMN_NAME_CONTENT, context.getResources().getString(R.string.content_type_voice));
                 }
 
+                // 最近消息记录
                 if(messageUri != null) {
 
                     String selection =
@@ -336,6 +337,8 @@ public class ChatMessageProcessor implements ChatMessageListener {
 
                 ContentValues values = new ContentValues();
                 values.put(AppContract.RecentContactEntry.COLUMN_NAME_CONTENT,context.getResources().getString(R.string.content_new_offline_msg));
+
+                // 最近消息记录
                 if(newCursor != null && newCursor.getCount() > 0 && newCursor.moveToFirst()){
                     int rowId = newCursor.getInt(newCursor.getColumnIndex(AppContract.RecentContactEntry._ID));
                     Uri appendUri = Uri.withAppendedPath(AppContract.RecentContactEntry.CONTENT_URI, Integer.toString(rowId));
@@ -406,7 +409,7 @@ public class ChatMessageProcessor implements ChatMessageListener {
                     }
                 }
 
-                // 消息查找
+                // // 最近消息记录
                 if(messageUri != null) {
                     uriArrayList.add(messageUri);
 
@@ -467,10 +470,10 @@ public class ChatMessageProcessor implements ChatMessageListener {
 
             // 接收群消息
             if (!direction) {
-                from = helper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID);
-                to = "0";
+                from = object.getString("Sender");
+                to = helper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID);
                 owner = helper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID);
-                status = MessageConstant.MESSAGE_STATUS_READ;
+                status = MessageConstant.MESSAGE_STATUS_NOT_READ;
             }
 
             String fromNickname = object.getString("SenderName");
@@ -531,6 +534,7 @@ public class ChatMessageProcessor implements ChatMessageListener {
                     values.put(AppContract.RecentContactEntry.COLUMN_NAME_CONTENT, "(群)" + context.getResources().getString(R.string.content_type_voice));
                 }
 
+                // 最近消息记录
                 if(messageUri != null) {
 
                     if (!direction) {
@@ -549,8 +553,8 @@ public class ChatMessageProcessor implements ChatMessageListener {
                             Uri appendUri = Uri.withAppendedPath(AppContract.RecentContactEntry.CONTENT_URI, Integer.toString(rowId));
 
                             values.put(AppContract.RecentContactEntry.COLUMN_NAME_UPDATE_TIME, datetime);
-                            //                            count = count + 1;
-                            //                            values.put(AppContract.RecentContactEntry.COLUMN_NAME_COUNT, count);
+                            count = count + 1;
+                            values.put(AppContract.RecentContactEntry.COLUMN_NAME_COUNT, count);
 
                             context.getContentResolver().update(appendUri, values, null, null);
 

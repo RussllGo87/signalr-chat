@@ -3,6 +3,7 @@ package net.pingfang.signalr.chat.activity;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -148,6 +149,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         buddyUid = buddy.getUid();
 
         initView();
+        updateMessageListStatus();
         loadLocalMessage();
         initCommunicate();
     }
@@ -239,6 +241,10 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         iv_msg_type_pic.setOnClickListener(this);
         iv_msg_type_voice = (ImageView) findViewById(R.id.iv_msg_type_voice);
         iv_msg_type_voice.setOnClickListener(this);
+    }
+
+    private void updateMessageListStatus() {
+        new UpdateMsgListStatus().execute(uid, buddyUid);
     }
 
     private void loadLocalMessage() {
@@ -558,7 +564,6 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         tv_msg.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,
                 RelativeLayout.LayoutParams.WRAP_CONTENT));
         tv_msg.setTextColor(Color.BLACK);
-        tv_msg.setPadding(0, 0, MediaFileUtils.dpToPx(getApplicationContext(), 20), 0);
         tv_msg.setGravity(Gravity.CENTER_VERTICAL);
         tv_msg.setText(content);
         if(direction) {
@@ -566,8 +571,6 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         } else {
             tv_msg.setBackgroundResource(R.drawable.msg_buddy);
         }
-
-
 
         ll.addView(tv_datetime);
         ll.addView(tv_name);
@@ -767,6 +770,72 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    private class UpdateMsgListStatus extends AsyncTask<String, String, String> {
+        @Override
+        protected String doInBackground(String... params) {
+            String selection =
+                    AppContract.ChatMessageEntry.COLUMN_NAME_M_OWNER + " = ? " +
+                            " AND " +
+                            AppContract.ChatMessageEntry.COLUMN_NAME_ENTRY_M_FROM + " = ? " +
+                            " AND " +
+                            AppContract.ChatMessageEntry.COLUMN_NAME_M_STATUS + " = ?";
+            String owner = params[0];
+            String buddy = params[1];
+
+            // 更新消息表状态
+            ContentValues values = new ContentValues();
+            values.put(AppContract.ChatMessageEntry.COLUMN_NAME_M_STATUS, MessageConstant.MESSAGE_STATUS_READ);
+            int update = getApplicationContext().getContentResolver().update(AppContract.ChatMessageEntry.CONTENT_URI,
+                    values, selection, new String[]{owner, buddy, String.valueOf(MessageConstant.MESSAGE_STATUS_NOT_READ)});
+
+            // 获取最近消息表未读消息数
+            String selectionRecent =
+                    AppContract.RecentContactView.COLUMN_NAME_OWNER + " = ? " +
+                            "AND " +
+                            AppContract.RecentContactView.COLUMN_NAME_UID + " = ?";
+            Cursor cursor = getApplicationContext().getContentResolver().query(
+                    AppContract.RecentContactView.CONTENT_URI,
+                    null,
+                    selectionRecent,
+                    new String[]{owner, buddy},
+                    null);
+            int count = 0;
+            if (cursor != null && cursor.moveToNext()) {
+                count = cursor.getInt(cursor.getColumnIndex(AppContract.RecentContactView.COLUMN_NAME_COUNT));
+                cursor.close();
+            }
+
+            // 更新最近消息列表未读消息数
+            int total = count - update;
+            String selectionUpdate = AppContract.RecentContactEntry.COLUMN_NAME_OWNER + " = ? " +
+                    "AND " +
+                    AppContract.RecentContactEntry.COLUMN_NAME_BUDDY + " = ?";
+            if (count > update) {
+                ContentValues updateValues = new ContentValues();
+                updateValues.put(AppContract.RecentContactEntry.COLUMN_NAME_COUNT, total);
+                getApplicationContext().getContentResolver().update(AppContract.RecentContactEntry.CONTENT_URI,
+                        updateValues, selectionUpdate, new String[]{owner, buddy});
+            } else {
+                ContentValues updateValues = new ContentValues();
+                updateValues.put(AppContract.RecentContactEntry.COLUMN_NAME_COUNT, 0);
+                getApplicationContext().getContentResolver().update(AppContract.RecentContactEntry.CONTENT_URI,
+                        updateValues, selectionUpdate, new String[]{owner, buddy});
+            }
+
+            return "ok";
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            if (!TextUtils.isEmpty(s) && s.equals("ok")) {
+                Intent newIntent = new Intent();
+                newIntent.setAction(GlobalApplication.ACTION_INTENT_MSG_UPDATE);
+                newIntent.putExtra("message", "update offline message count");
+                getApplicationContext().sendBroadcast(newIntent);
+            }
+        }
+    }
+
     // 加载本地已有消息
     private class LoadLocalMessageTask extends AsyncTask<String,String,String > {
         @Override
@@ -864,10 +933,50 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         protected String doInBackground(Uri... params) {
             Uri messageUri = params[0];
             ChatMessageManager chatMessageManager = new ChatMessageManager(getApplicationContext());
-            chatMessageManager.updateStatus(messageUri, MessageConstant.MESSAGE_STATUS_READ);
+            int update = chatMessageManager.updateStatus(messageUri, MessageConstant.MESSAGE_STATUS_READ);
+
+            // 获取最近消息表未读消息数
+            String selectionRecent =
+                    AppContract.RecentContactView.COLUMN_NAME_OWNER + " = ? " +
+                            "AND " +
+                            AppContract.RecentContactView.COLUMN_NAME_UID + " = ?";
+            Cursor countCursor = getApplicationContext().getContentResolver().query(AppContract.RecentContactView.CONTENT_URI,
+                    null, selectionRecent, new String[]{uid, buddyUid}, null);
+            int count = 0;
+            if (countCursor != null && countCursor.moveToNext()) {
+                count = countCursor.getInt(countCursor.getColumnIndex(AppContract.RecentContactView.COLUMN_NAME_COUNT));
+                countCursor.close();
+            }
+
+            // 更新最近消息列表未读消息数
+            int total = count - update;
+            String selectionUpdate = AppContract.RecentContactEntry.COLUMN_NAME_OWNER + " = ? " +
+                    "AND " +
+                    AppContract.RecentContactEntry.COLUMN_NAME_BUDDY + " = ?";
+            if (total > 0) {
+                ContentValues updateValues = new ContentValues();
+                updateValues.put(AppContract.RecentContactEntry.COLUMN_NAME_COUNT, total);
+                getApplicationContext().getContentResolver().update(AppContract.RecentContactEntry.CONTENT_URI,
+                        updateValues, selectionUpdate, new String[]{uid, buddyUid});
+
+                Intent newIntent = new Intent();
+                newIntent.setAction(GlobalApplication.ACTION_INTENT_MSG_UPDATE);
+                newIntent.putExtra("message", "update offline message count");
+                getApplicationContext().sendBroadcast(newIntent);
+            } else {
+                ContentValues updateValues = new ContentValues();
+                updateValues.put(AppContract.RecentContactEntry.COLUMN_NAME_COUNT, 0);
+                getApplicationContext().getContentResolver().update(AppContract.RecentContactEntry.CONTENT_URI,
+                        updateValues, selectionUpdate, new String[]{uid, buddyUid});
+
+                Intent newIntent = new Intent();
+                newIntent.setAction(GlobalApplication.ACTION_INTENT_MSG_UPDATE);
+                newIntent.putExtra("message", "update offline message count");
+                getApplicationContext().sendBroadcast(newIntent);
+            }
+
             Cursor cursor = null;
             if(messageUri != null) {
-                chatMessageManager.updateStatus(messageUri, MessageConstant.MESSAGE_STATUS_READ);
                 cursor = getApplicationContext().getContentResolver().query(messageUri, null, null, null, null);
             }
             if(cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {

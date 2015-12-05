@@ -56,6 +56,7 @@ public class MessageFragment extends Fragment implements LoaderManager.LoaderCal
     public void registerReceiver() {
         receiver = new MessageReceiver();
         IntentFilter filter = new IntentFilter();
+        filter.addAction(GlobalApplication.ACTION_INTENT_MSG_UPDATE);
         filter.addAction(GlobalApplication.ACTION_INTENT_ONLINE_MESSAGE_INCOMING);
         filter.addAction(GlobalApplication.ACTION_INTENT_ONLINE_MESSAGE_SEND);
         filter.addAction(GlobalApplication.ACTION_INTENT_OFFLINE_MESSAGE_LIST_COUNT_UPDATE);
@@ -93,7 +94,7 @@ public class MessageFragment extends Fragment implements LoaderManager.LoaderCal
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 User user = (User) view.getTag();
-                if(mListener != null) {
+                if (mListener != null) {
                     mListener.shield(user);
                     return true;
                 }

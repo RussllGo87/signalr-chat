@@ -119,7 +119,6 @@ public final class AppContract {
         public static final String TABLE_NAME = "t_shield";
         public static final String COLUMN_NAME_SHIELD = "shield";
         public static final String COLUMN_NAME_OWNER = "owner";
-
     }
 
     public static abstract class ShieldListView implements BaseColumns {
