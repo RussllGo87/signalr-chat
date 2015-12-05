@@ -51,6 +51,11 @@ public class MessageFragment extends Fragment implements LoaderManager.LoaderCal
 
         sharedPreferencesHelper = SharedPreferencesHelper.newInstance(getContext());
         registerReceiver();
+
+        String uid = sharedPreferencesHelper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID);
+        Bundle args = new Bundle();
+        args.putString(AppConstants.KEY_SYS_CURRENT_UID, uid);
+        getLoaderManager().initLoader(LOADER_ID, args, this);
     }
 
     public void registerReceiver() {
@@ -102,10 +107,24 @@ public class MessageFragment extends Fragment implements LoaderManager.LoaderCal
             }
         });
 
+
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
         String uid = sharedPreferencesHelper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID);
         Bundle args = new Bundle();
         args.putString(AppConstants.KEY_SYS_CURRENT_UID, uid);
-        getLoaderManager().initLoader(LOADER_ID, args, this);
+        getLoaderManager().restartLoader(LOADER_ID, args, this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        getLoaderManager().destroyLoader(LOADER_ID);
     }
 
     @Override
