@@ -271,7 +271,6 @@ public class BulkMsgActivity extends AppCompatActivity implements View.OnClickLi
         okHttpCommon.getRequest(URL_BULK_MSG_RULE, null, new HttpBaseCallback() {
             @Override
             public void onFailure(Request request, IOException e) {
-                super.onFailure(request, e);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
