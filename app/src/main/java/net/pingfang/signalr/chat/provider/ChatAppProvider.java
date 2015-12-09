@@ -36,8 +36,12 @@ public class ChatAppProvider extends ContentProvider {
     private static final int SHIELD_COLUMN_ID = 10;
     private static final int SHIELD_VIEW = 11;
     private static final int SHIELD_VIEW_COLUMN_ID = 12;
+    private static final int ADVERTISEMENT = 13;
+    private static final int ADVERTISEMENT_COLUMN_ID = 14;
+
     // 查询列集合
     private static HashMap<String, String> userProjectionMap;
+    private static HashMap<String, String> adProjectionMap;
     private static HashMap<String, String> messageProjectionMap;
     private static HashMap<String, String> recentProjectionMap;
     private static HashMap<String, String> vRecentProjectionMap;
@@ -75,6 +79,21 @@ public class ChatAppProvider extends ContentProvider {
         userProjectionMap.put(AppContract.UserEntry.COLUMN_NAME_EXP, AppContract.UserEntry.COLUMN_NAME_EXP);
         userProjectionMap.put(AppContract.UserEntry.COLUMN_NAME_DISTANCE, AppContract.UserEntry.COLUMN_NAME_DISTANCE);
 
+        adProjectionMap = new HashMap<String, String>();
+        adProjectionMap.put(AppContract.AdvertisementEntry._ID, AppContract.AdvertisementEntry._ID);
+        adProjectionMap.put(AppContract.AdvertisementEntry.COLUMN_NAME_AD_UID, AppContract.AdvertisementEntry.COLUMN_NAME_AD_UID);
+        adProjectionMap.put(AppContract.AdvertisementEntry.COLUMN_NAME_AD_ADDRESS, AppContract.AdvertisementEntry.COLUMN_NAME_AD_ADDRESS);
+        adProjectionMap.put(AppContract.AdvertisementEntry.COLUMN_NAME_AD_CODE, AppContract.AdvertisementEntry.COLUMN_NAME_AD_CODE);
+        adProjectionMap.put(AppContract.AdvertisementEntry.COLUMN_NAME_AD_LENGTH, AppContract.AdvertisementEntry.COLUMN_NAME_AD_LENGTH);
+        adProjectionMap.put(AppContract.AdvertisementEntry.COLUMN_NAME_AD_WIDTH, AppContract.AdvertisementEntry.COLUMN_NAME_AD_WIDTH);
+        adProjectionMap.put(AppContract.AdvertisementEntry.COLUMN_NAME_AD_REMARK, AppContract.AdvertisementEntry.COLUMN_NAME_AD_REMARK);
+        adProjectionMap.put(AppContract.AdvertisementEntry.COLUMN_NAME_AD_LAT, AppContract.AdvertisementEntry.COLUMN_NAME_AD_LAT);
+        adProjectionMap.put(AppContract.AdvertisementEntry.COLUMN_NAME_AD_LNG, AppContract.AdvertisementEntry.COLUMN_NAME_AD_LNG);
+        adProjectionMap.put(AppContract.AdvertisementEntry.COLUMN_NAME_AD_PATH_P1, AppContract.AdvertisementEntry.COLUMN_NAME_AD_PATH_P1);
+        adProjectionMap.put(AppContract.AdvertisementEntry.COLUMN_NAME_AD_PATH_P2, AppContract.AdvertisementEntry.COLUMN_NAME_AD_PATH_P2);
+        adProjectionMap.put(AppContract.AdvertisementEntry.COLUMN_NAME_AD_PATH_P3, AppContract.AdvertisementEntry.COLUMN_NAME_AD_PATH_P3);
+        adProjectionMap.put(AppContract.AdvertisementEntry.COLUMN_NAME_AD_PATH_P4, AppContract.AdvertisementEntry.COLUMN_NAME_AD_PATH_P4);
+        adProjectionMap.put(AppContract.AdvertisementEntry.COLUMN_NAME_AD_STATUS, AppContract.AdvertisementEntry.COLUMN_NAME_AD_STATUS);
 
         messageProjectionMap = new HashMap<String, String>();
         messageProjectionMap.put(AppContract.ChatMessageEntry._ID, AppContract.ChatMessageEntry._ID);
@@ -151,6 +170,26 @@ public class ChatAppProvider extends ContentProvider {
                 qb.appendWhere(AppContract.UserEntry._ID + "=" + uri.getPathSegments().get(1));
                 if (TextUtils.isEmpty(sortOrder)) {
                     orderBy = AppContract.UserEntry.DEFAULT_SORT_ORDER;
+                } else {
+                    orderBy = sortOrder;
+                }
+                break;
+            case ADVERTISEMENT:
+                qb.setTables(AppContract.AdvertisementEntry.TABLE_NAME);
+                qb.setProjectionMap(adProjectionMap);
+                if (TextUtils.isEmpty(sortOrder)) {
+                    orderBy = AppContract.AdvertisementEntry.DEFAULT_SORT_ORDER;
+                } else {
+                    orderBy = sortOrder;
+                }
+                break;
+            // 根据ID查询
+            case ADVERTISEMENT_COLUMN_ID:
+                qb.setTables(AppContract.AdvertisementEntry.TABLE_NAME);
+                qb.setProjectionMap(adProjectionMap);
+                qb.appendWhere(AppContract.AdvertisementEntry._ID + "=" + uri.getPathSegments().get(1));
+                if (TextUtils.isEmpty(sortOrder)) {
+                    orderBy = AppContract.AdvertisementEntry.DEFAULT_SORT_ORDER;
                 } else {
                     orderBy = sortOrder;
                 }
@@ -256,6 +295,14 @@ public class ChatAppProvider extends ContentProvider {
                     return userUri;
                 }
                 break;
+            case ADVERTISEMENT:
+                rowId = db.insert(AppContract.AdvertisementEntry.TABLE_NAME, null, values);
+                if (rowId > 0) {
+                    Uri adUri = ContentUris.withAppendedId(AppContract.AdvertisementEntry.CONTENT_URI, rowId);
+                    getContext().getContentResolver().notifyChange(adUri, null);
+                    return adUri;
+                }
+                break;
             case MESSAGE:
                 rowId = db.insert(AppContract.ChatMessageEntry.TABLE_NAME, null, values);
                 if(rowId > 0) {
@@ -298,6 +345,15 @@ public class ChatAppProvider extends ContentProvider {
             case USER_COLUMN_ID:
                 String userColumnId = uri.getPathSegments().get(1);
                 count = db.delete(AppContract.UserEntry.TABLE_NAME, AppContract.UserEntry._ID + "=" + userColumnId
+                        + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ')' : ""), selectionArgs);
+                break;
+            case ADVERTISEMENT:
+                count = db.delete(AppContract.AdvertisementEntry.TABLE_NAME, selection, selectionArgs);
+                break;
+            // 根据指定条件和ID删除
+            case ADVERTISEMENT_COLUMN_ID:
+                String adColumnId = uri.getPathSegments().get(1);
+                count = db.delete(AppContract.AdvertisementEntry.TABLE_NAME, AppContract.AdvertisementEntry._ID + "=" + adColumnId
                         + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ')' : ""), selectionArgs);
                 break;
             case MESSAGE:
@@ -345,6 +401,16 @@ public class ChatAppProvider extends ContentProvider {
             case USER_COLUMN_ID:
                 String userColumnId = uri.getPathSegments().get(1);
                 count = db.update(AppContract.UserEntry.TABLE_NAME, values, AppContract.UserEntry._ID + "=" + userColumnId
+                        + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ')' : ""), selectionArgs);
+                break;
+            // 根据指定条件更新
+            case ADVERTISEMENT:
+                count = db.update(AppContract.AdvertisementEntry.TABLE_NAME, values, selection, selectionArgs);
+                break;
+            // 根据指定条件和ID更新
+            case ADVERTISEMENT_COLUMN_ID:
+                String adColumnId = uri.getPathSegments().get(1);
+                count = db.update(AppContract.AdvertisementEntry.TABLE_NAME, values, AppContract.AdvertisementEntry._ID + "=" + adColumnId
                         + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ')' : ""), selectionArgs);
                 break;
             case MESSAGE:

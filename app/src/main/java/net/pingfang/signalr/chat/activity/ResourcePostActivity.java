@@ -99,11 +99,12 @@ public class ResourcePostActivity extends AppCompatActivity implements View.OnCl
     private ImageView iv_content_photo_1;
     private ImageView iv_content_photo_2;
     private ImageView iv_content_photo_3;
+    private ImageView iv_content_photo_4;
 
     //    private GridView gv_camera;
     //    private TextView tv_add_pic;
 //    private ImageView iv_resource_profile;
-    private ImageView iv_content_photo_4;
+
     private Button btn_resource_save;
     private Button btn_resource_cancel;
     private LocationClient locationClient;
@@ -606,6 +607,7 @@ public class ResourcePostActivity extends AppCompatActivity implements View.OnCl
         }
 
     }
+
 
     public void navigateUp() {
         Intent upIntent = NavUtils.getParentActivityIntent(this);

@@ -28,7 +28,11 @@
 
     </RelativeLayout>
 
-    <ScrollView
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -37,8 +41,15 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <LinearLayout android:layout_width="match_parent"
+            <EditText
+                android:id="@+id/et_ad_maintain_location"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:hint="广告位置"/>
+
+            <LinearLayout android:layout_width="match_parent"
+                          android:layout_height="wrap_content"
                           android:layout_marginTop="2dp"
                           android:orientation="horizontal">
 
@@ -46,7 +57,6 @@
                           android:layout_width="0dp"
                           android:layout_height="wrap_content"
                           android:layout_weight="1"
-                          android:enabled="false"
                           android:hint="广告编码"/>
 
                 <TextView
@@ -64,13 +74,131 @@
 
             </LinearLayout>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:orientation="horizontal">
 
-            <EditText android:id="@+id/et_ad_maintain_location"
+                <EditText
+                    android:id="@+id/et_ad_length"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="长度(米)"
+                    android:inputType="numberDecimal"
+                    />
+
+                <EditText
+                    android:id="@+id/et_ad_width"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="宽度（米）"
+                    android:inputType="numberDecimal"
+                    />
+
+            </LinearLayout>
+
+            <EditText
+                android:id="@+id/et_ad_maintain_remark"
                       android:layout_width="match_parent"
                       android:layout_height="wrap_content"
                       android:layout_marginTop="2dp"
-                      android:hint="广告位置"/>
+                android:hint="广告说明"/>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:layout_marginTop="2dp"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/iv_content_photo_1"
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginTop="2dp"
+                    android:src="@drawable/ic_empty"/>
+
+                <ImageView
+                    android:id="@+id/iv_content_photo_2"
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:src="@drawable/ic_empty"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:gravity="center">
+
+                <TextView
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="8dp"
+                    android:gravity="center"
+                    android:text="@string/text_info_left"/>
+
+                <TextView
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:gravity="center"
+                    android:text="@string/text_info_right"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:layout_marginTop="2dp"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/iv_content_photo_3"
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginTop="2dp"
+                    android:src="@drawable/ic_empty"/>
+
+                <ImageView
+                    android:id="@+id/iv_content_photo_4"
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:src="@drawable/ic_empty"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:gravity="center">
+
+                <TextView
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="8dp"
+                    android:gravity="center"
+                    android:text="@string/text_info_centre"/>
+
+                <TextView
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:gravity="center"
+                    android:text="@string/text_info_remote"/>
+            </LinearLayout>
+
+
+            <!--
             <ImageView
                 android:id="@+id/iv_ad_maintain_pic"
                 android:layout_width="150dp"
@@ -80,13 +208,14 @@
                 android:layout_marginRight="15dp"
                 android:layout_marginTop="2dp"
                 android:src="@drawable/ic_empty" />
+             -->
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="15dp"
                 android:layout_marginRight="15dp"
-                android:layout_marginTop="2dp"
+                android:layout_marginTop="8dp"
                 android:orientation="horizontal" >
 
                 <Button
@@ -114,5 +243,31 @@
         </LinearLayout>
 
     </ScrollView>
+
+        <LinearLayout
+            android:id="@+id/ll_progress_bar_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/bg_progress_bar_container"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <ProgressBar
+                android:id="@+id/pb_operation"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:indeterminate="true"/>
+
+            <TextView
+                android:id="@+id/tv_pb_operation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/white"
+                android:textSize="20sp"/>
+
+        </LinearLayout>
+
+    </RelativeLayout>
 
 </LinearLayout>

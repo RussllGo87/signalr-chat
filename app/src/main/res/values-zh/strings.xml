@@ -106,7 +106,7 @@
     <!---发现界面DiscoveryFragment,原来的下拉菜单列表 -->
     <string name="menu_action_scan">扫一扫</string>
     <string name="menu_action_resource">空置墙体资源</string>
-    <string name="menu_action_maintain">广告维护</string>
+    <string name="menu_action_maintain">广告施工维护</string>
     <string name="menu_action_nearby_friends">附近的人</string>
     <string name="menu_action_nearby_ads">周边广告</string>
     <string name="menu_action_share_apk">分享</string>
@@ -177,6 +177,7 @@
     <!-- 广告维护 -->
     <string name="title_activity_ad_maintain">广告施工维护</string>
     <string name="toast_ad_maintain_ok">广告上传成功</string>
+    <string name="toast_ad_maintain_error">广告上传错误，数据已经保存在本地</string>
     <string name="toast_location_ok">地址获取成功</string>
     <string name="btn_ad_maintain_code_scan">扫码</string>
     <string name="btn_ad_maintain_code_scan_cancelled">扫描已经取消</string>

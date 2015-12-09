@@ -37,6 +37,28 @@ public class AppDbHelper extends SQLiteOpenHelper {
     private static final String SQL_DELETE_ENTRY_USER =
             "DROP TABLE IF EXISTS " + AppContract.UserEntry.TABLE_NAME;
 
+    private static final String SQL_CREATE_ENTRY_ADVERTISEMENT =
+            "CREATE TABLE " + AppContract.AdvertisementEntry.TABLE_NAME + "(" +
+                    AppContract.AdvertisementEntry._ID + INTEGER_TYPE + PRIMARY_KEY + COMMA_SEP +
+                    AppContract.AdvertisementEntry.COLUMN_NAME_AD_UID + TEXT_TYPE + NOT_NULL + COMMA_SEP +
+                    AppContract.AdvertisementEntry.COLUMN_NAME_AD_ADDRESS + TEXT_TYPE + NOT_NULL + COMMA_SEP +
+                    AppContract.AdvertisementEntry.COLUMN_NAME_AD_CODE + TEXT_TYPE + NOT_NULL + COMMA_SEP +
+                    AppContract.AdvertisementEntry.COLUMN_NAME_AD_LENGTH + TEXT_TYPE + NOT_NULL + COMMA_SEP +
+                    AppContract.AdvertisementEntry.COLUMN_NAME_AD_WIDTH + TEXT_TYPE + NOT_NULL + COMMA_SEP +
+                    AppContract.AdvertisementEntry.COLUMN_NAME_AD_REMARK + TEXT_TYPE + NOT_NULL + COMMA_SEP +
+                    AppContract.AdvertisementEntry.COLUMN_NAME_AD_LAT + TEXT_TYPE + NOT_NULL + COMMA_SEP +
+                    AppContract.AdvertisementEntry.COLUMN_NAME_AD_LNG + TEXT_TYPE + NOT_NULL + COMMA_SEP +
+                    AppContract.AdvertisementEntry.COLUMN_NAME_AD_PATH_P1 + TEXT_TYPE + NOT_NULL + COMMA_SEP +
+                    AppContract.AdvertisementEntry.COLUMN_NAME_AD_PATH_P2 + TEXT_TYPE + NOT_NULL + COMMA_SEP +
+                    AppContract.AdvertisementEntry.COLUMN_NAME_AD_PATH_P3 + TEXT_TYPE + NOT_NULL + COMMA_SEP +
+                    AppContract.AdvertisementEntry.COLUMN_NAME_AD_PATH_P4 + TEXT_TYPE + NOT_NULL + COMMA_SEP +
+                    AppContract.AdvertisementEntry.COLUMN_NAME_AD_STATUS + INTEGER_TYPE + NOT_NULL +
+                    ")";
+
+    private static final String SQL_DELETE_ENTRY_ADVERTISEMENT =
+            "DROP TABLE IF EXISTS " + AppContract.AdvertisementEntry.TABLE_NAME;
+
+
     private static final String SQL_CREATE_ENTRY_MESSAGE =
             "CREATE TABLE " + AppContract.ChatMessageEntry.TABLE_NAME + " (" +
             AppContract.ChatMessageEntry._ID + INTEGER_TYPE + PRIMARY_KEY + COMMA_SEP +
@@ -129,6 +151,7 @@ public class AppDbHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(SQL_CREATE_ENTRY_USER);
+        db.execSQL(SQL_CREATE_ENTRY_ADVERTISEMENT);
         db.execSQL(SQL_CREATE_ENTRY_MESSAGE);
         db.execSQL(SQL_CREATE_ENTRY_RECENT);
         db.execSQL(SQL_CREATE_ENTRY_SHIELD);
@@ -146,6 +169,7 @@ public class AppDbHelper extends SQLiteOpenHelper {
         db.execSQL(SQL_DELETE_ENTRY_SHIELD);
         db.execSQL(SQL_DELETE_ENTRY_RECENT);
         db.execSQL(SQL_DELETE_ENTRY_MESSAGE);
+        db.execSQL(SQL_DELETE_ENTRY_ADVERTISEMENT);
         db.execSQL(SQL_DELETE_ENTRY_USER);
         onCreate(db);
     }
