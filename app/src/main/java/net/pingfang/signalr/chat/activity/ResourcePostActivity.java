@@ -2,15 +2,20 @@ package net.pingfang.signalr.chat.activity;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
@@ -21,6 +26,8 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,6 +45,7 @@ import net.pingfang.signalr.chat.location.LocationNotify;
 import net.pingfang.signalr.chat.net.HttpBaseCallback;
 import net.pingfang.signalr.chat.net.OkHttpCommonUtil;
 import net.pingfang.signalr.chat.util.CommonTools;
+import net.pingfang.signalr.chat.util.CommonUtil;
 import net.pingfang.signalr.chat.util.FileUtil;
 import net.pingfang.signalr.chat.util.GlobalApplication;
 import net.pingfang.signalr.chat.util.ImageUtils;
@@ -53,6 +61,9 @@ import java.io.IOException;
 public class ResourcePostActivity extends AppCompatActivity implements View.OnClickListener, LocationNotify {
 
     public static final String TAG = ResourcePostActivity.class.getSimpleName();
+
+    public static final String URL_ACCOUNT_INFO_LOAD = GlobalApplication.URL_WEB_API_HOST + "/api/WebAPI/User/GetUser";
+    public static final String KEY_URL_ACCOUNT_INFO_LOAD_UID = "id";
 
     public static final String URL_RESOURCE_POST = GlobalApplication.URL_WEB_API_HOST + "/api/WebAPI/ResourceWall/PublishResource";
     public static final String KEY_RESOURCE_POST_UID = "userId";
@@ -75,29 +86,32 @@ public class ResourcePostActivity extends AppCompatActivity implements View.OnCl
     //    List<String> fileContentList = new ArrayList<>();
     String[] fileContentArray = new String[4];
     String[] filePathArray = new String[4];
-
+    // GPS 状态相关变量
+    boolean gpsStatus = false;
     private TextView btn_activity_back;
     private EditText et_resource_width;
     private EditText et_resource_height;
     private EditText et_resource_location;
     private EditText et_resource_contacts;
     private EditText et_resource_phone;
+    private EditText et_resource_material;
     private EditText et_resource_remark;
     private ImageView iv_content_photo_1;
     private ImageView iv_content_photo_2;
     private ImageView iv_content_photo_3;
-    private ImageView iv_content_photo_4;
 
     //    private GridView gv_camera;
     //    private TextView tv_add_pic;
 //    private ImageView iv_resource_profile;
-
+    private ImageView iv_content_photo_4;
     private Button btn_resource_save;
     private Button btn_resource_cancel;
     private LocationClient locationClient;
     private LatLng currentLatLng;
-
     private int currentViewId = 0;
+    private LinearLayout ll_progress_bar_containerp;
+    private ProgressBar pb_operationp;
+    private TextView tv_pb_operationp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,8 +119,40 @@ public class ResourcePostActivity extends AppCompatActivity implements View.OnCl
         setContentView(R.layout.activity_resource_post);
 
         sharedPreferencesHelper = SharedPreferencesHelper.newInstance(getApplicationContext());
+        checkGpsStatus();
         initView();
         initLocation();
+        loadAccountInfo();
+    }
+
+    /**
+     * 检查gps状态并提示用户打开gps
+     */
+    public void checkGpsStatus() {
+        gpsStatus = CommonUtil.isGpsOPen(getApplicationContext());
+        if (!gpsStatus) {
+            LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            if (!locationManager.isProviderEnabled(android.location.LocationManager.GPS_PROVIDER)) {
+                AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+                dialog.setMessage("请打开GPS");
+                dialog.setPositiveButton("确定",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dilog, int which) {
+                                Intent intent = new Intent(
+                                        Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                                startActivity(intent);
+                            }
+                        });
+                dialog.setNeutralButton("取消", new android.content.DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dilog, int which) {
+                        dilog.dismiss();
+                    }
+                });
+                dialog.show();
+            }
+        }
     }
 
     private void initView() {
@@ -118,6 +164,7 @@ public class ResourcePostActivity extends AppCompatActivity implements View.OnCl
         et_resource_location = (EditText) findViewById(R.id.et_resource_location);
         et_resource_contacts = (EditText) findViewById(R.id.et_resource_contacts);
         et_resource_phone = (EditText) findViewById(R.id.et_resource_phone);
+        et_resource_material = (EditText) findViewById(R.id.et_resource_material);
         et_resource_remark = (EditText) findViewById(R.id.et_resource_remark);
 
         iv_content_photo_1 = (ImageView) findViewById(R.id.iv_content_photo_1);
@@ -128,6 +175,10 @@ public class ResourcePostActivity extends AppCompatActivity implements View.OnCl
         iv_content_photo_3.setOnClickListener(this);
         iv_content_photo_4 = (ImageView) findViewById(R.id.iv_content_photo_4);
         iv_content_photo_4.setOnClickListener(this);
+
+        ll_progress_bar_containerp = (LinearLayout) findViewById(R.id.ll_progress_bar_containerp);
+        pb_operationp = (ProgressBar) findViewById(R.id.pb_operationp);
+        tv_pb_operationp = (TextView) findViewById(R.id.tv_pb_operationp);
 
         //        gv_camera = (GridView) findViewById(R.id.gv_camera);
         //        adapter = new PhotoGridViewAdapter(getApplicationContext(),this);
@@ -372,7 +423,102 @@ public class ResourcePostActivity extends AppCompatActivity implements View.OnCl
 
     }
 
+    //获得用户名和密码
+    public void loadAccountInfo() {
+        OkHttpCommonUtil okHttp = OkHttpCommonUtil.newInstance(getApplicationContext());
+        okHttp.getRequest(URL_ACCOUNT_INFO_LOAD,
+                new OkHttpCommonUtil.Param[]{
+                        new OkHttpCommonUtil.Param(KEY_URL_ACCOUNT_INFO_LOAD_UID,
+                                sharedPreferencesHelper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID))
+                },
+                new HttpBaseCallback() {
+
+
+                    @Override
+                    public void onResponse(Response response) throws IOException {
+                        String result = response.body().string();
+                        Log.d(TAG, "URL_ACCOUNT_INFO_LOAD return " + result);
+                        JSONObject jsonObject = null;
+                        try {
+                            jsonObject = new JSONObject(result);
+                            int status = jsonObject.getInt("status");
+                            String message = jsonObject.getString("message");
+                            if (status == 0) {
+                                JSONObject resultJson = jsonObject.getJSONObject("result");
+                                final String phoneNo = resultJson.getString("phone");
+
+                                final String realname = resultJson.getString("realname");
+
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(getApplicationContext(),
+                                                getString(R.string.toast_account_info_load_ok),
+                                                Toast.LENGTH_SHORT).show();
+
+                                        if (phoneNo.length() > 0) {
+                                            et_resource_phone.setText(phoneNo);
+                                        }
+
+
+                                        if (realname.length() > 0) {
+                                            et_resource_contacts.setText(realname);
+                                        }
+
+                                        //
+                                    }
+                                });
+                            } else {
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(getApplicationContext(),
+                                                getString(R.string.toast_account_info_load_failure),
+                                                Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(getApplicationContext(),
+                                            getString(R.string.toast_account_info_load_failure),
+                                            Toast.LENGTH_SHORT).show();
+
+                                }
+                            });
+
+                        }
+                    }
+                });
+    }
+
     private void storeOrPostRes() {
+
+        if (et_resource_width.getText().toString().trim().length() <= 0) {
+            Toast.makeText(getApplicationContext(), "长度不能为空", Toast.LENGTH_SHORT).show();
+            return;
+        } else if (et_resource_height.getText().toString().trim().length() <= 0) {
+            Toast.makeText(getApplicationContext(), "宽度不能为空", Toast.LENGTH_SHORT).show();
+            return;
+        } else if (et_resource_location.getText().toString().trim().equals("")) {
+            Toast.makeText(getApplicationContext(), "地址不能为空", Toast.LENGTH_SHORT).show();
+            return;
+        } else if (et_resource_contacts.getText().toString().trim().equals("")) {
+            Toast.makeText(getApplicationContext(), "联系人不能为空", Toast.LENGTH_SHORT).show();
+            return;
+        } else if (et_resource_phone.getText().toString().trim().equals("")) {
+            Toast.makeText(getApplicationContext(), "联系电话不能为空", Toast.LENGTH_SHORT).show();
+            return;
+        } else if (et_resource_material.getText().toString().trim().equals("")) {
+            Toast.makeText(getApplicationContext(), "墙体材质不能为空", Toast.LENGTH_SHORT).show();
+            return;
+        } else if (!CommonTools.isPhoneNumber(et_resource_phone.getText().toString().trim())) {
+            Toast.makeText(getApplicationContext(), "请输入正确的电话号码", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         for (int i = 0; i < filePathArray.length; i++) {
             String path = filePathArray[i];
@@ -391,6 +537,8 @@ public class ResourcePostActivity extends AppCompatActivity implements View.OnCl
         }
 
         String tmpContent = sb.toString();
+        ll_progress_bar_containerp.setVisibility(View.VISIBLE);
+        tv_pb_operationp.setText("数据上传中");
 
         if (!TextUtils.isEmpty(tmpContent)) {
             OkHttpCommonUtil.Param[] params = new OkHttpCommonUtil.Param[]{
@@ -456,11 +604,6 @@ public class ResourcePostActivity extends AppCompatActivity implements View.OnCl
                     }
             );
         }
-        //        else if(fileContentList.size() < 3){
-        //            Toast.makeText(getApplicationContext(),getString(R.string.toast_resource_post_pic_num_error_1),Toast.LENGTH_SHORT).show();
-        //        } else {
-        //            Toast.makeText(getApplicationContext(),getString(R.string.toast_resource_post_pic_num_error_1),Toast.LENGTH_SHORT).show();
-        //        }
 
     }
 

@@ -105,7 +105,7 @@
 
     <!---发现界面DiscoveryFragment,原来的下拉菜单列表 -->
     <string name="menu_action_scan">扫一扫</string>
-    <string name="menu_action_resource">资源上传</string>
+    <string name="menu_action_resource">空置墙体资源</string>
     <string name="menu_action_maintain">广告维护</string>
     <string name="menu_action_nearby_friends">附近的人</string>
     <string name="menu_action_nearby_ads">周边广告</string>
@@ -157,7 +157,7 @@
     <!-- 菜单项 之 扫码 -->
     <string name="dialog_message_url">是否用浏览器打开链接?</string>
     <!-- 资源上传 -->
-    <string name="title_activity_resource_post">资源上传</string>
+    <string name="title_activity_resource_post">空置墙体资源</string>
     <string name="hint_et_resource_width">宽度(米)</string>
     <string name="hint_et_resource_height">高度(米)</string>
     <string name="tv_location">位置</string>
@@ -170,12 +170,12 @@
     <string name="toast_resource_posting_error">广告资源上传错误</string>
     <string name="toast_resource_posting_error_pic_no">第 %d 张 图片没有添加</string>
     <string name="toast_resource_post_error">广告资源上传失败</string>
-    <string name="toast_resource_post_pic_num_error_1">只能上传3到4张图片</string>
+    <string name="toast_resource_post_pic_num_error_1">必须拍摄4张照片</string>
     <string name="toast_resource_post_pic_num_error_2">最多只能拍4张图</string>
     <string name="tv_resource_post_requirement">上传资源说明：1.墙体画面清晰并能看清墙体类型；2.需上传四张照片（三张近景一张正面、二张不同侧面，及一张远景带路的照片）；3.墙体画面要完整并无明显遮挡物。</string>
 
     <!-- 广告维护 -->
-    <string name="title_activity_ad_maintain">广告维护</string>
+    <string name="title_activity_ad_maintain">广告施工维护</string>
     <string name="toast_ad_maintain_ok">广告上传成功</string>
     <string name="toast_location_ok">地址获取成功</string>
     <string name="btn_ad_maintain_code_scan">扫码</string>
@@ -273,5 +273,13 @@
 
     <!-- 调试错误 -->
     <string name="debug_http_response_invalid">响应不合法</string>
+
+
+    <!--马英刚添加的数据-->
+    <string name="toast_info_reg_error_password_not_length">密码的长度要大于六位数</string>
+    <string name="text_info_left">左侧墙</string>
+    <string name="text_info_right">右侧墙</string>
+    <string name="text_info_centre">中间墙</string>
+    <string name="text_info_remote">30米开外墙</string>
 
 </resources>
