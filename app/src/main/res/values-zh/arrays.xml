@@ -6,4 +6,9 @@
         <item>合作</item>
         <item>其他</item>
     </string-array>
+
+    <string-array name="msg_operate">
+        <item>屏蔽</item>
+        <item>删除</item>
+    </string-array>
 </resources>

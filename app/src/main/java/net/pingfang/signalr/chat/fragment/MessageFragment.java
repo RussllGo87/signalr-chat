@@ -100,7 +100,8 @@ public class MessageFragment extends Fragment implements LoaderManager.LoaderCal
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 User user = (User) view.getTag();
                 if (mListener != null) {
-                    mListener.shield(user);
+                    //                    mListener.shield(user);
+                    mListener.onMsgItemLongClick(position, user);
                     return true;
                 }
                 return false;
@@ -151,8 +152,10 @@ public class MessageFragment extends Fragment implements LoaderManager.LoaderCal
 
         Uri baseUri = AppContract.RecentContactView.CONTENT_URI;
 
-        String selection = AppContract.RecentContactView.COLUMN_NAME_OWNER + " = ?";
-        String[] selectionArgs = new String[]{uid};
+        String selection = AppContract.RecentContactView.COLUMN_NAME_OWNER + " = ?" +
+                " AND " +
+                AppContract.RecentContactView.COLUMN_NAME_STATUS_MSG_LIST + " != ?";
+        String[] selectionArgs = new String[]{uid, String.valueOf(User.USER_STATUS_MSG_LIST_OUT)};
 
         return new CursorLoader(getContext(),baseUri,null,selection,selectionArgs,null);
     }

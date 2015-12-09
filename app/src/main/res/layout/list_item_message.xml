@@ -2,30 +2,34 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-              android:orientation="horizontal"
-    android:padding="4dp">
+              android:padding="8dp">
 
     <ImageView android:id="@+id/iv_account_portrait"
         android:layout_width="@dimen/iv_user_portrait_width"
         android:layout_height="@dimen/iv_user_portrait_width"
+               android:layout_marginTop="2dp"
                android:src="@drawable/hale_default_user_portrait"/>
 
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="12dp"
         android:layout_weight="1"
         android:orientation="vertical">
 
         <TextView android:id="@+id/tv_friends_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+                  android:paddingBottom="4dp"
             android:text="昵称"
+                  android:textColor="@color/material_grey_600"
             android:textSize="20sp"/>
 
         <TextView android:id="@+id/tv_message_update"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="最近怎样"/>
+                  android:text="最近怎样"
+                  android:textColor="@color/material_grey_600"/>
 
     </LinearLayout>
 
@@ -37,7 +41,8 @@
         <TextView android:id="@+id/tv_msg_update_time"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="19:28"/>
+                  android:text="19:28"
+                  android:textColor="@color/material_grey_600"/>
 
         <TextView android:id="@+id/tv_msg_not_read"
             android:layout_width="match_parent"
