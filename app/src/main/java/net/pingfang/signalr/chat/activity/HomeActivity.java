@@ -52,6 +52,7 @@ import net.pingfang.signalr.chat.net.HttpBaseCallback;
 import net.pingfang.signalr.chat.net.OkHttpCommonUtil;
 import net.pingfang.signalr.chat.service.ChatService;
 import net.pingfang.signalr.chat.ui.dialog.DoubleButtonDialogFragment;
+import net.pingfang.signalr.chat.ui.dialog.ItemListDialogFragment;
 import net.pingfang.signalr.chat.util.CommonTools;
 import net.pingfang.signalr.chat.util.SharedPreferencesHelper;
 
@@ -117,6 +118,22 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         @Override
+        public void onMsgItemLongClick(int position, User user) {
+            ItemListDialogFragment itemListDialogFragment = ItemListDialogFragment.newInstance(this, user);
+            itemListDialogFragment.show(getSupportFragmentManager(), "ItemListDialogFragment");
+        }
+
+        @Override
+        public void onItemShield(User user) {
+            shield(user);
+        }
+
+        @Override
+        public void onItemDelete(User user) {
+
+        }
+
+        @Override
         public void loadTop() {
             if (mBound) {
                 loadNearbyPeople(1, 5);
@@ -129,6 +146,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             loadNearbyPeople(currentPage, 5);
         }
     };
+
+
     /**
      * Defines callbacks for service binding, passed to bindService()
      */
@@ -141,8 +160,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             ChatService.ChatBinder binder = (ChatService.ChatBinder) service;
             mService = binder.getService();
             mBound = true;
-
-            loadNearbyPeople(1, 5);
         }
 
         @Override

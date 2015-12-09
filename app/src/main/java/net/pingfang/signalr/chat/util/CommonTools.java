@@ -105,7 +105,6 @@ public class CommonTools {
 
     /**
      * 处理服务器返回的时间
-     * @param pattern 时间模式
      * @param datetime 时间字符串
      * @return
      */

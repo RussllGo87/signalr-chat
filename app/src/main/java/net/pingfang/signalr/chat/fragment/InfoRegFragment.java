@@ -90,17 +90,18 @@ public class InfoRegFragment extends Fragment implements View.OnClickListener{
                 String nickname = et_nick_name_reg.getText().toString().trim();
                 String password = et_pwd_reg.getText().toString().trim();
                 String passwordR = et_pwd_retype_reg.getText().toString().trim();
-                if(!TextUtils.isEmpty(password) && password.equals(passwordR)
-                        && CommonTools.checkRegParams(nickname,password)) {
-                    mListener.submitInfo(phone, nickname, password, gender);
-                } else if(TextUtils.isEmpty(nickname)) {
+                if (TextUtils.isEmpty(nickname)) {
                     Toast.makeText(getContext(),R.string.toast_info_reg_error_nickname_empty,Toast.LENGTH_LONG).show();
                 } else if(TextUtils.isEmpty(password)) {
                     Toast.makeText(getContext(),R.string.toast_info_reg_error_password_empty,Toast.LENGTH_LONG).show();
                 } else if(TextUtils.isEmpty(passwordR)) {
                     Toast.makeText(getContext(),R.string.toast_info_reg_error_passwordr_empty,Toast.LENGTH_LONG).show();
+                } else if (password.length() < 6) {
+                    Toast.makeText(getContext(), R.string.toast_info_reg_error_password_length_less_than_6, Toast.LENGTH_LONG).show();
                 } else if(!password.equals(passwordR)) {
                     Toast.makeText(getContext(),R.string.toast_info_reg_error_password_not_same,Toast.LENGTH_LONG).show();
+                } else {
+                    mListener.submitInfo(phone, nickname, password, gender);
                 }
                 break;
 //            case R.id.btn_address:

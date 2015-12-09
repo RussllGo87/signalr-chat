@@ -5,7 +5,7 @@
 
     <dimen name="padding_back_button">8dp</dimen>
     <dimen name="padding_activity_title">8dp</dimen>
-    <dimen name="text_size_activity_title">20sp</dimen>
+    <dimen name="text_size_activity_title">18sp</dimen>
 
     <dimen name="margin_tv_label_login_pattern">24dp</dimen>
     <dimen name="margin_portrait">8dp</dimen>
@@ -34,8 +34,8 @@
     <dimen name="padding_vertical_bottom_group_button_container">5dp</dimen>
 
     <!-- 消息列表与聊天用户列表 -->
-    <dimen name="iv_user_portrait_width">48dp</dimen>
-    <dimen name="iv_user_portrait_height">48dp</dimen>
+    <dimen name="iv_user_portrait_width">42dp</dimen>
+    <dimen name="iv_user_portrait_height">42dp</dimen>
 
     <!-- 账户界面 -->
     <dimen name="padding_tv_settings_item_me">16dp</dimen>
@@ -45,8 +45,11 @@
     <!-- 地址选择对话框 -->
     <dimen name="text_size_dialog_title_address_picker">20sp</dimen>
 
+    <!-- 消息列表 -->
+    <dimen name="padding_left_list_item_msg_container">8dp</dimen>
+
     <!-- 聊天用户列表 -->
-    <dimen name="padding_left_list_item_buddy_container">12dp</dimen>
+    <dimen name="padding_left_list_item_buddy_container">8dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
 
     <!-- ChatActivity聊天界面 -->

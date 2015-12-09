@@ -826,9 +826,34 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
         }
     }
 
+    /**
+     * layoutParams
+     * 点击登录按钮,使用帐号与密码登录
+     *
+     * @param view
+     */
     public void login(View view) {
         final String account = et_login_no.getText().toString().trim();
         String password = et_login_pwd.getText().toString().trim();
+
+        if (!TextUtils.isDigitsOnly(account)) {
+            Toast.makeText(getApplicationContext(), R.string.toast_phone_no_error_txt, Toast.LENGTH_LONG).show();
+            return;
+        } else if (account.length() != 11) {
+            Toast.makeText(getApplicationContext(), R.string.toast_phone_no_error_length, Toast.LENGTH_LONG).show();
+            return;
+        } else if (!CommonTools.isPhoneNumber(account)) {
+            Toast.makeText(getApplicationContext(), R.string.toast_phone_no_error_invalidate, Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        if (TextUtils.isEmpty(password)) {
+            Toast.makeText(getApplicationContext(), R.string.toast_info_reg_error_password_empty, Toast.LENGTH_LONG).show();
+            return;
+        } else if (password.length() < 6) {
+            Toast.makeText(getApplicationContext(), R.string.toast_info_reg_error_password_length_less_than_6, Toast.LENGTH_LONG).show();
+            return;
+        }
 
         if(CommonTools.isPhoneNumber(account) && CommonTools.isValidPwd(password)) {
             ll_progress_bar_container.setVisibility(View.VISIBLE);

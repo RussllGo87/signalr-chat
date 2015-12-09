@@ -8,4 +8,6 @@ import net.pingfang.signalr.chat.database.User;
 public interface OnFragmentInteractionListener {
     void loadAccountInfo();
     void shield(User user);
+
+    void onMsgItemLongClick(int position, User user);
 }

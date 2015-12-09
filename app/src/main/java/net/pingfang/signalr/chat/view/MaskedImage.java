@@ -13,13 +13,14 @@ import android.widget.ImageView;
 
 public abstract class MaskedImage extends ImageView {
     private static final Xfermode MASK_XFERMODE;
-    private Bitmap mask;
-    private Paint paint;
 
     static {
         PorterDuff.Mode localMode = PorterDuff.Mode.DST_IN;
         MASK_XFERMODE = new PorterDuffXfermode(localMode);
     }
+
+    private Bitmap mask;
+    private Paint paint;
 
     public MaskedImage(Context paramContext) {
         super(paramContext);
@@ -32,6 +33,7 @@ public abstract class MaskedImage extends ImageView {
     public MaskedImage(Context paramContext, AttributeSet paramAttributeSet, int paramInt) {
         super(paramContext, paramAttributeSet, paramInt);
     }
+
 
     public abstract Bitmap createMask();
 
