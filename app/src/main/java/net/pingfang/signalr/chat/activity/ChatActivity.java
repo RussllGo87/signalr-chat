@@ -120,7 +120,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             mService = binder.getService();
             mBound = true;
 
-            String offlineMessageReq = MessageConstructor.constructOfflineMsgReq(buddyUid, uid, 1, 5);
+            String offlineMessageReq = MessageConstructor.constructOfflineMsgReq(buddyUid, uid, 1, 10);
             Log.d("ChatActivity", offlineMessageReq);
 
             mService.sendMessage("RequestOfflineMsg", offlineMessageReq);
@@ -871,6 +871,8 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                         publishProgress(from, contentType, content, datetime, String.valueOf(messageType));
                     }
                 }
+
+                cursor.close();
             }
 
             return "ok";
@@ -899,27 +901,27 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
                     Uri uri = Uri.fromFile(new File(content));
                     if (messageType == MessageConstant.MESSAGE_TYPE_BULK) {
-                        String newBuddyName = buddyName + "(群)";
+                        String newBuddyName = nameFrom + "(群)";
                         inflaterImgMessage(bitmap, uri, direction, newBuddyName, newDatetime);
                     } else {
-                        inflaterImgMessage(bitmap, uri, direction, buddyName, newDatetime);
+                        inflaterImgMessage(bitmap, uri, direction, nameFrom, newDatetime);
                     }
                     //                    inflaterImgMessage(bitmap,uri,direction, nameFrom, newDatetime);
                 } else if(contentType.equals("Audio")) {
                     Uri uri = Uri.fromFile(new File(content));
                     if (messageType == MessageConstant.MESSAGE_TYPE_BULK) {
-                        String newBuddyName = buddyName + "(群)";
+                        String newBuddyName = nameFrom + "(群)";
                         inflaterVoiceMessage(uri, direction, newBuddyName, newDatetime);
                     } else {
-                        inflaterVoiceMessage(uri, direction, buddyName, newDatetime);
+                        inflaterVoiceMessage(uri, direction, nameFrom, newDatetime);
                     }
                     //                    inflaterVoiceMessage(uri,direction, nameFrom, newDatetime);
                 } else if(contentType.equals("Text")) {
                     if (messageType == MessageConstant.MESSAGE_TYPE_BULK) {
-                        String newBuddyName = buddyName + "(群)";
+                        String newBuddyName = nameFrom + "(群)";
                         inflaterTxtMessage(newBuddyName, direction, content, newDatetime);
                     } else {
-                        inflaterTxtMessage(buddyName, direction, content, newDatetime);
+                        inflaterTxtMessage(nameFrom, direction, content, newDatetime);
                     }
                     //                    inflaterTxtMessage(nameFrom,direction,content, newDatetime);
                 }

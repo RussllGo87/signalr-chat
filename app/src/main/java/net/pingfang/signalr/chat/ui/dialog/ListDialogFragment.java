@@ -27,6 +27,8 @@ public class ListDialogFragment extends DialogFragment {
     OnDialogListItemListener mOnDialogListItemListener;
     List<String> dataRes = new ArrayList<>();
 
+
+
     public static ListDialogFragment newInstance(OnDialogListItemListener mOnDialogListItemListener, List<String> dataRes) {
         ListDialogFragment fragment = new ListDialogFragment();
         fragment.mOnDialogListItemListener = mOnDialogListItemListener;

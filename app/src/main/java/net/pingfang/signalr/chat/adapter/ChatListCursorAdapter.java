@@ -50,7 +50,12 @@ public class ChatListCursorAdapter extends CursorAdapter {
         tv_friends_name.setText(cursor.getString(cursor.getColumnIndex(AppContract.RecentContactView.COLUMN_NAME_NICKNAME)));
 
         TextView tv_message_update = (TextView) view.findViewById(R.id.tv_message_update);
-        tv_message_update.setText(cursor.getString(cursor.getColumnIndex(AppContract.RecentContactView.COLUMN_NAME_CONTENT)));
+        String content = cursor.getString(cursor.getColumnIndex(AppContract.RecentContactView.COLUMN_NAME_CONTENT));
+        if (!TextUtils.isEmpty(content) && content.length() > 10) {
+            content = content.substring(0, 10);
+            content = content.concat("...");
+        }
+        tv_message_update.setText(content);
 
         TextView tv_msg_update_time = (TextView) view.findViewById(R.id.tv_msg_update_time);
         tv_msg_update_time.setText(cursor.getString(cursor.getColumnIndex(AppContract.RecentContactView.COLUMN_NAME_UPDATE_TIME)));

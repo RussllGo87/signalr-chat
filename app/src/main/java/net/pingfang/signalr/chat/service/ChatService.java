@@ -5,7 +5,9 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.util.Log;
 
 import net.pingfang.signalr.chat.message.ChatMessageListener;
@@ -22,6 +24,7 @@ import microsoft.aspnet.signalr.client.http.android.AndroidPlatformComponent;
 import microsoft.aspnet.signalr.client.hubs.HubConnection;
 import microsoft.aspnet.signalr.client.hubs.HubProxy;
 import microsoft.aspnet.signalr.client.hubs.SubscriptionHandler2;
+import microsoft.aspnet.signalr.client.transport.AutomaticTransport;
 
 public class ChatService extends Service {
 
@@ -39,6 +42,9 @@ public class ChatService extends Service {
     HubProxy hub;
     SignalRFuture<Void> awaitConnection;
     ChatMessageListener messageListener;
+    boolean isReconnectWhenDisconnect = false;
+    String qs;
+    Handler mHandler = new Handler(Looper.getMainLooper());
     private long lastSendTime = 0L;
 
     @Override
@@ -52,8 +58,8 @@ public class ChatService extends Service {
         int requestFlag = args.getInt(FLAG_SERVICE_CMD, FLAF_INIT_CONNECTION);
         switch(requestFlag) {
             case FLAF_INIT_CONNECTION:
-                String qs = args.getString(FLAG_INIT_CONNECTION_QS);
-                initConnection(qs);
+                qs = args.getString(FLAG_INIT_CONNECTION_QS);
+                initConnection();
                 return START_REDELIVER_INTENT;
         }
 
@@ -72,23 +78,24 @@ public class ChatService extends Service {
         destroy();
     }
 
-    private void initConnection(String qs) {
+    private void initConnection() {
         Platform.loadPlatformComponent(new AndroidPlatformComponent());
 
-        connection = new HubConnection(URL,qs, false, new Logger() {
+        connection = new HubConnection(URL, qs, false, new Logger() {
             @Override
             public void log(String s, LogLevel logLevel) {
                 if (logLevel == LogLevel.Information) {
-                    Log.i(TAG, "HubConnection LogLevel.Information == " + s);
+                    Log.i(TAG, s);
                 }
 
                 if (logLevel == LogLevel.Verbose) {
-                    Log.d(TAG, "HubConnection LogLevel.Verbose == " + s);
+                    Log.v(TAG, s);
                 }
 
                 if (logLevel == LogLevel.Critical) {
-                    Log.e(TAG, "HubConnection LogLevel.Critical == " + s);
+                    Log.d(TAG, s);
                 }
+
             }
         });
 
@@ -105,6 +112,7 @@ public class ChatService extends Service {
 
                 if (oldState == ConnectionState.Connected && newState == ConnectionState.Disconnected) {
                     Log.d(TAG, "通信端连接断开");
+                    awaitConnection = connection.start();
                 }
 
                 if (oldState == ConnectionState.Disconnected && newState == ConnectionState.Reconnecting) {
@@ -117,6 +125,12 @@ public class ChatService extends Service {
 
                 if (oldState == ConnectionState.Reconnecting && newState == ConnectionState.Disconnected) {
                     Log.d(TAG, "重新连接失败");
+                    mHandler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            awaitConnection = connection.start(new AutomaticTransport());
+                        }
+                    }, 10000);
                 }
             }
         });
@@ -136,7 +150,8 @@ public class ChatService extends Service {
                 },
                 String.class, String.class);
 
-        awaitConnection = connection.start();
+        isReconnectWhenDisconnect = true;
+        awaitConnection = connection.start(new AutomaticTransport());
 
     }
 
@@ -150,6 +165,10 @@ public class ChatService extends Service {
 
     }
 
+    private void setIsReconnectWhenDisconnect(boolean isReconnectWhenDisconnect) {
+        this.isReconnectWhenDisconnect = isReconnectWhenDisconnect;
+    }
+
     public void destroy() {
 
         if(messageListener != null) {
@@ -157,7 +176,8 @@ public class ChatService extends Service {
         }
 
         if(connection != null && connection.getState() == ConnectionState.Connected) {
-            connection.stop();
+            setIsReconnectWhenDisconnect(false);
+            connection.disconnect();
         }
     }
 
@@ -176,7 +196,7 @@ public class ChatService extends Service {
         protected String doInBackground(String... params) {
             Log.d(TAG,"send msgType == " + params[0]);
             Log.d(TAG,"send msg == " + params[1]);
-            hub.invoke("send",params[0],params[1]);
+            hub.invoke("send", params[0], params[1]);
             return "ok";
         }
     }

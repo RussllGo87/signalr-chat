@@ -282,7 +282,7 @@ public class BulkMsgActivity extends AppCompatActivity implements View.OnClickLi
             @Override
             public void onResponse(Response response) throws IOException {
                 String jsonResponse = response.body().string();
-                helper.putStringValue(AppConstants.KEY_SYS_BULK_MSG_RULE, jsonResponse);
+                //                helper.putStringValue(AppConstants.KEY_SYS_BULK_MSG_RULE, jsonResponse);
                 rulelist.clear();
                 try {
                     JSONArray jsonArray = new JSONArray(jsonResponse);
@@ -948,6 +948,7 @@ public class BulkMsgActivity extends AppCompatActivity implements View.OnClickLi
                         }
                     }
                 }
+                cursor.close();
             }
 
             return "ok";

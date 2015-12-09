@@ -128,7 +128,6 @@ public class ChatMessageProcessor implements ChatMessageListener {
             if(uid != null && !TextUtils.isEmpty(uid) && !uid.equals("0")) {
                 UserManager userManager = new UserManager(context);
                 boolean isExist = userManager.isExist(uid);
-                //                values.put(AppContract.UserEntry.COLUMN_NAME_STATUS,status);
                 if(isExist) {
                     context.getContentResolver().update(AppContract.UserEntry.CONTENT_URI,
                             values,
@@ -162,7 +161,6 @@ public class ChatMessageProcessor implements ChatMessageListener {
     /** 用户退出应用状态更新 **/
     private void exitApp() {
         ContentValues values = new ContentValues();
-        values.put(AppContract.UserEntry.COLUMN_NAME_STATUS_MSG_LIST, User.USER_STATUS_MSG_LIST_OUT);
         values.put(AppContract.UserEntry.COLUMN_NAME_STATUS_NEARBY_LIST, User.USER_STATUS_NEARBY_LIST_OUT);
         context.getContentResolver().update(AppContract.UserEntry.CONTENT_URI, values, null, null);
     }
