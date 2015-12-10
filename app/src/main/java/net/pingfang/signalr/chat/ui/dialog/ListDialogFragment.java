@@ -56,6 +56,7 @@ public class ListDialogFragment extends DialogFragment {
         builder.setView(view);
 
         dialog = builder.create();
+        dialog.setCanceledOnTouchOutside(false);
         return dialog;
     }
 
