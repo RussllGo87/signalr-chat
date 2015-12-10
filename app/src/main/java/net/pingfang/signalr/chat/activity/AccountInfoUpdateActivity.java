@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -275,6 +276,10 @@ public class AccountInfoUpdateActivity extends AppCompatActivity implements View
                 showDialog();
                 break;
             case R.id.btn_account_info_save:
+                if (TextUtils.isEmpty(fileContent)) {
+                    Bitmap bitmap = ((BitmapDrawable) iv_account_portrait.getDrawable()).getBitmap();
+                    fileContent = CommonTools.bitmapToBase64(bitmap);
+                }
                 saveOrUpdateAccountInfo();
                 break;
             case R.id.btn_account_info_cancel:
@@ -383,6 +388,7 @@ public class AccountInfoUpdateActivity extends AppCompatActivity implements View
 
                                         if(!TextUtils.isEmpty(phoneNo)) {
                                             et_account_phone.setText(phoneNo);
+                                            et_account_phone.setEnabled(false);
                                         }
 
                                         if(!TextUtils.isEmpty(nickName)) {
@@ -391,6 +397,7 @@ public class AccountInfoUpdateActivity extends AppCompatActivity implements View
 
                                         if(!TextUtils.isEmpty(realname)) {
                                             et_account_real_name.setText(realname);
+                                            et_account_real_name.setEnabled(false);
                                         }
 
                                         if (!TextUtils.isEmpty(address)) {
@@ -403,7 +410,7 @@ public class AccountInfoUpdateActivity extends AppCompatActivity implements View
 
                                         if(!TextUtils.isEmpty(portraitUrl)) {
                                             OkHttpCommonUtil okHttp = OkHttpCommonUtil.newInstance(getApplicationContext());
-                                            okHttp.display(iv_account_portrait, portraitUrl, R.drawable.hale_default_user_portrait);
+                                            okHttp.display(iv_account_portrait, portraitUrl, R.drawable.ic_empty);
                                         }
 
                                         if(!TextUtils.isEmpty(gender)) {

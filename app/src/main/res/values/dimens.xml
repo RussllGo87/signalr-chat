@@ -42,6 +42,11 @@
     <dimen name="btn_qr_code_width">32dp</dimen>
     <dimen name="btn_qr_code_height">@dimen/btn_qr_code_width</dimen>
 
+    <!-- 修改账户资料 -->
+    <dimen name="margin_vertical_account_update_container">10dp</dimen>
+    <dimen name="margin_horizontal_account_update_container">8dp</dimen>
+    <dimen name="width_account_update_label">50dp</dimen>
+
     <!-- 地址选择对话框 -->
     <dimen name="text_size_dialog_title_address_picker">20sp</dimen>
 
