@@ -293,6 +293,24 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="net.pingfang.signalr.chat.activity.HomeActivity"/>
         </activity>
+        <activity
+            android:name=".activity.AdUploadListActivity"
+            android:label="@string/title_activity_ad_upload_list"
+            android:parentActivityName=".activity.HomeActivity"
+            android:theme="@style/AppMainTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="net.pingfang.signalr.chat.activity.HomeActivity"/>
+        </activity>
+        <activity
+            android:name=".activity.AdUploadDetailActivity"
+            android:label="@string/title_activity_ad_upload_detail"
+            android:parentActivityName=".activity.AdUploadListActivity"
+            android:theme="@style/AppMainTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="net.pingfang.signalr.chat.activity.AdUploadListActivity"/>
+        </activity>
     </application>
 
 </manifest>

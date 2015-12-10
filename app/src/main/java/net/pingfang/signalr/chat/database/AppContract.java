@@ -144,8 +144,7 @@ public final class AppContract {
     //广告数据
     public static abstract class AdvertisementEntry implements BaseColumns {
         // 访问Uri
-        public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/");
-
+        public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/advertisement");
 
         // 内容类型
         public static final String CONTENT_TYPE = "vnd.android.cursor.dir/net.pingfang.signalr.chat.advertisement";

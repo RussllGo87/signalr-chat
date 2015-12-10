@@ -98,6 +98,10 @@
     <!-- 屏蔽人列表 -->
     <string name="title_activity_filter_list">@string/tv_account_item_filter_list</string>
     <string name="title_activity_account_info">AccountInfoActivity</string>
+    <!-- 未上传广告列表 -->
+    <string name="title_activity_ad_upload_list">AdUploadListActivity</string>
+    <!-- 未上传广告详情 -->
+    <string name="title_activity_ad_upload_detail">AdUploadDetailActivity</string>
 
 
     <!--- 下拉菜单列表,发现界面DiscoveryFragment -->
@@ -172,7 +176,6 @@
 
     <string name="image_get_file_user_canceled">REQUEST_IMAGE_GET canceled</string>
     <string name="image_get_file_user_error">REQUEST_IMAGE_GET error</string>
-    
 
 
 </resources>

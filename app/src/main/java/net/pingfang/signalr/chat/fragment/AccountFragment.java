@@ -13,6 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import net.pingfang.signalr.chat.R;
+import net.pingfang.signalr.chat.activity.AdUploadListActivity;
 import net.pingfang.signalr.chat.activity.ListShieldsActivity;
 import net.pingfang.signalr.chat.activity.ResourceListActivity;
 import net.pingfang.signalr.chat.activity.SettingsActivity;
@@ -31,9 +32,12 @@ public class AccountFragment extends Fragment implements View.OnClickListener{
     ImageView iv_account_portrait;
     TextView tv_account_item_me;
     TextView tv_account_current_exp;
-    ImageView btn_qr_code;
+    //    ImageView btn_qr_code;
     TextView tv_account_item_uploaded;
     TextView tv_account_item_filter_list;
+
+    TextView tv_account_item_ad_upload;
+
     TextView tv_account_item_settings;
     SharedPreferencesHelper helper;
     private OnFragmentInteractionListener mListener;
@@ -48,18 +52,22 @@ public class AccountFragment extends Fragment implements View.OnClickListener{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_account, container, false);
+        ll_container_account_item_me = (LinearLayout) view.findViewById(R.id.ll_container_account_item_me);
+        ll_container_account_item_me.setOnClickListener(this);
+        tv_account_item_me = (TextView) view.findViewById(R.id.tv_account_item_me);
         iv_account_portrait = (ImageView) view.findViewById(R.id.iv_account_portrait);
+        tv_account_current_exp = (TextView) view.findViewById(R.id.tv_account_current_exp);
         tv_account_item_uploaded = (TextView) view.findViewById(R.id.tv_account_item_uploaded);
         tv_account_item_uploaded.setOnClickListener(this);
         tv_account_item_filter_list = (TextView) view.findViewById(R.id.tv_account_item_filter_list);
         tv_account_item_filter_list.setOnClickListener(this);
 
-        ll_container_account_item_me = (LinearLayout) view.findViewById(R.id.ll_container_account_item_me);
-        ll_container_account_item_me.setOnClickListener(this);
-        tv_account_item_me = (TextView) view.findViewById(R.id.tv_account_item_me);
-        btn_qr_code = (ImageView) view.findViewById(R.id.btn_qr_code);
-        btn_qr_code.setOnClickListener(this);
-        tv_account_current_exp = (TextView) view.findViewById(R.id.tv_account_current_exp);
+        //        btn_qr_code = (ImageView) view.findViewById(R.id.btn_qr_code);
+        //        btn_qr_code.setOnClickListener(this);
+
+        tv_account_item_ad_upload = (TextView) view.findViewById(R.id.tv_account_item_ad_upload);
+        tv_account_item_ad_upload.setOnClickListener(this);
+
         tv_account_item_settings = (TextView) view.findViewById(R.id.tv_account_item_settings);
         tv_account_item_settings.setOnClickListener(this);
         return view;
@@ -95,9 +103,9 @@ public class AccountFragment extends Fragment implements View.OnClickListener{
     public void onClick(View view) {
         int viewId = view.getId();
         switch (viewId) {
-            case R.id.btn_qr_code:
-                showQrCodeInfo();
-                break;
+            //            case R.id.btn_qr_code:
+            //                showQrCodeInfo();
+            //                break;
             case R.id.ll_container_account_item_me:
                 //                Intent accountInfoIntent = new Intent();
                 //                accountInfoIntent.setClass(getContext(), AccountInfoActivity.class);
@@ -113,6 +121,11 @@ public class AccountFragment extends Fragment implements View.OnClickListener{
                 shieldsListIntent.setClass(getContext(), ListShieldsActivity.class);
                 startActivity(shieldsListIntent);
                 break;
+            case R.id.tv_account_item_ad_upload:
+                Intent adUploadIntent = new Intent();
+                adUploadIntent.setClass(getContext(), AdUploadListActivity.class);
+                startActivity(adUploadIntent);
+                break;
             case R.id.tv_account_item_settings:
                 Intent intent = new Intent();
                 intent.setClass(getActivity(), SettingsActivity.class);
@@ -121,7 +134,7 @@ public class AccountFragment extends Fragment implements View.OnClickListener{
         }
     }
 
-    public void showQrCodeInfo() {
-
-    }
+    //    public void showQrCodeInfo() {
+    //
+    //    }
 }

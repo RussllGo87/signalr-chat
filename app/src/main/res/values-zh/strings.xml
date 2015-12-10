@@ -131,6 +131,18 @@
     <string name="tv_fragment_account">我</string>
     <string name="tv_account_item_uploaded">我的资源</string>
     <string name="tv_account_item_filter_list">屏蔽人列表</string>
+    <string name="tv_account_item_ad_upload">未上传广告</string>
+    <!-- 未上传广告列表 -->
+    <string name="title_activity_ad_upload_list">广告施工维护列表</string>
+    <!-- 未上传广告详情 -->
+    <string name="title_activity_ad_upload_detail">广告施工维护详情</string>
+    <string name="tv_ad_detail_length">长度: %s米</string>
+    <string name="tv_ad_detail_width">宽度度: %s米</string>
+    <string name="tv_ad_detail_code">广告编码: %s</string>
+    <string name="tv_ad_detail_address">所在地: %s</string>
+    <string name="tv_ad_detail_remark">资源说明: %s</string>
+
+
     <!-- 我的资源上传记录 -->
     <string name="title_activity_resource_list">我的资源</string>
     <string name="action_range_all">全部</string>

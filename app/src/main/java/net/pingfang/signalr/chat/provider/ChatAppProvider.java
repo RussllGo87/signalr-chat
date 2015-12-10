@@ -63,6 +63,8 @@ public class ChatAppProvider extends ContentProvider {
         sUriMatcher.addURI(AppContract.AUTHORITY, "shield/#", SHIELD_COLUMN_ID);
         sUriMatcher.addURI(AppContract.AUTHORITY, "v_shield", SHIELD_VIEW);
         sUriMatcher.addURI(AppContract.AUTHORITY, "v_shield/#", SHIELD_VIEW_COLUMN_ID);
+        sUriMatcher.addURI(AppContract.AUTHORITY, "advertisement", ADVERTISEMENT);
+        sUriMatcher.addURI(AppContract.AUTHORITY, "advertisement/#", ADVERTISEMENT_COLUMN_ID);
 
 
         // 实例化查询列集合

@@ -21,6 +21,8 @@ public class Advertisement implements Parcelable {
             return new Advertisement[size];
         }
     };
+
+    int id;
     String uid;
     String address;
     String code;
@@ -35,7 +37,12 @@ public class Advertisement implements Parcelable {
     String path4;
     int status;
 
+    public Advertisement(String uid) {
+        this.uid = uid;
+    }
+
     public Advertisement(Parcel in) {
+        id = in.readInt();
         uid = in.readString();
         address = in.readString();
         code = in.readString();
@@ -58,6 +65,7 @@ public class Advertisement implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(id);
         dest.writeString(uid);
         dest.writeString(address);
         dest.writeString(code);
@@ -71,6 +79,14 @@ public class Advertisement implements Parcelable {
         dest.writeString(path3);
         dest.writeString(path4);
         dest.writeInt(status);
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getUid() {
