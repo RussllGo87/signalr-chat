@@ -262,6 +262,10 @@
     <string name="tv_about_item_suggestion">意见反馈</string>
     <string name="tv_about_item_share_apk">分享安装包</string>
     <string name="toast_app_name_version_latest">当前已经是最新版本了</string>
+    <string name="tv_new_version_found">检测到新版本</string>
+    <string name="dialog_message_url_latest_app_download">检测到有新版本了,是否要下载?</string>
+    <string name="toast_current_app_version_info_check_error">应用本地版本信息读取失败</string>
+    <string name="toast_latest_app_version_info_check_error">网络应用版本信息读取失败</string>
 
     <!--- 使用帮助 -->
     <string name="title_activity_guide">使用帮助</string>
@@ -286,6 +290,7 @@
 
     <!-- 调试错误 -->
     <string name="debug_http_response_invalid">响应不合法</string>
+    <string name="network_error">网络错误</string>
 
 
     <!--马英刚添加的数据-->
