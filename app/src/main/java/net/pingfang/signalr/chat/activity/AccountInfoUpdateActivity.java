@@ -2,6 +2,7 @@ package net.pingfang.signalr.chat.activity;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -31,6 +32,8 @@ import com.squareup.okhttp.Response;
 
 import net.pingfang.signalr.chat.R;
 import net.pingfang.signalr.chat.constant.app.AppConstants;
+import net.pingfang.signalr.chat.database.AppContract;
+import net.pingfang.signalr.chat.database.UserManager;
 import net.pingfang.signalr.chat.listener.OnMyDateSetListener;
 import net.pingfang.signalr.chat.net.HttpBaseCallback;
 import net.pingfang.signalr.chat.net.OkHttpCommonUtil;
@@ -328,7 +331,7 @@ public class AccountInfoUpdateActivity extends AppCompatActivity implements View
                                             Toast.makeText(getApplicationContext(),
                                                     getString(R.string.toast_account_info_update_ok),
                                                     Toast.LENGTH_SHORT).show();
-                                            navigateUp();
+                                            loadAccountInfo();
                                         }
                                     });
                                 }
@@ -379,6 +382,21 @@ public class AccountInfoUpdateActivity extends AppCompatActivity implements View
                                 address = resultJson.getString("address");
                                 birthdate = resultJson.getString("birthdate");
                                 gender = resultJson.getString("sex");
+
+                                UserManager userManager = new UserManager(getApplicationContext());
+                                ContentValues values = new ContentValues();
+
+                                String selection = AppContract.UserEntry.COLUMN_NAME_ENTRY_UID + " = ?";
+                                values.put(AppContract.UserEntry.COLUMN_NAME_NICK_NAME, nickName);
+                                values.put(AppContract.UserEntry.COLUMN_NAME_PORTRAIT, portraitUrl);
+                                getApplicationContext().getContentResolver().update(AppContract.UserEntry.CONTENT_URI,
+                                        values,
+                                        selection,
+                                        new String[]{sharedPreferencesHelper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID)});
+
+                                sharedPreferencesHelper.putStringValue(AppConstants.KEY_SYS_CURRENT_NICKNAME, nickName);
+                                sharedPreferencesHelper.putStringValue(AppConstants.KEY_SYS_CURRENT_PORTRAIT, portraitUrl);
+
                                 runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
@@ -386,16 +404,20 @@ public class AccountInfoUpdateActivity extends AppCompatActivity implements View
                                                 getString(R.string.toast_account_info_load_ok),
                                                 Toast.LENGTH_SHORT).show();
 
-                                        if(!TextUtils.isEmpty(phoneNo)) {
+                                        Intent intent = new Intent();
+                                        intent.setAction(GlobalApplication.ACTION_INTENT_ACCOUNT_INFO_UPDATE);
+                                        sendBroadcast(intent);
+
+                                        if (!TextUtils.isEmpty(phoneNo)) {
                                             et_account_phone.setText(phoneNo);
                                             et_account_phone.setEnabled(false);
                                         }
 
-                                        if(!TextUtils.isEmpty(nickName)) {
+                                        if (!TextUtils.isEmpty(nickName)) {
                                             et_account_nickname.setText(nickName);
                                         }
 
-                                        if(!TextUtils.isEmpty(realname)) {
+                                        if (!TextUtils.isEmpty(realname)) {
                                             et_account_real_name.setText(realname);
                                             et_account_real_name.setEnabled(false);
                                         }
@@ -404,17 +426,17 @@ public class AccountInfoUpdateActivity extends AppCompatActivity implements View
                                             et_account_address.setText(address);
                                         }
 
-                                        if(!TextUtils.isEmpty(birthdate)) {
+                                        if (!TextUtils.isEmpty(birthdate)) {
                                             et_account_birthdate.setText(birthdate);
                                         }
 
-                                        if(!TextUtils.isEmpty(portraitUrl)) {
+                                        if (!TextUtils.isEmpty(portraitUrl)) {
                                             OkHttpCommonUtil okHttp = OkHttpCommonUtil.newInstance(getApplicationContext());
                                             okHttp.display(iv_account_portrait, portraitUrl, R.drawable.ic_empty);
                                         }
 
-                                        if(!TextUtils.isEmpty(gender)) {
-                                            if(gender.equals("1")) {
+                                        if (!TextUtils.isEmpty(gender)) {
+                                            if (gender.equals("1")) {
                                                 rb_gender_male.setChecked(true);
                                             } else {
                                                 rb_gender_female.setChecked(true);

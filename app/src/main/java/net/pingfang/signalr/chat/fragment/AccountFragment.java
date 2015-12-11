@@ -1,7 +1,10 @@
 package net.pingfang.signalr.chat.fragment;
 
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
@@ -19,6 +22,7 @@ import net.pingfang.signalr.chat.activity.ResourceListActivity;
 import net.pingfang.signalr.chat.activity.SettingsActivity;
 import net.pingfang.signalr.chat.listener.OnFragmentInteractionListener;
 import net.pingfang.signalr.chat.net.OkHttpCommonUtil;
+import net.pingfang.signalr.chat.util.GlobalApplication;
 import net.pingfang.signalr.chat.util.SharedPreferencesHelper;
 
 /**
@@ -40,12 +44,20 @@ public class AccountFragment extends Fragment implements View.OnClickListener{
 
     TextView tv_account_item_settings;
     SharedPreferencesHelper helper;
+    MessageReceiver receiver;
     private OnFragmentInteractionListener mListener;
 
     public static AccountFragment newInstance(OnFragmentInteractionListener mListener) {
         AccountFragment fragment = new AccountFragment();
         fragment.mListener = mListener;
         return fragment;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        registerReceiver();
     }
 
     @Override
@@ -73,6 +85,13 @@ public class AccountFragment extends Fragment implements View.OnClickListener{
         return view;
     }
 
+    public void registerReceiver() {
+        receiver = new MessageReceiver();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(GlobalApplication.ACTION_INTENT_ACCOUNT_INFO_UPDATE);
+        getContext().registerReceiver(receiver, filter);
+    }
+
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -80,6 +99,15 @@ public class AccountFragment extends Fragment implements View.OnClickListener{
         helper = SharedPreferencesHelper.newInstance(getContext());
         if(mListener != null) {
             mListener.loadAccountInfo();
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        if (receiver != null) {
+            getContext().unregisterReceiver(receiver);
         }
     }
 
@@ -137,4 +165,13 @@ public class AccountFragment extends Fragment implements View.OnClickListener{
     //    public void showQrCodeInfo() {
     //
     //    }
+
+    private class MessageReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (mListener != null) {
+                mListener.loadAccountInfo();
+            }
+        }
+    }
 }
