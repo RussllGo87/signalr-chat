@@ -42,10 +42,12 @@ public class GlobalApplication extends Application {
     public static final String ACTION_INTENT_BULK_MESSAGE_SEND = "ACTION_INTENT_BULK_MESSAGE_SEND";
     public static final String ACTION_INTENT_SHIELD_LIST_UPDATE = "ACTION_INTENT_SHIELD_LIST_UPDATE";
 
+    public static final String ACTION_INTENT_ACCOUNT_INFO_UPDATE = "ACTION_INTENT_ACCOUNT_INFO_UPDATE";
 
     public static final String IMAGE_TITLE_NAME_PREFIX = "IMAGE_";
     public static final String VOICE_FILE_NAME_PREFIX = "VOICE_";
     public static final String VOICE_FILE_NAME_SUFFIX = ".3gp";
+
 
     public static final String ACTION_WX_AUTH_OK = "ACTION_WX_AUTH_OK";
     SharedPreferencesHelper helper;
