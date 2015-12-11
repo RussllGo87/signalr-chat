@@ -2,42 +2,41 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:orientation="vertical" >
+              android:background="#00000000"
+              android:gravity="bottom"
+              android:orientation="vertical"
+              android:padding="5dp">
 
-    <LinearLayout
+    <TextView
+        android:id="@+id/list_item_title_nearby_ad"
+              android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
+        android:paddingBottom="10dp"
+        android:paddingTop="10dp"
+        android:text="广告标题"
+        android:textSize="18sp"/>
 
-        android:layout_width="fill_parent"
-        android:layout_height="90dp"
-        android:orientation="horizontal" >
+    <TextView
+        android:id="@+id/list_item_address_nearby_ad"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
+        android:paddingBottom="10dp"
+        android:paddingTop="10dp"
+        android:text="地址"
+        android:textSize="18sp"/>
 
-        <FrameLayout
-            android:layout_width="170dp"
-            android:layout_height="wrap_content"
-            android:scaleType="fitXY"
-            android:background="@drawable/add_records_1_map"
-            >
-            <ImageView
-                android:layout_marginBottom="8dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="15dp"
-                android:paddingTop="15dp"
-                android:paddingBottom="15dp"
-                android:paddingLeft="13dp"
-                android:paddingRight="13dp"
-                android:id="@+id/my_postion"
-                android:textSize="14dp"
-                android:textColor="#000000"
-                android:layout_gravity="center"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                />
-        </FrameLayout>
-
-        <Button
-            android:id="@+id/add_info"
-            android:layout_width="wrap_content"
-            android:layout_height="72dp"
-            android:background="@drawable/add_records_map" />
-    </LinearLayout>
+    <TextView
+        android:id="@+id/list_item_detail_nearby_ad"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/photo_cancel_selector"
+        android:gravity="center"
+        android:paddingBottom="10dp"
+        android:paddingTop="10dp"
+        android:text="查看详情"
+        android:textSize="16sp"/>
 
 </LinearLayout>

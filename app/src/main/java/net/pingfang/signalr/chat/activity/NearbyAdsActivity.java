@@ -8,16 +8,13 @@ import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.PopupMenu;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.ContextThemeWrapper;
-import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
@@ -29,7 +26,6 @@ import com.baidu.mapapi.map.BaiduMap.OnMarkerClickListener;
 import com.baidu.mapapi.map.BaiduMapOptions;
 import com.baidu.mapapi.map.BitmapDescriptor;
 import com.baidu.mapapi.map.BitmapDescriptorFactory;
-import com.baidu.mapapi.map.InfoWindow;
 import com.baidu.mapapi.map.MapPoi;
 import com.baidu.mapapi.map.MapStatusUpdate;
 import com.baidu.mapapi.map.MapStatusUpdateFactory;
@@ -67,6 +63,11 @@ public class NearbyAdsActivity extends AppCompatActivity implements View.OnClick
     private MapView mapView;
     private BaiduMap baiduMap;
 
+    private LinearLayout ll_nearby_ad_container;
+    private TextView tv_title_nearby_ad;
+    private TextView tv_address_nearby_ad;
+    private TextView tv_detail_nearby_ad;
+
     private LocationClient locationClient;
     private BDLocationListener locationListener;
     private LatLng currentLatlng = new LatLng(23.23d, 112.6d);
@@ -91,6 +92,11 @@ public class NearbyAdsActivity extends AppCompatActivity implements View.OnClick
 
 
         mapView = (MapView) this.findViewById(R.id.mapView);
+
+        ll_nearby_ad_container = (LinearLayout) findViewById(R.id.ll_nearby_ad_container);
+        tv_title_nearby_ad = (TextView) findViewById(R.id.tv_title_nearby_ad);
+        tv_address_nearby_ad = (TextView) findViewById(R.id.tv_address_nearby_ad);
+        tv_detail_nearby_ad = (TextView) findViewById(R.id.tv_detail_nearby_ad);
     }
 
     /**
@@ -116,7 +122,7 @@ public class NearbyAdsActivity extends AppCompatActivity implements View.OnClick
 
             @Override
             public void onMapClick(LatLng latLng) {
-                baiduMap.hideInfoWindow();
+                ll_nearby_ad_container.setVisibility(View.GONE);
             }
 
             @Override
@@ -237,10 +243,11 @@ public class NearbyAdsActivity extends AppCompatActivity implements View.OnClick
                                         final String pic = js.getString("pic");
                                         final double lat = Double.parseDouble(js.getString("lat"));
                                         final double lng = Double.parseDouble(js.getString("lng"));
+                                        final String address = js.getString("address");
                                         mHandler.post(new Runnable() {
                                             @Override
                                             public void run() {
-                                                addMark(lat, lng, adContent, pic);
+                                                addMark(lat, lng, adContent, pic, address);
                                             }
                                         });
 
@@ -255,11 +262,11 @@ public class NearbyAdsActivity extends AppCompatActivity implements View.OnClick
                 });
     }
 
-    private void addMark(final double latitude, final double longitude, final String title, final String picUrl) {
+    private void addMark(final double latitude, final double longitude, final String title, final String picUrl, String address) {
         LatLng point = new LatLng(latitude, longitude);
         MarkerOptions options = new MarkerOptions();
         options.position(point);
-        BitmapDescriptor bitmapDescriptor = BitmapDescriptorFactory.fromResource(R.drawable.pointe_map);
+        BitmapDescriptor bitmapDescriptor = BitmapDescriptorFactory.fromResource(R.drawable.point_map_info);
         options.icon(bitmapDescriptor);
 
         Marker marker = (Marker) (baiduMap.addOverlay(options));
@@ -267,47 +274,44 @@ public class NearbyAdsActivity extends AppCompatActivity implements View.OnClick
         Bundle bundle = new Bundle();
         bundle.putString("url", picUrl);
         bundle.putString("title", title);
+        bundle.putString("address", address);
         marker.setExtraInfo(bundle);
     }
 
     private void showLocation(final Marker marker) {
 
-        View view = LayoutInflater.from(this).inflate(R.layout.list_item_nearby_ad, null);
-        ImageView imageView = (ImageView) view.findViewById(R.id.my_postion);
-        LatLng pt = new LatLng(marker.getPosition().latitude + 0.0004, marker.getPosition().longitude + 0.00005);
         Bundle bundle = marker.getExtraInfo();
-        String url = bundle.getString("url");
-        String title = bundle.getString("title");
+        final String url = bundle.getString("url");
+        final String title = bundle.getString("title");
+        final String address = bundle.getString("address");
 
-        if (!TextUtils.isEmpty(marker.getTitle())) {
-            if (!TextUtils.isEmpty(url)) {
-                //                url = GlobalApplication.PIC_URL_PREFIX + url;
-                OkHttpCommonUtil okhttp = OkHttpCommonUtil.newInstance(getApplicationContext());
-                okhttp.display(imageView, url, R.drawable.ic_empty);
+        ll_nearby_ad_container.setVisibility(View.VISIBLE);
+        ll_nearby_ad_container.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), NearbyAdDetailActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putString("text", title);
+                bundle.putString("url", url);
+                bundle.putString("address", address);
+                intent.putExtras(bundle);
+                startActivity(intent);
             }
-
-            final String tmpUrl = url;
-            final String tmpTitle = title;
-
-            imageView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-
-                    Intent intent = new Intent(getApplicationContext(), NearbyAdDetailActivity.class);
-                    Bundle bundle = new Bundle();
-                    bundle.putString("text", tmpTitle);
-                    bundle.putString("url", tmpUrl);
-                    intent.putExtras(bundle);
-                    startActivity(intent);
-                }
-            });
-        } else {
-            Toast.makeText(getApplicationContext(), "别点了这是我的位置！", Toast.LENGTH_SHORT)
-                    .show();
-        }
-
-        InfoWindow mInfoWindow = new InfoWindow(view, pt, 1);
-        baiduMap.showInfoWindow(mInfoWindow);
+        });
+        tv_title_nearby_ad.setText(title);
+        tv_address_nearby_ad.setText(address);
+        tv_detail_nearby_ad.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), NearbyAdDetailActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putString("text", title);
+                bundle.putString("url", url);
+                bundle.putString("address", address);
+                intent.putExtras(bundle);
+                startActivity(intent);
+            }
+        });
     }
 
     public void navigateUp() {

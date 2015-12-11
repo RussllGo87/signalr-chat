@@ -44,11 +44,64 @@
 
     </RelativeLayout>
 
-    <com.baidu.mapapi.map.MapView
-        android:id="@+id/mapView"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="3dp"
-        android:clickable="true"/>
+        android:layout_height="match_parent">
+
+        <com.baidu.mapapi.map.MapView
+            android:id="@+id/mapView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="3dp"/>
+
+        <LinearLayout
+            android:id="@+id/ll_nearby_ad_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:background="#ffffff"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/tv_title_nearby_ad"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:ellipsize="end"
+                android:paddingBottom="8dp"
+                android:paddingLeft="8dp"
+                android:paddingTop="8dp"
+                android:singleLine="true"
+                android:textSize="18sp"/>
+
+            <TextView
+                android:id="@+id/tv_address_nearby_ad"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:paddingBottom="8dp"
+                android:paddingLeft="16dp"
+                android:paddingTop="8dp"
+                android:singleLine="true"
+                android:textColor="@color/text_color_tv_label_grey"
+                android:textSize="14sp"/>
+
+            <TextView
+                android:id="@+id/tv_detail_nearby_ad"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/selector_ad_detail_btn"
+                android:gravity="center"
+                android:paddingBottom="8dp"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:paddingTop="8dp"
+                android:text="详情"
+                android:textColor="#ff0099cc"
+                android:textSize="16sp"/>
+        </LinearLayout>
+
+    </RelativeLayout>
 
 </LinearLayout>
