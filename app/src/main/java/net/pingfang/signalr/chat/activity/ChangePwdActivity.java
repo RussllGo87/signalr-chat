@@ -38,13 +38,11 @@ public class ChangePwdActivity extends AppCompatActivity implements View.OnClick
     public static final String KEY_PWD_UPDATE_NEW = "newpassword";
 
     TextView btn_activity_back;
-
+    SharedPreferencesHelper sharedPreferencesHelper;
     private EditText et_account_pwd_now;
     private EditText et_account_pwd_update;
     private EditText et_account_pwd_update_retype;
     private Button btn_account_pwd_update;
-
-    SharedPreferencesHelper sharedPreferencesHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,6 +89,9 @@ public class ChangePwdActivity extends AppCompatActivity implements View.OnClick
         }else if(TextUtils.isEmpty(pwdUpdate)){
             Toast.makeText(getApplicationContext(), "请输入新密码", Toast.LENGTH_SHORT).show();
             return;
+        } else if (pwdUpdate.length() < 6) {
+            Toast.makeText(getApplicationContext(), "密码必须不可以少于6位", Toast.LENGTH_SHORT).show();
+            return;
         }else if(TextUtils.isEmpty(pwdUpdateRetype)){
             Toast.makeText(getApplicationContext(), "请再次输入新密码", Toast.LENGTH_SHORT).show();
             return;
@@ -102,10 +103,10 @@ public class ChangePwdActivity extends AppCompatActivity implements View.OnClick
         if(CommonUtil.isConnected(getApplicationContext())){
             OkHttpCommonUtil okHttp = OkHttpCommonUtil.newInstance(getApplicationContext());
             okHttp.getRequest(URL_PWD_UPDATE,
-                    new OkHttpCommonUtil.Param[] {
-                            new OkHttpCommonUtil.Param(KEY_PWD_UPDATE_UID,sharedPreferencesHelper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID)),
-                            new OkHttpCommonUtil.Param(KEY_PWD_UPDATE_NOW,pwdNow),
-                            new OkHttpCommonUtil.Param(KEY_PWD_UPDATE_NEW,pwdUpdate)
+                    new OkHttpCommonUtil.Param[]{
+                            new OkHttpCommonUtil.Param(KEY_PWD_UPDATE_UID, sharedPreferencesHelper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID)),
+                            new OkHttpCommonUtil.Param(KEY_PWD_UPDATE_NOW, pwdNow),
+                            new OkHttpCommonUtil.Param(KEY_PWD_UPDATE_NEW, pwdUpdate)
                     },
                     new HttpBaseCallback() {
                         @Override
@@ -117,7 +118,7 @@ public class ChangePwdActivity extends AppCompatActivity implements View.OnClick
                                 jsonObject = new JSONObject(result);
                                 int status = jsonObject.getInt("status");
                                 String message = jsonObject.getString("message");
-                                if(status == 0) {
+                                if (status == 0) {
                                     runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
