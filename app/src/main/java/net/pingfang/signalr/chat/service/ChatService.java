@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.util.Log;
+import android.widget.Toast;
 
 import net.pingfang.signalr.chat.message.ChatMessageListener;
 import net.pingfang.signalr.chat.message.ChatMessageProcessor;
@@ -112,7 +113,14 @@ public class ChatService extends Service {
 
                 if (oldState == ConnectionState.Connected && newState == ConnectionState.Disconnected) {
                     Log.d(TAG, "通信端连接断开");
-                    awaitConnection = connection.start();
+                    if (isReconnectWhenDisconnect) {
+                        mHandler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                awaitConnection = connection.start(new AutomaticTransport());
+                            }
+                        }, 10000);
+                    }
                 }
 
                 if (oldState == ConnectionState.Disconnected && newState == ConnectionState.Reconnecting) {
@@ -125,12 +133,14 @@ public class ChatService extends Service {
 
                 if (oldState == ConnectionState.Reconnecting && newState == ConnectionState.Disconnected) {
                     Log.d(TAG, "重新连接失败");
-                    mHandler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            awaitConnection = connection.start(new AutomaticTransport());
-                        }
-                    }, 10000);
+                    if (isReconnectWhenDisconnect) {
+                        mHandler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                awaitConnection = connection.start(new AutomaticTransport());
+                            }
+                        }, 10000);
+                    }
                 }
             }
         });
@@ -155,7 +165,20 @@ public class ChatService extends Service {
 
     }
 
+
     public void sendMessage(String messageType, String message) {
+
+        if (connection.getState() == ConnectionState.Disconnected) {
+            Toast.makeText(getApplicationContext(), "通信连接已断开，正在尝试重新连接", Toast.LENGTH_LONG).show();
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    awaitConnection = connection.start(new AutomaticTransport());
+                }
+            }, 1000);
+            return;
+        }
+
         long currentTime = System.currentTimeMillis();
         long delta = currentTime - lastSendTime;
         if(delta > 300) {

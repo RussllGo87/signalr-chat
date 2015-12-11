@@ -1,10 +1,13 @@
 package net.pingfang.signalr.chat.ui.dialog;
 
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -57,6 +60,20 @@ public class ListDialogFragment extends DialogFragment {
 
         dialog = builder.create();
         dialog.setCanceledOnTouchOutside(false);
+        dialog.setOnKeyListener(new DialogInterface.OnKeyListener() {
+            @Override
+            public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+                if (keyCode == KeyEvent.KEYCODE_BACK) {
+                    new Handler().post(new Runnable() {
+                        @Override
+                        public void run() {
+                            getActivity().finish();
+                        }
+                    });
+                }
+                return false;
+            }
+        });
         return dialog;
     }
 
