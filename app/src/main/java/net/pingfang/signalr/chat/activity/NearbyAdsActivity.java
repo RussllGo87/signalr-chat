@@ -269,13 +269,15 @@ public class NearbyAdsActivity extends AppCompatActivity implements View.OnClick
         BitmapDescriptor bitmapDescriptor = BitmapDescriptorFactory.fromResource(R.drawable.point_map_info);
         options.icon(bitmapDescriptor);
 
-        Marker marker = (Marker) (baiduMap.addOverlay(options));
-        marker.setTitle(title);
-        Bundle bundle = new Bundle();
-        bundle.putString("url", picUrl);
-        bundle.putString("title", title);
-        bundle.putString("address", address);
-        marker.setExtraInfo(bundle);
+        if (baiduMap != null) {
+            Marker marker = (Marker) (baiduMap.addOverlay(options));
+            marker.setTitle(title);
+            Bundle bundle = new Bundle();
+            bundle.putString("url", picUrl);
+            bundle.putString("title", title);
+            bundle.putString("address", address);
+            marker.setExtraInfo(bundle);
+        }
     }
 
     private void showLocation(final Marker marker) {
