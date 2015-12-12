@@ -1,29 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-              android:padding="8dp">
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:paddingBottom="@dimen/padding_vertical_list_item_msg_container"
+              android:paddingLeft="@dimen/padding_horizontal_list_item_msg_container"
+              android:paddingRight="@dimen/padding_horizontal_list_item_msg_container"
+              android:paddingTop="@dimen/padding_vertical_list_item_msg_container">
 
-    <ImageView android:id="@+id/iv_account_portrait"
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/iv_account_portrait"
         android:layout_width="@dimen/iv_user_portrait_width"
         android:layout_height="@dimen/iv_user_portrait_width"
-               android:layout_marginTop="2dp"
-               android:src="@drawable/hale_default_user_portrait"/>
+        android:layout_marginTop="2dp"
+        android:src="@drawable/hale_default_user_portrait"/>
 
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="12dp"
+        android:layout_marginLeft="16dp"
         android:layout_weight="1"
         android:orientation="vertical">
 
         <TextView android:id="@+id/tv_friends_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-                  android:paddingBottom="4dp"
             android:text="昵称"
                   android:textColor="@color/material_grey_600"
-            android:textSize="20sp"/>
+                  android:textSize="24sp"/>
 
         <TextView android:id="@+id/tv_message_update"
             android:layout_width="match_parent"
@@ -35,19 +38,29 @@
 
     <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
         android:orientation="vertical">
 
         <TextView android:id="@+id/tv_msg_update_time"
-            android:layout_width="match_parent"
+                  android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-                  android:text="19:28"
+                  android:paddingBottom="4dp"
+                  android:text="2015-12-08 19:28:32"
                   android:textColor="@color/material_grey_600"/>
 
         <TextView android:id="@+id/tv_msg_not_read"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"/>
+                  android:layout_width="18dp"
+                  android:layout_height="18dp"
+                  android:layout_gravity="right"
+                  android:layout_marginRight="8dp"
+                  android:background="@drawable/shape_tv_msg_not_red"
+                  android:gravity="center"
+                  android:text="99"
+                  android:textColor="@android:color/white"
+                  android:textSize="10sp"
+                  android:textStyle="bold"
+                  android:visibility="gone"/>
 
     </LinearLayout>
 

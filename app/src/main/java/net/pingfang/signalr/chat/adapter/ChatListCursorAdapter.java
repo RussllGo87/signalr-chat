@@ -7,13 +7,15 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import net.pingfang.signalr.chat.R;
 import net.pingfang.signalr.chat.database.AppContract;
 import net.pingfang.signalr.chat.database.User;
 import net.pingfang.signalr.chat.net.OkHttpCommonUtil;
+import net.pingfang.signalr.chat.util.DateTimeUtil;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * Created by gongguopei87@gmail.com on 2015/10/15.
@@ -36,7 +38,7 @@ public class ChatListCursorAdapter extends CursorAdapter {
 
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
-        ImageView iv_account_portrait = (ImageView) view.findViewById(R.id.iv_account_portrait);
+        CircleImageView iv_account_portrait = (CircleImageView) view.findViewById(R.id.iv_account_portrait);
         String portraitUrl = cursor.getString(cursor.getColumnIndex(AppContract.RecentContactView.COLUMN_NAME_PORTRAIT));
         if (portraitUrl != null && !TextUtils.isEmpty(portraitUrl) && !"null".equals(portraitUrl)) {
 //            portraitUrl = GlobalApplication.PORTRAIT_URL_PREFIX + portraitUrl;
@@ -58,12 +60,18 @@ public class ChatListCursorAdapter extends CursorAdapter {
         tv_message_update.setText(content);
 
         TextView tv_msg_update_time = (TextView) view.findViewById(R.id.tv_msg_update_time);
-        tv_msg_update_time.setText(cursor.getString(cursor.getColumnIndex(AppContract.RecentContactView.COLUMN_NAME_UPDATE_TIME)));
+        String datetime = cursor.getString(cursor.getColumnIndex(AppContract.RecentContactView.COLUMN_NAME_UPDATE_TIME));
+        int timeFlag = DateTimeUtil.convertDatetimeFormat(datetime);
+        datetime = DateTimeUtil.displayDateOrTime(context, datetime, timeFlag);
+        tv_msg_update_time.setText(datetime);
 
         TextView tv_msg_not_read = (TextView) view.findViewById(R.id.tv_msg_not_read);
         int count = cursor.getInt(cursor.getColumnIndex(AppContract.RecentContactView.COLUMN_NAME_COUNT));
         if(count > 0) {
-            tv_msg_not_read.setText("" + count);
+            tv_msg_not_read.setVisibility(View.VISIBLE);
+            tv_msg_not_read.setText(count + "+");
+        } else {
+            tv_msg_not_read.setVisibility(View.GONE);
         }
 
 
