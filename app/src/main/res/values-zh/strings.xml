@@ -214,6 +214,9 @@
     <string name="content_type_pic">[图片]</string>
     <string name="content_type_voice">[声音]</string>
     <string name="content_new_offline_msg">[新的离线消息]</string>
+    <string name="date_display_today">今天</string>
+    <string name="date_display_yesterday">昨天</string>
+    <string name="date_display_error">日期显示出错</string>
 
     <!-- 群发消息 -->
     <string name="title_activity_bulk_msg">群发消息</string>

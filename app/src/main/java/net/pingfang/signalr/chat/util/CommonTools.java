@@ -14,8 +14,6 @@ import org.apache.commons.io.FileUtils;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -41,7 +39,6 @@ public class CommonTools {
         }
 
         return !(password.length() < 5 || password.length() > 16);
-
     }
 
     public static boolean isAvailableVc(String vc) {
@@ -103,110 +100,6 @@ public class CommonTools {
         return grayScaleBitmap;
     }
 
-    /**
-     * 处理服务器返回的时间
-     * @param datetime 时间字符串
-     * @return
-     */
-    public static String convertServerTime(String datetime) {
-        int index = datetime.indexOf('T');
-        String date = datetime.substring(0, index);
-        int dotIndex = datetime.indexOf('.');
-        String time = datetime.substring((index + 1), dotIndex);
-
-        StringBuffer stringBuffer = new StringBuffer();
-        stringBuffer.append(date);
-        stringBuffer.append(" ");
-        stringBuffer.append(time);
-        return stringBuffer.toString();
-    }
-
-    public static String TimeConvertString() {
-        Date now = new Date();
-        return TimeConvertString(now);
-    }
-
-    public static String TimeConvertString(Date date) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
-
-        StringBuffer stringBuffer = new StringBuffer();
-        stringBuffer.append(calendar.get(Calendar.YEAR));
-        stringBuffer.append("-");
-        int month = calendar.get(Calendar.MONTH);
-        month = month + 1;
-        if(month < 10) {
-            stringBuffer.append("0");
-        }
-        stringBuffer.append(month);
-        stringBuffer.append("-");
-        int day = calendar.get(Calendar.DAY_OF_MONTH);
-        if(day < 10) {
-            stringBuffer.append("0");
-        }
-        stringBuffer.append(day);
-        stringBuffer.append(" ");
-
-        int hour = calendar.get(Calendar.HOUR_OF_DAY);
-        if(hour < 10) {
-            stringBuffer.append("0");
-        }
-        stringBuffer.append(hour);
-        stringBuffer.append(":");
-        int minute = calendar.get(Calendar.MINUTE);
-        if(minute < 10) {
-            stringBuffer.append("0");
-        }
-        stringBuffer.append(minute);
-        stringBuffer.append(":");
-        int second = calendar.get(Calendar.SECOND);
-        if(second < 10) {
-            stringBuffer.append("0");
-        }
-        stringBuffer.append(second);
-
-        return stringBuffer.toString();
-    }
-
-    public static String generateTimestamp() {
-        long currentTimeMillis = System.currentTimeMillis();
-        Date date = new Date();
-        date.setTime(currentTimeMillis);
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
-
-        StringBuffer stringBuffer = new StringBuffer();
-        stringBuffer.append(calendar.get(Calendar.YEAR));
-        int month = calendar.get(Calendar.MONTH);
-        month = month + 1;
-        if(month < 10) {
-            stringBuffer.append("0");
-        }
-        stringBuffer.append(month);
-        int day = calendar.get(Calendar.DAY_OF_MONTH);
-        if(day < 10) {
-            stringBuffer.append("0");
-        }
-        stringBuffer.append(day);
-
-        int hour = calendar.get(Calendar.HOUR_OF_DAY);
-        if(hour < 10) {
-            stringBuffer.append("0");
-        }
-        stringBuffer.append(hour);
-        int minute = calendar.get(Calendar.MINUTE);
-        if(minute < 10) {
-            stringBuffer.append("0");
-        }
-        stringBuffer.append(minute);
-        int second = calendar.get(Calendar.SECOND);
-        if(second < 10) {
-            stringBuffer.append("0");
-        }
-        stringBuffer.append(second);
-
-        return stringBuffer.toString();
-    }
 
     /**
      * 将bitmap转换成Base64格式字符串

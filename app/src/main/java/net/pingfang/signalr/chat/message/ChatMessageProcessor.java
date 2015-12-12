@@ -16,7 +16,7 @@ import net.pingfang.signalr.chat.database.AppContract;
 import net.pingfang.signalr.chat.database.ChatMessageManager;
 import net.pingfang.signalr.chat.database.User;
 import net.pingfang.signalr.chat.database.UserManager;
-import net.pingfang.signalr.chat.util.CommonTools;
+import net.pingfang.signalr.chat.util.DateTimeUtil;
 import net.pingfang.signalr.chat.util.GlobalApplication;
 import net.pingfang.signalr.chat.util.MediaFileUtils;
 import net.pingfang.signalr.chat.util.SharedPreferencesHelper;
@@ -114,50 +114,6 @@ public class ChatMessageProcessor implements ChatMessageListener {
         }
     }
 
-    /** 用户上下线相关状态更新
-     * @param message 用户相关信息封装
-     * @param  status 用户上下线状态标志
-     * **/
-    private void updateUserStatus(String message,int status) {
-        String selection = AppContract.UserEntry.COLUMN_NAME_ENTRY_UID + " = ?";
-        JSONObject object;
-        ContentValues values = new ContentValues();
-        try {
-            object = new JSONObject(message);
-            String uid = object.getString("UserId");
-            if(uid != null && !TextUtils.isEmpty(uid) && !uid.equals("0")) {
-                UserManager userManager = new UserManager(context);
-                boolean isExist = userManager.isExist(uid);
-                if(isExist) {
-                    context.getContentResolver().update(AppContract.UserEntry.CONTENT_URI,
-                            values,
-                            selection,
-                            new String[]{uid});
-                } else {
-                    if(status == 1) {
-                        String nickname = object.getString("NickName");
-                        String portrait = object.getString("HeadPortrait");
-                        values.put(AppContract.UserEntry.COLUMN_NAME_ENTRY_UID,uid);
-                        values.put(AppContract.UserEntry.COLUMN_NAME_NICK_NAME,nickname);
-
-                        if(portrait != null && !TextUtils.isEmpty(portrait) && !"null".equals(portrait)) {
-                            values.put(AppContract.UserEntry.COLUMN_NAME_PORTRAIT,portrait);
-                        } else {
-                            values.put(AppContract.UserEntry.COLUMN_NAME_PORTRAIT, "");
-                        }
-                        context.getContentResolver().insert(AppContract.UserEntry.CONTENT_URI, values);
-                    }
-                }
-
-                Intent intent = new Intent();
-                intent.setAction(GlobalApplication.ACTION_INTENT_UPDATE_ONLINE_LIST);
-                context.sendBroadcast(intent);
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-
     /** 用户退出应用状态更新 **/
     private void exitApp() {
         ContentValues values = new ContentValues();
@@ -194,7 +150,7 @@ public class ChatMessageProcessor implements ChatMessageListener {
             String datetime = object.getString("SendTime");
             String contentType = object.getString("MessageType");
             if (!direction) {
-                datetime = CommonTools.convertServerTime(datetime);
+                datetime = DateTimeUtil.convertServerTime(datetime);
             }
 
             // 如果是接收消息,需要添加用户信息到数据库用户表
@@ -343,14 +299,14 @@ public class ChatMessageProcessor implements ChatMessageListener {
 
                     int currentCount = newCursor.getInt(newCursor.getColumnIndex(AppContract.RecentContactEntry.COLUMN_NAME_COUNT));
 
-                    values.put(AppContract.RecentContactEntry.COLUMN_NAME_UPDATE_TIME, CommonTools.TimeConvertString());
+                    values.put(AppContract.RecentContactEntry.COLUMN_NAME_UPDATE_TIME, DateTimeUtil.TimeConvertString());
                     values.put(AppContract.RecentContactEntry.COLUMN_NAME_COUNT,(currentCount + count));
                     context.getContentResolver().update(appendUri, values, null, null);
 
                     newCursor.close();
                 } else {
                     values.put(AppContract.RecentContactEntry.COLUMN_NAME_BUDDY,fromUid);
-                    values.put(AppContract.RecentContactEntry.COLUMN_NAME_UPDATE_TIME, CommonTools.TimeConvertString());
+                    values.put(AppContract.RecentContactEntry.COLUMN_NAME_UPDATE_TIME, DateTimeUtil.TimeConvertString());
                     values.put(AppContract.RecentContactEntry.COLUMN_NAME_OWNER,toUid);
                     values.put(AppContract.RecentContactEntry.COLUMN_NAME_COUNT,count);
                     context.getContentResolver().insert(AppContract.RecentContactEntry.CONTENT_URI,values);
@@ -379,7 +335,7 @@ public class ChatMessageProcessor implements ChatMessageListener {
                 String contentType = jsonObject.getString("MessageType");
                 String content = jsonObject.getString("Contents");
                 String datetime = jsonObject.getString("SendTime");
-                datetime = CommonTools.convertServerTime(datetime);
+                datetime = DateTimeUtil.convertServerTime(datetime);
 
                 // 消息存储
                 ChatMessageManager chatMessageManager = new ChatMessageManager(context);
@@ -480,7 +436,7 @@ public class ChatMessageProcessor implements ChatMessageListener {
             String datetime = object.getString("SendTime");
             String contentType = object.getString("MessageType");
             if (!direction) {
-                datetime = CommonTools.convertServerTime(datetime);
+                datetime = DateTimeUtil.convertServerTime(datetime);
             }
 
             // 如果是接收消息,需要添加用户信息到数据库用户表
@@ -704,14 +660,10 @@ public class ChatMessageProcessor implements ChatMessageListener {
                 String message = params[1];
             if(messageType.equals("OnlineList")) {
                 processOnlineList(message);
-            } else if(messageType.equals("Online")){
-                updateUserStatus(message, 1);
-            } else if(messageType.equals("Offline")) {
-                updateUserStatus(message, 0);
             } else if(messageType.equals("exitApp")) {
                 exitApp();
             } else if(messageType.equals("OnlineMsg")) {
-                processOnlineMessage(message,false);
+                processOnlineMessage(message, false);
             } else if(messageType.equals("OfflineMsgShort")) {
                 processOfflineMsgShort(message);
             } else if(messageType.equals("OfflineMsg")) {

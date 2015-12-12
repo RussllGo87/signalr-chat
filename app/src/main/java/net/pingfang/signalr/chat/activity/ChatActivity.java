@@ -53,6 +53,7 @@ import net.pingfang.signalr.chat.message.MessageConstant;
 import net.pingfang.signalr.chat.message.MessageConstructor;
 import net.pingfang.signalr.chat.service.ChatService;
 import net.pingfang.signalr.chat.util.CommonTools;
+import net.pingfang.signalr.chat.util.DateTimeUtil;
 import net.pingfang.signalr.chat.util.FileUtil;
 import net.pingfang.signalr.chat.util.GlobalApplication;
 import net.pingfang.signalr.chat.util.MediaFileUtils;
@@ -396,7 +397,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         String content = et_message.getText().toString().trim();
         et_message.setText("");
         if(!TextUtils.isEmpty(content)) {
-            String datetime = CommonTools.TimeConvertString();
+            String datetime = DateTimeUtil.TimeConvertString();
             String messageBody = MessageConstructor.constructTxtMessage(uid, nickname, portrait, buddyUid, content, datetime);
             // 消息发送
             mService.sendMessage("OnlineMsg", messageBody);
@@ -441,7 +442,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        String datetime = CommonTools.TimeConvertString();
+        String datetime = DateTimeUtil.TimeConvertString();
         if(resultCode == Activity.RESULT_OK) {
             if(data != null && data.getData() != null) {
                 if(requestCode == GlobalApplication.REQUEST_IMAGE_GET) {
@@ -520,7 +521,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             mStartRecording = false;
             btn_voice_record.setText(R.string.btn_voice_record);
 
-            String datetime = CommonTools.TimeConvertString();
+            String datetime = DateTimeUtil.TimeConvertString();
             Uri uri = Uri.parse(mFileName);
             inflaterVoiceMessage(uri, true, helper.getStringValue(AppConstants.KEY_SYS_CURRENT_NICKNAME), datetime);
 
