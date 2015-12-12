@@ -2,30 +2,33 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="@dimen/padding_left_list_item_buddy_container">
+                android:paddingBottom="@dimen/padding_vertical_list_item_msg_container"
+                android:paddingLeft="@dimen/padding_horizontal_list_item_msg_container"
+                android:paddingRight="@dimen/padding_horizontal_list_item_msg_container"
+                android:paddingTop="@dimen/padding_vertical_list_item_msg_container">
 
-    <ImageView android:id="@+id/iv_user_portrait"
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/iv_user_portrait"
         android:layout_width="@dimen/iv_user_portrait_width"
         android:layout_height="@dimen/iv_user_portrait_width"
-               android:layout_marginTop="6dp"
-               android:src="@drawable/hale_default_user_portrait"/>
+        android:layout_marginTop="6dp"
+        android:src="@drawable/hale_default_user_portrait"/>
 
     <TextView
         android:id="@+id/tv_user_nickname"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@+id/iv_user_portrait"
-        android:minHeight="18dp"
+        android:minHeight="24dp"
         android:paddingBottom="4dp"
         android:paddingLeft="12dp"
         android:paddingTop="4dp"
         android:text="朋友昵称"
         android:textColor="@color/material_grey_600"
-        android:textSize="@dimen/text_size_activity_title"/>
+        android:textSize="24sp"/>
 
     <ImageView
-        android:id="@+id/iv_user_gener"
+        android:id="@+id/iv_user_gender"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/tv_user_nickname"
@@ -38,7 +41,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/tv_user_nickname"
-        android:layout_toRightOf="@+id/iv_user_gener"
+        android:layout_toRightOf="@+id/iv_user_gender"
         android:src="@drawable/icon_hale_distance"/>
 
     <TextView

@@ -15,6 +15,8 @@ import net.pingfang.signalr.chat.database.AppContract;
 import net.pingfang.signalr.chat.database.User;
 import net.pingfang.signalr.chat.net.OkHttpCommonUtil;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 /**
  * Created by gongguopei87@gmail.com on 2015/9/28.
  */
@@ -35,7 +37,7 @@ public class BuddyListCursorAdapter extends CursorAdapter {
 
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
-        ImageView iv_user_portrait = (ImageView) view.findViewById(R.id.iv_user_portrait);
+        CircleImageView iv_user_portrait = (CircleImageView) view.findViewById(R.id.iv_user_portrait);
         String portraitUrl = cursor.getString(cursor.getColumnIndex(AppContract.UserEntry.COLUMN_NAME_PORTRAIT));
         if(portraitUrl != null && !TextUtils.isEmpty(portraitUrl) && !"null".equals(portraitUrl)) {
 //            portraitUrl = GlobalApplication.PORTRAIT_URL_PREFIX + portraitUrl;
@@ -48,7 +50,7 @@ public class BuddyListCursorAdapter extends CursorAdapter {
         TextView tv_user_nickname = (TextView) view.findViewById(R.id.tv_user_nickname);
         tv_user_nickname.setText(cursor.getString(cursor.getColumnIndex(AppContract.UserEntry.COLUMN_NAME_NICK_NAME)));
 
-        ImageView iv_user_gener = (ImageView) view.findViewById(R.id.iv_user_gener);
+        ImageView iv_user_gener = (ImageView) view.findViewById(R.id.iv_user_gender);
         int gender = cursor.getInt(cursor.getColumnIndex(AppContract.UserEntry.COLUMN_NAME_GENDER));
         if (gender == User.USER_GENDER_MALE) {
             iv_user_gener.setImageResource(R.drawable.icon_hale_male);
