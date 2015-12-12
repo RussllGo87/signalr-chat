@@ -181,7 +181,7 @@ public class ChatMessageProcessor implements ChatMessageListener {
                 String[] selectionArgs = new String[]{to};
 
                 ContentValues values = new ContentValues();
-                values.put(AppContract.UserEntry.COLUMN_NAME_STATUS_MSG_LIST, User.USER_STATUS_MSG_LIST_OUT);
+                values.put(AppContract.UserEntry.COLUMN_NAME_STATUS_MSG_LIST, User.USER_STATUS_MSG_LIST_IN);
 
                 int count = context.getContentResolver().update(AppContract.UserEntry.CONTENT_URI, values, selection, selectionArgs);
                 Intent intent = new Intent();
