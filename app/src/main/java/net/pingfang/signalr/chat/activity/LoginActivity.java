@@ -71,6 +71,8 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class LoginActivity extends AppCompatActivity implements LocationNotify{
 
     public static final String TAG = LoginActivity.class.getSimpleName();
@@ -95,6 +97,7 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
     public static final String KEY_URL_ACCOUNT_INFO_LOAD_UID = "id";
 
     LinearLayout ll_form_container;
+    CircleImageView iv_account_portrait_login;
     EditText et_login_no;
     EditText et_login_pwd;
     CheckBox cb_show_pwd;
@@ -223,7 +226,18 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
     protected void onStart() {
         super.onStart();
 
+        loadAccountPortrait();
         loadWxLoginCode();
+    }
+
+    private void loadAccountPortrait() {
+        String url = sharedPreferencesHelper.getStringValue(AppConstants.KEY_SYS_CURRENT_PORTRAIT);
+        if (!TextUtils.isEmpty(url)) {
+            OkHttpCommonUtil okHttpCommonUtil = OkHttpCommonUtil.newInstance(getApplicationContext());
+            okHttpCommonUtil.display(iv_account_portrait_login, url, R.drawable.hale_default_user_portrait);
+        } else {
+            iv_account_portrait_login.setImageResource(R.drawable.hale_default_user_portrait);
+        }
     }
 
     private void loadWxLoginCode() {
@@ -292,6 +306,9 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
 
     private void initView() {
         ll_form_container = (LinearLayout) findViewById(R.id.ll_form_container);
+
+        iv_account_portrait_login = (CircleImageView) findViewById(R.id.iv_account_portrait_login);
+
         et_login_no = (EditText) findViewById(R.id.et_login_no);
         if(!TextUtils.isEmpty(savedAccount)) {
             et_login_no.setText(savedAccount);

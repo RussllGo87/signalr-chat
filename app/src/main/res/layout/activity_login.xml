@@ -36,6 +36,14 @@
         android:focusableInTouchMode="true"
         android:orientation="vertical"/>
 
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/iv_account_portrait_login"
+        android:layout_width="@dimen/iv_user_portrait_width_login"
+        android:layout_height="@dimen/iv_user_portrait_height_login"
+        android:layout_above="@+id/ll_form_container"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/hale_default_user_portrait"/>
+
     <LinearLayout android:id="@+id/ll_form_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

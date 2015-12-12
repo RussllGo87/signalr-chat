@@ -27,6 +27,8 @@
     <dimen name="padding_horizontal_ll_form_container">16dp</dimen>
     <dimen name="text_size_tv_label_phone_no">18sp</dimen>
     <dimen name="padding_horizontal_et_login_no">8dp</dimen>
+    <dimen name="iv_user_portrait_width_login">64dp</dimen>
+    <dimen name="iv_user_portrait_height_login">64dp</dimen>
 
 
     <!-- Home主页 -->
