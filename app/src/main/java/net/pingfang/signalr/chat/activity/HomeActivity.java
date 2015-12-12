@@ -1,6 +1,7 @@
 package net.pingfang.signalr.chat.activity;
 
 import android.content.ComponentName;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
@@ -40,6 +41,7 @@ import net.pingfang.signalr.chat.constant.wechat.WxConstants;
 import net.pingfang.signalr.chat.constant.wechat.WxOauth2AccessToken;
 import net.pingfang.signalr.chat.constant.weibo.WeiboConstants;
 import net.pingfang.signalr.chat.constant.weibo.WeiboRequestListener;
+import net.pingfang.signalr.chat.database.AppContract;
 import net.pingfang.signalr.chat.database.User;
 import net.pingfang.signalr.chat.demo.GreyBitmapActivity;
 import net.pingfang.signalr.chat.fragment.AccountFragment;
@@ -54,6 +56,7 @@ import net.pingfang.signalr.chat.service.ChatService;
 import net.pingfang.signalr.chat.ui.dialog.DoubleButtonDialogFragment;
 import net.pingfang.signalr.chat.ui.dialog.ItemListDialogFragment;
 import net.pingfang.signalr.chat.util.CommonTools;
+import net.pingfang.signalr.chat.util.GlobalApplication;
 import net.pingfang.signalr.chat.util.SharedPreferencesHelper;
 
 import org.json.JSONException;
@@ -130,7 +133,18 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
         @Override
         public void onItemDelete(User user) {
+            String selection = AppContract.UserEntry.COLUMN_NAME_ENTRY_UID + " = ?";
+            String[] selectionArgs = new String[]{user.getUid()};
 
+            ContentValues values = new ContentValues();
+            values.put(AppContract.UserEntry.COLUMN_NAME_STATUS_MSG_LIST, User.USER_STATUS_MSG_LIST_OUT);
+
+            int count = getApplicationContext().getContentResolver().update(AppContract.UserEntry.CONTENT_URI, values, selection, selectionArgs);
+            if (count > 0) {
+                Intent intent = new Intent();
+                intent.setAction(GlobalApplication.ACTION_INTENT_MSG_LIST_UPDATE);
+                sendBroadcast(intent);
+            }
         }
 
         @Override
@@ -271,8 +285,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     private void logout() {
         helper.clearKey(AppConstants.KEY_SYS_CURRENT_UID);
-        helper.clearKey(AppConstants.KEY_SYS_CURRENT_NICKNAME);
-        helper.clearKey(AppConstants.KEY_SYS_CURRENT_PORTRAIT);
+        //        helper.clearKey(AppConstants.KEY_SYS_CURRENT_NICKNAME);
+        //        helper.clearKey(AppConstants.KEY_SYS_CURRENT_PORTRAIT);
 
         mAccessToken = SharedPreferencesHelper.readAccessToken();
         if(mAccessToken != null && mAccessToken.isSessionValid()) {

@@ -43,7 +43,6 @@ public class UserManager {
                 return user;
             }
         }
-
         return null;
     }
 }

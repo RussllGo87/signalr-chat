@@ -176,6 +176,17 @@ public class ChatMessageProcessor implements ChatMessageListener {
 
                     context.getContentResolver().insert(AppContract.UserEntry.CONTENT_URI, values);
                 }
+            } else {
+                String selection = AppContract.UserEntry.COLUMN_NAME_ENTRY_UID + " = ?";
+                String[] selectionArgs = new String[]{to};
+
+                ContentValues values = new ContentValues();
+                values.put(AppContract.UserEntry.COLUMN_NAME_STATUS_MSG_LIST, User.USER_STATUS_MSG_LIST_OUT);
+
+                int count = context.getContentResolver().update(AppContract.UserEntry.CONTENT_URI, values, selection, selectionArgs);
+                Intent intent = new Intent();
+                intent.setAction(GlobalApplication.ACTION_INTENT_MSG_LIST_UPDATE);
+                context.sendBroadcast(intent);
             }
 
             ChatMessageManager chatMessageManager = new ChatMessageManager(context);
@@ -568,12 +579,21 @@ public class ChatMessageProcessor implements ChatMessageListener {
                     null, selection, selectionArgs, null);
 
             if(newCursor != null && newCursor.getCount() > 0) {
+                Intent intent = new Intent();
+                intent.setAction(GlobalApplication.ACTION_INTENT_SHIELD_LIST_BEFORE);
+                intent.putExtra("uid", shield);
+                context.sendBroadcast(intent);
                 return;
             } else {
                 ContentValues values = new ContentValues();
-                values.put(AppContract.ShieldEntry.COLUMN_NAME_SHIELD,shield);
-                values.put(AppContract.ShieldEntry.COLUMN_NAME_OWNER,owner);
-                context.getContentResolver().insert(AppContract.ShieldEntry.CONTENT_URI,values);
+                values.put(AppContract.ShieldEntry.COLUMN_NAME_SHIELD, shield);
+                values.put(AppContract.ShieldEntry.COLUMN_NAME_OWNER, owner);
+                context.getContentResolver().insert(AppContract.ShieldEntry.CONTENT_URI, values);
+
+                Intent intent = new Intent();
+                intent.setAction(GlobalApplication.ACTION_INTENT_SHIELD_LIST_ADD);
+                intent.putExtra("uid", shield);
+                context.sendBroadcast(intent);
             }
 
         } catch (JSONException e) {

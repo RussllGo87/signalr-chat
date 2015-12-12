@@ -12,12 +12,14 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import net.pingfang.signalr.chat.R;
 import net.pingfang.signalr.chat.activity.ChatActivity;
@@ -25,6 +27,7 @@ import net.pingfang.signalr.chat.adapter.ChatListCursorAdapter;
 import net.pingfang.signalr.chat.constant.app.AppConstants;
 import net.pingfang.signalr.chat.database.AppContract;
 import net.pingfang.signalr.chat.database.User;
+import net.pingfang.signalr.chat.database.UserManager;
 import net.pingfang.signalr.chat.listener.OnFragmentInteractionListener;
 import net.pingfang.signalr.chat.util.GlobalApplication;
 import net.pingfang.signalr.chat.util.SharedPreferencesHelper;
@@ -61,6 +64,9 @@ public class MessageFragment extends Fragment implements LoaderManager.LoaderCal
     public void registerReceiver() {
         receiver = new MessageReceiver();
         IntentFilter filter = new IntentFilter();
+        filter.addAction(GlobalApplication.ACTION_INTENT_SHIELD_LIST_ADD);
+        filter.addAction(GlobalApplication.ACTION_INTENT_SHIELD_LIST_BEFORE);
+        filter.addAction(GlobalApplication.ACTION_INTENT_MSG_LIST_UPDATE);
         filter.addAction(GlobalApplication.ACTION_INTENT_MSG_UPDATE);
         filter.addAction(GlobalApplication.ACTION_INTENT_ONLINE_MESSAGE_INCOMING);
         filter.addAction(GlobalApplication.ACTION_INTENT_ONLINE_MESSAGE_SEND);
@@ -173,6 +179,22 @@ public class MessageFragment extends Fragment implements LoaderManager.LoaderCal
     private class MessageReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (!TextUtils.isEmpty(action)) {
+                UserManager userManager = new UserManager(getContext());
+                if (action.equals(GlobalApplication.ACTION_INTENT_SHIELD_LIST_ADD) || action.equals(GlobalApplication.ACTION_INTENT_SHIELD_LIST_BEFORE)) {
+                    String uid = intent.getStringExtra("uid");
+                    User user = userManager.queryUserByUid(uid);
+                    if (user != null && !TextUtils.isEmpty(user.getNickname())) {
+                        if (action.equals(GlobalApplication.ACTION_INTENT_SHIELD_LIST_ADD))
+                            Toast.makeText(getContext(), user.getNickname() + "成功添加到屏蔽人名单", Toast.LENGTH_LONG).show();
+
+                        if (action.equals(GlobalApplication.ACTION_INTENT_SHIELD_LIST_BEFORE))
+                            Toast.makeText(getContext(), user.getNickname() + "已经在屏蔽人名单了", Toast.LENGTH_LONG).show();
+                    }
+                }
+            }
+
             String uid = sharedPreferencesHelper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID);
             Bundle args = new Bundle();
             args.putString(AppConstants.KEY_SYS_CURRENT_UID, uid);

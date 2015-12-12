@@ -146,8 +146,8 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                 break;
             case R.id.tv_settings_item_exit:
                 sharedPreferencesHelper.clearKey(AppConstants.KEY_SYS_CURRENT_UID);
-                sharedPreferencesHelper.clearKey(AppConstants.KEY_SYS_CURRENT_NICKNAME);
-                sharedPreferencesHelper.clearKey(AppConstants.KEY_SYS_CURRENT_PORTRAIT);
+                //                sharedPreferencesHelper.clearKey(AppConstants.KEY_SYS_CURRENT_NICKNAME);
+                //                sharedPreferencesHelper.clearKey(AppConstants.KEY_SYS_CURRENT_PORTRAIT);
 
                 wbAccessToken = SharedPreferencesHelper.readAccessToken();
                 if(wbAccessToken != null && wbAccessToken.isSessionValid()) {
