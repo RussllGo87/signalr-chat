@@ -90,7 +90,7 @@ public class AppAboutActivity extends AppCompatActivity implements View.OnClickL
         tv_about_item_share_apk.setOnClickListener(this);
 
         iv_app_logo = (ImageView) findViewById(R.id.iv_app_logo);
-        Bitmap bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.hale_logo);
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.hale_icon);
         bitmap = Bitmap.createScaledBitmap(bitmap,
                 MediaFileUtils.dpToPx(getApplicationContext(), 150),
                 MediaFileUtils.dpToPx(getApplicationContext(), 120),

@@ -163,6 +163,7 @@ public class ResourcePostActivity extends AppCompatActivity implements View.OnCl
         et_resource_width = (EditText) findViewById(R.id.et_resource_width);
         et_resource_height = (EditText) findViewById(R.id.et_resource_height);
         et_resource_location = (EditText) findViewById(R.id.et_resource_location);
+        et_resource_location.setEnabled(false);
         et_resource_contacts = (EditText) findViewById(R.id.et_resource_contacts);
         et_resource_phone = (EditText) findViewById(R.id.et_resource_phone);
         et_resource_material = (EditText) findViewById(R.id.et_resource_material);
@@ -459,11 +460,13 @@ public class ResourcePostActivity extends AppCompatActivity implements View.OnCl
 
                                         if (phoneNo.length() > 0) {
                                             et_resource_phone.setText(phoneNo);
+                                            et_resource_phone.setEnabled(false);
                                         }
 
 
                                         if (realname.length() > 0) {
                                             et_resource_contacts.setText(realname);
+                                            et_resource_contacts.setEnabled(false);
                                         }
 
                                         //

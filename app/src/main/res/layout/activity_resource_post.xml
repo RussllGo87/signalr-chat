@@ -83,7 +83,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="15dp"
                 android:layout_marginRight="15dp"
-                android:layout_marginTop="2dp"/>
+                android:layout_marginTop="2dp"
+                android:hint="广告所在地址"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -99,7 +100,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginRight="1dp"
                     android:layout_weight="2"
-                    android:hint="联系人"/>
+                    android:hint="联系人"
+                    android:singleLine="true"/>
 
                 <EditText android:id="@+id/et_resource_phone"
                           android:layout_width="match_parent"

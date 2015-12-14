@@ -134,6 +134,7 @@ public class AdMaintainActivity extends AppCompatActivity implements View.OnClic
         btn_activity_back.setOnClickListener(this);
 
         et_ad_maintain_location = (EditText) findViewById(R.id.et_ad_maintain_location);
+        et_ad_maintain_location.setEnabled(false);
         et_ad_maintain_code = (EditText) findViewById(R.id.et_ad_maintain_code);
         btn_ad_maintain_code_scan = (TextView) findViewById(R.id.btn_ad_maintain_code_scan);
         btn_ad_maintain_code_scan.setOnClickListener(this);
