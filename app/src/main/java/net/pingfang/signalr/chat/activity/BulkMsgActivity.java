@@ -66,6 +66,7 @@ import net.pingfang.signalr.chat.net.HttpBaseCallback;
 import net.pingfang.signalr.chat.net.OkHttpCommonUtil;
 import net.pingfang.signalr.chat.service.ChatService;
 import net.pingfang.signalr.chat.ui.dialog.ListDialogFragment;
+import net.pingfang.signalr.chat.ui.dialog.SingleButtonDialogFragment;
 import net.pingfang.signalr.chat.util.CommonTools;
 import net.pingfang.signalr.chat.util.DateTimeUtil;
 import net.pingfang.signalr.chat.util.FileUtil;
@@ -85,6 +86,14 @@ import java.util.List;
 public class BulkMsgActivity extends AppCompatActivity implements View.OnClickListener, OnDialogListItemListener {
 
     public static final String TAG = BulkMsgActivity.class.getSimpleName();
+
+    public static final String BULK_MSG_TYPE_TXT = "BULK_MSG_TYPE_TXT";
+    public static final String BULK_MSG_TYPE_CAMERA = "BULK_MSG_TYPE_CAMERA";
+    public static final String BULK_MSG_TYPE_PIC = "BULK_MSG_TYPE_PIC";
+    public static final String BULK_MSG_TYPE_VOICE = "BULK_MSG_TYPE_VOICE";
+
+    public static final String URL_ACCOUNT_INFO_LOAD = GlobalApplication.URL_WEB_API_HOST + "/api/WebAPI/User/GetUser";
+    public static final String KEY_URL_ACCOUNT_INFO_LOAD_UID = "id";
 
     public static final String URL_BULK_MSG_RULE =
             GlobalApplication.URL_WEB_API_HOST + "/api/WebAPI/BroadcastIntegralDistance/GetBroadcastIntegralDistances";
@@ -107,7 +116,7 @@ public class BulkMsgActivity extends AppCompatActivity implements View.OnClickLi
     ImageView iv_msg_type_pic;
     ImageView iv_msg_type_voice;
 
-    SharedPreferencesHelper helper;
+    SharedPreferencesHelper sharedPreferencesHelper;
     String uid;
     String nickname;
     String portrait;
@@ -157,11 +166,11 @@ public class BulkMsgActivity extends AppCompatActivity implements View.OnClickLi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
-        helper = SharedPreferencesHelper.newInstance(getApplicationContext());
+        sharedPreferencesHelper = SharedPreferencesHelper.newInstance(getApplicationContext());
         chatMessageProcessor = new ChatMessageProcessor(getApplicationContext());
-        uid = helper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID);
-        nickname = helper.getStringValue(AppConstants.KEY_SYS_CURRENT_NICKNAME);
-        portrait = helper.getStringValue(AppConstants.KEY_SYS_CURRENT_PORTRAIT);
+        uid = sharedPreferencesHelper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID);
+        nickname = sharedPreferencesHelper.getStringValue(AppConstants.KEY_SYS_CURRENT_NICKNAME);
+        portrait = sharedPreferencesHelper.getStringValue(AppConstants.KEY_SYS_CURRENT_PORTRAIT);
 
         initView();
         loadBulkRule();
@@ -283,7 +292,7 @@ public class BulkMsgActivity extends AppCompatActivity implements View.OnClickLi
             @Override
             public void onResponse(Response response) throws IOException {
                 String jsonResponse = response.body().string();
-                //                helper.putStringValue(AppConstants.KEY_SYS_BULK_MSG_RULE, jsonResponse);
+                //                sharedPreferencesHelper.putStringValue(AppConstants.KEY_SYS_BULK_MSG_RULE, jsonResponse);
                 rulelist.clear();
                 try {
                     JSONArray jsonArray = new JSONArray(jsonResponse);
@@ -395,8 +404,7 @@ public class BulkMsgActivity extends AppCompatActivity implements View.OnClickLi
                 onVoiceTxtSwitchClick(iv_quick_voice_txt_switcher.isSelected());
                 break;
             case R.id.btn_send:
-                sendMessage();
-                hideKeyboard();
+                checkSendCondition(BULK_MSG_TYPE_TXT);
                 break;
             case R.id.iv_msg_type_chooser:
                 onMsgTypeChooserClick();
@@ -405,17 +413,122 @@ public class BulkMsgActivity extends AppCompatActivity implements View.OnClickLi
                 onVoiceTxtSwitchClick(true);
                 break;
             case R.id.iv_msg_type_camera:
-                openCamera();
-                onVoiceTxtSwitchClick(true);
+                checkSendCondition(BULK_MSG_TYPE_CAMERA);
                 break;
             case R.id.iv_msg_type_pic:
-                sendImage();
-                onVoiceTxtSwitchClick(true);
+                checkSendCondition(BULK_MSG_TYPE_PIC);
                 break;
             case R.id.iv_msg_type_voice:
-                onVoiceTxtSwitchClick(false);
+                checkSendCondition(BULK_MSG_TYPE_VOICE);
                 break;
         }
+    }
+
+    private void checkSendCondition(final String type) {
+        Toast.makeText(getApplicationContext(), "正在同步群消息发送记录数据", Toast.LENGTH_SHORT).show();
+        OkHttpCommonUtil okHttp = OkHttpCommonUtil.newInstance(getApplicationContext());
+        okHttp.getRequest(URL_ACCOUNT_INFO_LOAD,
+                new OkHttpCommonUtil.Param[]{
+                        new OkHttpCommonUtil.Param(KEY_URL_ACCOUNT_INFO_LOAD_UID,
+                                sharedPreferencesHelper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID))
+                },
+                new HttpBaseCallback() {
+                    @Override
+                    public void onResponse(Response response) throws IOException {
+                        String result = response.body().string();
+                        Log.d(TAG, "URL_ACCOUNT_INFO_LOAD return " + result);
+                        JSONObject jsonObject = null;
+                        try {
+                            jsonObject = new JSONObject(result);
+                            int status = jsonObject.getInt("status");
+                            String message = jsonObject.getString("message");
+                            if (status == 0) {
+                                JSONObject resultJson = jsonObject.getJSONObject("result");
+                                String nickName = resultJson.getString("nickname");
+                                String portraitUrl = resultJson.getString("portrait");
+                                final int exp = resultJson.getInt("exp");
+                                final int massTimes = resultJson.getInt("massTimes");
+
+                                ContentValues values = new ContentValues();
+                                String selection = AppContract.UserEntry.COLUMN_NAME_ENTRY_UID + " = ?";
+                                values.put(AppContract.UserEntry.COLUMN_NAME_NICK_NAME, nickName);
+                                values.put(AppContract.UserEntry.COLUMN_NAME_PORTRAIT, portraitUrl);
+                                getApplicationContext().getContentResolver().update(AppContract.UserEntry.CONTENT_URI,
+                                        values,
+                                        selection,
+                                        new String[]{sharedPreferencesHelper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID)});
+
+                                sharedPreferencesHelper.putStringValue(AppConstants.KEY_SYS_CURRENT_NICKNAME, nickName);
+                                sharedPreferencesHelper.putStringValue(AppConstants.KEY_SYS_CURRENT_PORTRAIT, portraitUrl);
+                                sharedPreferencesHelper.putInt(AppConstants.KEY_SYS_CURRENT_USER_EXP, exp);
+                                sharedPreferencesHelper.putInt(AppConstants.KEY_SYS_CURRENT_USER_SEND_TIME, massTimes);
+
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(getApplicationContext(), "同步群消息发送记录数据成功", Toast.LENGTH_SHORT).show();
+
+                                        Intent intent = new Intent();
+                                        intent.setAction(GlobalApplication.ACTION_INTENT_ACCOUNT_INFO_UPDATE);
+                                        sendBroadcast(intent);
+
+                                        if (!(currentIntegration > exp) && massTimes < currentMaxMassTimes) {
+                                            if (type.equals(BULK_MSG_TYPE_TXT)) {
+                                                sendMessage();
+                                                hideKeyboard();
+                                                return;
+                                            }
+
+                                            if (type.equals(BULK_MSG_TYPE_CAMERA)) {
+                                                openCamera();
+                                                onVoiceTxtSwitchClick(true);
+                                                return;
+                                            }
+
+                                            if (type.equals(BULK_MSG_TYPE_PIC)) {
+                                                sendImage();
+                                                onVoiceTxtSwitchClick(true);
+                                                return;
+                                            }
+
+                                            if (type.equals(BULK_MSG_TYPE_VOICE)) {
+                                                onVoiceTxtSwitchClick(false);
+                                            }
+                                        } else if (currentIntegration > exp) {
+                                            SingleButtonDialogFragment dialogFragment = SingleButtonDialogFragment.newInstance(getString(R.string.dialog_msg_bulk_msg_send_no_integration));
+                                            dialogFragment.show(getSupportFragmentManager(), "SingleButtonDialogFragment");
+                                            hideKeyboard();
+                                        } else if (!(massTimes < currentMaxMassTimes)) {
+                                            SingleButtonDialogFragment dialogFragment = SingleButtonDialogFragment.newInstance(getString(R.string.dialog_msg_bulk_msg_send_more_than_max_times));
+                                            dialogFragment.show(getSupportFragmentManager(), "SingleButtonDialogFragment");
+                                            hideKeyboard();
+                                        }
+                                    }
+                                });
+                            } else {
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        SingleButtonDialogFragment dialogFragment = SingleButtonDialogFragment.newInstance(getString(R.string.dialog_msg_bulk_msg_load_info_error));
+                                        dialogFragment.show(getSupportFragmentManager(), "SingleButtonDialogFragment");
+                                        hideKeyboard();
+                                    }
+                                });
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    SingleButtonDialogFragment dialogFragment = SingleButtonDialogFragment.newInstance(getString(R.string.dialog_msg_bulk_msg_send_invalidate));
+                                    dialogFragment.show(getSupportFragmentManager(), "SingleButtonDialogFragment");
+                                    hideKeyboard();
+                                }
+                            });
+
+                        }
+                    }
+                });
     }
 
     private void onMsgTypeChooserClick() {
@@ -536,8 +649,8 @@ public class BulkMsgActivity extends AppCompatActivity implements View.OnClickLi
                     portrait,
                     content,
                     datetime,
-                    helper.getStringValue(AppConstants.KEY_SYS_LOCATION_LNG),
-                    helper.getStringValue(AppConstants.KEY_SYS_LOCATION_LAT),
+                    sharedPreferencesHelper.getStringValue(AppConstants.KEY_SYS_LOCATION_LNG),
+                    sharedPreferencesHelper.getStringValue(AppConstants.KEY_SYS_LOCATION_LAT),
                     currentIntegration,
                     currentDistance,
                     currentMaxMassTimes);
@@ -646,14 +759,14 @@ public class BulkMsgActivity extends AppCompatActivity implements View.OnClickLi
                         Bitmap bitmap = MediaFileUtils.decodeBitmapFromPath(filePath,
                                 MediaFileUtils.dpToPx(getApplicationContext(), 150),
                                 MediaFileUtils.dpToPx(getApplicationContext(), 150));
-                        inflaterImgMessage(bitmap,uri, true, helper.getStringValue(AppConstants.KEY_SYS_CURRENT_NICKNAME), datetime);
+                        inflaterImgMessage(bitmap, uri, true, sharedPreferencesHelper.getStringValue(AppConstants.KEY_SYS_CURRENT_NICKNAME), datetime);
                         String fileExtension = MediaFileUtils.getFileExtension(filePath);
                         String fileBody = CommonTools.bitmapToBase64(bitmap);
                         if(!TextUtils.isEmpty(fileExtension) && !TextUtils.isEmpty(fileBody)) {
                             String messageBody = MessageConstructor.constructBulkFileMsgReq(
                                     uid, nickname, portrait, "Picture", fileExtension, fileBody, datetime,
-                                    helper.getStringValue(AppConstants.KEY_SYS_LOCATION_LNG),
-                                    helper.getStringValue(AppConstants.KEY_SYS_LOCATION_LAT),
+                                    sharedPreferencesHelper.getStringValue(AppConstants.KEY_SYS_LOCATION_LNG),
+                                    sharedPreferencesHelper.getStringValue(AppConstants.KEY_SYS_LOCATION_LAT),
                                     currentIntegration,
                                     currentDistance,
                                     currentMaxMassTimes);
@@ -670,14 +783,14 @@ public class BulkMsgActivity extends AppCompatActivity implements View.OnClickLi
                 Bitmap bitmap = MediaFileUtils.decodeBitmapFromPath(filePath,
                         MediaFileUtils.dpToPx(getApplicationContext(), 150),
                         MediaFileUtils.dpToPx(getApplicationContext(), 150));
-                inflaterImgMessage(bitmap, targetUri, true, helper.getStringValue(AppConstants.KEY_SYS_CURRENT_NICKNAME), datetime);
+                inflaterImgMessage(bitmap, targetUri, true, sharedPreferencesHelper.getStringValue(AppConstants.KEY_SYS_CURRENT_NICKNAME), datetime);
                 String fileExtension = MediaFileUtils.getFileExtension(filePath);
                 String fileBody = CommonTools.bitmapToBase64(bitmap);
                 if(!TextUtils.isEmpty(fileExtension) && !TextUtils.isEmpty(fileBody)) {
                     String messageBody = MessageConstructor.constructBulkFileMsgReq(
                             uid, nickname, portrait, "Picture", fileExtension, fileBody, datetime,
-                            helper.getStringValue(AppConstants.KEY_SYS_LOCATION_LNG),
-                            helper.getStringValue(AppConstants.KEY_SYS_LOCATION_LAT),
+                            sharedPreferencesHelper.getStringValue(AppConstants.KEY_SYS_LOCATION_LNG),
+                            sharedPreferencesHelper.getStringValue(AppConstants.KEY_SYS_LOCATION_LAT),
                             currentIntegration,
                             currentDistance,
                             currentMaxMassTimes);
@@ -794,7 +907,7 @@ public class BulkMsgActivity extends AppCompatActivity implements View.OnClickLi
 
             String datetime = DateTimeUtil.TimeConvertString();
             Uri uri = Uri.parse(mFileName);
-            inflaterVoiceMessage(uri, true, helper.getStringValue(AppConstants.KEY_SYS_CURRENT_NICKNAME), datetime);
+            inflaterVoiceMessage(uri, true, sharedPreferencesHelper.getStringValue(AppConstants.KEY_SYS_CURRENT_NICKNAME), datetime);
 
             String fileExtension = MediaFileUtils.getFileExtension(mFileName);
             String fileBody = CommonTools.fileToBase64(mFileName);
@@ -802,8 +915,8 @@ public class BulkMsgActivity extends AppCompatActivity implements View.OnClickLi
             if(!TextUtils.isEmpty(fileExtension) && !TextUtils.isEmpty(fileBody)) {
                 String messageBody = MessageConstructor.constructBulkFileMsgReq(uid, nickname, portrait,
                         "Audio", fileExtension, fileBody, datetime,
-                        helper.getStringValue(AppConstants.KEY_SYS_LOCATION_LNG),
-                        helper.getStringValue(AppConstants.KEY_SYS_LOCATION_LAT),
+                        sharedPreferencesHelper.getStringValue(AppConstants.KEY_SYS_LOCATION_LNG),
+                        sharedPreferencesHelper.getStringValue(AppConstants.KEY_SYS_LOCATION_LAT),
                         currentIntegration,
                         currentDistance,
                         currentMaxMassTimes);

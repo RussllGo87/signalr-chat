@@ -230,6 +230,10 @@
     <string name="toast_load_bulk_msg_rule_error">积分规则更新失败</string>
     <string name="toast_parse_bulk_msg_rule_error">积分规则解析错误</string>
     <string name="toast_load_bulk_msg_rule_ok">积分规则更新成功</string>
+    <string name="dialog_msg_bulk_msg_load_info_error">同步群消息发送记录数据失败</string>
+    <string name="dialog_msg_bulk_msg_send_no_integration">当前剩余积分不足</string>
+    <string name="dialog_msg_bulk_msg_send_more_than_max_times">当前规则下今天可发消息数已超出</string>
+    <string name="dialog_msg_bulk_msg_send_invalidate">同步群消息发送记录数据不合法</string>
 
     <!-- 设置页 -->
     <string name="title_activity_settings">@string/action_settings</string>

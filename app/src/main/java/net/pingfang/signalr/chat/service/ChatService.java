@@ -173,7 +173,7 @@ public class ChatService extends Service {
             mHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    awaitConnection = connection.start(new AutomaticTransport());
+                    initConnection();
                 }
             }, 1000);
             return;
