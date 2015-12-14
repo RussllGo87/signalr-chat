@@ -19,7 +19,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -828,19 +827,21 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
         super.onConfigurationChanged(newConfig);
 
         // Checks whether a hardware keyboard is available
-        if (newConfig.hardKeyboardHidden == Configuration.HARDKEYBOARDHIDDEN_NO) {
-            RelativeLayout.LayoutParams layoutParams =
-                    (RelativeLayout.LayoutParams)ll_form_container.getLayoutParams();
-            layoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP, RelativeLayout.TRUE);
-            layoutParams.topMargin = MediaFileUtils.dpToPx(getApplicationContext(),0);
-            ll_form_container.setLayoutParams(layoutParams);
-        } else if (newConfig.hardKeyboardHidden == Configuration.HARDKEYBOARDHIDDEN_YES) {
-            RelativeLayout.LayoutParams layoutParams =
-                    (RelativeLayout.LayoutParams)ll_form_container.getLayoutParams();
-            layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
-            layoutParams.topMargin = MediaFileUtils.dpToPx(getApplicationContext(),0);
-            ll_form_container.setLayoutParams(layoutParams);
-        }
+        //        if (newConfig.hardKeyboardHidden == Configuration.HARDKEYBOARDHIDDEN_NO) {
+        //            RelativeLayout.LayoutParams layoutParams =
+        //                    (RelativeLayout.LayoutParams)ll_form_container.getLayoutParams();
+        //            layoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP, RelativeLayout.TRUE);
+        //            layoutParams.topMargin = MediaFileUtils.dpToPx(getApplicationContext(),0);
+        //            ll_form_container.setLayoutParams(layoutParams);
+        //            iv_account_portrait_login.setVisibility(View.GONE);
+        //        } else if (newConfig.hardKeyboardHidden == Configuration.HARDKEYBOARDHIDDEN_YES) {
+        //            RelativeLayout.LayoutParams layoutParams =
+        //                    (RelativeLayout.LayoutParams)ll_form_container.getLayoutParams();
+        //            layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
+        //            layoutParams.topMargin = MediaFileUtils.dpToPx(getApplicationContext(),0);
+        //            ll_form_container.setLayoutParams(layoutParams);
+        //            iv_account_portrait_login.setVisibility(View.VISIBLE);
+        //        }
     }
 
     /**
