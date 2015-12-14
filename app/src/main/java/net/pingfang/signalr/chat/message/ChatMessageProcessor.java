@@ -285,13 +285,59 @@ public class ChatMessageProcessor implements ChatMessageListener {
     private void processOfflineMsgShort(String message) {
         SharedPreferencesHelper sharedPreferencesHelper = SharedPreferencesHelper.newInstance(context);
         JSONArray jsonArray;
+        UserManager userManager = new UserManager(context);
         try {
             jsonArray = new JSONArray(message);
             for(int i = 0; i < jsonArray.length(); i++) {
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
                 String fromUid = jsonObject.getString("Sender");
+                String fromNickName = jsonObject.getString("NickName");
+                String fromHeadPortrait = jsonObject.getString("HeadPortrait");
+                if (!TextUtils.isEmpty(fromHeadPortrait)) {
+                    if (!"null".equals(fromHeadPortrait)) {
+                        fromHeadPortrait = GlobalApplication.URL_WEB_API_HOST + "/UpLoad/Head/" + fromHeadPortrait;
+                    } else {
+                        fromHeadPortrait = "";
+                    }
+                } else {
+                    fromHeadPortrait = "";
+                }
+                int gender = User.USER_GENDER_MALE;
+                boolean sex = jsonObject.getBoolean("Sex");
+                if (sex) {
+                    gender = User.USER_GENDER_MALE;
+                } else {
+                    gender = User.USER_GENDER_FEMALE;
+                }
                 int count = jsonObject.getInt("Count");
                 String toUid = sharedPreferencesHelper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID);
+
+                ContentValues values = new ContentValues();
+                boolean isExist = userManager.isExist(fromUid);
+                if (isExist) {
+                    String selection = AppContract.UserEntry.COLUMN_NAME_ENTRY_UID + " = ?";
+                    values.put(AppContract.UserEntry.COLUMN_NAME_NICK_NAME, fromNickName);
+                    values.put(AppContract.UserEntry.COLUMN_NAME_PORTRAIT, fromHeadPortrait);
+                    values.put(AppContract.UserEntry.COLUMN_NAME_GENDER, gender);
+                    // 将用户消息状态标记设置为开启状态
+                    values.put(AppContract.UserEntry.COLUMN_NAME_STATUS_MSG_LIST, User.USER_STATUS_MSG_LIST_IN);
+
+                    context.getContentResolver().update(AppContract.UserEntry.CONTENT_URI,
+                            values,
+                            selection,
+                            new String[]{fromUid});
+                } else {
+                    values.put(AppContract.UserEntry.COLUMN_NAME_ENTRY_UID, fromUid);
+                    values.put(AppContract.UserEntry.COLUMN_NAME_NICK_NAME, fromNickName);
+                    values.put(AppContract.UserEntry.COLUMN_NAME_PORTRAIT, fromHeadPortrait);
+                    values.put(AppContract.UserEntry.COLUMN_NAME_GENDER, gender);
+                    // 将用户消息列表状态标记设置为开启状态
+                    values.put(AppContract.UserEntry.COLUMN_NAME_STATUS_MSG_LIST, User.USER_STATUS_MSG_LIST_IN);
+                    //当前添加用户为新创建用户，不可能在出现在附近列表里
+                    values.put(AppContract.UserEntry.COLUMN_NAME_STATUS_NEARBY_LIST, User.USER_STATUS_NEARBY_LIST_OUT);
+
+                    context.getContentResolver().insert(AppContract.UserEntry.CONTENT_URI, values);
+                }
 
                 String selection =
                         AppContract.RecentContactEntry.COLUMN_NAME_BUDDY + " = ? " +
@@ -300,8 +346,8 @@ public class ChatMessageProcessor implements ChatMessageListener {
                 Cursor newCursor = context.getContentResolver().query(AppContract.RecentContactEntry.CONTENT_URI,
                         null, selection, new String[]{fromUid,toUid}, null);
 
-                ContentValues values = new ContentValues();
-                values.put(AppContract.RecentContactEntry.COLUMN_NAME_CONTENT,context.getResources().getString(R.string.content_new_offline_msg));
+                ContentValues recentValues = new ContentValues();
+                recentValues.put(AppContract.RecentContactEntry.COLUMN_NAME_CONTENT, context.getResources().getString(R.string.content_new_offline_msg));
 
                 // 最近消息记录
                 if(newCursor != null && newCursor.getCount() > 0 && newCursor.moveToFirst()){
@@ -310,17 +356,18 @@ public class ChatMessageProcessor implements ChatMessageListener {
 
                     int currentCount = newCursor.getInt(newCursor.getColumnIndex(AppContract.RecentContactEntry.COLUMN_NAME_COUNT));
 
-                    values.put(AppContract.RecentContactEntry.COLUMN_NAME_UPDATE_TIME, DateTimeUtil.TimeConvertString());
-                    values.put(AppContract.RecentContactEntry.COLUMN_NAME_COUNT,(currentCount + count));
-                    context.getContentResolver().update(appendUri, values, null, null);
+                    recentValues.put(AppContract.RecentContactEntry.COLUMN_NAME_UPDATE_TIME, DateTimeUtil.TimeConvertString());
+                    recentValues.put(AppContract.RecentContactEntry.COLUMN_NAME_COUNT, (currentCount + count));
+                    context.getContentResolver().update(appendUri, recentValues, null, null);
 
                     newCursor.close();
                 } else {
-                    values.put(AppContract.RecentContactEntry.COLUMN_NAME_BUDDY,fromUid);
-                    values.put(AppContract.RecentContactEntry.COLUMN_NAME_UPDATE_TIME, DateTimeUtil.TimeConvertString());
-                    values.put(AppContract.RecentContactEntry.COLUMN_NAME_OWNER,toUid);
-                    values.put(AppContract.RecentContactEntry.COLUMN_NAME_COUNT,count);
-                    context.getContentResolver().insert(AppContract.RecentContactEntry.CONTENT_URI,values);
+                    recentValues.put(AppContract.RecentContactEntry.COLUMN_NAME_BUDDY, fromUid);
+                    recentValues.put(AppContract.RecentContactEntry.COLUMN_NAME_UPDATE_TIME, DateTimeUtil.TimeConvertString());
+                    recentValues.put(AppContract.RecentContactEntry.COLUMN_NAME_OWNER, toUid);
+                    recentValues.put(AppContract.RecentContactEntry.COLUMN_NAME_COUNT, count);
+                    recentValues.put(AppContract.RecentContactEntry.COLUMN_NAME_CONTENT, "[新的离线消息]");
+                    context.getContentResolver().insert(AppContract.RecentContactEntry.CONTENT_URI, recentValues);
                 }
             }
 
