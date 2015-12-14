@@ -69,7 +69,12 @@ public class ChatListCursorAdapter extends CursorAdapter {
         int count = cursor.getInt(cursor.getColumnIndex(AppContract.RecentContactView.COLUMN_NAME_COUNT));
         if(count > 0) {
             tv_msg_not_read.setVisibility(View.VISIBLE);
-            tv_msg_not_read.setText(count + "+");
+            if (count > 99) {
+                tv_msg_not_read.setText("99+");
+            } else {
+                tv_msg_not_read.setText(count + "");
+            }
+
         } else {
             tv_msg_not_read.setVisibility(View.GONE);
         }

@@ -14,6 +14,7 @@ import android.widget.Toast;
 import net.pingfang.signalr.chat.message.ChatMessageListener;
 import net.pingfang.signalr.chat.message.ChatMessageProcessor;
 import net.pingfang.signalr.chat.message.OnChatServiceConnectionChanged;
+import net.pingfang.signalr.chat.net.NetUtil;
 import net.pingfang.signalr.chat.util.GlobalApplication;
 
 import microsoft.aspnet.signalr.client.ConnectionState;
@@ -168,7 +169,7 @@ public class ChatService extends Service {
 
     public void sendMessage(String messageType, String message) {
 
-        if (connection.getState() == ConnectionState.Disconnected) {
+        if (NetUtil.isConnected(getApplicationContext()) && connection.getState() == ConnectionState.Disconnected) {
             Toast.makeText(getApplicationContext(), "通信连接已断开，正在尝试重新连接", Toast.LENGTH_LONG).show();
             mHandler.postDelayed(new Runnable() {
                 @Override
