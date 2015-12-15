@@ -284,7 +284,7 @@ public class BulkMsgActivity extends AppCompatActivity implements View.OnClickLi
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(getApplicationContext(), R.string.toast_load_bulk_msg_rule_error, Toast.LENGTH_LONG).show();
+                        Log.d(TAG, getString(R.string.toast_load_bulk_msg_rule_error));
                     }
                 });
             }
@@ -310,7 +310,7 @@ public class BulkMsgActivity extends AppCompatActivity implements View.OnClickLi
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(getApplicationContext(), R.string.toast_load_bulk_msg_rule_ok, Toast.LENGTH_LONG).show();
+                            Log.d(TAG, getString(R.string.toast_load_bulk_msg_rule_ok));
                             showRuleList();
                         }
                     });
@@ -320,7 +320,7 @@ public class BulkMsgActivity extends AppCompatActivity implements View.OnClickLi
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(getApplicationContext(), R.string.toast_parse_bulk_msg_rule_error, Toast.LENGTH_LONG).show();
+                            Log.d(TAG, getString(R.string.toast_parse_bulk_msg_rule_error));
                         }
                     });
                 }
@@ -425,7 +425,7 @@ public class BulkMsgActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void checkSendCondition(final String type) {
-        Toast.makeText(getApplicationContext(), "正在同步群消息发送记录数据", Toast.LENGTH_SHORT).show();
+        Log.d(TAG, "正在同步群消息发送记录数据");
         OkHttpCommonUtil okHttp = OkHttpCommonUtil.newInstance(getApplicationContext());
         okHttp.getRequest(URL_ACCOUNT_INFO_LOAD,
                 new OkHttpCommonUtil.Param[]{
@@ -466,7 +466,6 @@ public class BulkMsgActivity extends AppCompatActivity implements View.OnClickLi
                                 runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        Toast.makeText(getApplicationContext(), "同步群消息发送记录数据成功", Toast.LENGTH_SHORT).show();
 
                                         Intent intent = new Intent();
                                         intent.setAction(GlobalApplication.ACTION_INTENT_ACCOUNT_INFO_UPDATE);
