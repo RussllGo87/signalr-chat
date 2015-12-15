@@ -189,15 +189,20 @@ public class AccountInfoUpdateActivity extends AppCompatActivity implements View
         Intent getIntent = new Intent(Intent.ACTION_GET_CONTENT);
         getIntent.setType("image/*");
 
-        Intent pickIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        pickIntent.setType("image/*");
+        //        Intent pickIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        //        pickIntent.setType("image/*");
+        //
+        //        if (getIntent.resolveActivity(getPackageManager()) != null ||
+        //                pickIntent.resolveActivity(getPackageManager()) != null) {
+        //
+        //            Intent chooserIntent = Intent.createChooser(getIntent, getString(R.string.action_select_image));
+        //            chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{pickIntent});
+        //
+        //            startActivityForResult(chooserIntent, GlobalApplication.REQUEST_IMAGE_GET);
+        //        }
 
-        if (getIntent.resolveActivity(getPackageManager()) != null ||
-                pickIntent.resolveActivity(getPackageManager()) != null) {
-
+        if (getIntent.resolveActivity(getPackageManager()) != null) {
             Intent chooserIntent = Intent.createChooser(getIntent, getString(R.string.action_select_image));
-            chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{pickIntent});
-
             startActivityForResult(chooserIntent, GlobalApplication.REQUEST_IMAGE_GET);
         }
     }
