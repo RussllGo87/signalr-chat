@@ -567,11 +567,11 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         tv_msg.setTextColor(Color.BLACK);
         tv_msg.setGravity(Gravity.CENTER_VERTICAL);
         tv_msg.setText(content);
-        if(direction) {
-            tv_msg.setBackgroundResource(R.drawable.msg_me);
-        } else {
-            tv_msg.setBackgroundResource(R.drawable.msg_buddy);
-        }
+        //        if(direction) {
+        //            tv_msg.setBackgroundResource(R.drawable.msg_me);
+        //        } else {
+        //            tv_msg.setBackgroundResource(R.drawable.msg_buddy);
+        //        }
 
         ll.addView(tv_datetime);
         ll.addView(tv_name);
@@ -620,11 +620,11 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                 MediaFileUtils.dpToPx(getApplicationContext(), 10),
                 MediaFileUtils.dpToPx(getApplicationContext(), 10));
         imageView.setImageBitmap(bitmap);
-        if(direction) {
-            imageView.setBackgroundResource(R.drawable.msg_me);
-        } else {
-            imageView.setBackgroundResource(R.drawable.msg_buddy);
-        }
+        //        if(direction) {
+        //            imageView.setBackgroundResource(R.drawable.msg_me);
+        //        } else {
+        //            imageView.setBackgroundResource(R.drawable.msg_buddy);
+        //        }
         imageView.setTag(uri);
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -682,12 +682,12 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         if(direction) {
             imageView.setLayoutParams(params);
             imageView.setImageResource(R.drawable.voice_me);
-            imageView.setBackgroundResource(R.drawable.msg_me);
+            //            imageView.setBackgroundResource(R.drawable.msg_me);
 
         } else {
             imageView.setLayoutParams(params);
             imageView.setImageResource(R.drawable.voice_buddy);
-            imageView.setBackgroundResource(R.drawable.msg_buddy);
+            //            imageView.setBackgroundResource(R.drawable.msg_buddy);
         }
 
         imageView.setLayoutParams(params);

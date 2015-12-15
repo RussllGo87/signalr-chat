@@ -691,11 +691,11 @@ public class BulkMsgActivity extends AppCompatActivity implements View.OnClickLi
         tv_msg.setPadding(0, 0, MediaFileUtils.dpToPx(getApplicationContext(), 20), 0);
         tv_msg.setGravity(Gravity.CENTER_VERTICAL);
         tv_msg.setText(content);
-        if(direction) {
-            tv_msg.setBackgroundResource(R.drawable.msg_me);
-        } else {
-            tv_msg.setBackgroundResource(R.drawable.msg_buddy);
-        }
+        //        if(direction) {
+        //            tv_msg.setBackgroundResource(R.drawable.msg_me);
+        //        } else {
+        //            tv_msg.setBackgroundResource(R.drawable.msg_buddy);
+        //        }
 
 
 
@@ -835,11 +835,11 @@ public class BulkMsgActivity extends AppCompatActivity implements View.OnClickLi
                 MediaFileUtils.dpToPx(getApplicationContext(),10),
                 MediaFileUtils.dpToPx(getApplicationContext(),10));
         imageView.setImageBitmap(bitmap);
-        if(direction) {
-            imageView.setBackgroundResource(R.drawable.msg_me);
-        } else {
-            imageView.setBackgroundResource(R.drawable.msg_buddy);
-        }
+        //        if(direction) {
+        //            imageView.setBackgroundResource(R.drawable.msg_me);
+        //        } else {
+        //            imageView.setBackgroundResource(R.drawable.msg_buddy);
+        //        }
         imageView.setTag(uri);
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -956,12 +956,11 @@ public class BulkMsgActivity extends AppCompatActivity implements View.OnClickLi
         if(direction) {
             imageView.setLayoutParams(params);
             imageView.setImageResource(R.drawable.voice_me);
-            imageView.setBackgroundResource(R.drawable.msg_me);
-
+            //            imageView.setBackgroundResource(R.drawable.msg_me);
         } else {
             imageView.setLayoutParams(params);
             imageView.setImageResource(R.drawable.voice_buddy);
-            imageView.setBackgroundResource(R.drawable.msg_buddy);
+            //            imageView.setBackgroundResource(R.drawable.msg_buddy);
         }
 
         imageView.setLayoutParams(params);

@@ -35,11 +35,16 @@ public class ItemListDialogFragment extends DialogFragment {
         builder.setItems(R.array.msg_operate, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+
                 if (which == 0) {
-                    mOnItemListInteractionListener.onItemShield(user);
+                    mOnItemListInteractionListener.onItemRemark(user);
                 }
 
                 if (which == 1) {
+                    mOnItemListInteractionListener.onItemShield(user);
+                }
+
+                if (which == 2) {
                     mOnItemListInteractionListener.onItemDelete(user);
                 }
 

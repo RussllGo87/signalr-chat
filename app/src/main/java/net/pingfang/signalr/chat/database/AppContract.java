@@ -14,6 +14,9 @@ public final class AppContract {
     public AppContract() {
     }
 
+    /**
+     * UserEntry，用于保存用户个人基本信息的实体
+     */
     public static abstract class UserEntry implements BaseColumns {
 
         // 访问Uri
@@ -40,6 +43,34 @@ public final class AppContract {
         public static final String COLUMN_NAME_DISTANCE = "distance";
     }
 
+
+    /**
+     * UserStatusEntry用来描述用户与用户之间关系的实体
+     */
+    public static abstract class UserStatusEntry implements BaseColumns {
+        // 访问Uri
+        public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/user_status");
+
+        // 内容类型
+        public static final String CONTENT_TYPE = "vnd.android.cursor.dir/net.pingfang.signalr.chat.user_status";
+        public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/net.pingfang.signalr.chat.user_status";
+
+        // 默认排序常量
+        public static final String DEFAULT_SORT_ORDER = "owner DESC";
+
+        public static final String COLUMN_NAME_ENTRY_UID = "uid";
+        public static final String COLUMN_NAME_ENTRY_OWNER = "owner";
+        public static final String COLUMN_NAME_STATUS_MSG = "status_msg";
+        public static final String COLUMN_NAME_STATUS_NEARBY = "status_nearby";
+        public static final String COLUMN_NAME_STATUS_SHIELD = "status_shield";
+        public static final String COLUMN_NAME_DISTANCE = "distance";
+        public static final String COLUMN_NAME_STATUS_REMARK = "remark";
+
+    }
+
+    /**
+     * ChatMessageEntry,用于描述用户之间聊天消息的实体
+     */
     public static abstract class ChatMessageEntry implements BaseColumns {
 
         // 访问Uri
@@ -63,6 +94,9 @@ public final class AppContract {
         public static final String COLUMN_NAME_M_STATUS = "m_status";
     }
 
+    /**
+     * RecentContactEntry,描述用户最近消息的实体
+     */
     public static abstract class RecentContactEntry implements BaseColumns {
         // 访问Uri
         public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/recent");
@@ -82,6 +116,9 @@ public final class AppContract {
         public static final String COLUMN_NAME_COUNT = "count";
     }
 
+    /**
+     * RecentContactView, 用于显示用户最近消息的虚拟表(视图)
+     */
     public static abstract class RecentContactView implements BaseColumns{
         // 访问Uri
         public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/v_recent");
@@ -141,7 +178,9 @@ public final class AppContract {
         public static final String COLUMN_NAME_OWNER = "owner";
     }
 
-    //广告数据
+    /**
+     * AdvertisementEntry,进行施工广告维护的广告实体
+     */
     public static abstract class AdvertisementEntry implements BaseColumns {
         // 访问Uri
         public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/advertisement");

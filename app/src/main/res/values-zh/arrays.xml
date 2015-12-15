@@ -8,6 +8,7 @@
     </string-array>
 
     <string-array name="msg_operate">
+        <item>备注</item>
         <item>屏蔽</item>
         <item>删除</item>
     </string-array>

@@ -127,6 +127,11 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         @Override
+        public void onItemRemark(User user) {
+
+        }
+
+        @Override
         public void onItemShield(User user) {
             shield(user);
         }

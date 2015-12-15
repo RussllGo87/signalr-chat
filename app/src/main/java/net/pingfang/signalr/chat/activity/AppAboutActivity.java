@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -144,6 +145,7 @@ public class AppAboutActivity extends AppCompatActivity implements View.OnClickL
             @Override
             public void onResponse(Response response) throws IOException {
                 String responseStr = response.body().string();
+                Log.d(TAG, "URL_APP_VERSION_CHECK return == " + responseStr);
                 JSONObject jsonObject = null;
                 try {
                     jsonObject = new JSONObject(responseStr);
