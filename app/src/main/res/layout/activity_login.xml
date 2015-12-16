@@ -145,11 +145,11 @@
                   android:paddingRight="@dimen/activity_horizontal_margin">
 
         <TextView
+            android:id="@+id/btn_ui_login"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="@dimen/activity_horizontal_margin"
             android:background="@drawable/selector_btn_bg"
-            android:onClick="login"
             android:paddingBottom="@dimen/padding_vertical_button"
             android:paddingLeft="@dimen/padding_horizontal_button"
             android:paddingRight="@dimen/padding_horizontal_button"
@@ -159,11 +159,11 @@
             android:textSize="18sp"/>
 
         <TextView
+            android:id="@+id/btn_ui_register"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/activity_horizontal_margin"
             android:background="@drawable/selector_btn_bg"
-            android:onClick="register"
             android:paddingBottom="@dimen/padding_vertical_button"
             android:paddingLeft="@dimen/padding_horizontal_button"
             android:paddingRight="@dimen/padding_horizontal_button"
