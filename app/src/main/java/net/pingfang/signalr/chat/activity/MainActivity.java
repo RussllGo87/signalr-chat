@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.baidu.location.BDLocation;
 import com.baidu.location.LocationClient;
@@ -35,11 +36,12 @@ public class MainActivity extends AppCompatActivity implements LocationNotify {
     ImageView iv_app_logo;
     LinearLayout ll_container_buttons;
 
+    TextView btn_login;
+    TextView btn_register;
+    Handler mHandler = new Handler(Looper.getMainLooper());
     private LatLng currentLatLng;
     private LocationClient locationClient;
     private LocationListenerImpl locationListener;
-
-    Handler mHandler = new Handler(Looper.getMainLooper());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,6 +114,21 @@ public class MainActivity extends AppCompatActivity implements LocationNotify {
         iv_app_logo.setImageBitmap(bm);
 
         ll_container_buttons = (LinearLayout) findViewById(R.id.ll_container_buttons);
+
+        btn_login = (TextView) findViewById(R.id.btn_login);
+        btn_login.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                login(view);
+            }
+        });
+        btn_register = (TextView) findViewById(R.id.btn_register);
+        btn_register.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                register(view);
+            }
+        });
     }
 
 

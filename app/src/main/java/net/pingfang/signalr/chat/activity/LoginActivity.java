@@ -101,6 +101,9 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
     EditText et_login_pwd;
     CheckBox cb_show_pwd;
 
+    TextView btn_ui_login;
+    TextView btn_ui_register;
+
     ImageView btn_login_pattern_qq;
     ImageView btn_login_pattern_wechat;
     ImageView btn_login_pattern_weibo;
@@ -325,6 +328,21 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
                     et_login_pwd.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
                     et_login_pwd.setSelection(et_login_pwd.getText().length());
                 }
+            }
+        });
+
+        btn_ui_login = (TextView) findViewById(R.id.btn_ui_login);
+        btn_ui_login.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                login(view);
+            }
+        });
+        btn_ui_register = (TextView) findViewById(R.id.btn_ui_register);
+        btn_ui_register.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                register(view);
             }
         });
 
