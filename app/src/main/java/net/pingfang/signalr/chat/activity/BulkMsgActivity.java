@@ -10,7 +10,6 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.net.Uri;
@@ -30,24 +29,23 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.ContextThemeWrapper;
-import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.siyamed.shapeimageview.BubbleImageView;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 
@@ -661,48 +659,86 @@ public class BulkMsgActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void inflaterTxtMessage(String nameFrom, boolean direction, String content, String datetime) {
-        LinearLayout ll = new LinearLayout(getApplicationContext());
-        ll.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        ll.setOrientation(LinearLayout.VERTICAL);
-
-        TextView tv_datetime = new TextView(getApplicationContext());
-        tv_datetime.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        tv_datetime.setGravity(Gravity.CENTER_HORIZONTAL);
-        tv_datetime.setText(datetime);
-        tv_datetime.setTextColor(Color.BLACK);
-
-        TextView tv_name = new TextView(getApplicationContext());
-        tv_name.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        tv_name.setText(nameFrom);
-        tv_name.setTextColor(Color.BLACK);
-        if(direction) {
-            tv_name.setTextColor(Color.RED);
-            ll.setGravity(Gravity.LEFT);
-        } else {
-            tv_name.setTextColor(Color.BLACK);
-            ll.setGravity(Gravity.RIGHT);
-        }
-
-        TextView tv_msg = new TextView(getApplicationContext());
-        tv_msg.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,
-                RelativeLayout.LayoutParams.WRAP_CONTENT));
-        tv_msg.setTextColor(Color.BLACK);
-        tv_msg.setPadding(0, 0, MediaFileUtils.dpToPx(getApplicationContext(), 20), 0);
-        tv_msg.setGravity(Gravity.CENTER_VERTICAL);
-        tv_msg.setText(content);
+        //        LinearLayout ll = new LinearLayout(getApplicationContext());
+        //        ll.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        //        ll.setOrientation(LinearLayout.VERTICAL);
+        //
+        //        TextView tv_datetime = new TextView(getApplicationContext());
+        //        tv_datetime.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        //        tv_datetime.setGravity(Gravity.CENTER_HORIZONTAL);
+        //        tv_datetime.setText(datetime);
+        //        tv_datetime.setTextColor(Color.BLACK);
+        //
+        //        TextView tv_name = new TextView(getApplicationContext());
+        //        tv_name.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        //        tv_name.setText(nameFrom);
+        //        tv_name.setTextColor(Color.BLACK);
         //        if(direction) {
-        //            tv_msg.setBackgroundResource(R.drawable.msg_me);
+        //            tv_name.setTextColor(Color.RED);
+        //            ll.setGravity(Gravity.LEFT);
         //        } else {
-        //            tv_msg.setBackgroundResource(R.drawable.msg_buddy);
+        //            tv_name.setTextColor(Color.BLACK);
+        //            ll.setGravity(Gravity.RIGHT);
         //        }
+        //
+        //        TextView tv_msg = new TextView(getApplicationContext());
+        //        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,
+        //                RelativeLayout.LayoutParams.WRAP_CONTENT);
+        //        if(direction) {
+        //            params.setMargins(MediaFileUtils.dpToPx(getApplicationContext(), 16), 0, 0, 0);
+        //        } else {
+        //            params.setMargins(0, 0, MediaFileUtils.dpToPx(getApplicationContext(), 16), 0);
+        //        }
+        //        tv_msg.setLayoutParams(params);
+        //
+        //        tv_msg.setTextColor(Color.BLACK);
+        //        tv_msg.setGravity(Gravity.CENTER_VERTICAL);
+        //        tv_msg.setText(content);
+        //        tv_msg.setPadding(MediaFileUtils.dpToPx(getApplicationContext(), 16), MediaFileUtils.dpToPx(getApplicationContext(), 16),
+        //                MediaFileUtils.dpToPx(getApplicationContext(), 16), MediaFileUtils.dpToPx(getApplicationContext(), 16));
+        //        if(direction) {
+        //            tv_msg.setBackgroundResource(R.drawable.msg_me_pressed);
+        //        }
+        //        else {
+        //            tv_msg.setBackgroundResource(R.drawable.msg_buddy_pressed);
+        //        }
+        //
+        //
+        //
+        //        ll.addView(tv_datetime);
+        //        ll.addView(tv_name);
+        //        ll.addView(tv_msg);
+        //
+        //        ll_message_container.addView(ll);
 
-
-
-        ll.addView(tv_datetime);
-        ll.addView(tv_name);
-        ll.addView(tv_msg);
-
-        ll_message_container.addView(ll);
+        LayoutInflater inflater = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View view;
+        if(direction) {
+            view = inflater.inflate(R.layout.ll_container_msg_me_txt, null);
+            TextView tv_datetime = (TextView) view.findViewById(R.id.tv_chat_msg_me_time);
+            tv_datetime.setText(datetime);
+            TextView tv_name = (TextView) view.findViewById(R.id.tv_chat_msg_me_name);
+            tv_name.setText(nameFrom);
+            TextView tv_msg = (TextView) view.findViewById(R.id.tv_chat_msg_me_txt);
+            tv_msg.setText(content);
+            BubbleImageView iv_chat_msg_img = (BubbleImageView) view.findViewById(R.id.iv_chat_msg_me_img);
+            iv_chat_msg_img.setVisibility(View.GONE);
+            ImageView iv_chat_msg_voice = (ImageView) view.findViewById(R.id.iv_chat_msg_me_voice);
+            iv_chat_msg_voice.setVisibility(View.GONE);
+        } else {
+            view = inflater.inflate(R.layout.ll_container_msg_buddy_txt, null);
+            TextView tv_datetime = (TextView) view.findViewById(R.id.tv_chat_msg_buddy_time);
+            tv_datetime.setText(datetime);
+            TextView tv_name = (TextView) view.findViewById(R.id.tv_chat_msg_buddy_name);
+            tv_name.setText(nameFrom);
+            TextView tv_msg = (TextView) view.findViewById(R.id.tv_chat_msg_buddy_txt);
+            tv_msg.setText(content);
+            BubbleImageView iv_chat_msg_img = (BubbleImageView) view.findViewById(R.id.iv_chat_msg_buddy_img);
+            iv_chat_msg_img.setVisibility(View.GONE);
+            ImageView iv_chat_msg_voice = (ImageView) view.findViewById(R.id.iv_chat_msg_buddy_voice);
+            iv_chat_msg_voice.setVisibility(View.GONE);
+        }
+        ll_message_container.addView(view);
 
         mHandler.post(new Runnable() {
             @Override
@@ -716,15 +752,20 @@ public class BulkMsgActivity extends AppCompatActivity implements View.OnClickLi
         Intent getIntent = new Intent(Intent.ACTION_GET_CONTENT);
         getIntent.setType("image/*");
 
-        Intent pickIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        pickIntent.setType("image/*");
+        //        Intent pickIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        //        pickIntent.setType("image/*");
+        //
+        //        if (getIntent.resolveActivity(getPackageManager()) != null ||
+        //                pickIntent.resolveActivity(getPackageManager()) != null) {
+        //
+        //            Intent chooserIntent = Intent.createChooser(getIntent, getString(R.string.action_select_image));
+        //            chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{pickIntent});
+        //
+        //            startActivityForResult(chooserIntent, GlobalApplication.REQUEST_IMAGE_GET);
+        //        }
 
-        if (getIntent.resolveActivity(getPackageManager()) != null ||
-                pickIntent.resolveActivity(getPackageManager()) != null) {
-
+        if (getIntent.resolveActivity(getPackageManager()) != null) {
             Intent chooserIntent = Intent.createChooser(getIntent, getString(R.string.action_select_image));
-            chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{pickIntent});
-
             startActivityForResult(chooserIntent, GlobalApplication.REQUEST_IMAGE_GET);
         }
     }
@@ -803,62 +844,121 @@ public class BulkMsgActivity extends AppCompatActivity implements View.OnClickLi
 
     private void inflaterImgMessage(Bitmap bitmap,Uri uri,boolean direction,String from,String datetime) {
 
-        LinearLayout ll = new LinearLayout(getApplicationContext());
-        ll.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        ll.setOrientation(LinearLayout.VERTICAL);
+        //        LinearLayout ll = new LinearLayout(getApplicationContext());
+        //        ll.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        //        ll.setOrientation(LinearLayout.VERTICAL);
+        //
+        //        TextView tv_datetime = new TextView(getApplicationContext());
+        //        tv_datetime.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        //        tv_datetime.setGravity(Gravity.CENTER_HORIZONTAL);
+        //        tv_datetime.setText(datetime);
+        //        tv_datetime.setTextColor(Color.BLACK);
+        //
+        //        TextView tv_name = new TextView(getApplicationContext());
+        //        tv_name.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        //        tv_name.setText(from);
+        //        if(direction) {
+        //            tv_name.setTextColor(Color.RED);
+        //            ll.setGravity(Gravity.LEFT);
+        //        } else {
+        //            tv_name.setTextColor(Color.BLACK);
+        //            ll.setGravity(Gravity.RIGHT);
+        //        }
+        //
+        //
+        //        ImageView imageView = new ImageView(getApplicationContext());
+        //        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(MediaFileUtils.dpToPx(getApplicationContext(),150),
+        //                MediaFileUtils.dpToPx(getApplicationContext(),150));
+        //        imageView.setLayoutParams(params);
+        //        imageView.setPadding(MediaFileUtils.dpToPx(getApplicationContext(),10),
+        //                MediaFileUtils.dpToPx(getApplicationContext(),10),
+        //                MediaFileUtils.dpToPx(getApplicationContext(),10),
+        //                MediaFileUtils.dpToPx(getApplicationContext(),10));
+        //        imageView.setImageBitmap(bitmap);
+        //                if(direction) {
+        //                    imageView.setBackgroundResource(R.drawable.msg_me_pressed);
+        //                }
+        //                else {
+        //                    imageView.setBackgroundResource(R.drawable.msg_buddy_pressed);
+        //                }
+        //        imageView.setTag(uri);
+        //        imageView.setOnClickListener(new View.OnClickListener() {
+        //            @Override
+        //            public void onClick(View v) {
+        //                Uri uri = (Uri) v.getTag();
+        //                Intent intent = new Intent();
+        //                intent.setAction(Intent.ACTION_VIEW);
+        //                intent.setData(uri);
+        //                intent.setDataAndType(uri, "image/*");
+        //                if (intent.resolveActivity(getPackageManager()) != null) {
+        //                    startActivity(intent);
+        //                }
+        //            }
+        //        });
+        //
+        //        ll.addView(tv_datetime);
+        //        ll.addView(tv_name);
+        //        ll.addView(imageView);
+        //
+        //        ll_message_container.addView(ll);
 
-        TextView tv_datetime = new TextView(getApplicationContext());
-        tv_datetime.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        tv_datetime.setGravity(Gravity.CENTER_HORIZONTAL);
-        tv_datetime.setText(datetime);
-        tv_datetime.setTextColor(Color.BLACK);
-
-        TextView tv_name = new TextView(getApplicationContext());
-        tv_name.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        tv_name.setText(from);
+        LayoutInflater inflater = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View view;
         if(direction) {
-            tv_name.setTextColor(Color.RED);
-            ll.setGravity(Gravity.LEFT);
+            view = inflater.inflate(R.layout.ll_container_msg_me_txt, null);
+            TextView tv_datetime = (TextView) view.findViewById(R.id.tv_chat_msg_me_time);
+            tv_datetime.setText(datetime);
+            TextView tv_name = (TextView) view.findViewById(R.id.tv_chat_msg_me_name);
+            tv_name.setText(from);
+            TextView tv_msg = (TextView) view.findViewById(R.id.tv_chat_msg_me_txt);
+            tv_msg.setVisibility(View.GONE);
+            BubbleImageView iv_chat_msg_img = (BubbleImageView) view.findViewById(R.id.iv_chat_msg_me_img);
+            iv_chat_msg_img.setImageBitmap(bitmap);
+            iv_chat_msg_img.setTag(uri);
+            iv_chat_msg_img.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Uri uri = (Uri) v.getTag();
+                    Intent intent = new Intent();
+                    intent.setAction(Intent.ACTION_VIEW);
+                    intent.setData(uri);
+                    intent.setDataAndType(uri, "image/*");
+                    if (intent.resolveActivity(getPackageManager()) != null) {
+                        startActivity(intent);
+                    }
+                }
+            });
+            ImageView iv_chat_msg_voice = (ImageView) view.findViewById(R.id.iv_chat_msg_me_voice);
+            iv_chat_msg_voice.setVisibility(View.GONE);
         } else {
-            tv_name.setTextColor(Color.BLACK);
-            ll.setGravity(Gravity.RIGHT);
+            view = inflater.inflate(R.layout.ll_container_msg_buddy_txt, null);
+            TextView tv_datetime = (TextView) view.findViewById(R.id.tv_chat_msg_buddy_time);
+            tv_datetime.setText(datetime);
+            TextView tv_name = (TextView) view.findViewById(R.id.tv_chat_msg_buddy_name);
+            tv_name.setText(from);
+            TextView tv_msg = (TextView) view.findViewById(R.id.tv_chat_msg_buddy_txt);
+            tv_msg.setVisibility(View.GONE);
+            BubbleImageView iv_chat_msg_img = (BubbleImageView) view.findViewById(R.id.iv_chat_msg_buddy_img);
+            iv_chat_msg_img.setImageBitmap(bitmap);
+            iv_chat_msg_img.setTag(uri);
+            iv_chat_msg_img.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Uri uri = (Uri) v.getTag();
+                    Intent intent = new Intent();
+                    intent.setAction(Intent.ACTION_VIEW);
+                    intent.setData(uri);
+                    intent.setDataAndType(uri, "image/*");
+                    if (intent.resolveActivity(getPackageManager()) != null) {
+                        startActivity(intent);
+                    }
+                }
+            });
+            ImageView iv_chat_msg_voice = (ImageView) view.findViewById(R.id.iv_chat_msg_buddy_voice);
+            iv_chat_msg_voice.setVisibility(View.GONE);
         }
 
-
-        ImageView imageView = new ImageView(getApplicationContext());
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(MediaFileUtils.dpToPx(getApplicationContext(),150),
-                MediaFileUtils.dpToPx(getApplicationContext(),150));
-        imageView.setLayoutParams(params);
-        imageView.setPadding(MediaFileUtils.dpToPx(getApplicationContext(),10),
-                MediaFileUtils.dpToPx(getApplicationContext(),10),
-                MediaFileUtils.dpToPx(getApplicationContext(),10),
-                MediaFileUtils.dpToPx(getApplicationContext(),10));
-        imageView.setImageBitmap(bitmap);
-        //        if(direction) {
-        //            imageView.setBackgroundResource(R.drawable.msg_me);
-        //        } else {
-        //            imageView.setBackgroundResource(R.drawable.msg_buddy);
-        //        }
-        imageView.setTag(uri);
-        imageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Uri uri = (Uri) v.getTag();
-                Intent intent = new Intent();
-                intent.setAction(Intent.ACTION_VIEW);
-                intent.setData(uri);
-                intent.setDataAndType(uri, "image/*");
-                if (intent.resolveActivity(getPackageManager()) != null) {
-                    startActivity(intent);
-                }
-            }
-        });
-
-        ll.addView(tv_datetime);
-        ll.addView(tv_name);
-        ll.addView(imageView);
-
-        ll_message_container.addView(ll);
+        ll_message_container.addView(view);
 
         mHandler.post(new Runnable() {
             @Override
@@ -929,65 +1029,131 @@ public class BulkMsgActivity extends AppCompatActivity implements View.OnClickLi
 
     private void inflaterVoiceMessage(Uri uri,boolean direction,String from, String datetime) {
 
-        LinearLayout ll = new LinearLayout(getApplicationContext());
-        ll.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        ll.setOrientation(LinearLayout.VERTICAL);
+        //        LinearLayout ll = new LinearLayout(getApplicationContext());
+        //        ll.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        //        ll.setOrientation(LinearLayout.VERTICAL);
+        //
+        //        TextView tv_datetime = new TextView(getApplicationContext());
+        //        tv_datetime.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        //        tv_datetime.setGravity(Gravity.CENTER_HORIZONTAL);
+        //        tv_datetime.setText(datetime);
+        //        tv_datetime.setTextColor(Color.BLACK);
+        //
+        //        TextView tv_name = new TextView(getApplicationContext());
+        //        tv_name.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        //        tv_name.setText(from);
+        //        if(direction) {
+        //            tv_name.setTextColor(Color.RED);
+        //            ll.setGravity(Gravity.LEFT);
+        //        } else {
+        //            tv_name.setTextColor(Color.BLACK);
+        //            ll.setGravity(Gravity.RIGHT);
+        //        }
+        //
+        //        ImageView imageView = new ImageView(getApplicationContext());
+        //        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(250,250);
+        //        if(direction) {
+        //            imageView.setLayoutParams(params);
+        //            imageView.setImageResource(R.drawable.voice_me);
+        //            imageView.setBackgroundResource(R.drawable.msg_me_pressed);
+        //        } else {
+        //            imageView.setLayoutParams(params);
+        //            imageView.setImageResource(R.drawable.voice_buddy);
+        //            imageView.setBackgroundResource(R.drawable.msg_buddy_pressed);
+        //        }
+        //
+        //        imageView.setLayoutParams(params);
+        //        imageView.setTag(uri);
+        //        imageView.setOnClickListener(new View.OnClickListener() {
+        //            @Override
+        //            public void onClick(View v) {
+        //                Uri fileUri = (Uri) v.getTag();
+        //                if (mPlayer != null) {
+        //                    mPlayer.release();
+        //                    mPlayer = null;
+        //                }
+        //                mPlayer = MediaPlayer.create(getApplicationContext(), fileUri);
+        //                mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+        //                    @Override
+        //                    public void onCompletion(MediaPlayer mp) {
+        //                        mp.release();
+        //                    }
+        //                });
+        //                mPlayer.start();
+        //            }
+        //        });
+        //
+        //        ll.addView(tv_datetime);
+        //        ll.addView(tv_name);
+        //        ll.addView(imageView);
+        //
+        //        ll_message_container.addView(ll);
 
-        TextView tv_datetime = new TextView(getApplicationContext());
-        tv_datetime.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        tv_datetime.setGravity(Gravity.CENTER_HORIZONTAL);
-        tv_datetime.setText(datetime);
-        tv_datetime.setTextColor(Color.BLACK);
-
-        TextView tv_name = new TextView(getApplicationContext());
-        tv_name.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        tv_name.setText(from);
+        LayoutInflater inflater = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View view;
         if(direction) {
-            tv_name.setTextColor(Color.RED);
-            ll.setGravity(Gravity.LEFT);
-        } else {
-            tv_name.setTextColor(Color.BLACK);
-            ll.setGravity(Gravity.RIGHT);
-        }
-
-        ImageView imageView = new ImageView(getApplicationContext());
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(250,250);
-        if(direction) {
-            imageView.setLayoutParams(params);
-            imageView.setImageResource(R.drawable.voice_me);
-            //            imageView.setBackgroundResource(R.drawable.msg_me);
-        } else {
-            imageView.setLayoutParams(params);
-            imageView.setImageResource(R.drawable.voice_buddy);
-            //            imageView.setBackgroundResource(R.drawable.msg_buddy);
-        }
-
-        imageView.setLayoutParams(params);
-        imageView.setTag(uri);
-        imageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Uri fileUri = (Uri) v.getTag();
-                if (mPlayer != null) {
-                    mPlayer.release();
-                    mPlayer = null;
-                }
-                mPlayer = MediaPlayer.create(getApplicationContext(), fileUri);
-                mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                    @Override
-                    public void onCompletion(MediaPlayer mp) {
-                        mp.release();
+            view = inflater.inflate(R.layout.ll_container_msg_me_txt, null);
+            TextView tv_datetime = (TextView) view.findViewById(R.id.tv_chat_msg_me_time);
+            tv_datetime.setText(datetime);
+            TextView tv_name = (TextView) view.findViewById(R.id.tv_chat_msg_me_name);
+            tv_name.setText(from);
+            TextView tv_msg = (TextView) view.findViewById(R.id.tv_chat_msg_me_txt);
+            tv_msg.setVisibility(View.GONE);
+            BubbleImageView iv_chat_msg_img = (BubbleImageView) view.findViewById(R.id.iv_chat_msg_me_img);
+            iv_chat_msg_img.setVisibility(View.GONE);
+            ImageView iv_chat_msg_voice = (ImageView) view.findViewById(R.id.iv_chat_msg_me_voice);
+            iv_chat_msg_voice.setTag(uri);
+            iv_chat_msg_voice.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Uri fileUri = (Uri) v.getTag();
+                    if (mPlayer != null) {
+                        mPlayer.release();
+                        mPlayer = null;
                     }
-                });
-                mPlayer.start();
-            }
-        });
+                    mPlayer = MediaPlayer.create(getApplicationContext(), fileUri);
+                    mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                        @Override
+                        public void onCompletion(MediaPlayer mp) {
+                            mp.release();
+                        }
+                    });
+                    mPlayer.start();
+                }
+            });
+        } else {
+            view = inflater.inflate(R.layout.ll_container_msg_buddy_txt, null);
+            TextView tv_datetime = (TextView) view.findViewById(R.id.tv_chat_msg_buddy_time);
+            tv_datetime.setText(datetime);
+            TextView tv_name = (TextView) view.findViewById(R.id.tv_chat_msg_buddy_name);
+            tv_name.setText(from);
+            TextView tv_msg = (TextView) view.findViewById(R.id.tv_chat_msg_buddy_txt);
+            tv_msg.setVisibility(View.GONE);
+            BubbleImageView iv_chat_msg_img = (BubbleImageView) view.findViewById(R.id.iv_chat_msg_buddy_img);
+            iv_chat_msg_img.setVisibility(View.GONE);
+            ImageView iv_chat_msg_voice = (ImageView) view.findViewById(R.id.iv_chat_msg_buddy_voice);
+            iv_chat_msg_voice.setTag(uri);
+            iv_chat_msg_voice.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Uri fileUri = (Uri) v.getTag();
+                    if (mPlayer != null) {
+                        mPlayer.release();
+                        mPlayer = null;
+                    }
+                    mPlayer = MediaPlayer.create(getApplicationContext(), fileUri);
+                    mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                        @Override
+                        public void onCompletion(MediaPlayer mp) {
+                            mp.release();
+                        }
+                    });
+                    mPlayer.start();
+                }
+            });
+        }
 
-        ll.addView(tv_datetime);
-        ll.addView(tv_name);
-        ll.addView(imageView);
-
-        ll_message_container.addView(ll);
+        ll_message_container.addView(view);
 
         mHandler.post(new Runnable() {
             @Override

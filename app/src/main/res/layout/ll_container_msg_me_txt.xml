@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tv_chat_msg_me_time"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="2015-12-26 17:16:18"
+        android:textColor="@color/text_color_tv_label_grey"/>
+
+    <TextView
+        android:id="@+id/tv_chat_msg_me_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingBottom="4dp"
+        android:paddingLeft="4dp"
+        android:paddingTop="4dp"
+        android:text="火龙果"
+        android:textColor="#F00"/>
+
+    <TextView
+        android:id="@+id/tv_chat_msg_me_txt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="12dp"
+        android:background="@drawable/msg_me_pressed"
+        android:gravity="center_vertical"
+        android:maxWidth="200dp"
+        android:paddingBottom="8dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="8dp"
+        android:paddingTop="8dp"
+        android:text="你好"
+        android:textColor="@color/text_color_tv_label_grey"
+        android:textSize="16sp"/>
+
+    <!--
+    <ImageView android:id="@+id/iv_chat_msg_me_img"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginLeft="12dp"
+        android:src="@drawable/hale_default_user_portrait"
+        android:background="@drawable/msg_me_pressed"/>
+
+     -->
+
+    <com.github.siyamed.shapeimageview.BubbleImageView
+        android:id="@+id/iv_chat_msg_me_img"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="12dp"
+        android:src="@drawable/hale_logo"
+        app:siArrowPosition="left"
+        app:siRadius="8dp"
+        app:siSquare="true"
+        app:siTriangleHeight="8dp"/>
+
+    <ImageView
+        android:id="@+id/iv_chat_msg_me_voice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="12dp"
+        android:background="@drawable/msg_me_pressed"
+        android:minWidth="50dp"
+        android:src="@drawable/voice_me"/>
+</LinearLayout>

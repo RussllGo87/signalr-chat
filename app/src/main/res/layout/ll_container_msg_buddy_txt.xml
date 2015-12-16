@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tv_chat_msg_buddy_time"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="2015-12-25 18:26:31"
+        android:textColor="@color/text_color_tv_label_grey"/>
+
+    <TextView
+        android:id="@+id/tv_chat_msg_buddy_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:paddingBottom="4dp"
+        android:paddingRight="4dp"
+        android:paddingTop="4dp"
+        android:text="龚国佩313"
+        android:textColor="#0F0"/>
+
+    <TextView
+        android:id="@+id/tv_chat_msg_buddy_txt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:layout_marginRight="12dp"
+        android:background="@drawable/msg_buddy_pressed"
+        android:gravity="left"
+        android:maxWidth="200dp"
+        android:paddingBottom="8dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="16dp"
+        android:paddingTop="8dp"
+        android:text="最近好吗?"
+        android:textColor="@color/text_color_tv_label_grey"
+        android:textSize="16sp"/>
+
+    <!--
+    <ImageView android:id="@+id/iv_chat_msg_buddy_img"
+               android:layout_width="100dp"
+               android:layout_height="100dp"
+               android:layout_gravity="right"
+               android:layout_marginRight="12dp"
+               android:src="@drawable/hale_logo"
+               android:background="@drawable/msg_buddy_pressed"/>
+    -->
+
+
+    <com.github.siyamed.shapeimageview.BubbleImageView
+        android:id="@+id/iv_chat_msg_buddy_img"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:layout_marginRight="12dp"
+        android:src="@drawable/hale_logo"
+        app:siArrowPosition="right"
+        app:siRadius="8dp"
+        app:siSquare="true"
+        app:siTriangleHeight="8dp"/>
+
+    <ImageView
+        android:id="@+id/iv_chat_msg_buddy_voice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:layout_marginRight="12dp"
+        android:background="@drawable/msg_buddy_pressed"
+        android:minWidth="50dp"
+        android:src="@drawable/voice_buddy"/>
+
+</LinearLayout>
