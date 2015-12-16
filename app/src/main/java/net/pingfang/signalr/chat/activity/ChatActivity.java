@@ -518,7 +518,13 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
     private void stopRecording() {
         if(mStartRecording) {
-            mRecorder.stop();
+            try {
+                mRecorder.stop();
+            } catch (IllegalStateException e) {
+                e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             mRecorder.release();
             mRecorder = null;
 

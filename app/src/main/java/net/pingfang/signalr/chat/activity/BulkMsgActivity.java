@@ -997,7 +997,13 @@ public class BulkMsgActivity extends AppCompatActivity implements View.OnClickLi
 
     private void stopRecording() {
         if(mStartRecording) {
-            mRecorder.stop();
+            try {
+                mRecorder.stop();
+            } catch (IllegalStateException e) {
+                e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             mRecorder.release();
             mRecorder = null;
 
