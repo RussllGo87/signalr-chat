@@ -8,7 +8,7 @@ android {
         applicationId "net.pingfang.signalr.chat"
         minSdkVersion 9
         targetSdkVersion 22
-        versionCode 4
+        versionCode 6
     }
     buildTypes {
         debug {
@@ -25,12 +25,12 @@ android {
         demo {
             applicationId "net.pingfang.signalr.chat.demo"
             minSdkVersion 9
-            versionName "1.0.19alpha"
+            versionName "1.0.21alpha"
         }
         full {
             applicationId "net.pingfang.signalr.chat.full"
             minSdkVersion 9
-            versionName "1.0.19"
+            versionName "1.0.21"
         }
     }
     packagingOptions {
@@ -61,4 +61,5 @@ dependencies {
     compile 'com.android.support:design:23.1.1'
     compile 'com.github.orangegangsters:swipy:1.2.1@aar'
     compile 'de.hdodenhof:circleimageview:2.0.0'
+    compile 'com.github.siyamed:android-shape-imageview:0.9.+@aar'
 }
