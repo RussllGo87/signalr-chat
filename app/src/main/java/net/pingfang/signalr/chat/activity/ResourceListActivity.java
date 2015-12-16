@@ -14,8 +14,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.okhttp.Response;
 
@@ -41,14 +43,12 @@ public class ResourceListActivity extends AppCompatActivity implements View.OnCl
     public static final String URL_LIST_POST_RESOURCE =
             GlobalApplication.URL_WEB_API_HOST + "/api/WebAPI/ResourceWall/UploadResourceWallNote";
     public static final String KEY_LIST_RESOURCE_UID = "userId";
-
+    SharedPreferencesHelper helper;
     private TextView btn_activity_back;
     private TextView tv_menu_drop_down;
-
     private ListView list_resource_upload;
     private ResourceListAdapter listAdapter;
-
-    SharedPreferencesHelper helper;
+    private ImageView iv_resource_empty_place_holder;
     private Handler mHandler = new Handler(Looper.getMainLooper());
 
     @Override
@@ -79,8 +79,18 @@ public class ResourceListActivity extends AppCompatActivity implements View.OnCl
                 ResourceInfo resourceInfo = (ResourceInfo) view.getTag();
 
                 Intent intent = new Intent();
-                intent.setClass(getApplicationContext(),ResourceDetailActivity.class);
-                intent.putExtra("resource",resourceInfo);
+                intent.setClass(getApplicationContext(), ResourceDetailActivity.class);
+                intent.putExtra("resource", resourceInfo);
+                startActivity(intent);
+            }
+        });
+
+        iv_resource_empty_place_holder = (ImageView) findViewById(R.id.iv_resource_empty_place_holder);
+        iv_resource_empty_place_holder.setImageResource(R.drawable.drawable_iv_resource_empty);
+        iv_resource_empty_place_holder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), ResourcePostActivity.class);
                 startActivity(intent);
             }
         });
@@ -120,6 +130,8 @@ public class ResourceListActivity extends AppCompatActivity implements View.OnCl
                                         mHandler.post(new Runnable() {
                                             @Override
                                             public void run() {
+                                                list_resource_upload.setVisibility(View.VISIBLE);
+
                                                 ResourceInfo resourceInfo = new ResourceInfo();
                                                 resourceInfo.setWidth(width);
                                                 resourceInfo.setHeight(height);
@@ -134,10 +146,34 @@ public class ResourceListActivity extends AppCompatActivity implements View.OnCl
                                             }
                                         });
                                     }
+                                } else {
+                                    mHandler.post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Toast.makeText(getApplicationContext(), R.string.toast_resource_error_no_record, Toast.LENGTH_LONG).show();
+                                            list_resource_upload.setVisibility(View.GONE);
+                                        }
+                                    });
                                 }
+                            } else {
+                                mHandler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(getApplicationContext(), R.string.toast_resource_error_no_record, Toast.LENGTH_LONG).show();
+                                        list_resource_upload.setVisibility(View.GONE);
+                                    }
+                                });
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
+
+                            mHandler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(getApplicationContext(), R.string.toast_resource_error_in_load, Toast.LENGTH_LONG).show();
+                                    list_resource_upload.setVisibility(View.GONE);
+                                }
+                            });
                         }
 
                     }

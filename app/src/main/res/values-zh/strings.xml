@@ -158,6 +158,8 @@
     <string name="tv_resource_detail_address">地址:%s</string>
     <string name="tv_resource_detail_remark">备注:%s</string>
     <string name="tv_resource_detail_status">当前状态:%s</string>
+    <string name="toast_resource_error_no_record">没有上传记录</string>
+    <string name="toast_resource_error_in_load">获取上传资源出错</string>
     <!-- 屏蔽人列表 -->
     <string name="title_activity_filter_list">@string/tv_account_item_filter_list</string>
     <!-- 个人资料AccountInfoActivity -->

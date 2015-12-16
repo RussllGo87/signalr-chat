@@ -38,13 +38,17 @@
                   android:textColor="@android:color/white"
                   android:textSize="12sp"
                   android:visibility="gone"/>
-
-
     </RelativeLayout>
 
     <ListView android:id="@+id/list_resource_upload"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+              android:layout_height="match_parent"
+              android:visibility="gone"/>
 
+    <ImageView
+        android:id="@+id/iv_resource_empty_place_holder"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/drawable_iv_resource_empty"/>
 
 </LinearLayout>
