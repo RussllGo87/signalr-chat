@@ -37,6 +37,20 @@ public class AppDbHelper extends SQLiteOpenHelper {
     private static final String SQL_DELETE_ENTRY_USER =
             "DROP TABLE IF EXISTS " + AppContract.UserEntry.TABLE_NAME;
 
+    private static final String SQL_CREATE_ENTRY_USER_STATUS =
+            "CREATE TABLE " + AppContract.UserStatusEntry.TABLE_NAME + " (" +
+                    AppContract.UserStatusEntry._ID + INTEGER_TYPE + PRIMARY_KEY + COMMA_SEP +
+                    AppContract.UserStatusEntry.COLUMN_NAME_ENTRY_UID + TEXT_TYPE + NOT_NULL + COMMA_SEP +
+                    AppContract.UserStatusEntry.COLUMN_NAME_ENTRY_OWNER + TEXT_TYPE + NOT_NULL + COMMA_SEP +
+                    AppContract.UserStatusEntry.COLUMN_NAME_STATUS_REMARK + TEXT_TYPE + COMMA_SEP +
+                    AppContract.UserStatusEntry.COLUMN_NAME_STATUS_MSG + INTEGER_TYPE + COMMA_SEP +
+                    AppContract.UserStatusEntry.COLUMN_NAME_STATUS_NEARBY + INTEGER_TYPE + COMMA_SEP +
+                    AppContract.UserStatusEntry.COLUMN_NAME_STATUS_SHIELD + INTEGER_TYPE + COMMA_SEP +
+                    AppContract.UserStatusEntry.COLUMN_NAME_DISTANCE + INTEGER_TYPE +
+                    " )";
+    private static final String SQL_DELETE_ENTRY_USER_STATUS =
+            "DROP TABLE IF EXISTS " + AppContract.UserStatusEntry.TABLE_NAME;
+
     private static final String SQL_CREATE_ENTRY_ADVERTISEMENT =
             "CREATE TABLE " + AppContract.AdvertisementEntry.TABLE_NAME + "(" +
                     AppContract.AdvertisementEntry._ID + INTEGER_TYPE + PRIMARY_KEY + COMMA_SEP +
@@ -151,6 +165,7 @@ public class AppDbHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(SQL_CREATE_ENTRY_USER);
+        db.execSQL(SQL_CREATE_ENTRY_USER_STATUS);
         db.execSQL(SQL_CREATE_ENTRY_ADVERTISEMENT);
         db.execSQL(SQL_CREATE_ENTRY_MESSAGE);
         db.execSQL(SQL_CREATE_ENTRY_RECENT);
@@ -170,6 +185,7 @@ public class AppDbHelper extends SQLiteOpenHelper {
         db.execSQL(SQL_DELETE_ENTRY_RECENT);
         db.execSQL(SQL_DELETE_ENTRY_MESSAGE);
         db.execSQL(SQL_DELETE_ENTRY_ADVERTISEMENT);
+        db.execSQL(SQL_DELETE_ENTRY_USER_STATUS);
         db.execSQL(SQL_DELETE_ENTRY_USER);
         onCreate(db);
     }

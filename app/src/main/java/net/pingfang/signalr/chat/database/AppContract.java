@@ -58,6 +58,7 @@ public final class AppContract {
         // 默认排序常量
         public static final String DEFAULT_SORT_ORDER = "owner DESC";
 
+        public static final String TABLE_NAME = "t_user_status";
         public static final String COLUMN_NAME_ENTRY_UID = "uid";
         public static final String COLUMN_NAME_ENTRY_OWNER = "owner";
         public static final String COLUMN_NAME_STATUS_MSG = "status_msg";

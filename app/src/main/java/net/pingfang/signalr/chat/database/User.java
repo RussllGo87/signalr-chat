@@ -14,6 +14,9 @@ public class User implements Parcelable {
     public static final int USER_STATUS_NEARBY_LIST_IN = 0x01;
     public static final int USER_STATUS_NEARBY_LIST_OUT = 0x00;
 
+    public static final int USER_STATUS_SHIELD_LIST_IN = 0x01;
+    public static final int USER_STATUS_SHIELD_LIST_OUT = 0x00;
+
     public static final int USER_GENDER_MALE = 0x01;
     public static final int USER_GENDER_FEMALE = 0x00;
 

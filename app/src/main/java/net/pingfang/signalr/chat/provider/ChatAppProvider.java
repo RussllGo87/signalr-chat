@@ -38,9 +38,13 @@ public class ChatAppProvider extends ContentProvider {
     private static final int SHIELD_VIEW_COLUMN_ID = 12;
     private static final int ADVERTISEMENT = 13;
     private static final int ADVERTISEMENT_COLUMN_ID = 14;
+    private static final int USER_STATUS = 15;
+    private static final int USER_STATUS_COLUMN_ID = 16;
+
 
     // 查询列集合
     private static HashMap<String, String> userProjectionMap;
+    private static HashMap<String, String> userStatusProjectionMap;
     private static HashMap<String, String> adProjectionMap;
     private static HashMap<String, String> messageProjectionMap;
     private static HashMap<String, String> recentProjectionMap;
@@ -65,6 +69,8 @@ public class ChatAppProvider extends ContentProvider {
         sUriMatcher.addURI(AppContract.AUTHORITY, "v_shield/#", SHIELD_VIEW_COLUMN_ID);
         sUriMatcher.addURI(AppContract.AUTHORITY, "advertisement", ADVERTISEMENT);
         sUriMatcher.addURI(AppContract.AUTHORITY, "advertisement/#", ADVERTISEMENT_COLUMN_ID);
+        sUriMatcher.addURI(AppContract.AUTHORITY, "user_status", USER_STATUS);
+        sUriMatcher.addURI(AppContract.AUTHORITY, "user_status/#", USER_STATUS_COLUMN_ID);
 
 
         // 实例化查询列集合
@@ -80,6 +86,16 @@ public class ChatAppProvider extends ContentProvider {
         userProjectionMap.put(AppContract.UserEntry.COLUMN_NAME_STATUS_NEARBY_LIST, AppContract.UserEntry.COLUMN_NAME_STATUS_NEARBY_LIST);
         userProjectionMap.put(AppContract.UserEntry.COLUMN_NAME_EXP, AppContract.UserEntry.COLUMN_NAME_EXP);
         userProjectionMap.put(AppContract.UserEntry.COLUMN_NAME_DISTANCE, AppContract.UserEntry.COLUMN_NAME_DISTANCE);
+
+        userStatusProjectionMap = new HashMap<String, String>();
+        userStatusProjectionMap.put(AppContract.UserStatusEntry._ID, AppContract.UserStatusEntry._ID);
+        userStatusProjectionMap.put(AppContract.UserStatusEntry.COLUMN_NAME_ENTRY_UID, AppContract.UserStatusEntry.COLUMN_NAME_ENTRY_UID);
+        userStatusProjectionMap.put(AppContract.UserStatusEntry.COLUMN_NAME_ENTRY_OWNER, AppContract.UserStatusEntry.COLUMN_NAME_ENTRY_OWNER);
+        userStatusProjectionMap.put(AppContract.UserStatusEntry.COLUMN_NAME_STATUS_MSG, AppContract.UserStatusEntry.COLUMN_NAME_STATUS_MSG);
+        userStatusProjectionMap.put(AppContract.UserStatusEntry.COLUMN_NAME_STATUS_NEARBY, AppContract.UserStatusEntry.COLUMN_NAME_STATUS_NEARBY);
+        userStatusProjectionMap.put(AppContract.UserStatusEntry.COLUMN_NAME_STATUS_SHIELD, AppContract.UserStatusEntry.COLUMN_NAME_STATUS_SHIELD);
+        userStatusProjectionMap.put(AppContract.UserStatusEntry.COLUMN_NAME_DISTANCE, AppContract.UserStatusEntry.COLUMN_NAME_DISTANCE);
+        userStatusProjectionMap.put(AppContract.UserStatusEntry.COLUMN_NAME_STATUS_REMARK, AppContract.UserStatusEntry.COLUMN_NAME_STATUS_REMARK);
 
         adProjectionMap = new HashMap<String, String>();
         adProjectionMap.put(AppContract.AdvertisementEntry._ID, AppContract.AdvertisementEntry._ID);
@@ -172,6 +188,25 @@ public class ChatAppProvider extends ContentProvider {
                 qb.appendWhere(AppContract.UserEntry._ID + "=" + uri.getPathSegments().get(1));
                 if (TextUtils.isEmpty(sortOrder)) {
                     orderBy = AppContract.UserEntry.DEFAULT_SORT_ORDER;
+                } else {
+                    orderBy = sortOrder;
+                }
+                break;
+            case USER_STATUS:
+                qb.setTables(AppContract.UserStatusEntry.TABLE_NAME);
+                qb.setProjectionMap(userStatusProjectionMap);
+                if (TextUtils.isEmpty(sortOrder)) {
+                    orderBy = AppContract.UserStatusEntry.DEFAULT_SORT_ORDER;
+                } else {
+                    orderBy = sortOrder;
+                }
+                break;
+            case USER_STATUS_COLUMN_ID:
+                qb.setTables(AppContract.UserStatusEntry.TABLE_NAME);
+                qb.setProjectionMap(userStatusProjectionMap);
+                qb.appendWhere(AppContract.UserStatusEntry._ID + "=" + uri.getPathSegments().get(1));
+                if (TextUtils.isEmpty(sortOrder)) {
+                    orderBy = AppContract.UserStatusEntry.DEFAULT_SORT_ORDER;
                 } else {
                     orderBy = sortOrder;
                 }
@@ -297,6 +332,14 @@ public class ChatAppProvider extends ContentProvider {
                     return userUri;
                 }
                 break;
+            case USER_STATUS:
+                rowId = db.insert(AppContract.UserStatusEntry.TABLE_NAME, null, values);
+                if (rowId > 0) {
+                    Uri userStatusUri = ContentUris.withAppendedId(AppContract.UserStatusEntry.CONTENT_URI, rowId);
+                    getContext().getContentResolver().notifyChange(userStatusUri, null);
+                    return userStatusUri;
+                }
+                break;
             case ADVERTISEMENT:
                 rowId = db.insert(AppContract.AdvertisementEntry.TABLE_NAME, null, values);
                 if (rowId > 0) {
@@ -347,6 +390,14 @@ public class ChatAppProvider extends ContentProvider {
             case USER_COLUMN_ID:
                 String userColumnId = uri.getPathSegments().get(1);
                 count = db.delete(AppContract.UserEntry.TABLE_NAME, AppContract.UserEntry._ID + "=" + userColumnId
+                        + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ')' : ""), selectionArgs);
+                break;
+            case USER_STATUS:
+                count = db.delete(AppContract.UserStatusEntry.TABLE_NAME, selection, selectionArgs);
+                break;
+            case USER_STATUS_COLUMN_ID:
+                String userStatusColumnId = uri.getPathSegments().get(1);
+                count = db.delete(AppContract.UserStatusEntry.TABLE_NAME, AppContract.UserStatusEntry._ID + "=" + userStatusColumnId
                         + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ')' : ""), selectionArgs);
                 break;
             case ADVERTISEMENT:
@@ -403,6 +454,16 @@ public class ChatAppProvider extends ContentProvider {
             case USER_COLUMN_ID:
                 String userColumnId = uri.getPathSegments().get(1);
                 count = db.update(AppContract.UserEntry.TABLE_NAME, values, AppContract.UserEntry._ID + "=" + userColumnId
+                        + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ')' : ""), selectionArgs);
+                break;
+            // 根据指定条件更新
+            case USER_STATUS:
+                count = db.update(AppContract.UserStatusEntry.TABLE_NAME, values, selection, selectionArgs);
+                break;
+            // 根据指定条件和ID更新
+            case USER_STATUS_COLUMN_ID:
+                String userStatusColumnId = uri.getPathSegments().get(1);
+                count = db.update(AppContract.UserStatusEntry.TABLE_NAME, values, AppContract.UserStatusEntry._ID + "=" + userStatusColumnId
                         + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ')' : ""), selectionArgs);
                 break;
             // 根据指定条件更新
