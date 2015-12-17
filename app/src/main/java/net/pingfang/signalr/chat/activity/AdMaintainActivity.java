@@ -407,8 +407,6 @@ public class AdMaintainActivity extends AppCompatActivity implements View.OnClic
         values.put(AppContract.AdvertisementEntry.COLUMN_NAME_AD_STATUS, Advertisement.AD_STATUS_UPLOAD_ERROR);
 
         getContentResolver().insert(AppContract.AdvertisementEntry.CONTENT_URI, values);
-
-        navigateUp();
     }
 
     private void showDialog() {
