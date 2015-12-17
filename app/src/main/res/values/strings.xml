@@ -82,6 +82,10 @@
     <!-- 周边广告详细展示 -->
     <string name="title_activity_nearby_ad_detail">NearbyAdDetailActivity</string>
 
+    <!--- 修改备注名 -->
+    <string name="title_activity_remark_update">RemarkUpdateActivity</string>
+    <string name="tv_remark_update_ok">ok</string>
+
     <!-- BuddyFragment -->
     <string name="tv_fragment_buddy">BuddyFragment</string>
 

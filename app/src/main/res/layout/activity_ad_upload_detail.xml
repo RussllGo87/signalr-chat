@@ -208,7 +208,7 @@
                         android:layout_marginRight="5dp"
                         android:layout_weight="1"
                         android:background="@drawable/selector_btn_bg"
-                        android:text="确定"
+                        android:text="上传"
                         android:textColor="@android:color/white"/>
 
                     <Button

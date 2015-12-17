@@ -227,10 +227,10 @@ public class AdUploadDetailActivity extends AppCompatActivity implements View.On
                 navigateUp();
                 break;
             case R.id.btn_ad_maintain_save_info:
-                if (NetUtil.isWifiAvailable(getApplicationContext())) {
+                if (NetUtil.isConnected(getApplicationContext())) {
                     storeOnWeb();
                 } else {
-                    Toast.makeText(getApplicationContext(), "没有连接到wifi,只有连接到wifi才能上传", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "当前没有网络连接", Toast.LENGTH_SHORT).show();
                 }
                 break;
             case R.id.btn_ad_maintain_cancel_info:
