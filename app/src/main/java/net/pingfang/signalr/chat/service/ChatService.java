@@ -183,7 +183,8 @@ public class ChatService extends Service {
         long currentTime = System.currentTimeMillis();
         long delta = currentTime - lastSendTime;
         if(delta > 300) {
-            new MessageSendTask().execute(messageType, message);
+            MessageSendTask sendTask = new MessageSendTask();
+            sendTask.execute(messageType, message);
             lastSendTime = currentTime;
         }
 
@@ -195,9 +196,9 @@ public class ChatService extends Service {
 
     public void destroy() {
 
-        if(messageListener != null) {
-            messageListener.onMessageReceive("exitApp","");
-        }
+//        if(messageListener != null) {
+//            messageListener.onMessageReceive("exitApp","");
+//        }
 
         if(connection != null && connection.getState() == ConnectionState.Connected) {
             setIsReconnectWhenDisconnect(false);
@@ -215,7 +216,7 @@ public class ChatService extends Service {
         }
     }
 
-    private class MessageSendTask extends AsyncTask<String,String,String> {
+    class MessageSendTask extends AsyncTask<String,String,String> {
         @Override
         protected String doInBackground(String... params) {
             Log.d(TAG,"send msgType == " + params[0]);

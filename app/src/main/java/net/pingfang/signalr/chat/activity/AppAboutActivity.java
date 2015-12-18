@@ -1,9 +1,11 @@
 package net.pingfang.signalr.chat.activity;
 
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -11,6 +13,7 @@ import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -33,6 +36,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 
 public class AppAboutActivity extends AppCompatActivity implements View.OnClickListener{
@@ -203,20 +207,39 @@ public class AppAboutActivity extends AppCompatActivity implements View.OnClickL
         try {
             PackageInfo info = getPackageManager().getPackageInfo(getPackageName(),0);
             ApplicationInfo appInfo = info.applicationInfo;
-            String sourceDir = appInfo.sourceDir;
+            String sourceDir = appInfo.publicSourceDir;
             File file = new File(sourceDir);
             Uri sourceUri = Uri.fromFile(file);
             Intent sharingIntent = new Intent();
             sharingIntent.setAction(Intent.ACTION_SEND);
             sharingIntent.setType("application/*");
-            sharingIntent.setPackage("com.android.bluetooth");
             sharingIntent.putExtra(Intent.EXTRA_STREAM, sourceUri);
 
-            startActivity(Intent.createChooser(sharingIntent, "Share Application"));
+            PackageManager pm = getApplicationContext().getPackageManager();
+            List<ResolveInfo> resolveInfoList =  pm.queryIntentActivities(sharingIntent, PackageManager.MATCH_DEFAULT_ONLY);
+            String sharePackageName = null;
+            for(ResolveInfo resolveInfo : resolveInfoList) {
+                ActivityInfo activityInfo = resolveInfo.activityInfo;
+                Log.d(TAG, "activityInfo packageName == " + activityInfo.packageName);
+                if(activityInfo.packageName.contains("bluetooth")) {
+                    sharePackageName = activityInfo.packageName;
+                    break;
+                }
+            }
 
-            Toast.makeText(getApplicationContext(),sourceDir,Toast.LENGTH_SHORT).show();
+            if(!TextUtils.isEmpty(sharePackageName)) {
+                sharingIntent.setPackage(sharePackageName);
+                startActivity(Intent.createChooser(sharingIntent, "Share Application"));
+                Toast.makeText(getApplicationContext(), sourceDir, Toast.LENGTH_SHORT).show();
+            } else {
+                sharePackageName = "com.android.bluetooth";
+                sharingIntent.setPackage(sharePackageName);
+                startActivity(Intent.createChooser(sharingIntent, "Share Application"));
+                Toast.makeText(getApplicationContext(), sourceDir, Toast.LENGTH_SHORT).show();
+            }
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
+            Toast.makeText(getApplicationContext(), R.string.toast_share_not_support, Toast.LENGTH_SHORT).show();
         }
     }
 

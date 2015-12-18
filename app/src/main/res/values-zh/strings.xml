@@ -110,6 +110,7 @@
     <string name="menu_action_nearby_friends">附近的人</string>
     <string name="menu_action_nearby_ads">周边广告</string>
     <string name="menu_action_share_apk">分享</string>
+    <string name="toast_share_not_support">当前手机不支持蓝牙分享</string>
     <!-- 周边广告地图展示 -->
     <string name="title_activity_nearby_ads">周边广告</string>
     <string name="action_radius_half">500米</string>
