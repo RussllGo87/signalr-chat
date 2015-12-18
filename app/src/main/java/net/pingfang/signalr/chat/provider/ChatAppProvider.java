@@ -137,11 +137,14 @@ public class ChatAppProvider extends ContentProvider {
         vRecentProjectionMap.put(AppContract.RecentContactView.COLUMN_NAME_UID, AppContract.RecentContactView.COLUMN_NAME_UID);
         vRecentProjectionMap.put(AppContract.RecentContactView.COLUMN_NAME_NICKNAME, AppContract.RecentContactView.COLUMN_NAME_NICKNAME);
         vRecentProjectionMap.put(AppContract.RecentContactView.COLUMN_NAME_PORTRAIT, AppContract.RecentContactView.COLUMN_NAME_PORTRAIT);
-        vRecentProjectionMap.put(AppContract.RecentContactView.COLUMN_NAME_STATUS_MSG_LIST, AppContract.RecentContactView.COLUMN_NAME_STATUS_MSG_LIST);
-        vRecentProjectionMap.put(AppContract.RecentContactView.COLUMN_NAME_STATUS_NEARBY_LIST, AppContract.RecentContactView.COLUMN_NAME_STATUS_NEARBY_LIST);
+        vRecentProjectionMap.put(AppContract.RecentContactView.COLUMN_NAME_OWNER, AppContract.RecentContactView.COLUMN_NAME_OWNER);
+        vRecentProjectionMap.put(AppContract.RecentContactView.COLUMN_NAME_STATUS_MSG, AppContract.RecentContactView.COLUMN_NAME_STATUS_MSG);
+        vRecentProjectionMap.put(AppContract.RecentContactView.COLUMN_NAME_STATUS_NEARBY, AppContract.RecentContactView.COLUMN_NAME_STATUS_NEARBY);
+        vRecentProjectionMap.put(AppContract.RecentContactView.COLUMN_NAME_STATUS_SHIELD, AppContract.RecentContactView.COLUMN_NAME_STATUS_SHIELD);
+        vRecentProjectionMap.put(AppContract.RecentContactView.COLUMN_NAME_DISTANCE, AppContract.RecentContactView.COLUMN_NAME_DISTANCE);
+        vRecentProjectionMap.put(AppContract.RecentContactView.COLUMN_NAME_STATUS_REMARK, AppContract.RecentContactView.COLUMN_NAME_STATUS_REMARK);
         vRecentProjectionMap.put(AppContract.RecentContactView.COLUMN_NAME_CONTENT, AppContract.RecentContactView.COLUMN_NAME_CONTENT);
         vRecentProjectionMap.put(AppContract.RecentContactView.COLUMN_NAME_UPDATE_TIME, AppContract.RecentContactView.COLUMN_NAME_UPDATE_TIME);
-        vRecentProjectionMap.put(AppContract.RecentContactView.COLUMN_NAME_OWNER, AppContract.RecentContactView.COLUMN_NAME_OWNER);
         vRecentProjectionMap.put(AppContract.RecentContactView.COLUMN_NAME_COUNT, AppContract.RecentContactView.COLUMN_NAME_COUNT);
 
         shieldProjectionMap = new HashMap<String, String>();

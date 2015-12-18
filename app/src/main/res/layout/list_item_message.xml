@@ -44,23 +44,38 @@
 
         <TextView android:id="@+id/tv_msg_update_time"
                   android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+                  android:layout_height="wrap_content"
                   android:paddingBottom="4dp"
                   android:text="2015-12-08 19:28:32"
                   android:textColor="@color/material_grey_600"/>
 
-        <TextView android:id="@+id/tv_msg_not_read"
-                  android:layout_width="18dp"
-                  android:layout_height="18dp"
-                  android:layout_gravity="right"
-                  android:layout_marginRight="8dp"
-                  android:background="@drawable/shape_tv_msg_not_red"
-                  android:gravity="center"
-                  android:text="99"
-                  android:textColor="@android:color/white"
-                  android:textSize="10sp"
-                  android:textStyle="bold"
-                  android:visibility="gone"/>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:orientation="horizontal">
+
+            <TextView android:id="@+id/tv_status_shield"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/material_grey_600"
+                android:text="已屏蔽"
+                android:layout_marginRight="8dp"/>
+
+            <TextView android:id="@+id/tv_msg_not_read"
+                      android:layout_width="18dp"
+                      android:layout_height="18dp"
+                      android:layout_gravity="right"
+                      android:layout_marginRight="8dp"
+                      android:background="@drawable/shape_tv_msg_not_red"
+                      android:gravity="center"
+                      android:text="99"
+                      android:textColor="@android:color/white"
+                      android:textSize="10sp"
+                      android:textStyle="bold"/>
+
+        </LinearLayout>
+
 
     </LinearLayout>
 

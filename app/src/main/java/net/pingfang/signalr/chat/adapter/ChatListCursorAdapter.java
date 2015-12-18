@@ -49,7 +49,13 @@ public class ChatListCursorAdapter extends CursorAdapter {
         }
 
         TextView tv_friends_name = (TextView) view.findViewById(R.id.tv_friends_name);
-        tv_friends_name.setText(cursor.getString(cursor.getColumnIndex(AppContract.RecentContactView.COLUMN_NAME_NICKNAME)));
+        String remark = cursor.getString(cursor.getColumnIndex(AppContract.RecentContactView.COLUMN_NAME_STATUS_REMARK));
+        String nickname = cursor.getString(cursor.getColumnIndex(AppContract.RecentContactView.COLUMN_NAME_NICKNAME));
+        if(!TextUtils.isEmpty(remark)) {
+            tv_friends_name.setText(remark + "(" + nickname + ")" );
+        } else {
+            tv_friends_name.setText(nickname);
+        }
 
         TextView tv_message_update = (TextView) view.findViewById(R.id.tv_message_update);
         String content = cursor.getString(cursor.getColumnIndex(AppContract.RecentContactView.COLUMN_NAME_CONTENT));
@@ -64,6 +70,16 @@ public class ChatListCursorAdapter extends CursorAdapter {
         int timeFlag = DateTimeUtil.convertDatetimeFormat(datetime);
         datetime = DateTimeUtil.displayDateOrTime(context, datetime, timeFlag);
         tv_msg_update_time.setText(datetime);
+
+        TextView tv_status_shield = (TextView) view.findViewById(R.id.tv_status_shield);
+        int statusShield = cursor.getInt(cursor.getColumnIndex(AppContract.RecentContactView.COLUMN_NAME_STATUS_SHIELD));
+        if(statusShield == User.USER_STATUS_SHIELD_LIST_OUT) {
+            tv_status_shield.setVisibility(View.GONE);
+        } else {
+            tv_status_shield.setVisibility(View.VISIBLE);
+        }
+
+
 
         TextView tv_msg_not_read = (TextView) view.findViewById(R.id.tv_msg_not_read);
         int count = cursor.getInt(cursor.getColumnIndex(AppContract.RecentContactView.COLUMN_NAME_COUNT));
@@ -81,7 +97,6 @@ public class ChatListCursorAdapter extends CursorAdapter {
 
 
         String uid = cursor.getString(cursor.getColumnIndex(AppContract.RecentContactView.COLUMN_NAME_UID));
-        String nickname = cursor.getString(cursor.getColumnIndex(AppContract.RecentContactView.COLUMN_NAME_NICKNAME));
 
         User user = new User(uid, nickname, portraitUrl);
         view.setTag(user);

@@ -105,22 +105,34 @@ public class AppDbHelper extends SQLiteOpenHelper {
     private static final String SQL_CREATE_VIEW_RECENT =
             "CREATE VIEW IF NOT EXISTS " + AppContract.RecentContactView.VIEW_NAME + " AS " +
             "SELECT " +
-            "recent." + AppContract.RecentContactEntry._ID + " AS " + AppContract.RecentContactView._ID + COMMA_SEP +
+            "user_status." + AppContract.UserStatusEntry._ID + " AS " + AppContract.RecentContactView._ID + COMMA_SEP +
             "user." + AppContract.UserEntry.COLUMN_NAME_ENTRY_UID + " AS " + AppContract.RecentContactView.COLUMN_NAME_UID + COMMA_SEP +
             "user." + AppContract.UserEntry.COLUMN_NAME_NICK_NAME + " AS " + AppContract.RecentContactView.COLUMN_NAME_NICKNAME + COMMA_SEP +
             "user." + AppContract.UserEntry.COLUMN_NAME_PORTRAIT + " AS " + AppContract.RecentContactView.COLUMN_NAME_PORTRAIT + COMMA_SEP +
-                    "user." + AppContract.UserEntry.COLUMN_NAME_STATUS_MSG_LIST + " AS " + AppContract.RecentContactView.COLUMN_NAME_STATUS_MSG_LIST + COMMA_SEP +
-                    "user." + AppContract.UserEntry.COLUMN_NAME_STATUS_NEARBY_LIST + " AS " + AppContract.RecentContactView.COLUMN_NAME_STATUS_NEARBY_LIST + COMMA_SEP +
+            "user_status." + AppContract.UserStatusEntry.COLUMN_NAME_ENTRY_OWNER + " AS " + AppContract.RecentContactView.COLUMN_NAME_OWNER + COMMA_SEP +
+            "user_status." + AppContract.UserStatusEntry.COLUMN_NAME_STATUS_MSG + " AS " + AppContract.RecentContactView.COLUMN_NAME_STATUS_MSG + COMMA_SEP +
+            "user_status." + AppContract.UserStatusEntry.COLUMN_NAME_STATUS_NEARBY + " AS " + AppContract.RecentContactView.COLUMN_NAME_STATUS_NEARBY + COMMA_SEP +
+            "user_status." + AppContract.UserStatusEntry.COLUMN_NAME_STATUS_SHIELD + " AS " + AppContract.RecentContactView.COLUMN_NAME_STATUS_SHIELD + COMMA_SEP +
+            "user_status." + AppContract.UserStatusEntry.COLUMN_NAME_DISTANCE + " AS " + AppContract.RecentContactView.COLUMN_NAME_DISTANCE + COMMA_SEP +
+            "user_status." + AppContract.UserStatusEntry.COLUMN_NAME_STATUS_REMARK + " AS " + AppContract.RecentContactView.COLUMN_NAME_STATUS_REMARK + COMMA_SEP +
             "recent." + AppContract.RecentContactEntry.COLUMN_NAME_CONTENT + " AS " + AppContract.RecentContactView.COLUMN_NAME_CONTENT + COMMA_SEP +
             "recent." + AppContract.RecentContactEntry.COLUMN_NAME_UPDATE_TIME + " AS " + AppContract.RecentContactView.COLUMN_NAME_UPDATE_TIME + COMMA_SEP +
             "recent." + AppContract.RecentContactEntry.COLUMN_NAME_COUNT + " AS " + AppContract.RecentContactView.COLUMN_NAME_COUNT + COMMA_SEP +
             "recent." + AppContract.RecentContactEntry.COLUMN_NAME_OWNER + " AS " + AppContract.RecentContactView.COLUMN_NAME_OWNER + " " +
             "FROM " +
             AppContract.UserEntry.TABLE_NAME + " AS user, " +
+            AppContract.UserStatusEntry.TABLE_NAME + " AS user_status, " +
             AppContract.RecentContactEntry.TABLE_NAME + " AS recent " +
             "WHERE " +
+            "user_status." + AppContract.UserStatusEntry.COLUMN_NAME_ENTRY_OWNER + " = " +
+            "recent." + AppContract.RecentContactEntry.COLUMN_NAME_OWNER +
+            " AND " +
+            "user_status." + AppContract.UserStatusEntry.COLUMN_NAME_ENTRY_UID + " = " +
+            "recent." + AppContract.RecentContactEntry.COLUMN_NAME_BUDDY +
+            " AND " +
             "user." + AppContract.UserEntry.COLUMN_NAME_ENTRY_UID + " = " +
-            "recent." + AppContract.RecentContactEntry.COLUMN_NAME_BUDDY;
+            "user_status." + AppContract.UserStatusEntry.COLUMN_NAME_ENTRY_UID;
+
 
     private static final String SQL_DELETE_VIEW_RECENT =
             "DROP VIEW IF EXISTS " + AppContract.RecentContactView.VIEW_NAME;

@@ -64,6 +64,7 @@ public class MessageFragment extends Fragment implements LoaderManager.LoaderCal
     public void registerReceiver() {
         receiver = new MessageReceiver();
         IntentFilter filter = new IntentFilter();
+        filter.addAction(GlobalApplication.ACTION_INTENT_REMARK_UPDATE);
         filter.addAction(GlobalApplication.ACTION_INTENT_SHIELD_LIST_ADD);
         filter.addAction(GlobalApplication.ACTION_INTENT_SHIELD_LIST_BEFORE);
         filter.addAction(GlobalApplication.ACTION_INTENT_MSG_LIST_UPDATE);
@@ -106,7 +107,7 @@ public class MessageFragment extends Fragment implements LoaderManager.LoaderCal
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 User user = (User) view.getTag();
                 if (mListener != null) {
-                    //                    mListener.shield(user);
+//                    mListener.shield(user);
                     mListener.onMsgItemLongClick(position, user);
                     return true;
                 }
@@ -160,7 +161,7 @@ public class MessageFragment extends Fragment implements LoaderManager.LoaderCal
 
         String selection = AppContract.RecentContactView.COLUMN_NAME_OWNER + " = ?" +
                 " AND " +
-                AppContract.RecentContactView.COLUMN_NAME_STATUS_MSG_LIST + " != ?";
+                AppContract.RecentContactView.COLUMN_NAME_STATUS_MSG + " != ?";
         String[] selectionArgs = new String[]{uid, String.valueOf(User.USER_STATUS_MSG_LIST_OUT)};
 
         return new CursorLoader(getContext(),baseUri,null,selection,selectionArgs,null);
@@ -192,6 +193,12 @@ public class MessageFragment extends Fragment implements LoaderManager.LoaderCal
                         if (action.equals(GlobalApplication.ACTION_INTENT_SHIELD_LIST_BEFORE))
                             Toast.makeText(getContext(), user.getNickname() + "已经在屏蔽人名单了", Toast.LENGTH_LONG).show();
                     }
+                }
+            }
+
+            if (!TextUtils.isEmpty(action)) {
+                if (action.equals(GlobalApplication.ACTION_INTENT_REMARK_UPDATE)) {
+                    Toast.makeText(getContext(), "备注名修改成功", Toast.LENGTH_LONG).show();
                 }
             }
 

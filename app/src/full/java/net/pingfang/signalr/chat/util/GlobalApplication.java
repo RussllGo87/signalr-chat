@@ -46,6 +46,7 @@ public class GlobalApplication extends Application {
     public static final String ACTION_INTENT_SHIELD_LIST_BEFORE = "ACTION_INTENT_SHIELD_LIST_BEFORE";
 
     public static final String ACTION_INTENT_ACCOUNT_INFO_UPDATE = "ACTION_INTENT_ACCOUNT_INFO_UPDATE";
+    public static final String ACTION_INTENT_REMARK_UPDATE = "ACTION_INTENT_REMARK_UPDATE";
 
     public static final String IMAGE_TITLE_NAME_PREFIX = "IMAGE_";
     public static final String VOICE_FILE_NAME_PREFIX = "VOICE_";

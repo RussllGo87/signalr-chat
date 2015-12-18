@@ -128,7 +128,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
         @Override
         public void onItemRemark(User user) {
-
+            Intent intent = new Intent(getApplicationContext(), RemarkUpdateActivity.class);
+            intent.putExtra("user", user);
+            startActivity(intent);
         }
 
         @Override
@@ -138,13 +140,17 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
         @Override
         public void onItemDelete(User user) {
-            String selection = AppContract.UserEntry.COLUMN_NAME_ENTRY_UID + " = ?";
-            String[] selectionArgs = new String[]{user.getUid()};
+            String selection =
+                    AppContract.UserStatusEntry.COLUMN_NAME_ENTRY_UID + " = ? " +
+                    " AND " +
+                     AppContract.UserStatusEntry.COLUMN_NAME_ENTRY_OWNER + " = ?";
+
+            String[] selectionArgs = new String[]{user.getUid(),helper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID)};
 
             ContentValues values = new ContentValues();
-            values.put(AppContract.UserEntry.COLUMN_NAME_STATUS_MSG_LIST, User.USER_STATUS_MSG_LIST_OUT);
+            values.put(AppContract.UserStatusEntry.COLUMN_NAME_STATUS_MSG, User.USER_STATUS_MSG_LIST_OUT);
 
-            int count = getApplicationContext().getContentResolver().update(AppContract.UserEntry.CONTENT_URI, values, selection, selectionArgs);
+            int count = getApplicationContext().getContentResolver().update(AppContract.UserStatusEntry.CONTENT_URI, values, selection, selectionArgs);
             if (count > 0) {
                 Intent intent = new Intent();
                 intent.setAction(GlobalApplication.ACTION_INTENT_MSG_LIST_UPDATE);

@@ -135,9 +135,12 @@ public final class AppContract {
         public static final String COLUMN_NAME_UID = "uid";
         public static final String COLUMN_NAME_NICKNAME ="nickname";
         public static final String COLUMN_NAME_PORTRAIT = "portrait";
-        public static final String COLUMN_NAME_STATUS_MSG_LIST = "status_msg_list";
-        public static final String COLUMN_NAME_STATUS_NEARBY_LIST = "status_nearby_list";
         public static final String COLUMN_NAME_OWNER = "owner";
+        public static final String COLUMN_NAME_STATUS_MSG = "status_msg";
+        public static final String COLUMN_NAME_STATUS_NEARBY = "status_nearby";
+        public static final String COLUMN_NAME_STATUS_SHIELD = "status_shield";
+        public static final String COLUMN_NAME_DISTANCE = "distance";
+        public static final String COLUMN_NAME_STATUS_REMARK = "remark";
         public static final String COLUMN_NAME_CONTENT = "content";
         public static final String COLUMN_NAME_UPDATE_TIME = "update_time";
         public static final String COLUMN_NAME_COUNT = "count";

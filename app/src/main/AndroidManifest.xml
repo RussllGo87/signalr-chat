@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest
-    package="net.pingfang.signalr.chat"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="net.pingfang.signalr.chat" >
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -22,10 +21,10 @@
 
     <permission
         android:name="net.pingfang.signalr.chat.permission.MMOAUTH_CALLBACK"
-        android:protectionLevel="normal"/>
+        android:protectionLevel="normal" />
     <permission
         android:name="net.pingfang.signalr.chat.permission.MM_MESSAGE"
-        android:protectionLevel="normal"/>
+        android:protectionLevel="normal" />
 
     <uses-permission android:name="net.pingfang.signalr.chat.permission.MMOAUTH_CALLBACK" />
     <uses-permission android:name="net.pingfang.signalr.chat.permission.MM_MESSAGE" />
@@ -38,12 +37,12 @@
         android:theme="@style/AppMainTheme" >
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
-            android:value="2DNGDiGfbcKr9tLpvmSAVjEs"/>
+            android:value="2DNGDiGfbcKr9tLpvmSAVjEs" />
 
         <activity
             android:name=".activity.MainActivity"
             android:label="@string/title_activity_main"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -54,7 +53,7 @@
             android:name=".activity.LoginActivity"
             android:label="@string/title_activity_login"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize">
+            android:windowSoftInputMode="adjustResize" >
         </activity>
         <activity
             android:name=".full.wxapi.WXEntryActivity"
@@ -81,12 +80,12 @@
         <activity
             android:name=".activity.RegisterActivity"
             android:label="@string/title_activity_register"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name=".activity.HomeActivity"
             android:label="@string/title_activity_home"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name=".activity.CaptureActivityAnyOrientation"
@@ -99,7 +98,7 @@
             android:name=".activity.ResourcePostActivity"
             android:label="@string/title_activity_resource_post"
             android:parentActivityName=".activity.HomeActivity"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="net.pingfang.signalr.chat.activity.HomeActivity" />
@@ -108,7 +107,7 @@
             android:name=".activity.AdMaintainActivity"
             android:label="@string/title_activity_ad_maintain"
             android:parentActivityName=".activity.HomeActivity"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="net.pingfang.signalr.chat.activity.HomeActivity" />
@@ -117,7 +116,7 @@
             android:name=".activity.BulkMsgActivity"
             android:label="@string/title_activity_bulk_msg"
             android:parentActivityName=".activity.HomeActivity"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="net.pingfang.signalr.chat.activity.HomeActivity" />
@@ -126,16 +125,16 @@
             android:name=".activity.ListShieldsActivity"
             android:label="@string/title_activity_filter_list"
             android:parentActivityName=".activity.HomeActivity"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="net.pingfang.signalr.chat.activity.HomeActivity"/>
+                android:value="net.pingfang.signalr.chat.activity.HomeActivity" />
         </activity>
         <activity
             android:name=".activity.NearbyFriendsActivity"
             android:label="@string/title_activity_nearby_friends"
             android:parentActivityName=".activity.HomeActivity"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="net.pingfang.signalr.chat.activity.HomeActivity" />
@@ -144,7 +143,7 @@
             android:name=".activity.ChatActivity"
             android:label="@string/app_name"
             android:parentActivityName=".activity.HomeActivity"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activity.HomeActivity" />
@@ -153,7 +152,7 @@
             android:name=".activity.ResourceListActivity"
             android:label="@string/title_activity_resource_list"
             android:parentActivityName=".activity.HomeActivity"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="net.pingfang.signalr.chat.activity.HomeActivity" />
@@ -162,7 +161,7 @@
             android:name=".activity.ResourceDetailActivity"
             android:label="@string/title_activity_resource_detail"
             android:parentActivityName=".activity.ResourceListActivity"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="net.pingfang.signalr.chat.activity.ResourceListActivity" />
@@ -171,7 +170,7 @@
             android:name=".activity.NearbyAdsActivity"
             android:label="@string/title_activity_nearby_ads"
             android:parentActivityName=".activity.HomeActivity"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="net.pingfang.signalr.chat.activity.HomeActivity" />
@@ -180,16 +179,16 @@
             android:name=".activity.NearbyAdDetailActivity"
             android:label="@string/title_activity_nearby_ad_detail"
             android:parentActivityName=".activity.NearbyAdsActivity"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activity.NearbyAdsActivity"/>
+                android:value=".activity.NearbyAdsActivity" />
         </activity>
         <activity
             android:name=".activity.SettingsActivity"
             android:label="@string/title_activity_settings"
             android:parentActivityName=".activity.HomeActivity"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="net.pingfang.signalr.chat.activity.HomeActivity" />
@@ -198,7 +197,7 @@
             android:name=".activity.AccountSettingsActivity"
             android:label="@string/title_activity_account_settings"
             android:parentActivityName=".activity.SettingsActivity"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="net.pingfang.signalr.chat.activity.SettingsActivity" />
@@ -207,25 +206,25 @@
             android:name=".activity.ChangePwdActivity"
             android:label="@string/title_activity_change_pwd"
             android:parentActivityName=".activity.SettingsActivity"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="net.pingfang.signalr.chat.activity.SettingsActivity"/>
+                android:value="net.pingfang.signalr.chat.activity.SettingsActivity" />
         </activity>
         <activity
             android:name=".activity.AccountInfoUpdateActivity"
             android:label="@string/title_activity_account_info_update"
             android:parentActivityName=".activity.SettingsActivity"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="net.pingfang.signalr.chat.activity.SettingsActivity"/>
+                android:value="net.pingfang.signalr.chat.activity.SettingsActivity" />
         </activity>
         <activity
             android:name=".activity.AppAboutActivity"
             android:label="@string/title_activity_settings"
             android:parentActivityName=".activity.HomeActivity"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="net.pingfang.signalr.chat.activity.SettingsActivity" />
@@ -234,7 +233,7 @@
             android:name=".activity.GuideActivity"
             android:label="@string/title_activity_guide"
             android:parentActivityName=".activity.AppAboutActivity"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="net.pingfang.signalr.chat.activity.AppAboutActivity" />
@@ -243,15 +242,57 @@
             android:name=".activity.FeedbackActivity"
             android:label="@string/title_activity_feedback"
             android:parentActivityName=".activity.AppAboutActivity"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="net.pingfang.signalr.chat.activity.AppAboutActivity" />
         </activity>
         <activity
             android:name=".activity.PhotoViewerActivity"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" >
         </activity>
+        <activity
+            android:name=".activity.AccountInfoActivity"
+            android:label="@string/title_activity_account_info"
+            android:parentActivityName=".activity.HomeActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppMainTheme" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="net.pingfang.signalr.chat.activity.HomeActivity" />
+        </activity>
+        <activity
+            android:name=".activity.AdUploadListActivity"
+            android:screenOrientation="portrait"
+            android:label="@string/title_activity_ad_upload_list"
+            android:parentActivityName=".activity.HomeActivity"
+            android:theme="@style/AppMainTheme" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="net.pingfang.signalr.chat.activity.HomeActivity" />
+        </activity>
+        <activity
+            android:name=".activity.AdUploadDetailActivity"
+            android:screenOrientation="portrait"
+            android:label="@string/title_activity_ad_upload_detail"
+            android:parentActivityName=".activity.AdUploadListActivity"
+            android:theme="@style/AppMainTheme" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="net.pingfang.signalr.chat.activity.AdUploadListActivity" />
+        </activity>
+        <activity
+            android:name=".activity.RemarkUpdateActivity"
+            android:screenOrientation="portrait"
+            android:label="@string/title_activity_remark_update"
+            android:parentActivityName=".activity.HomeActivity"
+            android:theme="@style/AppMainTheme" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="net.pingfang.signalr.chat.activity.HomeActivity" />
+        </activity>
+
+
 
         <service
             android:name="com.baidu.location.f"
@@ -283,34 +324,7 @@
             </intent-filter>
         </receiver>
 
-        <activity
-            android:name=".activity.AccountInfoActivity"
-            android:label="@string/title_activity_account_info"
-            android:parentActivityName=".activity.HomeActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppMainTheme">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="net.pingfang.signalr.chat.activity.HomeActivity"/>
-        </activity>
-        <activity
-            android:name=".activity.AdUploadListActivity"
-            android:label="@string/title_activity_ad_upload_list"
-            android:parentActivityName=".activity.HomeActivity"
-            android:theme="@style/AppMainTheme">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="net.pingfang.signalr.chat.activity.HomeActivity"/>
-        </activity>
-        <activity
-            android:name=".activity.AdUploadDetailActivity"
-            android:label="@string/title_activity_ad_upload_detail"
-            android:parentActivityName=".activity.AdUploadListActivity"
-            android:theme="@style/AppMainTheme">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="net.pingfang.signalr.chat.activity.AdUploadListActivity"/>
-        </activity>
+
     </application>
 
 </manifest>
