@@ -139,13 +139,6 @@ public class ChatMessageProcessor implements ChatMessageListener {
         }
     }
 
-    /** 用户退出应用状态更新 **/
-    private void exitApp() {
-        ContentValues values = new ContentValues();
-        values.put(AppContract.UserEntry.COLUMN_NAME_STATUS_NEARBY_LIST, User.USER_STATUS_NEARBY_LIST_OUT);
-        context.getContentResolver().update(AppContract.UserEntry.CONTENT_URI, values, null, null);
-    }
-
     /**
      * 处理在线消息的收发
      *
@@ -197,8 +190,8 @@ public class ChatMessageProcessor implements ChatMessageListener {
 
                     String selectionStatus =
                             AppContract.UserStatusEntry.COLUMN_NAME_ENTRY_UID + " = ?" +
-                                    " AND " +
-                                    AppContract.UserStatusEntry.COLUMN_NAME_ENTRY_OWNER + " = ?";
+                            " AND " +
+                            AppContract.UserStatusEntry.COLUMN_NAME_ENTRY_OWNER + " = ?";
                     String[] selectionArgsStatus = new String[]{from, sharedPreferencesHelper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID)};
 
                     ContentValues statusValues = new ContentValues();
@@ -397,19 +390,19 @@ public class ChatMessageProcessor implements ChatMessageListener {
                             selection,
                             new String[]{fromUid});
 
-                    //                    String selectionStatus =
-                    //                            AppContract.UserStatusEntry.COLUMN_NAME_ENTRY_UID + " = ?" +
-                    //                                    " AND " +
-                    //                                    AppContract.UserStatusEntry.COLUMN_NAME_ENTRY_OWNER + " = ?";
-                    //                    String[] selectionArgsStatus = new String[] {fromUid,sharedPreferencesHelper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID)};
-                    //
-                    //                    ContentValues statusValues = new ContentValues();
-                    //                    statusValues.put(AppContract.UserStatusEntry.COLUMN_NAME_STATUS_MSG, User.USER_STATUS_MSG_LIST_IN);
-                    //
-                    //                    context.getContentResolver().update(AppContract.UserStatusEntry.CONTENT_URI,
-                    //                            statusValues,
-                    //                            selectionStatus,
-                    //                            selectionArgsStatus);
+                    String selectionStatus =
+                            AppContract.UserStatusEntry.COLUMN_NAME_ENTRY_UID + " = ?" +
+                                    " AND " +
+                                    AppContract.UserStatusEntry.COLUMN_NAME_ENTRY_OWNER + " = ?";
+                    String[] selectionArgsStatus = new String[] {fromUid,sharedPreferencesHelper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID)};
+
+                    ContentValues statusValues = new ContentValues();
+                    statusValues.put(AppContract.UserStatusEntry.COLUMN_NAME_STATUS_MSG, User.USER_STATUS_MSG_LIST_IN);
+
+                    context.getContentResolver().update(AppContract.UserStatusEntry.CONTENT_URI,
+                            statusValues,
+                            selectionStatus,
+                            selectionArgsStatus);
 
                 } else {
                     ContentValues values = new ContentValues();
@@ -424,15 +417,15 @@ public class ChatMessageProcessor implements ChatMessageListener {
 
                     context.getContentResolver().insert(AppContract.UserEntry.CONTENT_URI, values);
 
-                    //                    ContentValues statusValues = new ContentValues();
-                    //                    statusValues.put(AppContract.UserStatusEntry.COLUMN_NAME_ENTRY_UID, fromUid);
-                    //                    statusValues.put(AppContract.UserStatusEntry.COLUMN_NAME_ENTRY_OWNER, sharedPreferencesHelper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID));
-                    //                    statusValues.put(AppContract.UserStatusEntry.COLUMN_NAME_STATUS_MSG, User.USER_STATUS_MSG_LIST_IN);
-                    //                    statusValues.put(AppContract.UserStatusEntry.COLUMN_NAME_STATUS_NEARBY, User.USER_STATUS_NEARBY_LIST_OUT);
-                    //                    statusValues.put(AppContract.UserStatusEntry.COLUMN_NAME_STATUS_SHIELD, User.USER_STATUS_SHIELD_LIST_OUT);
-                    //                    statusValues.put(AppContract.UserStatusEntry.COLUMN_NAME_DISTANCE, 0);
-                    //                    statusValues.put(AppContract.UserStatusEntry.COLUMN_NAME_STATUS_REMARK, "");
-                    //                    context.getContentResolver().insert(AppContract.UserStatusEntry.CONTENT_URI, statusValues);
+                    ContentValues statusValues = new ContentValues();
+                    statusValues.put(AppContract.UserStatusEntry.COLUMN_NAME_ENTRY_UID, fromUid);
+                    statusValues.put(AppContract.UserStatusEntry.COLUMN_NAME_ENTRY_OWNER, sharedPreferencesHelper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID));
+                    statusValues.put(AppContract.UserStatusEntry.COLUMN_NAME_STATUS_MSG, User.USER_STATUS_MSG_LIST_IN);
+                    statusValues.put(AppContract.UserStatusEntry.COLUMN_NAME_STATUS_NEARBY, User.USER_STATUS_NEARBY_LIST_OUT);
+                    statusValues.put(AppContract.UserStatusEntry.COLUMN_NAME_STATUS_SHIELD, User.USER_STATUS_SHIELD_LIST_OUT);
+                    statusValues.put(AppContract.UserStatusEntry.COLUMN_NAME_DISTANCE, 0);
+                    statusValues.put(AppContract.UserStatusEntry.COLUMN_NAME_STATUS_REMARK, "");
+                    context.getContentResolver().insert(AppContract.UserStatusEntry.CONTENT_URI, statusValues);
                 }
 
                 String selection =
@@ -608,19 +601,19 @@ public class ChatMessageProcessor implements ChatMessageListener {
                             selection,
                             new String[]{from});
 
-                    //                    String selectionStatus =
-                    //                            AppContract.UserStatusEntry.COLUMN_NAME_ENTRY_UID + " = ?" +
-                    //                                    " AND " +
-                    //                                    AppContract.UserStatusEntry.COLUMN_NAME_ENTRY_OWNER + " = ?";
-                    //                    String[] selectionArgsStatus = new String[] {from,sharedPreferencesHelper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID)};
-                    //
-                    //                    ContentValues statusValues = new ContentValues();
-                    //                    statusValues.put(AppContract.UserStatusEntry.COLUMN_NAME_STATUS_MSG, User.USER_STATUS_MSG_LIST_IN);
-                    //
-                    //                    context.getContentResolver().update(AppContract.UserStatusEntry.CONTENT_URI,
-                    //                            statusValues,
-                    //                            selectionStatus,
-                    //                            selectionArgsStatus);
+                    String selectionStatus =
+                            AppContract.UserStatusEntry.COLUMN_NAME_ENTRY_UID + " = ?" +
+                            " AND " +
+                            AppContract.UserStatusEntry.COLUMN_NAME_ENTRY_OWNER + " = ?";
+                    String[] selectionArgsStatus = new String[] {from,sharedPreferencesHelper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID)};
+
+                    ContentValues statusValues = new ContentValues();
+                    statusValues.put(AppContract.UserStatusEntry.COLUMN_NAME_STATUS_MSG, User.USER_STATUS_MSG_LIST_IN);
+
+                    context.getContentResolver().update(AppContract.UserStatusEntry.CONTENT_URI,
+                            statusValues,
+                            selectionStatus,
+                            selectionArgsStatus);
 
                 } else {
                     values.put(AppContract.UserEntry.COLUMN_NAME_ENTRY_UID, from);
@@ -631,15 +624,15 @@ public class ChatMessageProcessor implements ChatMessageListener {
 
                     context.getContentResolver().insert(AppContract.UserEntry.CONTENT_URI, values);
 
-                    //                    ContentValues statusValues = new ContentValues();
-                    //                    statusValues.put(AppContract.UserStatusEntry.COLUMN_NAME_ENTRY_UID, from);
-                    //                    statusValues.put(AppContract.UserStatusEntry.COLUMN_NAME_ENTRY_OWNER, sharedPreferencesHelper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID));
-                    //                    statusValues.put(AppContract.UserStatusEntry.COLUMN_NAME_STATUS_MSG, User.USER_STATUS_MSG_LIST_IN);
-                    //                    statusValues.put(AppContract.UserStatusEntry.COLUMN_NAME_STATUS_NEARBY, User.USER_STATUS_NEARBY_LIST_OUT);
-                    //                    statusValues.put(AppContract.UserStatusEntry.COLUMN_NAME_STATUS_SHIELD, User.USER_STATUS_SHIELD_LIST_OUT);
-                    //                    statusValues.put(AppContract.UserStatusEntry.COLUMN_NAME_DISTANCE, 0);
-                    //                    statusValues.put(AppContract.UserStatusEntry.COLUMN_NAME_STATUS_REMARK, "");
-                    //                    context.getContentResolver().insert(AppContract.UserStatusEntry.CONTENT_URI, statusValues);
+                    ContentValues statusValues = new ContentValues();
+                    statusValues.put(AppContract.UserStatusEntry.COLUMN_NAME_ENTRY_UID, from);
+                    statusValues.put(AppContract.UserStatusEntry.COLUMN_NAME_ENTRY_OWNER, sharedPreferencesHelper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID));
+                    statusValues.put(AppContract.UserStatusEntry.COLUMN_NAME_STATUS_MSG, User.USER_STATUS_MSG_LIST_IN);
+                    statusValues.put(AppContract.UserStatusEntry.COLUMN_NAME_STATUS_NEARBY, User.USER_STATUS_NEARBY_LIST_OUT);
+                    statusValues.put(AppContract.UserStatusEntry.COLUMN_NAME_STATUS_SHIELD, User.USER_STATUS_SHIELD_LIST_OUT);
+                    statusValues.put(AppContract.UserStatusEntry.COLUMN_NAME_DISTANCE, 0);
+                    statusValues.put(AppContract.UserStatusEntry.COLUMN_NAME_STATUS_REMARK, "");
+                    context.getContentResolver().insert(AppContract.UserStatusEntry.CONTENT_URI, statusValues);
                 }
             }
 
@@ -737,19 +730,19 @@ public class ChatMessageProcessor implements ChatMessageListener {
             String owner = jsonObject.getString("UserId");
             String shield = jsonObject.getString("ShieldedObjectId");
 
-            //            String selectionStatus =
-            //                    AppContract.UserStatusEntry.COLUMN_NAME_ENTRY_UID + " = ?" +
-            //                            " AND " +
-            //                            AppContract.UserStatusEntry.COLUMN_NAME_ENTRY_OWNER + " = ?";
-            //            String[] selectionArgsStatus = new String[] {shield,owner};
-            //
-            //            ContentValues statusValues = new ContentValues();
-            //            statusValues.put(AppContract.UserStatusEntry.COLUMN_NAME_STATUS_SHIELD, User.USER_STATUS_SHIELD_LIST_IN);
+            String selectionStatus =
+                    AppContract.UserStatusEntry.COLUMN_NAME_ENTRY_UID + " = ?" +
+                            " AND " +
+                            AppContract.UserStatusEntry.COLUMN_NAME_ENTRY_OWNER + " = ?";
+            String[] selectionArgsStatus = new String[] {shield,owner};
 
-            //            context.getContentResolver().update(AppContract.UserStatusEntry.CONTENT_URI,
-            //                    statusValues,
-            //                    selectionStatus,
-            //                    selectionArgsStatus);
+            ContentValues statusValues = new ContentValues();
+            statusValues.put(AppContract.UserStatusEntry.COLUMN_NAME_STATUS_SHIELD, User.USER_STATUS_SHIELD_LIST_IN);
+
+            context.getContentResolver().update(AppContract.UserStatusEntry.CONTENT_URI,
+                    statusValues,
+                    selectionStatus,
+                    selectionArgsStatus);
 
             String selection =
                     AppContract.ShieldListView.COLUMN_NAME_UID + " = ? " +
@@ -825,19 +818,19 @@ public class ChatMessageProcessor implements ChatMessageListener {
             String owner = jsonObject.getString("UserId");
             String unshield = jsonObject.getString("ShieldedObjectId");
 
-            //            String selectionStatus =
-            //                    AppContract.UserStatusEntry.COLUMN_NAME_ENTRY_UID + " = ?" +
-            //                            " AND " +
-            //                            AppContract.UserStatusEntry.COLUMN_NAME_ENTRY_OWNER + " = ?";
-            //            String[] selectionArgsStatus = new String[] {unshield,owner};
-            //
-            //            ContentValues statusValues = new ContentValues();
-            //            statusValues.put(AppContract.UserStatusEntry.COLUMN_NAME_STATUS_SHIELD, User.USER_STATUS_SHIELD_LIST_OUT);
-            //
-            //            context.getContentResolver().update(AppContract.UserStatusEntry.CONTENT_URI,
-            //                    statusValues,
-            //                    selectionStatus,
-            //                    selectionArgsStatus);
+            String selectionStatus =
+                    AppContract.UserStatusEntry.COLUMN_NAME_ENTRY_UID + " = ?" +
+                    " AND " +
+                    AppContract.UserStatusEntry.COLUMN_NAME_ENTRY_OWNER + " = ?";
+            String[] selectionArgsStatus = new String[] {unshield,owner};
+
+            ContentValues statusValues = new ContentValues();
+            statusValues.put(AppContract.UserStatusEntry.COLUMN_NAME_STATUS_SHIELD, User.USER_STATUS_SHIELD_LIST_OUT);
+
+            context.getContentResolver().update(AppContract.UserStatusEntry.CONTENT_URI,
+                    statusValues,
+                    selectionStatus,
+                    selectionArgsStatus);
 
 
             String selection =
@@ -879,8 +872,6 @@ public class ChatMessageProcessor implements ChatMessageListener {
                 String message = params[1];
             if(messageType.equals("OnlineList")) {
                 processOnlineList(message);
-            } else if(messageType.equals("exitApp")) {
-                exitApp();
             } else if(messageType.equals("OnlineMsg")) {
                 processOnlineMessage(message, false);
             } else if(messageType.equals("OfflineMsgShort")) {
