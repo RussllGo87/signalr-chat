@@ -331,6 +331,7 @@ public class AdMaintainActivity extends AppCompatActivity implements View.OnClic
                                 public void run() {
                                     Toast.makeText(getApplicationContext(), "当前网络状况不好，数据已经保存到了本地", Toast.LENGTH_SHORT).show();
                                     ll_progress_bar_container.setVisibility(View.GONE);
+                                    navigateUp();
                                 }
                             });
                         }
