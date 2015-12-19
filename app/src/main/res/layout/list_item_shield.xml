@@ -6,10 +6,11 @@
     android:paddingLeft="@dimen/padding_left_list_item_buddy_container"
     android:paddingRight="@dimen/padding_left_list_item_buddy_container">
 
-    <ImageView android:id="@+id/iv_shield_portrait"
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/iv_shield_portrait"
         android:layout_width="32dp"
         android:layout_height="32dp"
-               android:src="@drawable/hale_default_user_portrait"/>
+        android:src="@drawable/hale_default_user_portrait"/>
 
     <TextView android:id="@+id/tv_shield_nickname"
         style="@style/SettingItemStyle"

@@ -833,13 +833,13 @@ public class ChatMessageProcessor implements ChatMessageListener {
                     selectionArgsStatus);
 
 
-            String selection =
-                    AppContract.ShieldEntry.COLUMN_NAME_SHIELD + " = ? " +
-                            "AND " +
-                            AppContract.ShieldEntry.COLUMN_NAME_OWNER + " = ?";
-
-            String[] selectionArgs = new String[]{unshield,owner};
-            context.getContentResolver().delete(AppContract.ShieldEntry.CONTENT_URI,selection,selectionArgs);
+//            String selection =
+//                    AppContract.ShieldEntry.COLUMN_NAME_SHIELD + " = ? " +
+//                            "AND " +
+//                            AppContract.ShieldEntry.COLUMN_NAME_OWNER + " = ?";
+//
+//            String[] selectionArgs = new String[]{unshield,owner};
+//            context.getContentResolver().delete(AppContract.ShieldEntry.CONTENT_URI,selection,selectionArgs);
 
             Intent intent = new Intent();
             intent.setAction(GlobalApplication.ACTION_INTENT_SHIELD_LIST_UPDATE);

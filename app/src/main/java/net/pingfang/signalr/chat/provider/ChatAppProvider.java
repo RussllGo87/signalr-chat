@@ -40,11 +40,14 @@ public class ChatAppProvider extends ContentProvider {
     private static final int ADVERTISEMENT_COLUMN_ID = 14;
     private static final int USER_STATUS = 15;
     private static final int USER_STATUS_COLUMN_ID = 16;
+    private static final int USER_STATUS_VIEW = 17;
+    private static final int USER_STATUS_VIEW_COLUMN_ID = 18 ;
 
 
     // 查询列集合
     private static HashMap<String, String> userProjectionMap;
     private static HashMap<String, String> userStatusProjectionMap;
+    private static HashMap<String, String> vUserStatusProjectionMap;
     private static HashMap<String, String> adProjectionMap;
     private static HashMap<String, String> messageProjectionMap;
     private static HashMap<String, String> recentProjectionMap;
@@ -55,22 +58,24 @@ public class ChatAppProvider extends ContentProvider {
     static {
         // Uri匹配工具类
         sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-        sUriMatcher.addURI(AppContract.AUTHORITY, "user", USER);
-        sUriMatcher.addURI(AppContract.AUTHORITY, "user/#", USER_COLUMN_ID);
+        sUriMatcher.addURI(AppContract.AUTHORITY, "entry_user", USER);
+        sUriMatcher.addURI(AppContract.AUTHORITY, "entry_user/#", USER_COLUMN_ID);
         sUriMatcher.addURI(AppContract.AUTHORITY, "message", MESSAGE);
         sUriMatcher.addURI(AppContract.AUTHORITY, "message/#", MESSAGE_COLUMN_ID);
-        sUriMatcher.addURI(AppContract.AUTHORITY, "recent", RECENT);
-        sUriMatcher.addURI(AppContract.AUTHORITY, "recent/#", RECENT_COLUMN_ID);
-        sUriMatcher.addURI(AppContract.AUTHORITY, "v_recent", RECENT_VIEW);
-        sUriMatcher.addURI(AppContract.AUTHORITY, "v_recent/#", RECENT_VIEW_COLUMN_ID);
+        sUriMatcher.addURI(AppContract.AUTHORITY, "entry_recent_contract", RECENT);
+        sUriMatcher.addURI(AppContract.AUTHORITY, "entry_recent_contract/#", RECENT_COLUMN_ID);
+        sUriMatcher.addURI(AppContract.AUTHORITY, "view_recent_contract", RECENT_VIEW);
+        sUriMatcher.addURI(AppContract.AUTHORITY, "view_recent_contract/#", RECENT_VIEW_COLUMN_ID);
         sUriMatcher.addURI(AppContract.AUTHORITY, "shield", SHIELD);
         sUriMatcher.addURI(AppContract.AUTHORITY, "shield/#", SHIELD_COLUMN_ID);
         sUriMatcher.addURI(AppContract.AUTHORITY, "v_shield", SHIELD_VIEW);
         sUriMatcher.addURI(AppContract.AUTHORITY, "v_shield/#", SHIELD_VIEW_COLUMN_ID);
-        sUriMatcher.addURI(AppContract.AUTHORITY, "advertisement", ADVERTISEMENT);
-        sUriMatcher.addURI(AppContract.AUTHORITY, "advertisement/#", ADVERTISEMENT_COLUMN_ID);
-        sUriMatcher.addURI(AppContract.AUTHORITY, "user_status", USER_STATUS);
-        sUriMatcher.addURI(AppContract.AUTHORITY, "user_status/#", USER_STATUS_COLUMN_ID);
+        sUriMatcher.addURI(AppContract.AUTHORITY, "entry_advertisement", ADVERTISEMENT);
+        sUriMatcher.addURI(AppContract.AUTHORITY, "entry_advertisement/#", ADVERTISEMENT_COLUMN_ID);
+        sUriMatcher.addURI(AppContract.AUTHORITY, "entry_user_status", USER_STATUS);
+        sUriMatcher.addURI(AppContract.AUTHORITY, "entry_user_status/#", USER_STATUS_COLUMN_ID);
+        sUriMatcher.addURI(AppContract.AUTHORITY, "view_user_status", USER_STATUS_VIEW);
+        sUriMatcher.addURI(AppContract.AUTHORITY, "view_user_status/#", USER_STATUS_VIEW_COLUMN_ID);
 
 
         // 实例化查询列集合
@@ -96,6 +101,18 @@ public class ChatAppProvider extends ContentProvider {
         userStatusProjectionMap.put(AppContract.UserStatusEntry.COLUMN_NAME_STATUS_SHIELD, AppContract.UserStatusEntry.COLUMN_NAME_STATUS_SHIELD);
         userStatusProjectionMap.put(AppContract.UserStatusEntry.COLUMN_NAME_DISTANCE, AppContract.UserStatusEntry.COLUMN_NAME_DISTANCE);
         userStatusProjectionMap.put(AppContract.UserStatusEntry.COLUMN_NAME_STATUS_REMARK, AppContract.UserStatusEntry.COLUMN_NAME_STATUS_REMARK);
+
+        vUserStatusProjectionMap = new HashMap<String, String>();
+        vUserStatusProjectionMap.put(AppContract.UserStatusView._ID, AppContract.UserStatusView._ID);
+        vUserStatusProjectionMap.put(AppContract.UserStatusView.COLUMN_NAME_UID, AppContract.UserStatusView.COLUMN_NAME_UID);
+        vUserStatusProjectionMap.put(AppContract.UserStatusView.COLUMN_NAME_NICKNAME, AppContract.UserStatusView.COLUMN_NAME_NICKNAME);
+        vUserStatusProjectionMap.put(AppContract.UserStatusView.COLUMN_NAME_PORTRAIT, AppContract.UserStatusView.COLUMN_NAME_PORTRAIT);
+        vUserStatusProjectionMap.put(AppContract.UserStatusView.COLUMN_NAME_OWNER, AppContract.UserStatusView.COLUMN_NAME_OWNER);
+        vUserStatusProjectionMap.put(AppContract.UserStatusView.COLUMN_NAME_STATUS_MSG, AppContract.UserStatusView.COLUMN_NAME_STATUS_MSG);
+        vUserStatusProjectionMap.put(AppContract.UserStatusView.COLUMN_NAME_STATUS_NEARBY, AppContract.UserStatusView.COLUMN_NAME_STATUS_NEARBY);
+        vUserStatusProjectionMap.put(AppContract.UserStatusView.COLUMN_NAME_STATUS_SHIELD, AppContract.UserStatusView.COLUMN_NAME_STATUS_SHIELD);
+        vUserStatusProjectionMap.put(AppContract.UserStatusView.COLUMN_NAME_DISTANCE, AppContract.UserStatusView.COLUMN_NAME_DISTANCE);
+        vUserStatusProjectionMap.put(AppContract.UserStatusView.COLUMN_NAME_STATUS_REMARK, AppContract.UserStatusView.COLUMN_NAME_STATUS_REMARK);
 
         adProjectionMap = new HashMap<String, String>();
         adProjectionMap.put(AppContract.AdvertisementEntry._ID, AppContract.AdvertisementEntry._ID);
@@ -210,6 +227,25 @@ public class ChatAppProvider extends ContentProvider {
                 qb.appendWhere(AppContract.UserStatusEntry._ID + "=" + uri.getPathSegments().get(1));
                 if (TextUtils.isEmpty(sortOrder)) {
                     orderBy = AppContract.UserStatusEntry.DEFAULT_SORT_ORDER;
+                } else {
+                    orderBy = sortOrder;
+                }
+                break;
+            case USER_STATUS_VIEW:
+                qb.setTables(AppContract.UserStatusView.VIEW_NAME);
+                qb.setProjectionMap(vUserStatusProjectionMap);
+                if (TextUtils.isEmpty(sortOrder)) {
+                    orderBy = AppContract.UserStatusView.DEFAULT_SORT_ORDER;
+                } else {
+                    orderBy = sortOrder;
+                }
+                break;
+            case USER_STATUS_VIEW_COLUMN_ID:
+                qb.setTables(AppContract.UserStatusView.VIEW_NAME);
+                qb.setProjectionMap(vUserStatusProjectionMap);
+                qb.appendWhere(AppContract.UserStatusView._ID + "=" + uri.getPathSegments().get(1));
+                if (TextUtils.isEmpty(sortOrder)) {
+                    orderBy = AppContract.UserStatusView.DEFAULT_SORT_ORDER;
                 } else {
                     orderBy = sortOrder;
                 }

@@ -51,6 +51,29 @@ public class AppDbHelper extends SQLiteOpenHelper {
     private static final String SQL_DELETE_ENTRY_USER_STATUS =
             "DROP TABLE IF EXISTS " + AppContract.UserStatusEntry.TABLE_NAME;
 
+    private static final String SQL_CREATE_VIEW_USER_STATUS =
+            "CREATE VIEW IF NOT EXISTS " + AppContract.UserStatusView.VIEW_NAME + " AS " +
+                    "SELECT " +
+                    "user_status." + AppContract.UserStatusEntry._ID + " AS " + AppContract.UserStatusView._ID + COMMA_SEP +
+                    "user." + AppContract.UserEntry.COLUMN_NAME_ENTRY_UID + " AS " + AppContract.UserStatusView.COLUMN_NAME_UID + COMMA_SEP +
+                    "user." + AppContract.UserEntry.COLUMN_NAME_NICK_NAME + " AS " + AppContract.UserStatusView.COLUMN_NAME_NICKNAME + COMMA_SEP +
+                    "user." + AppContract.UserEntry.COLUMN_NAME_PORTRAIT + " AS " + AppContract.UserStatusView.COLUMN_NAME_PORTRAIT + COMMA_SEP +
+                    "user_status." + AppContract.UserStatusEntry.COLUMN_NAME_ENTRY_OWNER + " AS " + AppContract.UserStatusView.COLUMN_NAME_OWNER + COMMA_SEP +
+                    "user_status." + AppContract.UserStatusEntry.COLUMN_NAME_STATUS_MSG + " AS " + AppContract.UserStatusView.COLUMN_NAME_STATUS_MSG + COMMA_SEP +
+                    "user_status." + AppContract.UserStatusEntry.COLUMN_NAME_STATUS_NEARBY + " AS " + AppContract.UserStatusView.COLUMN_NAME_STATUS_NEARBY + COMMA_SEP +
+                    "user_status." + AppContract.UserStatusEntry.COLUMN_NAME_STATUS_SHIELD + " AS " + AppContract.UserStatusView.COLUMN_NAME_STATUS_SHIELD + COMMA_SEP +
+                    "user_status." + AppContract.UserStatusEntry.COLUMN_NAME_DISTANCE + " AS " + AppContract.UserStatusView.COLUMN_NAME_DISTANCE + COMMA_SEP +
+                    "user_status." + AppContract.UserStatusEntry.COLUMN_NAME_STATUS_REMARK + " AS " + AppContract.UserStatusView.COLUMN_NAME_STATUS_REMARK +
+                    " FROM " +
+                    AppContract.UserEntry.TABLE_NAME + " AS user, " +
+                    AppContract.UserStatusEntry.TABLE_NAME + " AS user_status " +
+                    "WHERE " +
+                    "user." + AppContract.UserEntry.COLUMN_NAME_ENTRY_UID + " = " +
+                    "user_status." + AppContract.UserStatusEntry.COLUMN_NAME_ENTRY_UID;
+
+    private static final String SQL_DELETE_VIEW_USER_STATUS =
+            "DROP VIEW IF EXISTS " + AppContract.UserStatusView.VIEW_NAME;
+
     private static final String SQL_CREATE_ENTRY_ADVERTISEMENT =
             "CREATE TABLE " + AppContract.AdvertisementEntry.TABLE_NAME + "(" +
                     AppContract.AdvertisementEntry._ID + INTEGER_TYPE + PRIMARY_KEY + COMMA_SEP +
@@ -117,8 +140,7 @@ public class AppDbHelper extends SQLiteOpenHelper {
             "user_status." + AppContract.UserStatusEntry.COLUMN_NAME_STATUS_REMARK + " AS " + AppContract.RecentContactView.COLUMN_NAME_STATUS_REMARK + COMMA_SEP +
             "recent." + AppContract.RecentContactEntry.COLUMN_NAME_CONTENT + " AS " + AppContract.RecentContactView.COLUMN_NAME_CONTENT + COMMA_SEP +
             "recent." + AppContract.RecentContactEntry.COLUMN_NAME_UPDATE_TIME + " AS " + AppContract.RecentContactView.COLUMN_NAME_UPDATE_TIME + COMMA_SEP +
-            "recent." + AppContract.RecentContactEntry.COLUMN_NAME_COUNT + " AS " + AppContract.RecentContactView.COLUMN_NAME_COUNT + COMMA_SEP +
-            "recent." + AppContract.RecentContactEntry.COLUMN_NAME_OWNER + " AS " + AppContract.RecentContactView.COLUMN_NAME_OWNER + " " +
+            "recent." + AppContract.RecentContactEntry.COLUMN_NAME_COUNT + " AS " + AppContract.RecentContactView.COLUMN_NAME_COUNT + " " +
             "FROM " +
             AppContract.UserEntry.TABLE_NAME + " AS user, " +
             AppContract.UserStatusEntry.TABLE_NAME + " AS user_status, " +
@@ -138,6 +160,12 @@ public class AppDbHelper extends SQLiteOpenHelper {
             "DROP VIEW IF EXISTS " + AppContract.RecentContactView.VIEW_NAME;
 
 
+    /************************************
+     ************************************
+     **** 以下表与视图已过时 ***************
+     ************************************
+     * **************************
+     * */
     private static final String SQL_CREATE_ENTRY_SHIELD =
             "CREATE TABLE " + AppContract.ShieldEntry.TABLE_NAME + " (" +
             AppContract.ShieldEntry._ID + INTEGER_TYPE + PRIMARY_KEY + COMMA_SEP +
@@ -183,6 +211,7 @@ public class AppDbHelper extends SQLiteOpenHelper {
         db.execSQL(SQL_CREATE_ENTRY_RECENT);
         db.execSQL(SQL_CREATE_ENTRY_SHIELD);
 
+        db.execSQL(SQL_CREATE_VIEW_USER_STATUS);
         db.execSQL(SQL_CREATE_VIEW_RECENT);
         db.execSQL(SQL_CREATE_VIEW_LIST_SHIELD);
     }
@@ -191,6 +220,7 @@ public class AppDbHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
         db.execSQL(SQL_DELETE_VIEW_LIST_SHIELD);
+        db.execSQL(SQL_DELETE_VIEW_USER_STATUS);
         db.execSQL(SQL_DELETE_VIEW_RECENT);
 
         db.execSQL(SQL_DELETE_ENTRY_SHIELD);
