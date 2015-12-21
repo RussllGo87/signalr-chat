@@ -39,8 +39,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.siyamed.shapeimageview.BubbleImageView;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
 
 import net.pingfang.signalr.chat.R;
 import net.pingfang.signalr.chat.constant.app.AppConstants;
@@ -50,6 +53,8 @@ import net.pingfang.signalr.chat.database.User;
 import net.pingfang.signalr.chat.message.ChatMessageProcessor;
 import net.pingfang.signalr.chat.message.MessageConstant;
 import net.pingfang.signalr.chat.message.MessageConstructor;
+import net.pingfang.signalr.chat.net.HttpBaseCallback;
+import net.pingfang.signalr.chat.net.OkHttpCommonUtil;
 import net.pingfang.signalr.chat.service.ChatService;
 import net.pingfang.signalr.chat.util.CommonTools;
 import net.pingfang.signalr.chat.util.DateTimeUtil;
@@ -58,17 +63,31 @@ import net.pingfang.signalr.chat.util.GlobalApplication;
 import net.pingfang.signalr.chat.util.MediaFileUtils;
 import net.pingfang.signalr.chat.util.SharedPreferencesHelper;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
 public class ChatActivity extends AppCompatActivity implements View.OnClickListener{
 
+    public static final String TAG = ChatActivity.class.getSimpleName();
+
+    public static final String URL_LOAD_OFFLINE_MSG = GlobalApplication.URL_WEB_API_HOST + "/api/WebAPI/User/RequestOfflineMsg";
+    public static final String KEY_LOAD_OFFLINE_MSG_TO = "Receiver";
+    public static final String KEY_LOAD_OFFLINE_MSG_FROM = "Sender";
+    public static final String KEY_LOAD_OFFLINE_MSG_CURRENT_PAGE = "Page";
+    public static final String KEY_LOAD_OFFLINE_MSG_PAGE_SIZE = "Rows";
+
     TextView btn_activity_back;
     TextView tv_activity_title;
     TextView tv_offline_message;
     ScrollView sv_message_container;
     LinearLayout ll_message_container;
+
+    LinearLayout ll_record_voice_indicator;
 
     ImageView iv_quick_voice_txt_switcher;
     Button btn_voice_record;
@@ -120,10 +139,10 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             mService = binder.getService();
             mBound = true;
 
-            String offlineMessageReq = MessageConstructor.constructOfflineMsgReq(buddyUid, uid, 1, 10);
-            Log.d("ChatActivity", offlineMessageReq);
-
-            mService.sendMessage("RequestOfflineMsg", offlineMessageReq);
+//            String offlineMessageReq = MessageConstructor.constructOfflineMsgReq(buddyUid, uid, 1, 10);
+//            Log.d("ChatActivity", offlineMessageReq);
+//
+//            mService.sendMessage("RequestOfflineMsg", offlineMessageReq);
         }
 
         @Override
@@ -150,8 +169,151 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
         initView();
         updateMessageListStatus();
-        loadLocalMessage();
-        initCommunicate();
+        loadOfflineMsg();
+    }
+
+    private void loadOfflineMsg() {
+        OkHttpCommonUtil okHttpCommonUtil = OkHttpCommonUtil.newInstance(getApplicationContext());
+        okHttpCommonUtil.getRequest(
+                URL_LOAD_OFFLINE_MSG,
+                new OkHttpCommonUtil.Param[] {
+                    new OkHttpCommonUtil.Param(KEY_LOAD_OFFLINE_MSG_TO, uid),
+                    new OkHttpCommonUtil.Param(KEY_LOAD_OFFLINE_MSG_FROM, buddyUid),
+                    new OkHttpCommonUtil.Param(KEY_LOAD_OFFLINE_MSG_CURRENT_PAGE, 1),
+                    new OkHttpCommonUtil.Param(KEY_LOAD_OFFLINE_MSG_PAGE_SIZE, 10)
+                },
+                new HttpBaseCallback() {
+
+                    @Override
+                    public void onFailure(Request request, IOException e) {
+                        super.onFailure(request, e);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                loadLocalMessage();
+                                initCommunicate();
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onResponse(Response response) throws IOException {
+                        String responseStr = response.body().string();
+                        Log.d(TAG, "URL_LOAD_OFFLINE_MSG from == " + buddyUid);
+                        Log.d(TAG, "URL_LOAD_OFFLINE_MSG return ==" + responseStr);
+                        JSONArray jsonArray;
+                        try {
+                            jsonArray = new JSONArray(responseStr);
+                            ArrayList<Uri> uriArrayList = new ArrayList<>();
+                            for(int i = 0; i < jsonArray.length(); i++) {
+                                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                String fromUid = jsonObject.getString("Sender");
+                                String to = jsonObject.getString("Receiver");
+                                String owner = to;
+                                String contentType = jsonObject.getString("MessageType");
+                                String content = jsonObject.getString("Contents");
+                                String datetime = jsonObject.getString("SendTime");
+                                datetime = DateTimeUtil.convertServerTime(datetime);
+
+                                // 消息存储
+                                ChatMessageManager chatMessageManager = new ChatMessageManager(getApplicationContext());
+                                Uri messageUri = null;
+                                ContentValues values = new ContentValues();
+                                if(!TextUtils.isEmpty(contentType)) {
+                                    if(contentType.equals("Text")) {
+                                        messageUri = chatMessageManager.insert(fromUid, to, owner, MessageConstant.MESSAGE_TYPE_OFF_LINE,
+                                                contentType, content, datetime, MessageConstant.MESSAGE_STATUS_READ);
+                                        values.put(AppContract.RecentContactEntry.COLUMN_NAME_CONTENT, content);
+                                    } else if(contentType.equals("Picture")){
+                                        String fileExtension = "png";
+                                        String filePath = MediaFileUtils.processReceiveFile(getApplicationContext(), content,
+                                                MessageConstant.MESSAGE_FILE_TYPE_IMG, fileExtension);
+                                        messageUri = chatMessageManager.insert(fromUid, to, owner, MessageConstant.MESSAGE_TYPE_OFF_LINE,
+                                                contentType, filePath, datetime, MessageConstant.MESSAGE_STATUS_READ);
+                                        values.put(AppContract.RecentContactEntry.COLUMN_NAME_CONTENT, getApplicationContext().getResources().getString(R.string.content_type_pic));
+                                    } else if(contentType.equals("Audio")) {
+                                        String fileExtension = GlobalApplication.VOICE_FILE_NAME_SUFFIX;
+                                        String filePath = MediaFileUtils.processReceiveFile(getApplicationContext(), content,
+                                                MessageConstant.MESSAGE_FILE_TYPE_AUDIO, fileExtension);
+                                        messageUri = chatMessageManager.insert(fromUid, to, owner, MessageConstant.MESSAGE_TYPE_OFF_LINE,
+                                                contentType, filePath, datetime, MessageConstant.MESSAGE_STATUS_READ);
+                                        values.put(AppContract.RecentContactEntry.COLUMN_NAME_CONTENT, getApplicationContext().getResources().getString(R.string.content_type_voice));
+                                    }
+                                }
+
+                                //  最近消息记录
+                                if(messageUri != null) {
+                                    uriArrayList.add(messageUri);
+
+                                    String selection =
+                                            AppContract.RecentContactEntry.COLUMN_NAME_BUDDY + " = ? " +
+                                                    "AND " +
+                                                    AppContract.RecentContactEntry.COLUMN_NAME_OWNER + " = ?";
+                                    Cursor newCursor = getApplicationContext().getContentResolver().query(AppContract.RecentContactEntry.CONTENT_URI,
+                                            null, selection, new String[]{fromUid,to}, null);
+
+                                    if(newCursor != null && newCursor.getCount() > 0 && newCursor.moveToFirst()){
+                                        int rowId = newCursor.getInt(newCursor.getColumnIndex(AppContract.RecentContactEntry._ID));
+                                        Uri appendUri = Uri.withAppendedPath(AppContract.RecentContactEntry.CONTENT_URI, Integer.toString(rowId));
+
+                                        int currentCount = newCursor.getInt(newCursor.getColumnIndex(AppContract.RecentContactEntry.COLUMN_NAME_COUNT));
+
+                                        values.put(AppContract.RecentContactEntry.COLUMN_NAME_UPDATE_TIME, datetime);
+                                        values.put(AppContract.RecentContactEntry.COLUMN_NAME_COUNT,(currentCount -1));
+
+                                        Log.d("ChatMessageProcessor", "processOfflineMessageList currentCount == " + currentCount);
+
+                                        getApplicationContext().getContentResolver().update(appendUri, values, null, null);
+
+                                        newCursor.close();
+                                    } else {
+                                        values.put(AppContract.RecentContactEntry.COLUMN_NAME_BUDDY,fromUid);
+                                        values.put(AppContract.RecentContactEntry.COLUMN_NAME_UPDATE_TIME, datetime);
+                                        values.put(AppContract.RecentContactEntry.COLUMN_NAME_OWNER,to);
+                                        values.put(AppContract.RecentContactEntry.COLUMN_NAME_COUNT,0);
+                                        getApplicationContext().getContentResolver().insert(AppContract.RecentContactEntry.CONTENT_URI,values);
+                                    }
+                                }
+                            }
+
+                            if( jsonArray.length() == 0) {
+                                String selection =
+                                        AppContract.RecentContactEntry.COLUMN_NAME_BUDDY + " = ? " +
+                                        "AND " +
+                                        AppContract.RecentContactEntry.COLUMN_NAME_OWNER + " = ?";
+                                ContentValues values = new ContentValues();
+                                values.put(AppContract.RecentContactEntry.COLUMN_NAME_COUNT,0);
+
+                                getApplicationContext().getContentResolver().update(
+                                        AppContract.RecentContactEntry.CONTENT_URI,
+                                        values,
+                                        selection,
+                                        new String[]{buddyUid,uid});
+                            }
+
+                            Intent intent = new Intent();
+                            intent.setAction(GlobalApplication.ACTION_INTENT_OFFLINE_MESSAGE_LIST_INCOMING);
+                            intent.putParcelableArrayListExtra("message", uriArrayList);
+                            getApplicationContext().sendBroadcast(intent);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(getApplicationContext(),R.string.toast_load_offline_msg_invalidate,Toast.LENGTH_LONG).show();
+                                }
+                            });
+                        } finally {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    loadLocalMessage();
+                                    initCommunicate();
+                                }
+                            });
+                        }
+                    }
+                });
     }
 
     private void initView() {
@@ -166,6 +328,8 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         sv_message_container = (ScrollView) findViewById(R.id.sv_message_container);
         ll_message_container = (LinearLayout) findViewById(R.id.ll_message_container);
         ll_message_container.setOnClickListener(this);
+
+        ll_record_voice_indicator = (LinearLayout) findViewById(R.id.ll_record_voice_indicator);
 
         iv_quick_voice_txt_switcher = (ImageView) findViewById(R.id.iv_quick_voice_txt_switcher);
         iv_quick_voice_txt_switcher.setOnClickListener(this);
@@ -490,7 +654,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void startRecording() {
-
+        ll_record_voice_indicator.setVisibility(View.VISIBLE);
         mFileName = MediaFileUtils.genarateFilePath(getApplicationContext(),
                 Environment.DIRECTORY_MUSIC, "voice", GlobalApplication.VOICE_FILE_NAME_SUFFIX);
 
@@ -517,6 +681,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void stopRecording() {
+        ll_record_voice_indicator.setVisibility(View.GONE);
         if(mStartRecording) {
             try {
                 mRecorder.stop();
@@ -792,13 +957,15 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                         mPlayer = null;
                     }
                     mPlayer = MediaPlayer.create(getApplicationContext(), fileUri);
-                    mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                        @Override
-                        public void onCompletion(MediaPlayer mp) {
-                            mp.release();
-                        }
-                    });
-                    mPlayer.start();
+                    if(mPlayer != null) {
+                        mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                            @Override
+                            public void onCompletion(MediaPlayer mp) {
+                                mp.release();
+                            }
+                        });
+                        mPlayer.start();
+                    }
                 }
             });
         } else {
@@ -822,13 +989,16 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                         mPlayer = null;
                     }
                     mPlayer = MediaPlayer.create(getApplicationContext(), fileUri);
-                    mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                        @Override
-                        public void onCompletion(MediaPlayer mp) {
-                            mp.release();
-                        }
-                    });
-                    mPlayer.start();
+                    if(mPlayer != null) {
+                        mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                            @Override
+                            public void onCompletion(MediaPlayer mp) {
+                                mp.release();
+                            }
+                        });
+                        mPlayer.start();
+                    }
+
                 }
             });
         }
@@ -960,15 +1130,18 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    /**
+     * 将存储本地的所有未读消息改为已读状态，并且更新未读消息数目
+     */
     private class UpdateMsgListStatus extends AsyncTask<String, String, String> {
         @Override
         protected String doInBackground(String... params) {
             String selection =
                     AppContract.ChatMessageEntry.COLUMN_NAME_M_OWNER + " = ? " +
-                            " AND " +
-                            AppContract.ChatMessageEntry.COLUMN_NAME_ENTRY_M_FROM + " = ? " +
-                            " AND " +
-                            AppContract.ChatMessageEntry.COLUMN_NAME_M_STATUS + " = ?";
+                    " AND " +
+                    AppContract.ChatMessageEntry.COLUMN_NAME_ENTRY_M_FROM + " = ? " +
+                    " AND " +
+                    AppContract.ChatMessageEntry.COLUMN_NAME_M_STATUS + " = ?";
             String owner = params[0];
             String buddy = params[1];
 
@@ -981,8 +1154,8 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             // 获取最近消息表未读消息数
             String selectionRecent =
                     AppContract.RecentContactView.COLUMN_NAME_OWNER + " = ? " +
-                            "AND " +
-                            AppContract.RecentContactView.COLUMN_NAME_UID + " = ?";
+                    "AND " +
+                    AppContract.RecentContactView.COLUMN_NAME_UID + " = ?";
             Cursor cursor = getApplicationContext().getContentResolver().query(
                     AppContract.RecentContactView.CONTENT_URI,
                     null,
@@ -997,7 +1170,8 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
             // 更新最近消息列表未读消息数
             int total = count - update;
-            String selectionUpdate = AppContract.RecentContactEntry.COLUMN_NAME_OWNER + " = ? " +
+            String selectionUpdate =
+                    AppContract.RecentContactEntry.COLUMN_NAME_OWNER + " = ? " +
                     "AND " +
                     AppContract.RecentContactEntry.COLUMN_NAME_BUDDY + " = ?";
             if (count > update) {

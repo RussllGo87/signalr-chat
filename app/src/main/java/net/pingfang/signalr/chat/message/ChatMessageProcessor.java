@@ -14,6 +14,7 @@ import net.pingfang.signalr.chat.R;
 import net.pingfang.signalr.chat.constant.app.AppConstants;
 import net.pingfang.signalr.chat.database.AppContract;
 import net.pingfang.signalr.chat.database.ChatMessageManager;
+import net.pingfang.signalr.chat.database.DbUtils;
 import net.pingfang.signalr.chat.database.User;
 import net.pingfang.signalr.chat.database.UserManager;
 import net.pingfang.signalr.chat.util.DateTimeUtil;
@@ -428,6 +429,22 @@ public class ChatMessageProcessor implements ChatMessageListener {
                     context.getContentResolver().insert(AppContract.UserStatusEntry.CONTENT_URI, statusValues);
                 }
 
+
+                String selectionCountOnlineMsg =
+                        AppContract.ChatMessageEntry.COLUMN_NAME_M_OWNER + " = ? " +
+                        " AND " +
+                        AppContract.ChatMessageEntry.COLUMN_NAME_ENTRY_M_FROM + " = ? " +
+                        " AND " +
+                        AppContract.ChatMessageEntry.COLUMN_NAME_M_STATUS + " = ?";
+
+
+                // 查询未读非离线消息数
+                int countOnlineMsg = DbUtils.count(
+                        context,
+                        AppContract.ChatMessageEntry.CONTENT_URI,
+                        selectionCountOnlineMsg,
+                        new String[]{toUid, fromUid, String.valueOf(MessageConstant.MESSAGE_STATUS_NOT_READ)});
+
                 String selection =
                         AppContract.RecentContactEntry.COLUMN_NAME_BUDDY + " = ? " +
                                 "AND " +
@@ -443,10 +460,9 @@ public class ChatMessageProcessor implements ChatMessageListener {
                     int rowId = newCursor.getInt(newCursor.getColumnIndex(AppContract.RecentContactEntry._ID));
                     Uri appendUri = Uri.withAppendedPath(AppContract.RecentContactEntry.CONTENT_URI, Integer.toString(rowId));
 
-                    int currentCount = newCursor.getInt(newCursor.getColumnIndex(AppContract.RecentContactEntry.COLUMN_NAME_COUNT));
-
+                    recentValues.put(AppContract.RecentContactEntry.COLUMN_NAME_CONTENT, "[新的离线消息]");
                     recentValues.put(AppContract.RecentContactEntry.COLUMN_NAME_UPDATE_TIME, DateTimeUtil.TimeConvertString());
-                    recentValues.put(AppContract.RecentContactEntry.COLUMN_NAME_COUNT, (currentCount + count));
+                    recentValues.put(AppContract.RecentContactEntry.COLUMN_NAME_COUNT, (countOnlineMsg + count));
                     context.getContentResolver().update(appendUri, recentValues, null, null);
 
                     newCursor.close();

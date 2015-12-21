@@ -225,6 +225,8 @@
     <string name="date_display_today">今天</string>
     <string name="date_display_yesterday">昨天</string>
     <string name="date_display_error">日期显示出错</string>
+    <string name="toast_load_offline_msg_error">网络异常，请检查你的网络</string>
+    <string name="toast_load_offline_msg_invalidate">获取的离线消息数据不合法</string>
 
     <!-- 群发消息 -->
     <string name="title_activity_bulk_msg">群发消息</string>
