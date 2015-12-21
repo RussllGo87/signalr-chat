@@ -195,11 +195,6 @@ public class ChatService extends Service {
     }
 
     public void destroy() {
-
-//        if(messageListener != null) {
-//            messageListener.onMessageReceive("exitApp","");
-//        }
-
         if(connection != null && connection.getState() == ConnectionState.Connected) {
             setIsReconnectWhenDisconnect(false);
             connection.disconnect();

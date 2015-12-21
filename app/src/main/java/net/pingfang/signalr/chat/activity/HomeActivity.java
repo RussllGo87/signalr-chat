@@ -295,7 +295,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void logout() {
-        helper.clearKey(AppConstants.KEY_SYS_CURRENT_UID);
+
         //        helper.clearKey(AppConstants.KEY_SYS_CURRENT_NICKNAME);
         //        helper.clearKey(AppConstants.KEY_SYS_CURRENT_PORTRAIT);
 
@@ -335,11 +335,16 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         if (mBound) {
-            mService.destroy();
-            unbindService(mConnection);
-            mBound = false;
+
+            String exitMsg = "{UserId:" + "\"" + helper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID) +"\"" +  "}";
+            mService.sendMessage("OffLineNotify",exitMsg);
+
+//            mService.destroy();
+//            unbindService(mConnection);
+//            mBound = false;
         }
         stopService(new Intent(getApplicationContext(), ChatService.class));
+        helper.clearKey(AppConstants.KEY_SYS_CURRENT_UID);
 
         Intent exitIntent = new Intent();
         exitIntent.setClass(getApplicationContext(), LoginActivity.class);

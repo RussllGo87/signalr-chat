@@ -145,7 +145,6 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                 startActivity(intent);
                 break;
             case R.id.tv_settings_item_exit:
-                sharedPreferencesHelper.clearKey(AppConstants.KEY_SYS_CURRENT_UID);
                 //                sharedPreferencesHelper.clearKey(AppConstants.KEY_SYS_CURRENT_NICKNAME);
                 //                sharedPreferencesHelper.clearKey(AppConstants.KEY_SYS_CURRENT_PORTRAIT);
 
@@ -188,15 +187,20 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                 }
 
                 if (mBound) {
-                    mService.destroy();
-                    unbindService(mConnection);
-                    mBound = false;
+                    String exitMsg = "{UserId:" + "\"" + sharedPreferencesHelper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID) +"\"" +  "}";
+                    mService.sendMessage("OffLineNotify",exitMsg);
+
+//                    mService.destroy();
+//                    unbindService(mConnection);
+//                    mBound = false;
                 }
                 stopService(new Intent(getApplicationContext(),ChatService.class));
+                sharedPreferencesHelper.clearKey(AppConstants.KEY_SYS_CURRENT_UID);
+
 
                 Intent exitIntent = new Intent();
                 exitIntent.setClass(getApplicationContext(), LoginActivity.class);
-                exitIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK| IntentCompat.FLAG_ACTIVITY_CLEAR_TASK);
+                exitIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | IntentCompat.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(exitIntent);
                 finish();
                 break;
