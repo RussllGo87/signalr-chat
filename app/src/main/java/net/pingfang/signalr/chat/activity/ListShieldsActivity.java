@@ -187,6 +187,20 @@ public class ListShieldsActivity extends AppCompatActivity implements View.OnCli
 
                             }
 
+                            if(!(jsonArray.length() > 0)) {
+                                String selectionStatus =
+                                        AppContract.UserStatusEntry.COLUMN_NAME_ENTRY_OWNER + " = ?";
+                                String[] selectionArgsStatus = new String[]{sharedPreferencesHelper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID)};
+
+                                ContentValues statusValues = new ContentValues();
+                                statusValues.put(AppContract.UserStatusEntry.COLUMN_NAME_STATUS_SHIELD, User.USER_STATUS_SHIELD_LIST_OUT);
+
+                                getApplicationContext().getContentResolver().update(AppContract.UserStatusEntry.CONTENT_URI,
+                                        statusValues,
+                                        selectionStatus,
+                                        selectionArgsStatus);
+                            }
+
                             Intent intent = new Intent();
                             intent.setAction(GlobalApplication.ACTION_INTENT_SHIELD_LIST_UPDATE);
                             getApplicationContext().sendBroadcast(intent);
