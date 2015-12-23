@@ -83,6 +83,12 @@
             android:screenOrientation="portrait" >
         </activity>
         <activity
+            android:name=".activity.PwdForgetActivity"
+            android:label="@string/title_activity_pwd_forget"
+            android:theme="@style/AppMainTheme"
+            android:screenOrientation="portrait">
+        </activity>
+        <activity
             android:name=".activity.HomeActivity"
             android:label="@string/title_activity_home"
             android:screenOrientation="portrait" >
@@ -263,9 +269,9 @@
         </activity>
         <activity
             android:name=".activity.AdUploadListActivity"
-            android:screenOrientation="portrait"
             android:label="@string/title_activity_ad_upload_list"
             android:parentActivityName=".activity.HomeActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppMainTheme" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -273,9 +279,9 @@
         </activity>
         <activity
             android:name=".activity.AdUploadDetailActivity"
-            android:screenOrientation="portrait"
             android:label="@string/title_activity_ad_upload_detail"
             android:parentActivityName=".activity.AdUploadListActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppMainTheme" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -283,16 +289,14 @@
         </activity>
         <activity
             android:name=".activity.RemarkUpdateActivity"
-            android:screenOrientation="portrait"
             android:label="@string/title_activity_remark_update"
             android:parentActivityName=".activity.HomeActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppMainTheme" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="net.pingfang.signalr.chat.activity.HomeActivity" />
         </activity>
-
-
 
         <service
             android:name="com.baidu.location.f"

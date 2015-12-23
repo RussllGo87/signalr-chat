@@ -44,6 +44,15 @@
     <string name="weibosdk_demo_toast_obtain_token_failed">获取 Token 失败</string>
     <string name="error_msg_wechat_not_installed">你还没有安装微信</string>
 
+    <!-- 忘记密码 -->
+    <string name="title_activity_pwd_forget">忘记密码</string>
+    <string name="toast_pwd_forget_load_validate_code_error">获取验证码失败,请检查你的网络</string>
+    <string name="toast_pwd_forget_load_validate_code_ok">验证码获取成功,请注意短信查收</string>
+    <string name="toast_pwd_forget_load_validate_code_invalidate">获取验证码请求,返回不合法</string>
+    <string name="toast_pwd_forget_validate_code_empty">验证码不能为空</string>
+    <string name="toast_pwd_forget_update_pwd_error">提交新密码失败,请检查你的网络</string>
+    <string name="toast_pwd_forget_update_pwd_ok">新密码提交成功</string>
+    <string name="toast_pwd_forget_update_pwd_invalidate">新密码提交请求,返回不合法</string>
 
     <!-- 注册页 -->
     <string name="title_activity_register">注册</string>

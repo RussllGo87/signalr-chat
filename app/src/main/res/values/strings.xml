@@ -27,6 +27,9 @@
     <string name="btn_login_pattern_weibo">Weibo</string>
     <string name="error_msg_wechat_not_installed">Wechat App not installed</string>
 
+    <!-- 忘记密码 -->
+    <string name="title_activity_pwd_forget">PwdForgetActivity</string>
+
     <!-- 注册页 -->
     <string name="title_activity_register">RegisterActivity</string>
     <string name="btn_step_previous">Back</string>
@@ -180,6 +183,7 @@
 
     <string name="image_get_file_user_canceled">REQUEST_IMAGE_GET canceled</string>
     <string name="image_get_file_user_error">REQUEST_IMAGE_GET error</string>
+
 
 
 </resources>

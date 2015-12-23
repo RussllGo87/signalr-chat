@@ -29,33 +29,44 @@
 
     </RelativeLayout>
 
-    <EditText android:id="@+id/et_account_pwd_now"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:layout_marginTop="10dp"
-              android:hint="当前密码"
-              android:inputType="textPassword"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin">
 
-    <EditText android:id="@+id/et_account_pwd_update"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:layout_marginTop="5dp"
-              android:hint="新密码"
-              android:inputType="textPassword"/>
+        <EditText android:id="@+id/et_account_pwd_now"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:layout_marginTop="10dp"
+                  android:hint="当前密码"
+                  android:inputType="textPassword"/>
 
-    <EditText android:id="@+id/et_account_pwd_update_retype"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:layout_marginTop="5dp"
-              android:hint="再次输入新密码"
-              android:inputType="textPassword"/>
+        <EditText android:id="@+id/et_account_pwd_update"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:layout_marginTop="5dp"
+                  android:hint="新密码"
+                  android:inputType="textPassword"/>
 
-    <Button android:id="@+id/btn_account_pwd_update"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:background="@drawable/selector_btn_bg"
-            android:text="确定"
-            android:textColor="@android:color/white"/>
+        <EditText android:id="@+id/et_account_pwd_update_retype"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:layout_marginTop="5dp"
+                  android:hint="再次输入新密码"
+                  android:inputType="textPassword"/>
+
+        <Button android:id="@+id/btn_account_pwd_update"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/selector_btn_bg"
+                android:text="确定"
+                android:textColor="@android:color/white"/>
+
+
+    </LinearLayout>
+
 
 </LinearLayout>

@@ -35,6 +35,7 @@ import com.baidu.location.BDLocation;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
 import com.baidu.mapapi.model.LatLng;
+import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 
 import net.pingfang.signalr.chat.R;
@@ -319,17 +320,17 @@ public class ResourcePostActivity extends AppCompatActivity implements View.OnCl
         Intent getIntent = new Intent(Intent.ACTION_GET_CONTENT);
         getIntent.setType("image/*");
 
-        //        Intent pickIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        //        pickIntent.setType("image/*");
-        //
-        //        if (getIntent.resolveActivity(getPackageManager()) != null ||
-        //                pickIntent.resolveActivity(getPackageManager()) != null) {
-        //
-        //            Intent chooserIntent = Intent.createChooser(getIntent, getString(R.string.action_select_image));
-        //            chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{pickIntent});
-        //
-        //            startActivityForResult(chooserIntent, GlobalApplication.REQUEST_IMAGE_GET);
-        //        }
+//        Intent pickIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+//        pickIntent.setType("image/*");
+//
+//        if (getIntent.resolveActivity(getPackageManager()) != null ||
+//                pickIntent.resolveActivity(getPackageManager()) != null) {
+//
+//            Intent chooserIntent = Intent.createChooser(getIntent, getString(R.string.action_select_image));
+//            chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{pickIntent});
+//
+//            startActivityForResult(chooserIntent, GlobalApplication.REQUEST_IMAGE_GET);
+//        }
 
         if (getIntent.resolveActivity(getPackageManager()) != null) {
             Intent chooserIntent = Intent.createChooser(getIntent, getString(R.string.action_select_image));
@@ -342,6 +343,7 @@ public class ResourcePostActivity extends AppCompatActivity implements View.OnCl
 
         if(resultCode == Activity.RESULT_OK) {
             if(requestCode == GlobalApplication.REQUEST_IMAGE_CAPTURE) {
+                
                 String filePath = tmpFilePath;
                 ImageUtils.ImageSize actualImageSize = ImageUtils.getImageSize(filePath);
                 ImageUtils.ImageSize imageViewSize = ImageUtils.getImageViewSize(iv_content_photo_1);
@@ -350,7 +352,9 @@ public class ResourcePostActivity extends AppCompatActivity implements View.OnCl
                 ops.inJustDecodeBounds = false;
                 ops.inSampleSize = inSampleSize;
                 final Bitmap bm = BitmapFactory.decodeFile(filePath, ops);
+
                 fileContent = CommonTools.bitmapToBase64(bm);
+
                 if (currentViewId == iv_content_photo_1.getId()) {
                     fileContentArray[0] = fileContent;
                     filePathArray[0] = filePath;
@@ -434,6 +438,18 @@ public class ResourcePostActivity extends AppCompatActivity implements View.OnCl
                 },
                 new HttpBaseCallback() {
 
+                    @Override
+                    public void onFailure(Request request, IOException e) {
+                        super.onFailure(request, e);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(getApplicationContext(),
+                                        getString(R.string.toast_account_info_load_failure),
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
 
                     @Override
                     public void onResponse(Response response) throws IOException {
@@ -561,6 +577,21 @@ public class ResourcePostActivity extends AppCompatActivity implements View.OnCl
                     URL_RESOURCE_POST,
                     params,
                     new HttpBaseCallback() {
+
+                        @Override
+                        public void onFailure(Request request, IOException e) {
+                            super.onFailure(request, e);
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    ll_progress_bar_containerp.setVisibility(View.GONE);
+                                    Toast.makeText(getApplicationContext(),
+                                            getString(R.string.toast_resource_post_error),
+                                            Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }
+
                         @Override
                         public void onResponse(Response response) throws IOException {
                             String result = response.body().string();
@@ -574,6 +605,7 @@ public class ResourcePostActivity extends AppCompatActivity implements View.OnCl
                                     runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
+                                            ll_progress_bar_containerp.setVisibility(View.GONE);
                                             Toast.makeText(getApplicationContext(),
                                                     getString(R.string.toast_resource_post_ok),
                                                     Toast.LENGTH_SHORT).show();
@@ -584,10 +616,10 @@ public class ResourcePostActivity extends AppCompatActivity implements View.OnCl
                                     runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
+                                            ll_progress_bar_containerp.setVisibility(View.GONE);
                                             Toast.makeText(getApplicationContext(),
                                                     getString(R.string.toast_resource_posting_error),
                                                     Toast.LENGTH_SHORT).show();
-                                            navigateUp();
                                         }
                                     });
                                 }
@@ -596,10 +628,10 @@ public class ResourcePostActivity extends AppCompatActivity implements View.OnCl
                                 runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
+                                        ll_progress_bar_containerp.setVisibility(View.GONE);
                                         Toast.makeText(getApplicationContext(),
                                                 getString(R.string.toast_resource_post_error),
                                                 Toast.LENGTH_SHORT).show();
-                                        navigateUp();
                                     }
                                 });
                             }

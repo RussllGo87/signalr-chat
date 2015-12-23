@@ -100,6 +100,7 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
     EditText et_login_no;
     EditText et_login_pwd;
     CheckBox cb_show_pwd;
+    TextView tv_pwd_forget;
 
     TextView btn_ui_login;
     TextView btn_ui_register;
@@ -328,6 +329,15 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
                     et_login_pwd.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
                     et_login_pwd.setSelection(et_login_pwd.getText().length());
                 }
+            }
+        });
+
+        tv_pwd_forget = (TextView) findViewById(R.id.tv_pwd_forget);
+        tv_pwd_forget.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(),PwdForgetActivity.class);
+                startActivity(intent);
             }
         });
 
