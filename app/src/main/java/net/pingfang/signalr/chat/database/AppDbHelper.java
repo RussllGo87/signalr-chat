@@ -95,6 +95,29 @@ public class AppDbHelper extends SQLiteOpenHelper {
     private static final String SQL_DELETE_ENTRY_ADVERTISEMENT =
             "DROP TABLE IF EXISTS " + AppContract.AdvertisementEntry.TABLE_NAME;
 
+    private static final String SQL_CREATE_ENTRY_AD_RESOURCE =
+            "CREATE TABLE " + AppContract.AdResourceEntry.TABLE_NAME + "(" +
+                    AppContract.AdResourceEntry._ID + INTEGER_TYPE + PRIMARY_KEY + COMMA_SEP +
+                    AppContract.AdResourceEntry.COLUMN_NAME_RESOURCE_UID + TEXT_TYPE + NOT_NULL + COMMA_SEP +
+                    AppContract.AdResourceEntry.COLUMN_NAME_RESOURCE_LENGTH + TEXT_TYPE + NOT_NULL + COMMA_SEP +
+                    AppContract.AdResourceEntry.COLUMN_NAME_RESOURCE_WIDTH + TEXT_TYPE + NOT_NULL + COMMA_SEP +
+                    AppContract.AdResourceEntry.COLUMN_NAME_RESOURCE_ADDRESS + TEXT_TYPE + NOT_NULL + COMMA_SEP +
+                    AppContract.AdResourceEntry.COLUMN_NAME_RESOURCE_CONTACT + TEXT_TYPE + NOT_NULL + COMMA_SEP +
+                    AppContract.AdResourceEntry.COLUMN_NAME_RESOURCE_PHONE + TEXT_TYPE + NOT_NULL + COMMA_SEP +
+                    AppContract.AdResourceEntry.COLUMN_NAME_RESOURCE_MATERIAL + TEXT_TYPE + NOT_NULL + COMMA_SEP +
+                    AppContract.AdResourceEntry.COLUMN_NAME_RESOURCE_REMARK + TEXT_TYPE + NOT_NULL + COMMA_SEP +
+                    AppContract.AdResourceEntry.COLUMN_NAME_RESOURCE_LAT + TEXT_TYPE + NOT_NULL + COMMA_SEP +
+                    AppContract.AdResourceEntry.COLUMN_NAME_RESOURCE_LNG + TEXT_TYPE + NOT_NULL + COMMA_SEP +
+                    AppContract.AdResourceEntry.COLUMN_NAME_RESOURCE_PATH_P1 + TEXT_TYPE + NOT_NULL + COMMA_SEP +
+                    AppContract.AdResourceEntry.COLUMN_NAME_RESOURCE_PATH_P2 + TEXT_TYPE + NOT_NULL + COMMA_SEP +
+                    AppContract.AdResourceEntry.COLUMN_NAME_RESOURCE_PATH_P3 + TEXT_TYPE + NOT_NULL + COMMA_SEP +
+                    AppContract.AdResourceEntry.COLUMN_NAME_RESOURCE_PATH_P4 + TEXT_TYPE + NOT_NULL + COMMA_SEP +
+                    AppContract.AdResourceEntry.COLUMN_NAME_RESOURCE_STATUS + INTEGER_TYPE + NOT_NULL +
+                    ")";
+
+    private static final String SQL_DELETE_ENTRY_AD_RESOURCE =
+            "DROP TABLE IF EXISTS " + AppContract.AdResourceEntry.TABLE_NAME;
+
 
     private static final String SQL_CREATE_ENTRY_MESSAGE =
             "CREATE TABLE " + AppContract.ChatMessageEntry.TABLE_NAME + " (" +
@@ -207,6 +230,7 @@ public class AppDbHelper extends SQLiteOpenHelper {
         db.execSQL(SQL_CREATE_ENTRY_USER);
         db.execSQL(SQL_CREATE_ENTRY_USER_STATUS);
         db.execSQL(SQL_CREATE_ENTRY_ADVERTISEMENT);
+        db.execSQL(SQL_CREATE_ENTRY_AD_RESOURCE);
         db.execSQL(SQL_CREATE_ENTRY_MESSAGE);
         db.execSQL(SQL_CREATE_ENTRY_RECENT);
         db.execSQL(SQL_CREATE_ENTRY_SHIELD);
@@ -226,6 +250,7 @@ public class AppDbHelper extends SQLiteOpenHelper {
         db.execSQL(SQL_DELETE_ENTRY_SHIELD);
         db.execSQL(SQL_DELETE_ENTRY_RECENT);
         db.execSQL(SQL_DELETE_ENTRY_MESSAGE);
+        db.execSQL(SQL_DELETE_ENTRY_AD_RESOURCE);
         db.execSQL(SQL_DELETE_ENTRY_ADVERTISEMENT);
         db.execSQL(SQL_DELETE_ENTRY_USER_STATUS);
         db.execSQL(SQL_DELETE_ENTRY_USER);

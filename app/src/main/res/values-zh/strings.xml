@@ -145,7 +145,12 @@
     <string name="tv_fragment_account">我</string>
     <string name="tv_account_item_uploaded">我的资源</string>
     <string name="tv_account_item_filter_list">屏蔽人列表</string>
+    <string name="tv_account_item_resource_upload">未上传资源</string>
     <string name="tv_account_item_ad_upload">未上传广告</string>
+    <!-- 未上传资源列表 -->
+    <string name="title_activity_resource_upload_list">空置墙体资源列表</string>
+    <!-- 未上传资源详情 -->
+    <string name="title_activity_ad_resource_upload_detail">未上传资源详情</string>
     <!-- 未上传广告列表 -->
     <string name="title_activity_ad_upload_list">广告施工维护列表</string>
     <!-- 未上传广告详情 -->
@@ -155,7 +160,6 @@
     <string name="tv_ad_detail_code">广告编码: %s</string>
     <string name="tv_ad_detail_address">所在地: %s</string>
     <string name="tv_ad_detail_remark">资源说明: %s</string>
-
 
     <!-- 我的资源上传记录 -->
     <string name="title_activity_resource_list">我的资源</string>
@@ -170,7 +174,8 @@
     <string name="tv_resource_detail_contact">联系人:%s</string>
     <string name="tv_resource_detail_contact_info">电话:%s</string>
     <string name="tv_resource_detail_address">地址:%s</string>
-    <string name="tv_resource_detail_remark">备注:%s</string>
+    <string name="tv_resource_detail_meterial">墙体材质:%s</string>
+    <string name="tv_resource_detail_remark">资源说明:%s</string>
     <string name="tv_resource_detail_status">当前状态:%s</string>
     <string name="toast_resource_error_no_record">没有上传记录</string>
     <string name="toast_resource_error_in_load">获取上传资源出错</string>
@@ -196,9 +201,9 @@
     <string name="hint_et_contact_phone">联系电话</string>
     <string name="tv_photos">相关照片</string>
     <string name="toast_resource_post_ok">广告资源上传成功</string>
-    <string name="toast_resource_posting_error">广告资源上传错误</string>
+    <string name="toast_resource_posting_error">广告资源上传错误，数据已存储到本地</string>
     <string name="toast_resource_posting_error_pic_no">第 %d 张 图片没有添加</string>
-    <string name="toast_resource_post_error">广告资源上传失败</string>
+    <string name="toast_resource_post_error">广告资源上传失败，数据已存储到本地</string>
     <string name="toast_resource_post_pic_num_error_1">必须拍摄4张照片</string>
     <string name="toast_resource_post_pic_num_error_2">最多只能拍4张图</string>
     <string name="tv_resource_post_requirement">上传资源说明：1.墙体画面清晰并能看清墙体类型；2.需上传四张照片（三张近景一张正面、二张不同侧面，及一张远景带路的照片）；3.墙体画面要完整并无明显遮挡物。</string>

@@ -2,6 +2,7 @@ package net.pingfang.signalr.chat.activity;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -41,9 +42,12 @@ import com.squareup.okhttp.Response;
 import net.pingfang.signalr.chat.R;
 import net.pingfang.signalr.chat.adapter.PhotoGridViewAdapter;
 import net.pingfang.signalr.chat.constant.app.AppConstants;
+import net.pingfang.signalr.chat.database.AdResource;
+import net.pingfang.signalr.chat.database.AppContract;
 import net.pingfang.signalr.chat.location.LocationListenerImpl;
 import net.pingfang.signalr.chat.location.LocationNotify;
 import net.pingfang.signalr.chat.net.HttpBaseCallback;
+import net.pingfang.signalr.chat.net.NetUtil;
 import net.pingfang.signalr.chat.net.OkHttpCommonUtil;
 import net.pingfang.signalr.chat.util.CommonTools;
 import net.pingfang.signalr.chat.util.CommonUtil;
@@ -73,10 +77,12 @@ public class ResourcePostActivity extends AppCompatActivity implements View.OnCl
     public static final String KEY_RESOURCE_POST_ADDRESS = "address";
     public static final String KEY_RESOURCE_POST_CONTACTS = "contactName";
     public static final String KEY_RESOURCE_POST_PHONE = "mobile";
+    public static final String KEY_RESOURCE_POST_MATERIAL = "wallType";
     public static final String KEY_RESOURCE_POST_REMARK = "remark";
     public static final String KEY_RESOURCE_POST_PROFILE = "pic";
     public static final String KEY_URL_RESOURCE_POST_LOCATION_LAT = "lat";
     public static final String KEY_URL_RESOURCE_POST_LOCATION_LNG = "lng";
+
     public LocationListenerImpl locationListener;
     PhotoGridViewAdapter adapter;
     SharedPreferencesHelper sharedPreferencesHelper;
@@ -547,6 +553,40 @@ public class ResourcePostActivity extends AppCompatActivity implements View.OnCl
             }
         }
 
+        if (NetUtil.isConnected(getApplicationContext())) {
+            storeOnWeb();
+        } else {
+            storeOnLocalDb();
+            Toast.makeText(getApplicationContext(), "当前网络状况不好，数据已经保存到了本地", Toast.LENGTH_SHORT).show();
+            navigateUp();
+        }
+    }
+
+    private void storeOnLocalDb() {
+        ContentValues values = new ContentValues();
+        values.put(AppContract.AdResourceEntry.COLUMN_NAME_RESOURCE_UID, sharedPreferencesHelper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID));
+        values.put(AppContract.AdResourceEntry.COLUMN_NAME_RESOURCE_LENGTH, et_resource_width.getText().toString().trim());
+        values.put(AppContract.AdResourceEntry.COLUMN_NAME_RESOURCE_WIDTH, et_resource_height.getText().toString().trim());
+        values.put(AppContract.AdResourceEntry.COLUMN_NAME_RESOURCE_ADDRESS, et_resource_location.getText().toString().trim());
+        values.put(AppContract.AdResourceEntry.COLUMN_NAME_RESOURCE_CONTACT, et_resource_contacts.getText().toString().trim());
+        values.put(AppContract.AdResourceEntry.COLUMN_NAME_RESOURCE_PHONE, et_resource_phone.getText().toString().trim());
+        values.put(AppContract.AdResourceEntry.COLUMN_NAME_RESOURCE_MATERIAL, et_resource_material.getText().toString().trim());
+        values.put(AppContract.AdResourceEntry.COLUMN_NAME_RESOURCE_REMARK, et_resource_remark.getText().toString().trim());
+        values.put(AppContract.AdResourceEntry.COLUMN_NAME_RESOURCE_LAT, currentLatLng.latitude);
+        values.put(AppContract.AdResourceEntry.COLUMN_NAME_RESOURCE_LNG, currentLatLng.longitude);
+        values.put(AppContract.AdResourceEntry.COLUMN_NAME_RESOURCE_PATH_P1, filePathArray[0]);
+        values.put(AppContract.AdResourceEntry.COLUMN_NAME_RESOURCE_PATH_P2, filePathArray[1]);
+        values.put(AppContract.AdResourceEntry.COLUMN_NAME_RESOURCE_PATH_P3, filePathArray[2]);
+        values.put(AppContract.AdResourceEntry.COLUMN_NAME_RESOURCE_PATH_P4, filePathArray[3]);
+        values.put(AppContract.AdResourceEntry.COLUMN_NAME_RESOURCE_STATUS, AdResource.RESOURCE_STATUS_UPLOAD_ERROR);
+
+        getContentResolver().insert(AppContract.AdResourceEntry.CONTENT_URI, values);
+    }
+
+    public void storeOnWeb() {
+        ll_progress_bar_containerp.setVisibility(View.VISIBLE);
+        tv_pb_operationp.setText("数据上传中");
+
         StringBuffer sb = new StringBuffer();
         for (int i = 0; i < fileContentArray.length; i++) {
             sb.append(fileContentArray[i]);
@@ -556,9 +596,6 @@ public class ResourcePostActivity extends AppCompatActivity implements View.OnCl
         }
 
         String tmpContent = sb.toString();
-        ll_progress_bar_containerp.setVisibility(View.VISIBLE);
-        tv_pb_operationp.setText("数据上传中");
-
         if (!TextUtils.isEmpty(tmpContent)) {
             OkHttpCommonUtil.Param[] params = new OkHttpCommonUtil.Param[]{
                     new OkHttpCommonUtil.Param(KEY_RESOURCE_POST_UID, sharedPreferencesHelper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID)),
@@ -567,6 +604,7 @@ public class ResourcePostActivity extends AppCompatActivity implements View.OnCl
                     new OkHttpCommonUtil.Param(KEY_RESOURCE_POST_ADDRESS, et_resource_location.getText().toString().trim()),
                     new OkHttpCommonUtil.Param(KEY_RESOURCE_POST_CONTACTS, et_resource_contacts.getText().toString().trim()),
                     new OkHttpCommonUtil.Param(KEY_RESOURCE_POST_PHONE, et_resource_phone.getText().toString().trim()),
+                    new OkHttpCommonUtil.Param(KEY_RESOURCE_POST_MATERIAL, et_resource_material.getText().toString().trim()),
                     new OkHttpCommonUtil.Param(KEY_RESOURCE_POST_REMARK, et_resource_remark.getText().toString().trim()),
                     new OkHttpCommonUtil.Param(KEY_URL_RESOURCE_POST_LOCATION_LAT, currentLatLng.latitude),
                     new OkHttpCommonUtil.Param(KEY_URL_RESOURCE_POST_LOCATION_LNG, currentLatLng.longitude),
@@ -580,14 +618,13 @@ public class ResourcePostActivity extends AppCompatActivity implements View.OnCl
 
                         @Override
                         public void onFailure(Request request, IOException e) {
-                            super.onFailure(request, e);
+                            storeOnLocalDb();
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
                                     ll_progress_bar_containerp.setVisibility(View.GONE);
-                                    Toast.makeText(getApplicationContext(),
-                                            getString(R.string.toast_resource_post_error),
-                                            Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getApplicationContext(), "当前网络状况不好，数据已经保存到了本地", Toast.LENGTH_SHORT).show();
+                                    navigateUp();
                                 }
                             });
                         }
@@ -613,6 +650,7 @@ public class ResourcePostActivity extends AppCompatActivity implements View.OnCl
                                         }
                                     });
                                 } else {
+                                    storeOnLocalDb();
                                     runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
@@ -620,11 +658,13 @@ public class ResourcePostActivity extends AppCompatActivity implements View.OnCl
                                             Toast.makeText(getApplicationContext(),
                                                     getString(R.string.toast_resource_posting_error),
                                                     Toast.LENGTH_SHORT).show();
+                                            navigateUp();
                                         }
                                     });
                                 }
                             } catch (JSONException e) {
                                 e.printStackTrace();
+                                storeOnLocalDb();
                                 runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
@@ -632,6 +672,7 @@ public class ResourcePostActivity extends AppCompatActivity implements View.OnCl
                                         Toast.makeText(getApplicationContext(),
                                                 getString(R.string.toast_resource_post_error),
                                                 Toast.LENGTH_SHORT).show();
+                                        navigateUp();
                                     }
                                 });
                             }

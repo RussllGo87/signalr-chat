@@ -24,7 +24,7 @@ public class GlobalApplication extends Application {
 
     //    public static final String PORTRAIT_URL_PREFIX = URL_WEB_API_HOST + "/UpLoad/Head/";
     //    public static final String PIC_URL_PREFIX = URL_WEB_API_HOST + "/UpLoad/";
-    //    public static final String RESOURCE_PIC_URL_PREFIX = PIC_URL_PREFIX + "Resource/";
+    //    public static final String RESOURCE_PIC_URL_PREFIX = PIC_URL_PREFIX + "AdResource/";
 
     //    public static final String ACTION_INTENT_TEXT_MESSAGE_INCOMING = "ACTION_INTENT_TEXT_MESSAGE_INCOMING";
     //    public static final String ACTION_INTENT_IMAGE_MESSAGE_INCOMING = "ACTION_INTENT_IMAGE_MESSAGE_INCOMING";

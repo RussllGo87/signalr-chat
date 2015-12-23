@@ -202,6 +202,35 @@ public final class AppContract {
         public static final String DEFAULT_SORT_ORDER = AdvertisementEntry._ID + " ASC";
     }
 
+    public static final class AdResourceEntry implements BaseColumns {
+        // 访问Uri
+        public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/entry_resource");
+
+        // 内容类型
+        public static final String CONTENT_TYPE = "vnd.android.cursor.dir/net.pingfang.signalr.chat.entry_resource";
+        public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/net.pingfang.signalr.chat.entry_resource";
+
+        public static final String TABLE_NAME = "t_resource";
+        public static final String COLUMN_NAME_RESOURCE_UID = "t_uid";
+        public static final String COLUMN_NAME_RESOURCE_LENGTH = "t_length";
+        public static final String COLUMN_NAME_RESOURCE_WIDTH = "t_width";
+        public static final String COLUMN_NAME_RESOURCE_ADDRESS = "t_address";
+        public static final String COLUMN_NAME_RESOURCE_CONTACT = "t_contact";
+        public static final String COLUMN_NAME_RESOURCE_PHONE = "t_phone";
+        public static final String COLUMN_NAME_RESOURCE_MATERIAL = "t_material";
+        public static final String COLUMN_NAME_RESOURCE_REMARK = "t_remark";
+        public static final String COLUMN_NAME_RESOURCE_LAT = "t_lat";
+        public static final String COLUMN_NAME_RESOURCE_LNG = "t_lng";
+        public static final String COLUMN_NAME_RESOURCE_PATH_P1 = "t_path_p1";
+        public static final String COLUMN_NAME_RESOURCE_PATH_P2 = "t_path_p2";
+        public static final String COLUMN_NAME_RESOURCE_PATH_P3 = "t_path_p3";
+        public static final String COLUMN_NAME_RESOURCE_PATH_P4 = "t_path_p4";
+        public static final String COLUMN_NAME_RESOURCE_STATUS = "t_status";
+
+        // 默认排序常量
+        public static final String DEFAULT_SORT_ORDER = AdResourceEntry._ID + " ASC";
+    }
+
 
 
     /////////////////////////////////////////////////////////////////////////////////////

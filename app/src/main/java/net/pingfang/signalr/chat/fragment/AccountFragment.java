@@ -19,6 +19,7 @@ import net.pingfang.signalr.chat.R;
 import net.pingfang.signalr.chat.activity.AdUploadListActivity;
 import net.pingfang.signalr.chat.activity.ListShieldsActivity;
 import net.pingfang.signalr.chat.activity.ResourceListActivity;
+import net.pingfang.signalr.chat.activity.ResourceUploadListActivity;
 import net.pingfang.signalr.chat.activity.SettingsActivity;
 import net.pingfang.signalr.chat.listener.OnFragmentInteractionListener;
 import net.pingfang.signalr.chat.net.OkHttpCommonUtil;
@@ -37,6 +38,7 @@ public class AccountFragment extends Fragment implements View.OnClickListener{
     TextView tv_account_item_me;
     TextView tv_account_current_exp;
     //    ImageView btn_qr_code;
+    TextView tv_account_item_resource_upload;
     TextView tv_account_item_uploaded;
     TextView tv_account_item_filter_list;
 
@@ -77,6 +79,8 @@ public class AccountFragment extends Fragment implements View.OnClickListener{
         //        btn_qr_code = (ImageView) view.findViewById(R.id.btn_qr_code);
         //        btn_qr_code.setOnClickListener(this);
 
+        tv_account_item_resource_upload = (TextView) view.findViewById(R.id.tv_account_item_resource_upload);
+        tv_account_item_resource_upload.setOnClickListener(this);
         tv_account_item_ad_upload = (TextView) view.findViewById(R.id.tv_account_item_ad_upload);
         tv_account_item_ad_upload.setOnClickListener(this);
 
@@ -148,6 +152,11 @@ public class AccountFragment extends Fragment implements View.OnClickListener{
                 Intent shieldsListIntent = new Intent();
                 shieldsListIntent.setClass(getContext(), ListShieldsActivity.class);
                 startActivity(shieldsListIntent);
+                break;
+            case R.id.tv_account_item_resource_upload:
+                Intent resourceUploadIntent = new Intent();
+                resourceUploadIntent.setClass(getContext(), ResourceUploadListActivity.class);
+                startActivity(resourceUploadIntent);
                 break;
             case R.id.tv_account_item_ad_upload:
                 Intent adUploadIntent = new Intent();

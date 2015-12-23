@@ -85,8 +85,8 @@
         <activity
             android:name=".activity.PwdForgetActivity"
             android:label="@string/title_activity_pwd_forget"
-            android:theme="@style/AppMainTheme"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:theme="@style/AppMainTheme" >
         </activity>
         <activity
             android:name=".activity.HomeActivity"
@@ -266,6 +266,26 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="net.pingfang.signalr.chat.activity.HomeActivity" />
+        </activity>
+        <activity
+            android:name=".activity.ResourceUploadListActivity"
+            android:label="@string/title_activity_resource_upload_list"
+            android:parentActivityName=".activity.HomeActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppMainTheme" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="net.pingfang.signalr.chat.activity.HomeActivity" />
+        </activity>
+        <activity
+            android:name=".activity.ResourceUploadDetailActivity"
+            android:label="@string/title_activity_ad_resource_upload_detail"
+            android:parentActivityName=".activity.ResourceUploadListActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppMainTheme" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="net.pingfang.signalr.chat.activity.ResourceUploadListActivity" />
         </activity>
         <activity
             android:name=".activity.AdUploadListActivity"

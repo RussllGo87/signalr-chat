@@ -60,6 +60,14 @@
         android:text="@string/tv_account_item_filter_list"/>
 
     <TextView
+        android:id="@+id/tv_account_item_resource_upload"
+        style="@style/SettingItemStyle"
+        android:background="@drawable/selector_settings_item"
+        android:drawableEnd="@drawable/setting_view_arrow"
+        android:drawableRight="@drawable/setting_view_arrow"
+        android:text="@string/tv_account_item_resource_upload"/>
+
+    <TextView
         android:id="@+id/tv_account_item_ad_upload"
         style="@style/SettingItemStyle"
         android:layout_marginBottom="@dimen/activity_vertical_margin"

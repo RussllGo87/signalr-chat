@@ -42,6 +42,8 @@ public class ChatAppProvider extends ContentProvider {
     private static final int USER_STATUS_COLUMN_ID = 16;
     private static final int USER_STATUS_VIEW = 17;
     private static final int USER_STATUS_VIEW_COLUMN_ID = 18 ;
+    private static final int AD_RESOURCE = 19;
+    private static final int AD_RESOURCE_COLUMN_ID = 20;
 
 
     // 查询列集合
@@ -49,6 +51,7 @@ public class ChatAppProvider extends ContentProvider {
     private static HashMap<String, String> userStatusProjectionMap;
     private static HashMap<String, String> vUserStatusProjectionMap;
     private static HashMap<String, String> adProjectionMap;
+    private static HashMap<String, String> adResourceProjectionMap;
     private static HashMap<String, String> messageProjectionMap;
     private static HashMap<String, String> recentProjectionMap;
     private static HashMap<String, String> vRecentProjectionMap;
@@ -72,6 +75,8 @@ public class ChatAppProvider extends ContentProvider {
         sUriMatcher.addURI(AppContract.AUTHORITY, "v_shield/#", SHIELD_VIEW_COLUMN_ID);
         sUriMatcher.addURI(AppContract.AUTHORITY, "entry_advertisement", ADVERTISEMENT);
         sUriMatcher.addURI(AppContract.AUTHORITY, "entry_advertisement/#", ADVERTISEMENT_COLUMN_ID);
+        sUriMatcher.addURI(AppContract.AUTHORITY, "entry_resource", AD_RESOURCE);
+        sUriMatcher.addURI(AppContract.AUTHORITY, "entry_resource/#", AD_RESOURCE_COLUMN_ID);
         sUriMatcher.addURI(AppContract.AUTHORITY, "entry_user_status", USER_STATUS);
         sUriMatcher.addURI(AppContract.AUTHORITY, "entry_user_status/#", USER_STATUS_COLUMN_ID);
         sUriMatcher.addURI(AppContract.AUTHORITY, "view_user_status", USER_STATUS_VIEW);
@@ -129,6 +134,24 @@ public class ChatAppProvider extends ContentProvider {
         adProjectionMap.put(AppContract.AdvertisementEntry.COLUMN_NAME_AD_PATH_P3, AppContract.AdvertisementEntry.COLUMN_NAME_AD_PATH_P3);
         adProjectionMap.put(AppContract.AdvertisementEntry.COLUMN_NAME_AD_PATH_P4, AppContract.AdvertisementEntry.COLUMN_NAME_AD_PATH_P4);
         adProjectionMap.put(AppContract.AdvertisementEntry.COLUMN_NAME_AD_STATUS, AppContract.AdvertisementEntry.COLUMN_NAME_AD_STATUS);
+
+        adResourceProjectionMap = new HashMap<String, String>();
+        adResourceProjectionMap.put(AppContract.AdResourceEntry._ID, AppContract.AdResourceEntry._ID);
+        adResourceProjectionMap.put(AppContract.AdResourceEntry.COLUMN_NAME_RESOURCE_UID, AppContract.AdResourceEntry.COLUMN_NAME_RESOURCE_UID);
+        adResourceProjectionMap.put(AppContract.AdResourceEntry.COLUMN_NAME_RESOURCE_LENGTH, AppContract.AdResourceEntry.COLUMN_NAME_RESOURCE_LENGTH);
+        adResourceProjectionMap.put(AppContract.AdResourceEntry.COLUMN_NAME_RESOURCE_WIDTH, AppContract.AdResourceEntry.COLUMN_NAME_RESOURCE_WIDTH);
+        adResourceProjectionMap.put(AppContract.AdResourceEntry.COLUMN_NAME_RESOURCE_ADDRESS, AppContract.AdResourceEntry.COLUMN_NAME_RESOURCE_ADDRESS);
+        adResourceProjectionMap.put(AppContract.AdResourceEntry.COLUMN_NAME_RESOURCE_CONTACT, AppContract.AdResourceEntry.COLUMN_NAME_RESOURCE_CONTACT);
+        adResourceProjectionMap.put(AppContract.AdResourceEntry.COLUMN_NAME_RESOURCE_PHONE, AppContract.AdResourceEntry.COLUMN_NAME_RESOURCE_PHONE);
+        adResourceProjectionMap.put(AppContract.AdResourceEntry.COLUMN_NAME_RESOURCE_MATERIAL, AppContract.AdResourceEntry.COLUMN_NAME_RESOURCE_MATERIAL);
+        adResourceProjectionMap.put(AppContract.AdResourceEntry.COLUMN_NAME_RESOURCE_REMARK, AppContract.AdResourceEntry.COLUMN_NAME_RESOURCE_REMARK);
+        adResourceProjectionMap.put(AppContract.AdResourceEntry.COLUMN_NAME_RESOURCE_LAT, AppContract.AdResourceEntry.COLUMN_NAME_RESOURCE_LAT);
+        adResourceProjectionMap.put(AppContract.AdResourceEntry.COLUMN_NAME_RESOURCE_LNG, AppContract.AdResourceEntry.COLUMN_NAME_RESOURCE_LNG);
+        adResourceProjectionMap.put(AppContract.AdResourceEntry.COLUMN_NAME_RESOURCE_PATH_P1, AppContract.AdResourceEntry.COLUMN_NAME_RESOURCE_PATH_P1);
+        adResourceProjectionMap.put(AppContract.AdResourceEntry.COLUMN_NAME_RESOURCE_PATH_P2, AppContract.AdResourceEntry.COLUMN_NAME_RESOURCE_PATH_P2);
+        adResourceProjectionMap.put(AppContract.AdResourceEntry.COLUMN_NAME_RESOURCE_PATH_P3, AppContract.AdResourceEntry.COLUMN_NAME_RESOURCE_PATH_P3);
+        adResourceProjectionMap.put(AppContract.AdResourceEntry.COLUMN_NAME_RESOURCE_PATH_P4, AppContract.AdResourceEntry.COLUMN_NAME_RESOURCE_PATH_P4);
+        adResourceProjectionMap.put(AppContract.AdResourceEntry.COLUMN_NAME_RESOURCE_STATUS, AppContract.AdResourceEntry.COLUMN_NAME_RESOURCE_STATUS);
 
         messageProjectionMap = new HashMap<String, String>();
         messageProjectionMap.put(AppContract.ChatMessageEntry._ID, AppContract.ChatMessageEntry._ID);
@@ -270,6 +293,25 @@ public class ChatAppProvider extends ContentProvider {
                     orderBy = sortOrder;
                 }
                 break;
+            case AD_RESOURCE:
+                qb.setTables(AppContract.AdResourceEntry.TABLE_NAME);
+                qb.setProjectionMap(adResourceProjectionMap);
+                if(TextUtils.isEmpty(sortOrder)) {
+                    orderBy = AppContract.AdResourceEntry.DEFAULT_SORT_ORDER;
+                } else {
+                    orderBy = sortOrder;
+                }
+                break;
+            case AD_RESOURCE_COLUMN_ID:
+                qb.setTables(AppContract.AdResourceEntry.TABLE_NAME);
+                qb.setProjectionMap(adResourceProjectionMap);
+                qb.appendWhere(AppContract.AdResourceEntry._ID + "=" + uri.getPathSegments().get(1));
+                if(TextUtils.isEmpty(sortOrder)) {
+                    orderBy = AppContract.AdResourceEntry.DEFAULT_SORT_ORDER;
+                } else {
+                    orderBy = sortOrder;
+                }
+                break;
             case MESSAGE:
                 qb.setTables(AppContract.ChatMessageEntry.TABLE_NAME);
                 qb.setProjectionMap(messageProjectionMap);
@@ -387,6 +429,14 @@ public class ChatAppProvider extends ContentProvider {
                     return adUri;
                 }
                 break;
+            case AD_RESOURCE:
+                rowId = db.insert(AppContract.AdResourceEntry.TABLE_NAME, null, values);
+                if (rowId > 0) {
+                    Uri adUri = ContentUris.withAppendedId(AppContract.AdResourceEntry.CONTENT_URI, rowId);
+                    getContext().getContentResolver().notifyChange(adUri, null);
+                    return adUri;
+                }
+                break;
             case MESSAGE:
                 rowId = db.insert(AppContract.ChatMessageEntry.TABLE_NAME, null, values);
                 if(rowId > 0) {
@@ -446,6 +496,14 @@ public class ChatAppProvider extends ContentProvider {
             case ADVERTISEMENT_COLUMN_ID:
                 String adColumnId = uri.getPathSegments().get(1);
                 count = db.delete(AppContract.AdvertisementEntry.TABLE_NAME, AppContract.AdvertisementEntry._ID + "=" + adColumnId
+                        + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ')' : ""), selectionArgs);
+                break;
+            case AD_RESOURCE:
+                count = db.delete(AppContract.AdResourceEntry.TABLE_NAME, selection, selectionArgs);
+                break;
+            case AD_RESOURCE_COLUMN_ID:
+                String adResourceColumnId = uri.getPathSegments().get(1);
+                count = db.delete(AppContract.AdResourceEntry.TABLE_NAME, AppContract.AdResourceEntry._ID + "=" + adResourceColumnId
                         + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ')' : ""), selectionArgs);
                 break;
             case MESSAGE:
@@ -513,6 +571,14 @@ public class ChatAppProvider extends ContentProvider {
             case ADVERTISEMENT_COLUMN_ID:
                 String adColumnId = uri.getPathSegments().get(1);
                 count = db.update(AppContract.AdvertisementEntry.TABLE_NAME, values, AppContract.AdvertisementEntry._ID + "=" + adColumnId
+                        + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ')' : ""), selectionArgs);
+                break;
+            case AD_RESOURCE:
+                count = db.update(AppContract.AdResourceEntry.TABLE_NAME, values, selection, selectionArgs);
+                break;
+            case AD_RESOURCE_COLUMN_ID:
+                String adResourceColumnId = uri.getPathSegments().get(1);
+                count = db.update(AppContract.AdResourceEntry.TABLE_NAME, values, AppContract.AdResourceEntry._ID + "=" + adResourceColumnId
                         + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ')' : ""), selectionArgs);
                 break;
             case MESSAGE:
