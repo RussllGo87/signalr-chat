@@ -121,6 +121,7 @@ public class ResourceListActivity extends AppCompatActivity implements View.OnCl
                                         final String width = js.getString("Length");
                                         final String height = js.getString("Width");
                                         final String resStatus = js.getString("IsProcessed");
+                                        final String material = js.getString("WallType");
                                         final String remark = js.getString("Remark");
                                         final String url = js.getString("ResourcePicture");
                                         final String address = js.getString("Address");
@@ -136,6 +137,7 @@ public class ResourceListActivity extends AppCompatActivity implements View.OnCl
                                                 resourceInfo.setWidth(width);
                                                 resourceInfo.setHeight(height);
                                                 resourceInfo.setResStatus(resStatus);
+                                                resourceInfo.setMaterial(material);
                                                 resourceInfo.setRemark(remark);
                                                 resourceInfo.setUrl(url);
                                                 resourceInfo.setPostTime(postTime);

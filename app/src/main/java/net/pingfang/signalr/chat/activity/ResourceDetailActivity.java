@@ -30,6 +30,7 @@ public class ResourceDetailActivity extends AppCompatActivity implements View.On
     private TextView tv_resource_detail_address;
     private TextView tv_resource_detail_update_time;
     private TextView tv_resource_detail_status;
+    private TextView tv_resource_detail_material;
     private TextView tv_resource_detail_remark;
 
     @Override
@@ -64,6 +65,7 @@ public class ResourceDetailActivity extends AppCompatActivity implements View.On
         tv_resource_detail_address = (TextView) findViewById(R.id.tv_resource_detail_address);
         tv_resource_detail_update_time = (TextView) findViewById(R.id.tv_resource_detail_update_time);
         tv_resource_detail_status = (TextView) findViewById(R.id.tv_resource_detail_status);
+        tv_resource_detail_material = (TextView) findViewById(R.id.tv_resource_detail_material);
         tv_resource_detail_remark = (TextView) findViewById(R.id.tv_resource_detail_remark);
     }
 
@@ -96,6 +98,7 @@ public class ResourceDetailActivity extends AppCompatActivity implements View.On
             tv_resource_detail_address.setText(getString(R.string.tv_resource_detail_address,resourceInfo.getAddress()));
             tv_resource_detail_update_time.setText(getString(R.string.tv_resource_detail_update_time,resourceInfo.getPostTime()));
             tv_resource_detail_status.setText(getString(R.string.tv_resource_detail_status,resourceInfo.getResStatus()));
+            tv_resource_detail_material.setText(getString(R.string.tv_resource_detail_meterial, resourceInfo.getMaterial()));
             tv_resource_detail_remark.setText(getString(R.string.tv_resource_detail_remark,resourceInfo.getRemark()));
         }
     }

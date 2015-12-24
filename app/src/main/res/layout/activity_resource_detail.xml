@@ -105,6 +105,13 @@
                 android:layout_marginTop="20dp"
                 android:text="审核状态:" />
 
+            <TextView
+                android:id="@+id/tv_resource_detail_material"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="16dp"
+                android:text="墙体材质:" />
 
             <TextView
                 android:id="@+id/tv_resource_detail_remark"
@@ -112,7 +119,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
                 android:layout_marginTop="16dp"
-                android:text="备注:" />
+                android:text="资源说明:" />
 
             <LinearLayout
                 android:layout_width="match_parent"
