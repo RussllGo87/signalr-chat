@@ -329,8 +329,6 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         ll_message_container = (LinearLayout) findViewById(R.id.ll_message_container);
         ll_message_container.setOnClickListener(this);
 
-        ll_record_voice_indicator = (LinearLayout) findViewById(R.id.ll_record_voice_indicator);
-
         iv_quick_voice_txt_switcher = (ImageView) findViewById(R.id.iv_quick_voice_txt_switcher);
         iv_quick_voice_txt_switcher.setOnClickListener(this);
         iv_quick_voice_txt_switcher.setSelected(false);
@@ -405,6 +403,8 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         iv_msg_type_pic.setOnClickListener(this);
         iv_msg_type_voice = (ImageView) findViewById(R.id.iv_msg_type_voice);
         iv_msg_type_voice.setOnClickListener(this);
+
+        ll_record_voice_indicator = (LinearLayout) findViewById(R.id.ll_record_voice_indicator);
     }
 
     private void updateMessageListStatus() {

@@ -114,6 +114,8 @@ public class BulkMsgActivity extends AppCompatActivity implements View.OnClickLi
     ImageView iv_msg_type_pic;
     ImageView iv_msg_type_voice;
 
+    LinearLayout ll_record_voice_indicator;
+
     SharedPreferencesHelper sharedPreferencesHelper;
     String uid;
     String nickname;
@@ -272,6 +274,8 @@ public class BulkMsgActivity extends AppCompatActivity implements View.OnClickLi
         iv_msg_type_pic.setOnClickListener(this);
         iv_msg_type_voice = (ImageView) findViewById(R.id.iv_msg_type_voice);
         iv_msg_type_voice.setOnClickListener(this);
+
+        ll_record_voice_indicator = (LinearLayout) findViewById(R.id.ll_record_voice_indicator);
     }
 
     private void loadBulkRule() {
@@ -969,7 +973,7 @@ public class BulkMsgActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void startRecording() {
-
+        ll_record_voice_indicator.setVisibility(View.VISIBLE);
         mFileName = MediaFileUtils.genarateFilePath(getApplicationContext(),
                 Environment.DIRECTORY_MUSIC, "voice", GlobalApplication.VOICE_FILE_NAME_SUFFIX);
 
@@ -996,6 +1000,7 @@ public class BulkMsgActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void stopRecording() {
+        ll_record_voice_indicator.setVisibility(View.GONE);
         if(mStartRecording) {
             try {
                 mRecorder.stop();
@@ -1118,13 +1123,16 @@ public class BulkMsgActivity extends AppCompatActivity implements View.OnClickLi
                         mPlayer = null;
                     }
                     mPlayer = MediaPlayer.create(getApplicationContext(), fileUri);
-                    mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                        @Override
-                        public void onCompletion(MediaPlayer mp) {
-                            mp.release();
-                        }
-                    });
-                    mPlayer.start();
+                    if(mPlayer != null) {
+                        mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                            @Override
+                            public void onCompletion(MediaPlayer mp) {
+                                mp.release();
+                            }
+                        });
+                        mPlayer.start();
+                    }
+
                 }
             });
         } else {
@@ -1148,13 +1156,15 @@ public class BulkMsgActivity extends AppCompatActivity implements View.OnClickLi
                         mPlayer = null;
                     }
                     mPlayer = MediaPlayer.create(getApplicationContext(), fileUri);
-                    mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                        @Override
-                        public void onCompletion(MediaPlayer mp) {
-                            mp.release();
-                        }
-                    });
-                    mPlayer.start();
+                    if(mPlayer != null) {
+                        mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                            @Override
+                            public void onCompletion(MediaPlayer mp) {
+                                mp.release();
+                            }
+                        });
+                        mPlayer.start();
+                    }
                 }
             });
         }
