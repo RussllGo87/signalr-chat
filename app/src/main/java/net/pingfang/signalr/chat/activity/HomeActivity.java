@@ -64,7 +64,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 
-public class HomeActivity extends AppCompatActivity implements View.OnClickListener {
+public class HomeActivity extends AppCompatActivity implements View.OnClickListener,OnBuddyFragmentInteractionListener {
 
     public static final String TAG = HomeActivity.class.getSimpleName();
 
@@ -98,79 +98,81 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     // 微信登录配置
     private WxOauth2AccessToken mWxOauth2AccessToken;
 
-    private OnBuddyFragmentInteractionListener onFragmentInteractionListener = new OnBuddyFragmentInteractionListener() {
+    /***
+     * OnBuddyFragmentInteractionListener方法实现
+     */
+    @Override
+    public void loadAccountInfo() {
+        String nickname = helper.getStringValue(AppConstants.KEY_SYS_CURRENT_NICKNAME);
+        String portrait = helper.getStringValue(AppConstants.KEY_SYS_CURRENT_PORTRAIT);
+        int exp = helper.getInt(AppConstants.KEY_SYS_CURRENT_USER_EXP, 0);
 
-        @Override
-        public void loadAccountInfo() {
-            String nickname = helper.getStringValue(AppConstants.KEY_SYS_CURRENT_NICKNAME);
-            String portrait = helper.getStringValue(AppConstants.KEY_SYS_CURRENT_PORTRAIT);
-            int exp = helper.getInt(AppConstants.KEY_SYS_CURRENT_USER_EXP, 0);
+        AccountFragment fragment = (AccountFragment) adapter.getItem(3);
+        fragment.updateAccountInfo(nickname, portrait, exp);
+    }
 
-            AccountFragment fragment = (AccountFragment) adapter.getItem(3);
-            fragment.updateAccountInfo(nickname, portrait, exp);
+    @Override
+    public void shield(User user) {
+        if (mBound) {
+            mService.sendMessage("Shield",
+                    MessageConstructor.constructShieldMsgReq(
+                            helper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID),
+                            user.getUid()));
         }
+    }
 
-        @Override
-        public void shield(User user) {
-            if (mBound) {
-                mService.sendMessage("Shield",
-                        MessageConstructor.constructShieldMsgReq(
-                                helper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID),
-                                user.getUid()));
-            }
+    @Override
+    public void onMsgItemLongClick(int position, User user) {
+        ItemListDialogFragment itemListDialogFragment = ItemListDialogFragment.newInstance(this, user);
+        itemListDialogFragment.show(getSupportFragmentManager(), "ItemListDialogFragment");
+    }
+
+    @Override
+    public void onItemRemark(User user) {
+        Intent intent = new Intent(getApplicationContext(), RemarkUpdateActivity.class);
+        intent.putExtra("user", user);
+        startActivity(intent);
+    }
+
+    @Override
+    public void onItemShield(User user) {
+        shield(user);
+    }
+
+    @Override
+    public void onItemDelete(User user) {
+        String selection =
+                AppContract.UserStatusEntry.COLUMN_NAME_ENTRY_UID + " = ? " +
+                        " AND " +
+                        AppContract.UserStatusEntry.COLUMN_NAME_ENTRY_OWNER + " = ?";
+
+        String[] selectionArgs = new String[]{user.getUid(),helper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID)};
+
+        ContentValues values = new ContentValues();
+        values.put(AppContract.UserStatusEntry.COLUMN_NAME_STATUS_MSG, User.USER_STATUS_MSG_LIST_OUT);
+
+        int count = getApplicationContext().getContentResolver().update(AppContract.UserStatusEntry.CONTENT_URI, values, selection, selectionArgs);
+        if (count > 0) {
+            Intent intent = new Intent();
+            intent.setAction(GlobalApplication.ACTION_INTENT_MSG_LIST_UPDATE);
+            sendBroadcast(intent);
         }
+    }
 
-        @Override
-        public void onMsgItemLongClick(int position, User user) {
-            ItemListDialogFragment itemListDialogFragment = ItemListDialogFragment.newInstance(this, user);
-            itemListDialogFragment.show(getSupportFragmentManager(), "ItemListDialogFragment");
+    @Override
+    public void loadTop() {
+        if (mBound) {
+            loadNearbyPeople(1, 5);
         }
+    }
 
-        @Override
-        public void onItemRemark(User user) {
-            Intent intent = new Intent(getApplicationContext(), RemarkUpdateActivity.class);
-            intent.putExtra("user", user);
-            startActivity(intent);
-        }
+    @Override
+    public void loadBottom() {
+        int currentPage = buddyFragment.getCurrentPage();
+        loadNearbyPeople(currentPage, 5);
+    }
 
-        @Override
-        public void onItemShield(User user) {
-            shield(user);
-        }
 
-        @Override
-        public void onItemDelete(User user) {
-            String selection =
-                    AppContract.UserStatusEntry.COLUMN_NAME_ENTRY_UID + " = ? " +
-                    " AND " +
-                     AppContract.UserStatusEntry.COLUMN_NAME_ENTRY_OWNER + " = ?";
-
-            String[] selectionArgs = new String[]{user.getUid(),helper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID)};
-
-            ContentValues values = new ContentValues();
-            values.put(AppContract.UserStatusEntry.COLUMN_NAME_STATUS_MSG, User.USER_STATUS_MSG_LIST_OUT);
-
-            int count = getApplicationContext().getContentResolver().update(AppContract.UserStatusEntry.CONTENT_URI, values, selection, selectionArgs);
-            if (count > 0) {
-                Intent intent = new Intent();
-                intent.setAction(GlobalApplication.ACTION_INTENT_MSG_LIST_UPDATE);
-                sendBroadcast(intent);
-            }
-        }
-
-        @Override
-        public void loadTop() {
-            if (mBound) {
-                loadNearbyPeople(1, 5);
-            }
-        }
-
-        @Override
-        public void loadBottom() {
-            int currentPage = buddyFragment.getCurrentPage();
-            loadNearbyPeople(currentPage, 5);
-        }
-    };
 
 
     /**
@@ -382,9 +384,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     private void initAdapter() {
         discoveryFragment = DiscoveryFragment.newInstance();
-        messageFragment = MessageFragment.newInstance(onFragmentInteractionListener);
-        buddyFragment = BuddyFragment.newInstance(onFragmentInteractionListener);
-        accountFragment = AccountFragment.newInstance(onFragmentInteractionListener);
+        messageFragment = MessageFragment.newInstance(this);
+        buddyFragment = BuddyFragment.newInstance(this);
+        accountFragment = AccountFragment.newInstance(this);
         adapter = new CollectionPagerAdapter(getSupportFragmentManager());
         adapter.add(discoveryFragment);
         adapter.add(messageFragment);
