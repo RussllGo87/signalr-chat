@@ -1,6 +1,7 @@
 package net.pingfang.signalr.chat.util;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
@@ -13,7 +14,9 @@ import org.apache.commons.io.FileUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -100,7 +103,6 @@ public class CommonTools {
         return grayScaleBitmap;
     }
 
-
     /**
      * 将bitmap转换成Base64格式字符串
      * 格式化byte
@@ -160,5 +162,43 @@ public class CommonTools {
         }
 
         return result;
+    }
+
+
+    public static String imagePath2Base64(String sourceFilePath){
+        try{
+            int dh = 1024;
+            int dw = 768;
+            BitmapFactory.Options factory = new BitmapFactory.Options();
+            factory.inJustDecodeBounds = true;
+            InputStream is = new FileInputStream(sourceFilePath);
+            BitmapFactory.decodeStream(is, null, factory);
+            int hRatio = (int)Math.ceil(factory.outHeight / (float)dh);
+            int wRatio = (int)Math.ceil(factory.outWidth / (float)dw);
+
+            if(hRatio > 1|| wRatio>1){
+                if(hRatio> wRatio){
+                    factory.inSampleSize = hRatio;
+                }
+                else
+                    factory.inSampleSize = wRatio;
+            }
+            factory.inJustDecodeBounds = false;
+            is.close();
+            is = new FileInputStream(sourceFilePath);
+            Bitmap bmp = BitmapFactory.decodeStream(is, null, factory);
+
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bmp.compress(Bitmap.CompressFormat.JPEG, 80, baos);
+            baos.flush();
+            baos.close();
+
+            byte[] bitmapBytes = baos.toByteArray();
+            return Base64.encodeToString(bitmapBytes, Base64.DEFAULT);
+
+        }catch(Exception e){
+            e.printStackTrace();
+            return null;
+        }
     }
 }

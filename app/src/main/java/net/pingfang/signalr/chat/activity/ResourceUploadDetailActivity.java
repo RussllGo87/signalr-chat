@@ -277,7 +277,7 @@ public class ResourceUploadDetailActivity extends AppCompatActivity implements V
                 ops.inSampleSize = inSampleSize;
                 final Bitmap bm = BitmapFactory.decodeFile(path, ops);
 
-                String fileContent = CommonTools.bitmapToBase64(bm);
+                String fileContent = CommonTools.imagePath2Base64(path);
 
                 publishProgress(i, bm, fileContent);
             }

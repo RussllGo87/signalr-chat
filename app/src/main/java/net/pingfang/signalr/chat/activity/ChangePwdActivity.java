@@ -18,8 +18,8 @@ import com.squareup.okhttp.Response;
 import net.pingfang.signalr.chat.R;
 import net.pingfang.signalr.chat.constant.app.AppConstants;
 import net.pingfang.signalr.chat.net.HttpBaseCallback;
+import net.pingfang.signalr.chat.net.NetUtil;
 import net.pingfang.signalr.chat.net.OkHttpCommonUtil;
-import net.pingfang.signalr.chat.util.CommonUtil;
 import net.pingfang.signalr.chat.util.GlobalApplication;
 import net.pingfang.signalr.chat.util.SharedPreferencesHelper;
 
@@ -100,7 +100,7 @@ public class ChangePwdActivity extends AppCompatActivity implements View.OnClick
             return;
         }
 
-        if(CommonUtil.isConnected(getApplicationContext())){
+        if(NetUtil.isConnected(getApplicationContext())){
             OkHttpCommonUtil okHttp = OkHttpCommonUtil.newInstance(getApplicationContext());
             okHttp.getRequest(URL_PWD_UPDATE,
                     new OkHttpCommonUtil.Param[]{

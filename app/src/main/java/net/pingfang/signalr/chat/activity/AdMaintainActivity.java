@@ -10,6 +10,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -49,11 +50,11 @@ import net.pingfang.signalr.chat.database.Advertisement;
 import net.pingfang.signalr.chat.database.AppContract;
 import net.pingfang.signalr.chat.location.LocationListenerImpl;
 import net.pingfang.signalr.chat.location.LocationNotify;
+import net.pingfang.signalr.chat.location.LocationUtil;
 import net.pingfang.signalr.chat.net.HttpBaseCallback;
 import net.pingfang.signalr.chat.net.NetUtil;
 import net.pingfang.signalr.chat.net.OkHttpCommonUtil;
 import net.pingfang.signalr.chat.util.CommonTools;
-import net.pingfang.signalr.chat.util.CommonUtil;
 import net.pingfang.signalr.chat.util.FileUtil;
 import net.pingfang.signalr.chat.util.GlobalApplication;
 import net.pingfang.signalr.chat.util.ImageUtils;
@@ -167,7 +168,7 @@ public class AdMaintainActivity extends AppCompatActivity implements View.OnClic
      * 检查gps状态并提示用户打开gps
      */
     public void checkGpsStatus() {
-        gpsStatus = CommonUtil.isGpsOPen(getApplicationContext());
+        gpsStatus = LocationUtil.isGpsOPen(getApplicationContext());
         if (!gpsStatus) {
             LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
             if (!locationManager.isProviderEnabled(android.location.LocationManager.GPS_PROVIDER)) {
@@ -521,23 +522,28 @@ public class AdMaintainActivity extends AppCompatActivity implements View.OnClic
                 ops.inJustDecodeBounds = false;
                 ops.inSampleSize = inSampleSize;
                 final Bitmap bm = BitmapFactory.decodeFile(filePath, ops);
-                fileContent = CommonTools.bitmapToBase64(bm);
+
+//                fileContent = CommonTools.bitmapToBase64(bm);
                 if (currentViewId == iv_content_photo_1.getId()) {
-                    fileContentArray[0] = fileContent;
+//                    fileContentArray[0] = fileContent;
                     filePathArray[0] = filePath;
                     iv_content_photo_1.setImageBitmap(bm);
+                    new LoadImageContentTask().execute(filePathArray[0], "0");
                 } else if (currentViewId == iv_content_photo_2.getId()) {
-                    fileContentArray[1] = fileContent;
+//                    fileContentArray[1] = fileContent;
                     filePathArray[1] = filePath;
                     iv_content_photo_2.setImageBitmap(bm);
+                    new LoadImageContentTask().execute(filePathArray[1], "1");
                 } else if (currentViewId == iv_content_photo_3.getId()) {
-                    fileContentArray[2] = fileContent;
+//                    fileContentArray[2] = fileContent;
                     filePathArray[2] = filePath;
                     iv_content_photo_3.setImageBitmap(bm);
+                    new LoadImageContentTask().execute(filePathArray[2], "2");
                 } else if (currentViewId == iv_content_photo_4.getId()) {
-                    fileContentArray[3] = fileContent;
+//                    fileContentArray[3] = fileContent;
                     filePathArray[3] = filePath;
                     iv_content_photo_4.setImageBitmap(bm);
+                    new LoadImageContentTask().execute(filePathArray[3], "3");
                 }
             } else if(requestCode == GlobalApplication.REQUEST_IMAGE_GET) {
                 if(data != null && data.getData() != null) {
@@ -550,23 +556,29 @@ public class AdMaintainActivity extends AppCompatActivity implements View.OnClic
                     ops.inJustDecodeBounds = false;
                     ops.inSampleSize = inSampleSize;
                     final Bitmap bm = BitmapFactory.decodeFile(filePath, ops);
-                    fileContent = CommonTools.bitmapToBase64(bm);
+
+//                    fileContent = CommonTools.bitmapToBase64(bm);
+
                     if (currentViewId == iv_content_photo_1.getId()) {
-                        fileContentArray[0] = fileContent;
+//                        fileContentArray[0] = fileContent;
                         filePathArray[0] = filePath;
                         iv_content_photo_1.setImageBitmap(bm);
+                        new LoadImageContentTask().execute(filePathArray[0], "0");
                     } else if (currentViewId == iv_content_photo_2.getId()) {
-                        fileContentArray[1] = fileContent;
+//                        fileContentArray[1] = fileContent;
                         filePathArray[1] = filePath;
                         iv_content_photo_2.setImageBitmap(bm);
+                        new LoadImageContentTask().execute(filePathArray[1], "1");
                     } else if (currentViewId == iv_content_photo_3.getId()) {
-                        fileContentArray[2] = fileContent;
+//                        fileContentArray[2] = fileContent;
                         filePathArray[2] = filePath;
                         iv_content_photo_3.setImageBitmap(bm);
+                        new LoadImageContentTask().execute(filePathArray[2], "2");
                     } else if (currentViewId == iv_content_photo_4.getId()) {
-                        fileContentArray[3] = fileContent;
+//                        fileContentArray[3] = fileContent;
                         filePathArray[3] = filePath;
                         iv_content_photo_4.setImageBitmap(bm);
+                        new LoadImageContentTask().execute(filePathArray[3], "3");
                     }
                 } else if(data == null) {
                     Toast.makeText(getApplicationContext(),getString(R.string.image_get_data_null),Toast.LENGTH_SHORT).show();
@@ -603,6 +615,31 @@ public class AdMaintainActivity extends AppCompatActivity implements View.OnClic
                     .startActivities();
         } else {
             onBackPressed();
+        }
+    }
+
+    class LoadImageContentTask extends AsyncTask<String, String, String> {
+        @Override
+        protected String doInBackground(String... params) {
+            String path = params[0];
+            String position = params[1];
+
+            String content = CommonTools.imagePath2Base64(path);
+
+            publishProgress(position, content);
+
+            return "ok";
+        }
+
+        @Override
+        protected void onProgressUpdate(String... values) {
+            String position = values[0];
+            String content = values[1];
+
+            int positionInt = Integer.valueOf(position);
+            if(positionInt < 4) {
+                fileContentArray[positionInt] = content;
+            }
         }
     }
 }

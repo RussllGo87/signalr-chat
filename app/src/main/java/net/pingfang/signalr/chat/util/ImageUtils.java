@@ -193,7 +193,6 @@ public class ImageUtils
 
     /**
      * 根据view获得期望的宽度
-     *
      * @param view
      * @return
      */
@@ -232,7 +231,6 @@ public class ImageUtils
 
     /**
      * 通过反射获取imageview的某个属性值
-     *
      * @param object
      * @param fieldName
      * @return
@@ -255,4 +253,5 @@ public class ImageUtils
         return value;
 
     }
+
 }
