@@ -125,6 +125,8 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
     Handler mHandler = new Handler(Looper.getMainLooper());
 
+    private long currentTime = 0L;
+
     ChatMessageProcessor chatMessageProcessor;
     /**
      * Defines callbacks for service binding, passed to bindService()
@@ -654,6 +656,9 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void startRecording() {
+
+        currentTime = System.currentTimeMillis();
+
         ll_record_voice_indicator.setVisibility(View.VISIBLE);
         mFileName = MediaFileUtils.createFilePath(getApplicationContext(),
                 Environment.DIRECTORY_MUSIC, "voice", GlobalApplication.VOICE_FILE_NAME_SUFFIX);
@@ -696,18 +701,25 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             mStartRecording = false;
             btn_voice_record.setText(R.string.btn_voice_record);
 
-            String datetime = DateTimeUtil.TimeConvertString();
-            Uri uri = Uri.parse(mFileName);
-            inflaterVoiceMessage(uri, true, helper.getStringValue(AppConstants.KEY_SYS_CURRENT_NICKNAME), datetime);
+            long now = System.currentTimeMillis();
+            long delta = now - currentTime;
+            currentTime = now;
+            if(delta > 3000) {
+                String datetime = DateTimeUtil.TimeConvertString();
+                Uri uri = Uri.parse(mFileName);
+                inflaterVoiceMessage(uri, true, helper.getStringValue(AppConstants.KEY_SYS_CURRENT_NICKNAME), datetime);
 
-            String fileExtension = MediaFileUtils.getFileExtension(mFileName);
-            String fileBody = CommonTools.fileToBase64(mFileName);
-            int i = 1;
-            if(!TextUtils.isEmpty(fileExtension) && !TextUtils.isEmpty(fileBody)) {
-                String messageBody = MessageConstructor.constructFileMessage(uid,nickname,portrait,
-                        buddyUid, "Audio", fileExtension, fileBody,datetime);
-                mService.sendMessage("OnlineMsg", messageBody);
-                chatMessageProcessor.onSendMessage("OnlineMsg", messageBody);
+                String fileExtension = MediaFileUtils.getFileExtension(mFileName);
+                String fileBody = CommonTools.fileToBase64(mFileName);
+                int i = 1;
+                if(!TextUtils.isEmpty(fileExtension) && !TextUtils.isEmpty(fileBody)) {
+                    String messageBody = MessageConstructor.constructFileMessage(uid,nickname,portrait,
+                            buddyUid, "Audio", fileExtension, fileBody,datetime);
+                    mService.sendMessage("OnlineMsg", messageBody);
+                    chatMessageProcessor.onSendMessage("OnlineMsg", messageBody);
+                }
+            } else {
+                Toast.makeText(getApplicationContext(), "录音时间太短", Toast.LENGTH_LONG).show();
             }
         }
 

@@ -136,8 +136,10 @@ public class BulkMsgActivity extends AppCompatActivity implements View.OnClickLi
     int currentIntegration = 0;
     double currentDistance = 0.0d;
     int currentMaxMassTimes = 1;
-    List<BulkRule> rulelist = new ArrayList<BulkRule>();
+    List<BulkRule> ruleList = new ArrayList<>();
     List<String> listRuleString = new ArrayList<>();
+
+    private long currentTime = 0L;
 
     Handler mHandler = new Handler(Looper.getMainLooper());
 
@@ -212,7 +214,7 @@ public class BulkMsgActivity extends AppCompatActivity implements View.OnClickLi
                 int eventCode = event.getAction();
                 switch (eventCode) {
                     case MotionEvent.ACTION_DOWN:
-                        startRecording();
+                        checkSendCondition(BULK_MSG_TYPE_VOICE);
                         return true;
                     case MotionEvent.ACTION_UP:
                         stopRecording();
@@ -295,7 +297,7 @@ public class BulkMsgActivity extends AppCompatActivity implements View.OnClickLi
             public void onResponse(Response response) throws IOException {
                 String jsonResponse = response.body().string();
                 //                sharedPreferencesHelper.putStringValue(AppConstants.KEY_SYS_BULK_MSG_RULE, jsonResponse);
-                rulelist.clear();
+                ruleList.clear();
                 try {
                     JSONArray jsonArray = new JSONArray(jsonResponse);
                     for (int i = 0; i < jsonArray.length(); i++) {
@@ -306,7 +308,7 @@ public class BulkMsgActivity extends AppCompatActivity implements View.OnClickLi
                         int maxMassTimes = jsonObject.getInt("MaxMassTimes");
 
                         BulkRule bulkRule = new BulkRule(id, integration, distance, maxMassTimes);
-                        rulelist.add(bulkRule);
+                        ruleList.add(bulkRule);
                     }
 
                     runOnUiThread(new Runnable() {
@@ -334,7 +336,7 @@ public class BulkMsgActivity extends AppCompatActivity implements View.OnClickLi
 
     private void showRuleList() {
         listRuleString.clear();
-        for (BulkRule rule : rulelist) {
+        for (BulkRule rule : ruleList) {
             if (rule.getDistance() < 1000) {
                 listRuleString.add(rule.getDistance() + "米");
             } else {
@@ -348,7 +350,7 @@ public class BulkMsgActivity extends AppCompatActivity implements View.OnClickLi
 
     @Override
     public void onDialogItemClick(int position) {
-        BulkRule rule = rulelist.get(position);
+        BulkRule rule = ruleList.get(position);
         currentIntegration = rule.getIntegration();
         currentDistance = rule.getDistance();
         currentMaxMassTimes = rule.getMaxMassTimes();
@@ -421,7 +423,8 @@ public class BulkMsgActivity extends AppCompatActivity implements View.OnClickLi
                 checkSendCondition(BULK_MSG_TYPE_PIC);
                 break;
             case R.id.iv_msg_type_voice:
-                checkSendCondition(BULK_MSG_TYPE_VOICE);
+//                checkSendCondition(BULK_MSG_TYPE_VOICE);
+                onVoiceTxtSwitchClick(false);
                 break;
         }
     }
@@ -493,7 +496,7 @@ public class BulkMsgActivity extends AppCompatActivity implements View.OnClickLi
                                             }
 
                                             if (type.equals(BULK_MSG_TYPE_VOICE)) {
-                                                onVoiceTxtSwitchClick(false);
+                                                startRecording();
                                             }
                                         } else if (currentIntegration > exp) {
                                             SingleButtonDialogFragment dialogFragment = SingleButtonDialogFragment.newInstance(getString(R.string.dialog_msg_bulk_msg_send_no_integration));
@@ -973,6 +976,8 @@ public class BulkMsgActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void startRecording() {
+        currentTime = System.currentTimeMillis();
+
         ll_record_voice_indicator.setVisibility(View.VISIBLE);
         mFileName = MediaFileUtils.createFilePath(getApplicationContext(),
                 Environment.DIRECTORY_MUSIC, "voice", GlobalApplication.VOICE_FILE_NAME_SUFFIX);
@@ -1015,24 +1020,31 @@ public class BulkMsgActivity extends AppCompatActivity implements View.OnClickLi
             mStartRecording = false;
             btn_voice_record.setText(R.string.btn_voice_record);
 
-            String datetime = DateTimeUtil.TimeConvertString();
-            Uri uri = Uri.parse(mFileName);
-            inflaterVoiceMessage(uri, true, sharedPreferencesHelper.getStringValue(AppConstants.KEY_SYS_CURRENT_NICKNAME), datetime);
+            long now = System.currentTimeMillis();
+            long delta = now - currentTime;
+            currentTime = now;
+            if(delta > 3000) {
+                String datetime = DateTimeUtil.TimeConvertString();
+                Uri uri = Uri.parse(mFileName);
+                inflaterVoiceMessage(uri, true, sharedPreferencesHelper.getStringValue(AppConstants.KEY_SYS_CURRENT_NICKNAME), datetime);
 
-            String fileExtension = MediaFileUtils.getFileExtension(mFileName);
-            String fileBody = CommonTools.fileToBase64(mFileName);
+                String fileExtension = MediaFileUtils.getFileExtension(mFileName);
+                String fileBody = CommonTools.fileToBase64(mFileName);
 
-            if(!TextUtils.isEmpty(fileExtension) && !TextUtils.isEmpty(fileBody)) {
-                String messageBody = MessageConstructor.constructBulkFileMsgReq(uid, nickname, portrait,
-                        "Audio", fileExtension, fileBody, datetime,
-                        sharedPreferencesHelper.getStringValue(AppConstants.KEY_SYS_LOCATION_LNG),
-                        sharedPreferencesHelper.getStringValue(AppConstants.KEY_SYS_LOCATION_LAT),
-                        currentIntegration,
-                        currentDistance,
-                        currentMaxMassTimes);
-                Log.d(TAG, "messageBody = " + messageBody);
-                mService.sendMessage("BulkMssaging", messageBody);
-                chatMessageProcessor.onSendMessage("BulkMssaging", messageBody);
+                if(!TextUtils.isEmpty(fileExtension) && !TextUtils.isEmpty(fileBody)) {
+                    String messageBody = MessageConstructor.constructBulkFileMsgReq(uid, nickname, portrait,
+                            "Audio", fileExtension, fileBody, datetime,
+                            sharedPreferencesHelper.getStringValue(AppConstants.KEY_SYS_LOCATION_LNG),
+                            sharedPreferencesHelper.getStringValue(AppConstants.KEY_SYS_LOCATION_LAT),
+                            currentIntegration,
+                            currentDistance,
+                            currentMaxMassTimes);
+                    Log.d(TAG, "messageBody = " + messageBody);
+                    mService.sendMessage("BulkMssaging", messageBody);
+                    chatMessageProcessor.onSendMessage("BulkMssaging", messageBody);
+                }
+            } else {
+                Toast.makeText(getApplicationContext(), "录音时间太短", Toast.LENGTH_LONG).show();
             }
         }
 
