@@ -160,6 +160,9 @@ public class PhoneFragment extends Fragment implements View.OnClickListener{
                                 });
                             } else {
                                 // 其他请求错误
+                                if(status == -1) {
+                                    Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
+                                }
                                 btn_load_validate_code.setClickable(true);
                             }
                         } catch (JSONException e) {

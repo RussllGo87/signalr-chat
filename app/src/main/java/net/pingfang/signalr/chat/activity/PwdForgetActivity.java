@@ -225,6 +225,7 @@ public class PwdForgetActivity extends AppCompatActivity implements View.OnClick
                         try {
                             jsonObject = new JSONObject(responseStr);
                             int status = jsonObject.getInt("Status");
+                            String message = jsonObject.getString("Message");
                             if(status == 0) {
                                 runOnUiThread(new Runnable() {
                                     @Override
@@ -238,6 +239,9 @@ public class PwdForgetActivity extends AppCompatActivity implements View.OnClick
                                 });
                             } else {
                                 // 其他请求错误
+                                if(status == -1) {
+                                    Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
+                                }
                                 btn_load_validate_code.setClickable(true);
                             }
                         } catch (JSONException e) {
