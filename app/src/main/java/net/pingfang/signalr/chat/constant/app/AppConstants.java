@@ -19,4 +19,10 @@ public class AppConstants {
 
     public static final String KEY_SYS_BULK_MSG_RULE = "KEY_SYS_BULK_MSG_RULE";
 
+    public static final String KEY_SYS_FP_PHONE = "KEY_SYS_FP_PHONE";
+    public static final String KEY_SYS_FP_CODE = "KEY_SYS_FP_CODE";
+
+    public static final String KEY_SYS_PHONE_REG = "KEY_SYS_PHONE_REG";
+    public static final String KEY_SYS_CODE_REG = "KEY_SYS_CODE_REG";
+
 }

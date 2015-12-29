@@ -8,4 +8,5 @@ public interface OnRegisterInteractionListener {
     void loadCode(String phoneNo);
     void submitCode(String phoneNo,String vc);
     void submitInfo(String... arg);
+    void nextPage();
 }

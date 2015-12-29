@@ -20,6 +20,7 @@ import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 
 import net.pingfang.signalr.chat.R;
+import net.pingfang.signalr.chat.constant.app.AppConstants;
 import net.pingfang.signalr.chat.fragment.InfoRegFragment;
 import net.pingfang.signalr.chat.fragment.PhoneFragment;
 import net.pingfang.signalr.chat.listener.OnRegisterInteractionListener;
@@ -27,6 +28,7 @@ import net.pingfang.signalr.chat.net.HttpBaseCallback;
 import net.pingfang.signalr.chat.net.OkHttpCommonUtil;
 import net.pingfang.signalr.chat.ui.dialog.SingleButtonDialogFragment;
 import net.pingfang.signalr.chat.util.GlobalApplication;
+import net.pingfang.signalr.chat.util.SharedPreferencesHelper;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -45,6 +47,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
     public static final String VALIDATE_PHONE_URL = GlobalApplication.URL_WEB_API_HOST + "/api/WebAPI/User/CheckPhone";
     public static final String VALIDATE_PHONE_KEY_PHONE_NO = "phone";
+
     public static final String SUBMIT_REG_INFORMATION_URL = GlobalApplication.URL_WEB_API_HOST + "/api/WebAPI/User/Register";
     public static final String SUBMIT_REG_INFORMATION_KEY_PHONE = "phone";
     public static final String SUBMIT_REG_INFORMATION_KEY_NICKNAME = "nickname";
@@ -69,6 +72,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     int requestStep = STEP_1;
 
     private Handler mDelivery;
+    private SharedPreferencesHelper sharedPreferencesHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +80,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         setContentView(R.layout.activity_register);
 
         mDelivery = new Handler(Looper.getMainLooper());
+        sharedPreferencesHelper = SharedPreferencesHelper.newInstance(getApplicationContext());
 
         initView();
         initFragment();
@@ -126,7 +131,11 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 //                    ft.replace(R.id.fl_container_reg,infoFragment,"InfoRegFragment");
 //                    ft.commit();
 
-                    fragment.validatePhoneNo();
+                    boolean isNext = fragment.isNextStep();
+                    if(isNext) {
+                        nextPage();
+                    }
+//                    fragment.validatePhoneNo();
 
                 } else {
                     InfoRegFragment infoFragment = (InfoRegFragment) getSupportFragmentManager().findFragmentByTag("InfoRegFragment");
@@ -134,6 +143,17 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 }
                 break;
         }
+    }
+
+    public void nextPage() {
+        requestStep = STEP_2;
+        btn_step_previous.setText(R.string.btn_step_previous);
+        String tmpPhone = sharedPreferencesHelper.getStringValue(AppConstants.KEY_SYS_PHONE_REG);
+        InfoRegFragment infoFragment = InfoRegFragment.newInstance(tmpPhone);
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        ft.replace(R.id.fl_container_reg, infoFragment, "InfoRegFragment");
+        ft.commit();
     }
 
     private void navBack() {
@@ -172,7 +192,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             public void onResponse(Response response) throws IOException {
                 String json = response.body().string();
                 Log.d(TAG, "VALIDATE_PHONE_URL return " + json);
-                JSONObject jsonObject = null;
+                JSONObject jsonObject;
                 try {
                     jsonObject = new JSONObject(json);
                     int status = jsonObject.getInt("status");
@@ -230,7 +250,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             @Override
             public void onResponse(Response response) throws IOException {
                 String json = response.body().string();
-                JSONObject jsonObject = null;
+                JSONObject jsonObject;
                 try {
                     jsonObject = new JSONObject(json);
                     int status = jsonObject.getInt("status");
@@ -271,7 +291,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             @Override
             public void onResponse(Response response) throws IOException {
                 String json = response.body().string();
-                JSONObject jsonObject = null;
+                JSONObject jsonObject;
                 try {
                     jsonObject = new JSONObject(json);
                     int status = jsonObject.getInt("status");
@@ -333,7 +353,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             public void onResponse(Response response) throws IOException {
                 String json = response.body().string();
                 Log.d(TAG,"SUBMIT_REG_INFORMATION_URL return " + json);
-                JSONObject jsonObject = null;
+                JSONObject jsonObject;
                 try {
                     jsonObject = new JSONObject(json);
                     int status = jsonObject.getInt("status");
