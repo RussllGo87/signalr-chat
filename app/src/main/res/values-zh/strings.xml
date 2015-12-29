@@ -144,6 +144,7 @@
     <string name="tv_account_item_settings">@string/title_activity_settings</string>
     <string name="tv_fragment_account">我</string>
     <string name="tv_account_item_uploaded">我的资源</string>
+    <string name="tv_account_item_maintained">我的维护任务</string>
     <string name="tv_account_item_filter_list">屏蔽人列表</string>
     <string name="tv_account_item_resource_upload">未上传资源</string>
     <string name="tv_account_item_ad_upload">未上传广告</string>
@@ -305,6 +306,7 @@
     <string name="title_activity_feedback">@string/tv_about_item_suggestion</string>
     <string name="btn_feedback_submit">提交</string>
     <string name="toast_feedback_ok">反馈提交成功,我们会继续努力的</string>
+    <string name="title_activity_grey_bitmap">图片转灰</string>
 
     <!-- provider 相关 -->
     <string name="illegal_uri_exception">错误的 URI</string>
