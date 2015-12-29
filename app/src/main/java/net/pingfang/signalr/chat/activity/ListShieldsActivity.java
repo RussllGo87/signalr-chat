@@ -18,6 +18,7 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -139,6 +140,9 @@ public class ListShieldsActivity extends AppCompatActivity implements View.OnCli
                                 String uid = jsonObject.getString("userId");
                                 String nickname = jsonObject.getString("nickname");
                                 String portrait = jsonObject.getString("portrait");
+                                if(!TextUtils.isEmpty(portrait)) {
+                                    portrait = "";
+                                }
                                 boolean isExist = userManager.isExist(uid);
                                 ContentValues values = new ContentValues();
                                 if (isExist) {
