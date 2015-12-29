@@ -307,7 +307,7 @@ public class ResourcePostActivity extends AppCompatActivity implements View.OnCl
     }
 
     private void openCamera() {
-        tmpFilePath = MediaFileUtils.genarateFilePath(getApplicationContext(),
+        tmpFilePath = MediaFileUtils.createFilePath(getApplicationContext(),
                 Environment.DIRECTORY_PICTURES, "Photos", "jpg");
         File file = new File(tmpFilePath);
         if (file.exists()) {

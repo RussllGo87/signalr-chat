@@ -1,12 +1,9 @@
 package net.pingfang.signalr.chat.util;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Environment;
-import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
@@ -23,22 +20,9 @@ import java.util.Calendar;
  */
 public class MediaFileUtils {
 
-
-
-    public static File getAlbumStorageDir(Context context, String type, String albumName) {
-        // Get the directory for the app's private pictures directory.
-        File file = new File(context.getExternalFilesDir(
-                type), albumName);
-        if(!file.exists()) {
-            file.mkdir();
-            Log.e("MediaFileUtils", "Directory created");
-        }
-        return file;
-    }
-
-    public static String genarateFilePath(Context context, String type, String albumName, String fileExtension) {
+    public static String createFilePath(Context context, String type, String albumName, String fileExtension) {
         Calendar c = Calendar.getInstance();
-        File fileDir = getAlbumStorageDir(context, type, albumName);
+        File fileDir = FileUtil.getAlbumStorageDir(context, type, albumName);
         StringBuilder stringBuilder = new StringBuilder();
         if(!TextUtils.isEmpty(type)) {
             if(type.equals(Environment.DIRECTORY_PICTURES)) {
@@ -78,26 +62,10 @@ public class MediaFileUtils {
         return  null;
     }
 
-    public static String getRealPathFromURI(Context context, Uri contentUri) {
-        Cursor cursor = null;
-        try {
-            String[] proj = { MediaStore.Images.Media.DATA };
-            cursor = context.getContentResolver().query(contentUri,  proj, null, null, null);
-            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-            cursor.moveToFirst();
-            return cursor.getString(column_index);
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
-        }
-    }
-
     public static String getFileExtension(String filePath) {
         if(!TextUtils.isEmpty(filePath)) {
             int lastIndex = filePath.lastIndexOf(".");
-            String extension = filePath.substring(lastIndex + 1);
-            return extension;
+            return filePath.substring(lastIndex + 1);
         }
         return null;
     }
@@ -105,16 +73,15 @@ public class MediaFileUtils {
 
     public static String processReceiveFile(Context context, String fileBody, String fileType,String fileExtension) {
         try {
-            StringBuffer buffer = new StringBuffer();
             String filePath = null;
             if(!TextUtils.isEmpty(fileType) && !TextUtils.isEmpty(fileExtension)) {
                 if(fileType.equals("IMAGE")) {
-                    filePath = genarateFilePath(context, Environment.DIRECTORY_PICTURES, "pic", fileExtension);
+                    filePath = createFilePath(context, Environment.DIRECTORY_PICTURES, "pic", fileExtension);
                 } else if(fileType.equals("AUDIO")) {
-                    filePath = genarateFilePath(context, Environment.DIRECTORY_MUSIC, "voice", GlobalApplication.VOICE_FILE_NAME_SUFFIX);
+                    filePath = createFilePath(context, Environment.DIRECTORY_MUSIC, "voice", GlobalApplication.VOICE_FILE_NAME_SUFFIX);
                 }
 
-                File file = null;
+                File file;
                 if(filePath != null && !TextUtils.isEmpty(filePath)) {
                     file = new File(filePath);
                     if(!file.exists()) {

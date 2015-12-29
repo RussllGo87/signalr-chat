@@ -452,19 +452,26 @@ public class AdMaintainActivity extends AppCompatActivity implements View.OnClic
     }
 
     private void openCamera() {
-        tmpFilePath = MediaFileUtils.genarateFilePath(getApplicationContext(),
+        tmpFilePath = MediaFileUtils.createFilePath(getApplicationContext(),
                 Environment.DIRECTORY_PICTURES, "Photos", "jpg");
-        File file = new File(tmpFilePath);
-        if (file.exists()) {
-            file.delete();
+        if(tmpFilePath != null) {
+            File file = new File(tmpFilePath);
+            if (file.exists()) {
+                file.delete();
+            }
+
+            targetUri = Uri.fromFile(file);
+            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, targetUri);
+            if (intent.resolveActivity(getPackageManager()) != null) {
+                startActivityForResult(intent, GlobalApplication.REQUEST_IMAGE_CAPTURE);
+            }
+        } else {
+            Toast.makeText(getApplicationContext(),
+                   "创建照片存储路径失败",
+                    Toast.LENGTH_SHORT).show();
         }
 
-        targetUri = Uri.fromFile(file);
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, targetUri);
-        if (intent.resolveActivity(getPackageManager()) != null) {
-            startActivityForResult(intent, GlobalApplication.REQUEST_IMAGE_CAPTURE);
-        }
 
     }
 

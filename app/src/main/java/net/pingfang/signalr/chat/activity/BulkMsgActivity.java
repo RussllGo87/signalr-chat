@@ -775,7 +775,7 @@ public class BulkMsgActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void openCamera() {
-        tmpFilePath = MediaFileUtils.genarateFilePath(getApplicationContext(),
+        tmpFilePath = MediaFileUtils.createFilePath(getApplicationContext(),
                 Environment.DIRECTORY_PICTURES, "Photos", "jpg");
         File file = new File(tmpFilePath);
         if (file.exists()) {
@@ -974,7 +974,7 @@ public class BulkMsgActivity extends AppCompatActivity implements View.OnClickLi
 
     private void startRecording() {
         ll_record_voice_indicator.setVisibility(View.VISIBLE);
-        mFileName = MediaFileUtils.genarateFilePath(getApplicationContext(),
+        mFileName = MediaFileUtils.createFilePath(getApplicationContext(),
                 Environment.DIRECTORY_MUSIC, "voice", GlobalApplication.VOICE_FILE_NAME_SUFFIX);
 
         if(!TextUtils.isEmpty(mFileName) && !mStartRecording) {

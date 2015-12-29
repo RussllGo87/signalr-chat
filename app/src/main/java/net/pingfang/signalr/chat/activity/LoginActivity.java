@@ -655,7 +655,7 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
 
     private void downloadPortrait(final String platform,String portraitUrl) {
 
-        String portraitDest = MediaFileUtils.genarateFilePath(getApplicationContext(),
+        String portraitDest = MediaFileUtils.createFilePath(getApplicationContext(),
                 Environment.DIRECTORY_PICTURES, "Portrait", "jpg");
         OkHttpCommonUtil okHttp = OkHttpCommonUtil.newInstance(getApplicationContext());
         okHttp.downloadFileAsync(portraitUrl, portraitDest, new ResultCallbackImpl<String>() {
@@ -875,8 +875,6 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
     /**
      * layoutParams
      * 点击登录按钮,使用帐号与密码登录
-     *
-     * @param view
      */
     public void login(View view) {
         final String account = et_login_no.getText().toString().trim();
@@ -1038,7 +1036,7 @@ public class LoginActivity extends AppCompatActivity implements LocationNotify{
                     public void onResponse(Response response) throws IOException {
                         String result = response.body().string();
                         Log.d(TAG, "URL_ACCOUNT_INFO_LOAD return " + result);
-                        JSONObject jsonObject = null;
+                        JSONObject jsonObject;
                         try {
                             jsonObject = new JSONObject(result);
                             int status = jsonObject.getInt("status");

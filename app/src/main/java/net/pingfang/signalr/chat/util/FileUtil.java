@@ -9,11 +9,17 @@ import android.os.Build;
 import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
+import android.support.v4.content.ContextCompat;
+import android.util.Log;
+
+import java.io.File;
 
 /**
  * Created by gongguopei87@gmail.com on 2015/9/24.
  */
 public class FileUtil {
+
+    public static final String TAG = FileUtil.class.getSimpleName();
 
     /* Checks if external storage is available for read and write */
     public static boolean isExternalStorageWritable() {
@@ -34,6 +40,35 @@ public class FileUtil {
         return false;
     }
 
+    public static File getAlbumStorageDir(Context context, String type, String albumName) {
+        // Get the directory for the app's private pictures directory.
+
+        if(!isExternalStorageWritable()) {
+            Log.d(TAG,"当前外部存储设备不可用");
+            return null;
+        }
+        File[] fileDirs = ContextCompat.getExternalFilesDirs(context, type);
+        File parentPath;
+        if(fileDirs != null) {
+            parentPath = fileDirs[0];
+        } else {
+            Log.d(TAG,"当前外部存储设备不存在");
+            return null;
+        }
+
+        File file = new File(parentPath, albumName);
+        if(!file.exists()) {
+            if(file.mkdir()) {
+                Log.e("FileUtil", "Directory created");
+            } else {
+                Log.e("FileUtil", "Directory created errors !!");
+            }
+
+
+        }
+        return file;
+    }
+
     /**
      * Get a file path from a Uri. This will get the the path for Storage Access
      * Framework Documents, as well as the _data field for the MediaStore and
@@ -41,7 +76,6 @@ public class FileUtil {
      *
      * @param context The context.
      * @param uri The Uri to query.
-     * @author paulburke
      */
     @TargetApi(Build.VERSION_CODES.KITKAT)
     public static String getPath(final Context context, final Uri uri) {
