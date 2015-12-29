@@ -3,32 +3,115 @@
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:gravity="center_horizontal"
-              android:orientation="horizontal"
+              android:orientation="vertical"
+              android:layout_margin="8dp"
               tools:context="net.pingfang.signalr.chat.fragment.PhoneFragment">
 
-    <EditText
-        android:id="@+id/et_phone_reg"
-        android:layout_width="0dp"
+    <!--
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:hint="@string/hint_et_phone_reg"
-        android:inputType="phone|numberDecimal"
-        android:minWidth="200dp"
-        android:singleLine="true"/>
+        android:orientation="horizontal">
 
-    <TextView
-        android:id="@+id/btn_validate_phone"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="@dimen/margin_vertical_button_reg_phone"
-        android:background="@drawable/selector_btn_bg"
-        android:paddingBottom="@dimen/padding_vertical_button_reg_phone"
-        android:paddingLeft="@dimen/padding_horizontal_button_reg_phone"
-        android:paddingRight="@dimen/padding_horizontal_button_reg_phone"
-        android:paddingTop="@dimen/padding_vertical_button_reg_phone"
-        android:text="@string/btn_validate_phone"
-        android:textColor="@android:color/white"/>
+        <EditText
+            android:id="@+id/et_phone_reg"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="@string/hint_et_phone_reg"
+            android:inputType="phone|numberDecimal"
+            android:minWidth="200dp"
+            android:singleLine="true"/>
+
+        <TextView
+            android:id="@+id/btn_validate_phone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="@dimen/margin_vertical_button_reg_phone"
+            android:layout_marginEnd="@dimen/margin_vertical_button_reg_phone"
+            android:background="@drawable/selector_btn_bg"
+            android:paddingBottom="@dimen/padding_vertical_button_reg_phone"
+            android:paddingLeft="@dimen/padding_horizontal_button_reg_phone"
+            android:paddingRight="@dimen/padding_horizontal_button_reg_phone"
+            android:paddingTop="@dimen/padding_vertical_button_reg_phone"
+            android:text="@string/btn_validate_phone"
+            android:textColor="@android:color/white"/>
+
+    </LinearLayout>
+    -->
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="手机号码 "
+                android:textColor="@color/text_color_tv_label_grey"
+                android:textSize="@dimen/text_size_tv_label_phone_no"/>
+
+            <EditText
+                android:id="@+id/et_phone_reg"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="8dp"
+                android:inputType="phone"
+                android:hint="请输入手机号码"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:orientation="horizontal">
+            <EditText
+                android:id="@+id/et_validate_code_reg"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="请输入验证码"/>
+            <TextView
+                android:id="@+id/btn_load_validate_code"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/selector_btn_bg"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:text="获取验证码"
+                android:textColor="@android:color/white"/>
+        </LinearLayout>
+
+    <LinearLayout android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:gravity="right"
+                  android:layout_marginTop="16dp"
+                  android:orientation="horizontal">
+
+        <TextView android:id="@+id/btn_step_next_reg"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:paddingTop="8dp"
+                  android:paddingBottom="8dp"
+                  android:paddingLeft="16dp"
+                  android:paddingRight="16dp"
+                  android:layout_marginLeft="16dp"
+                  android:background="@drawable/selector_btn_bg"
+                  android:gravity="center"
+                  android:text="下一步"
+                  android:textSize="20sp"
+                  android:textColor="@android:color/white"/>
+    </LinearLayout>
+
 
 </LinearLayout>
