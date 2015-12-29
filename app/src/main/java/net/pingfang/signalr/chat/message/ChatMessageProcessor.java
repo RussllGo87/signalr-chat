@@ -69,7 +69,7 @@ public class ChatMessageProcessor implements ChatMessageListener {
                 String nickName = object.getString("NickName");
                 String headPortrait = object.getString("HeadPortrait");
                 String distance = object.getString("Distance");
-                int gender = User.USER_GENDER_MALE;
+                int gender;
                 boolean sex = object.getBoolean("Sex");
                 if (sex) {
                     gender = User.USER_GENDER_MALE;
