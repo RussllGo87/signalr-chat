@@ -144,7 +144,7 @@ public class PhoneFragment extends Fragment implements View.OnClickListener{
                         try {
                             jsonObject = new JSONObject(responseStr);
                             int status = jsonObject.getInt("Status");
-                            String message = jsonObject.getString("Message");
+                            final String message = jsonObject.getString("Message");
                             if(status == 0) {
                                 String code = jsonObject.getString("IdentifyingCode");
                                 sharedPreferencesHelper.putStringValue(AppConstants.KEY_SYS_PHONE_REG, phoneNo);
@@ -161,9 +161,16 @@ public class PhoneFragment extends Fragment implements View.OnClickListener{
                             } else {
                                 // 其他请求错误
                                 if(status == -1) {
-                                    Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
+                                    getActivity().runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
+                                            btn_load_validate_code.setClickable(true);
+                                        }
+                                    });
+
                                 }
-                                btn_load_validate_code.setClickable(true);
+
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
