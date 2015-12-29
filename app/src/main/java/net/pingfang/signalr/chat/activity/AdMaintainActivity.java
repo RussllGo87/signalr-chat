@@ -345,7 +345,7 @@ public class AdMaintainActivity extends AppCompatActivity implements View.OnClic
                             try {
                                 jsonObject = new JSONObject(result);
                                 int status = jsonObject.getInt("status");
-                                String message = jsonObject.getString("message");
+                                final String message = jsonObject.getString("message");
                                 if (status == 0) {
                                     runOnUiThread(new Runnable() {
                                         @Override
@@ -358,17 +358,29 @@ public class AdMaintainActivity extends AppCompatActivity implements View.OnClic
                                         }
                                     });
                                 } else {
-                                    storeOnLocalDb();
-                                    runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            ll_progress_bar_container.setVisibility(View.GONE);
-                                            Toast.makeText(getApplicationContext(),
-                                                    getString(R.string.toast_ad_maintain_error),
-                                                    Toast.LENGTH_SHORT).show();
-                                            navigateUp();
-                                        }
-                                    });
+                                    if(status == -1) {
+                                        runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                ll_progress_bar_container.setVisibility(View.GONE);
+                                                Toast.makeText(getApplicationContext(),
+                                                        message,
+                                                        Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
+                                    } else {
+                                        storeOnLocalDb();
+                                        runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                ll_progress_bar_container.setVisibility(View.GONE);
+                                                Toast.makeText(getApplicationContext(),
+                                                        getString(R.string.toast_ad_maintain_error),
+                                                        Toast.LENGTH_SHORT).show();
+                                                navigateUp();
+                                            }
+                                        });
+                                    }
                                 }
                             } catch (JSONException e) {
                                 e.printStackTrace();
