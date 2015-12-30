@@ -21,6 +21,7 @@ import net.pingfang.signalr.chat.activity.ListShieldsActivity;
 import net.pingfang.signalr.chat.activity.ResourceListActivity;
 import net.pingfang.signalr.chat.activity.ResourceUploadListActivity;
 import net.pingfang.signalr.chat.activity.SettingsActivity;
+import net.pingfang.signalr.chat.constant.app.AppConstants;
 import net.pingfang.signalr.chat.listener.OnFragmentInteractionListener;
 import net.pingfang.signalr.chat.net.OkHttpCommonUtil;
 import net.pingfang.signalr.chat.util.GlobalApplication;
@@ -107,6 +108,17 @@ public class AccountFragment extends Fragment implements View.OnClickListener{
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+
+        String nickname = helper.getStringValue(AppConstants.KEY_SYS_CURRENT_NICKNAME);
+        String portrait = helper.getStringValue(AppConstants.KEY_SYS_CURRENT_PORTRAIT);
+        int exp = helper.getInt(AppConstants.KEY_SYS_CURRENT_USER_EXP, 0);
+
+        updateAccountInfo(nickname, portrait, exp);
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
 
@@ -114,6 +126,7 @@ public class AccountFragment extends Fragment implements View.OnClickListener{
             getContext().unregisterReceiver(receiver);
         }
     }
+
 
     public void updateAccountInfo(String nickname, String portrait, int exp) {
         if (!TextUtils.isEmpty(nickname)) {
