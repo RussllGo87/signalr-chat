@@ -58,9 +58,9 @@ public class OkHttpCommonUtil {
         Cache cache = new Cache(context.getCacheDir(),cacheSize);
 
         mOkHttpClient = new OkHttpClient();
-        mOkHttpClient.setConnectTimeout(30, TimeUnit.SECONDS);
+        mOkHttpClient.setConnectTimeout(15, TimeUnit.SECONDS);
         mOkHttpClient.setWriteTimeout(10, TimeUnit.SECONDS);
-        mOkHttpClient.setReadTimeout(30, TimeUnit.SECONDS);
+        mOkHttpClient.setReadTimeout(15, TimeUnit.SECONDS);
         mOkHttpClient.setCache(cache);
     }
 
@@ -309,6 +309,12 @@ public class OkHttpCommonUtil {
 
             @Override
             public void onResponse(Response response) throws IOException {
+
+                Response cacheResponse = response.cacheResponse();
+                if(cacheResponse != null && cacheResponse.body().byteStream().available() > 0) {
+                    response = cacheResponse;
+                }
+
                 byte[] buf = new byte[2048];
                 int len = 0;
 
@@ -356,7 +362,7 @@ public class OkHttpCommonUtil {
      * @param errorResId 加载错误默认的图片resID
      */
     private void displayImage(final ImageView view, final String url, final int errorResId) {
-        Request request = new Request.Builder().url(url).build();
+        final Request request = new Request.Builder().url(url).build();
         Call call = mOkHttpClient.newCall(request);
 
         call.enqueue(new Callback() {
@@ -372,6 +378,10 @@ public class OkHttpCommonUtil {
 
             @Override
             public void onResponse(Response response) throws IOException {
+                Response cacheResponse = response.cacheResponse();
+                if(cacheResponse != null && cacheResponse.body().byteStream().available() > 0) {
+                    response = cacheResponse;
+                }
                 InputStream inputStream = null;
                 try {
                     inputStream = response.body().byteStream();
@@ -515,6 +525,10 @@ public class OkHttpCommonUtil {
 
             @Override
             public void onResponse(Response response) throws IOException {
+                Response cacheResponse = response.cacheResponse();
+                if(cacheResponse != null && cacheResponse.body().byteStream().available() > 0) {
+                    response = cacheResponse;
+                }
                 final String message = response.body().string();
                 mDelivery.post(new Runnable() {
                     @Override
