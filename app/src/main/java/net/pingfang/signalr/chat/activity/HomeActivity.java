@@ -92,7 +92,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     ChatService mService;
     boolean mBound = false;
     private Handler mDelivery;
-    private boolean mReturningWithResult = false;
     /** 微博相关参数,封装了 "access_token"，"expires_in"，"refresh_token"，并提供了他们的管理功能  */
     private Oauth2AccessToken mAccessToken;
     // 微信登录配置
@@ -450,7 +449,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         Log.d(TAG, "qs == " + qs);
         Intent intent = new Intent(getApplicationContext(),ChatService.class);
         Bundle args = new Bundle();
-        args.putInt(ChatService.FLAG_SERVICE_CMD, ChatService.FLAF_INIT_CONNECTION);
+        args.putInt(ChatService.FLAG_SERVICE_CMD, ChatService.FLAG_INIT_CONNECTION);
         args.putString(ChatService.FLAG_INIT_CONNECTION_QS, qs);
         intent.putExtra("args", args);
         startService(intent);
