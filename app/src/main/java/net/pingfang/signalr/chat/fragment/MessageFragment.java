@@ -159,10 +159,13 @@ public class MessageFragment extends Fragment implements LoaderManager.LoaderCal
 
         Uri baseUri = AppContract.RecentContactView.CONTENT_URI;
 
-        String selection = AppContract.RecentContactView.COLUMN_NAME_OWNER + " = ?" +
-                " AND " +
-                AppContract.RecentContactView.COLUMN_NAME_STATUS_MSG + " != ?";
-        String[] selectionArgs = new String[]{uid, String.valueOf(User.USER_STATUS_MSG_LIST_OUT)};
+        String selection = AppContract.RecentContactView.COLUMN_NAME_OWNER + " = ?";
+        String[] selectionArgs = new String[]{uid};
+
+//        String selection = AppContract.RecentContactView.COLUMN_NAME_OWNER + " = ?" +
+//                " AND " +
+//                AppContract.RecentContactView.COLUMN_NAME_STATUS_MSG + " != ?";
+//        String[] selectionArgs = new String[]{uid, String.valueOf(User.USER_STATUS_MSG_LIST_OUT)};
 
         return new CursorLoader(getContext(),baseUri,null,selection,selectionArgs,null);
     }
