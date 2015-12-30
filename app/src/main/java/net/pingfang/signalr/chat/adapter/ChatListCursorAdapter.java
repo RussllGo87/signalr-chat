@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.support.v4.widget.CursorAdapter;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -79,8 +80,6 @@ public class ChatListCursorAdapter extends CursorAdapter {
             tv_status_shield.setVisibility(View.VISIBLE);
         }
 
-
-
         TextView tv_msg_not_read = (TextView) view.findViewById(R.id.tv_msg_not_read);
         int count = cursor.getInt(cursor.getColumnIndex(AppContract.RecentContactView.COLUMN_NAME_COUNT));
         if(count > 0) {
@@ -95,7 +94,12 @@ public class ChatListCursorAdapter extends CursorAdapter {
             tv_msg_not_read.setVisibility(View.GONE);
         }
 
-
+        int msgListStatus = cursor.getInt(cursor.getColumnIndex(AppContract.RecentContactView.COLUMN_NAME_STATUS_MSG));
+        if(msgListStatus == User.USER_STATUS_MSG_LIST_IN) {
+            Log.d("ChatListCursorAdapter", "ChatListCursorAdapter bindView msgListStatus == USER_STATUS_MSG_LIST_IN");
+        } else {
+            Log.d("ChatListCursorAdapter", "ChatListCursorAdapter bindView msgListStatus == USER_STATUS_MSG_LIST_OUT");
+        }
         String uid = cursor.getString(cursor.getColumnIndex(AppContract.RecentContactView.COLUMN_NAME_UID));
 
         User user = new User(uid, nickname, portraitUrl);

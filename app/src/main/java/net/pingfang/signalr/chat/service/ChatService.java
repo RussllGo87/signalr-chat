@@ -1,7 +1,11 @@
 package net.pingfang.signalr.chat.service;
 
 import android.app.Service;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.Bundle;
@@ -16,6 +20,10 @@ import net.pingfang.signalr.chat.message.ChatMessageProcessor;
 import net.pingfang.signalr.chat.message.OnChatServiceConnectionChanged;
 import net.pingfang.signalr.chat.net.NetUtil;
 import net.pingfang.signalr.chat.util.GlobalApplication;
+
+import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import microsoft.aspnet.signalr.client.ConnectionState;
 import microsoft.aspnet.signalr.client.LogLevel;
@@ -34,7 +42,7 @@ public class ChatService extends Service {
 
     public static final String FLAG_SERVICE_CMD = "FLAG_SERVICE_CMD";
 
-    public static final int FLAF_INIT_CONNECTION = 0x01;
+    public static final int FLAG_INIT_CONNECTION = 0x01;
     public static final String FLAG_INIT_CONNECTION_QS = "FLAG_INIT_CONNECTION";
 
     public static final String URL = GlobalApplication.URL_COMMUNICATION_API_HOST + "/signalr/hubs/";
@@ -46,20 +54,57 @@ public class ChatService extends Service {
     ChatMessageListener messageListener;
     boolean isReconnectWhenDisconnect = false;
     String qs;
-    Handler mHandler = new Handler(Looper.getMainLooper());
     private long lastSendTime = 0L;
+    Handler mHandler = new Handler(Looper.getMainLooper());
+
+    private BroadcastReceiver mReceiver = new BroadcastReceiver()
+    {
+        @Override
+        public void onReceive(Context context, Intent intent)
+        {
+            String action = intent.getAction();
+            if (action.equals(ConnectivityManager.CONNECTIVITY_ACTION))
+            {
+            Timer timer = new Timer();
+            timer.schedule(new QunXTask(),new Date());
+        }
+        }
+    };
+
+    class QunXTask extends TimerTask{
+
+        @Override
+        public void run() {
+            if (NetUtil.isConnected(getApplicationContext())) {
+                mHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        initConnection();
+                    }
+                }, 1000);
+            }
+            else {
+                isReconnectWhenDisconnect = false;
+            }
+
+        }
+    }
 
     @Override
     public void onCreate() {
         super.onCreate();
+
+        IntentFilter mFilter = new IntentFilter();
+        mFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(mReceiver, mFilter);
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Bundle args = intent.getBundleExtra("args");
-        int requestFlag = args.getInt(FLAG_SERVICE_CMD, FLAF_INIT_CONNECTION);
+        int requestFlag = args.getInt(FLAG_SERVICE_CMD, FLAG_INIT_CONNECTION);
         switch(requestFlag) {
-            case FLAF_INIT_CONNECTION:
+            case FLAG_INIT_CONNECTION:
                 qs = args.getString(FLAG_INIT_CONNECTION_QS);
                 initConnection();
                 return START_REDELIVER_INTENT;
@@ -77,6 +122,7 @@ public class ChatService extends Service {
     public void onDestroy() {
         super.onDestroy();
 
+        unregisterReceiver(mReceiver); // 删除广播
         destroy();
     }
 
