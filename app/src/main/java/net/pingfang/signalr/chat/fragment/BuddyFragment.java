@@ -170,6 +170,7 @@ public class BuddyFragment extends Fragment implements LoaderManager.LoaderCallb
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        listCursorAdapter.notifyDataSetChanged();
         listCursorAdapter.swapCursor(data);
     }
 

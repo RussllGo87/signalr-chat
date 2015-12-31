@@ -60,6 +60,9 @@ public class BuddyListCursorAdapter extends CursorAdapter {
 
         TextView tv_user_distance = (TextView) view.findViewById(R.id.tv_user_distance);
         String distance = cursor.getString(cursor.getColumnIndex(AppContract.UserEntry.COLUMN_NAME_DISTANCE));
+        if(!TextUtils.isEmpty(distance)) {
+            tv_user_distance.setText("");
+        }
         tv_user_distance.setText(context.getResources().getString(R.string.tv_user_distance, distance));
 
         String uid = cursor.getString(cursor.getColumnIndex(AppContract.UserEntry.COLUMN_NAME_ENTRY_UID));
