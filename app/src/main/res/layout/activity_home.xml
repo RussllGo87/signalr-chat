@@ -20,6 +20,17 @@
                   android:textColor="@android:color/white"
                   android:textSize="@dimen/text_size_activity_title"/>
 
+        <!--
+        <TextView android:id="@+id/tv_activity_connection_status"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:text="连接成功"
+                  android:textColor="@android:color/white"
+                  android:textSize="10sp"
+                  android:layout_centerHorizontal="true"
+                  android:layout_alignBaseline="@+id/tv_activity_title"/>
+        -->
+
         <TextView android:id="@+id/tv_msg_bulk"
                   android:layout_width="wrap_content"
                   android:layout_height="wrap_content"

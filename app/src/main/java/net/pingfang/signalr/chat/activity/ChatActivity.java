@@ -83,6 +83,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
     TextView btn_activity_back;
     TextView tv_activity_title;
+    TextView tv_activity_connection_status;
     TextView tv_offline_message;
     ScrollView sv_message_container;
     LinearLayout ll_message_container;
@@ -325,6 +326,9 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         tv_activity_title = (TextView) findViewById(R.id.tv_activity_title);
         tv_activity_title.setText(getString(R.string.title_activity_chat, buddyName));
 
+        tv_activity_connection_status = (TextView) findViewById(R.id.tv_activity_connection_status);
+        tv_activity_connection_status.setText(helper.getStringValue(ChatService.KEY_CONNECTION_STATUS,""));
+
         tv_offline_message = (TextView) findViewById(R.id.tv_offline_message);
 
         sv_message_container = (ScrollView) findViewById(R.id.sv_message_container);
@@ -427,6 +431,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     public void registerReceiver() {
         receiver = new MessageReceiver();
         IntentFilter filter = new IntentFilter();
+        filter.addAction(ChatService.INTENT_ACTION_CONNECTION_STATUS);
         filter.addAction(GlobalApplication.ACTION_INTENT_ONLINE_MESSAGE_INCOMING);
         filter.addAction(GlobalApplication.ACTION_INTENT_OFFLINE_MESSAGE_LIST_INCOMING);
         filter.addAction(GlobalApplication.ACTION_INTENT_BULK_MESSAGE_INCOMING);
@@ -963,6 +968,11 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                 if (buddyUid.equals(fromUid)) {
                     new ProcessMessageTask().execute(messageUri);
                 }
+            } else if(action.equals(ChatService.INTENT_ACTION_CONNECTION_STATUS)) {
+                Bundle args = intent.getBundleExtra("args");
+                String message = args.getString("message");
+                Log.d(TAG, "ChatService.INTENT_ACTION_CONNECTION_STATUS == " + message);
+                tv_activity_connection_status.setText(message);
             }
         }
     }

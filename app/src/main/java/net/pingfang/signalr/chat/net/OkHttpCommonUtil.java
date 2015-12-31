@@ -309,12 +309,6 @@ public class OkHttpCommonUtil {
 
             @Override
             public void onResponse(Response response) throws IOException {
-
-                Response cacheResponse = response.cacheResponse();
-                if(cacheResponse != null && cacheResponse.body().byteStream().available() > 0) {
-                    response = cacheResponse;
-                }
-
                 byte[] buf = new byte[2048];
                 int len = 0;
 
@@ -378,10 +372,6 @@ public class OkHttpCommonUtil {
 
             @Override
             public void onResponse(Response response) throws IOException {
-                Response cacheResponse = response.cacheResponse();
-                if(cacheResponse != null && cacheResponse.body().byteStream().available() > 0) {
-                    response = cacheResponse;
-                }
                 InputStream inputStream = null;
                 try {
                     inputStream = response.body().byteStream();
@@ -525,10 +515,6 @@ public class OkHttpCommonUtil {
 
             @Override
             public void onResponse(Response response) throws IOException {
-                Response cacheResponse = response.cacheResponse();
-                if(cacheResponse != null && cacheResponse.body().byteStream().available() > 0) {
-                    response = cacheResponse;
-                }
                 final String message = response.body().string();
                 mDelivery.post(new Runnable() {
                     @Override

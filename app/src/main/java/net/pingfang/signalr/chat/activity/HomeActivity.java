@@ -1,9 +1,11 @@
 package net.pingfang.signalr.chat.activity;
 
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.net.Uri;
 import android.os.Bundle;
@@ -69,6 +71,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     public static final String TAG = HomeActivity.class.getSimpleName();
 
     TextView tv_activity_title;
+//    TextView tv_activity_connection_status;
     TextView tv_msg_bulk;
     TextView tv_menu_drop_down;
     FrameLayout fl_container;
@@ -88,7 +91,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     SharedPreferencesHelper helper;
     // qq 登录配置
     Tencent mTencent;
-    //    ChatService chatService;
     ChatService mService;
     boolean mBound = false;
     private Handler mDelivery;
@@ -96,6 +98,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private Oauth2AccessToken mAccessToken;
     // 微信登录配置
     private WxOauth2AccessToken mWxOauth2AccessToken;
+
+    MessageReceiver messageReceiver;
 
     /***
      * OnBuddyFragmentInteractionListener方法实现
@@ -338,7 +342,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         if (mBound) {
 
             String exitMsg = "{UserId:" + "\"" + helper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID) +"\"" +  "}";
-            mService.sendMessage("OffLineNotify",exitMsg);
+            mService.sendMessage("OffLineNotify", exitMsg);
 
 //            mService.destroy();
 //            unbindService(mConnection);
@@ -356,6 +360,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     private void initView() {
         tv_activity_title = (TextView) findViewById(R.id.tv_activity_title);
+//        tv_activity_connection_status = (TextView) findViewById(R.id.tv_activity_connection_status);
+//        tv_activity_connection_status.setText(helper.getStringValue(ChatService.KEY_CONNECTION_STATUS,"连接正常"));
         tv_msg_bulk = (TextView) findViewById(R.id.tv_msg_bulk);
         tv_msg_bulk.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -445,6 +451,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void initCommunicate() {
+
+        registerReceiver();
+
         String qs = constructLogin(helper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID));
         Log.d(TAG, "qs == " + qs);
         Intent intent = new Intent(getApplicationContext(),ChatService.class);
@@ -453,6 +462,13 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         args.putString(ChatService.FLAG_INIT_CONNECTION_QS, qs);
         intent.putExtra("args", args);
         startService(intent);
+    }
+
+    public void registerReceiver() {
+        messageReceiver = new MessageReceiver();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(ChatService.INTENT_ACTION_CONNECTION_STATUS);
+        registerReceiver(messageReceiver, filter);
     }
 
     private void bindChatService() {
@@ -474,6 +490,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onDestroy() {
         super.onDestroy();
+
+        if (messageReceiver != null) {
+            unregisterReceiver(messageReceiver);
+        }
 
         if (mBound) {
             mService.destroy();
@@ -600,4 +620,16 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         return stringBuffer.toString();
     }
 
+    class MessageReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if(action.equals(ChatService.INTENT_ACTION_CONNECTION_STATUS)) {
+                Bundle args = intent.getBundleExtra("args");
+                String message = args.getString("message");
+                Log.d(TAG, "ChatService.INTENT_ACTION_CONNECTION_STATUS == " + message);
+//                tv_activity_connection_status.setText(message);
+            }
+        }
+    }
 }
