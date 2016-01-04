@@ -190,6 +190,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             ChatService.ChatBinder binder = (ChatService.ChatBinder) service;
             mService = binder.getService();
             mBound = true;
+            loadTop();
         }
 
         @Override
@@ -410,6 +411,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                     case 2:
                         tv_activity_title.setText(R.string.tv_activity_title_roster);
                         setImageViewGroupSelected(2);
+                        loadTop();
                         break;
                     case 3:
                         tv_activity_title.setText(R.string.tv_activity_title_account);
@@ -520,6 +522,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.iv_list_nearby_people:
                 pager.setCurrentItem(2);
                 setImageViewGroupSelected(2);
+                loadTop();
                 break;
             case R.id.iv_account_management:
                 pager.setCurrentItem(3);
