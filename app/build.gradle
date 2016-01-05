@@ -9,7 +9,7 @@ android {
         applicationId "net.pingfang.signalr.chat"
         minSdkVersion 9
         targetSdkVersion 22
-        versionCode 20
+        versionCode 21
     }
     buildTypes {
         debug {
@@ -26,12 +26,12 @@ android {
         demo {
             applicationId "net.pingfang.signalr.chat.demo"
             minSdkVersion 9
-            versionName "1.0.39alpha"
+            versionName "1.0.42alpha"
         }
         full {
             applicationId "net.pingfang.signalr.chat.full"
             minSdkVersion 9
-            versionName "1.0.39"
+            versionName "1.0.42"
         }
     }
     packagingOptions {

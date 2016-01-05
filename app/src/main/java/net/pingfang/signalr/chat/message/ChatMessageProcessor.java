@@ -359,7 +359,10 @@ public class ChatMessageProcessor implements ChatMessageListener {
                 String fromHeadPortrait = jsonObject.getString("HeadPortrait");
                 if (!TextUtils.isEmpty(fromHeadPortrait)) {
                     if (!"null".equals(fromHeadPortrait)) {
-                        fromHeadPortrait = GlobalApplication.URL_WEB_API_HOST + "/UpLoad/Head/" + fromHeadPortrait;
+                        if(!fromHeadPortrait.startsWith("http")) {
+                            fromHeadPortrait = GlobalApplication.URL_WEB_API_HOST + "/UpLoad/Head/" + fromHeadPortrait;
+                        }
+
                     } else {
                         fromHeadPortrait = "";
                     }
@@ -367,12 +370,16 @@ public class ChatMessageProcessor implements ChatMessageListener {
                     fromHeadPortrait = "";
                 }
                 int gender = User.USER_GENDER_MALE;
-                boolean sex = jsonObject.getBoolean("Sex");
-                if (sex) {
-                    gender = User.USER_GENDER_MALE;
-                } else {
-                    gender = User.USER_GENDER_FEMALE;
+                String sexStr = jsonObject.getString("Sex");
+                if(!TextUtils.isEmpty(sexStr) && !"null".equals(sexStr)) {
+                    boolean sex = jsonObject.getBoolean("Sex");
+                    if (sex) {
+                        gender = User.USER_GENDER_MALE;
+                    } else {
+                            gender = User.USER_GENDER_FEMALE;
+                    }
                 }
+
                 int count = jsonObject.getInt("Count");
                 String toUid = sharedPreferencesHelper.getStringValue(AppConstants.KEY_SYS_CURRENT_UID);
 

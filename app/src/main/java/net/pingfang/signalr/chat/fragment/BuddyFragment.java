@@ -110,12 +110,13 @@ public class BuddyFragment extends Fragment implements LoaderManager.LoaderCallb
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        listCursorAdapter = new BuddyListCursorAdapter(getContext(),null, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
-        list_user.setAdapter(listCursorAdapter);
         list_user.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                User user = (User) view.getTag();
+                BuddyListCursorAdapter.ViewDataHolder holder = (BuddyListCursorAdapter.ViewDataHolder) view.getTag();
+
+                User user = new User(holder.getUid(), holder.getNickname(), holder.getPortraitUrl(), holder.getRemark(), holder.getGender(),
+                        holder.getMsgListStatus(), holder.getNearbyStatus(), 0, holder.getDistance());
 
                 Intent intent = new Intent();
                 intent.setClass(getContext(), ChatActivity.class);
@@ -170,8 +171,8 @@ public class BuddyFragment extends Fragment implements LoaderManager.LoaderCallb
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        listCursorAdapter.notifyDataSetChanged();
-        listCursorAdapter.swapCursor(data);
+        listCursorAdapter = new BuddyListCursorAdapter(getContext(),data, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+        list_user.setAdapter(listCursorAdapter);
     }
 
     @Override

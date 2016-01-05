@@ -200,7 +200,12 @@ public class MainActivity extends AppCompatActivity implements LocationNotify {
                                                 }
                                             }
                                         });
-                                dialogFragment.show(getSupportFragmentManager(), "DoubleButtonDialogFragment");
+                                try {
+                                    dialogFragment.show(getSupportFragmentManager(), "DoubleButtonDialogFragment");
+                                } catch (IllegalStateException e) {
+                                    Log.d(TAG, "IllegalStateException when show dialog");
+                                }
+
                             }
                         });
                     } else {
