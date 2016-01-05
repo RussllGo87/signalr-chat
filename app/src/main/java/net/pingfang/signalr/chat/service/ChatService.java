@@ -83,7 +83,7 @@ public class ChatService extends Service {
             String message = "";
             if (NetUtil.isConnected(getApplicationContext())) {
                 Log.d(TAG, "网络连接成功");
-                message = "网络连接成功";
+                message = "连网成功";
                 isReconnectWhenDisconnect = true;
                 mHandler.postDelayed(new Runnable() {
                     @Override
@@ -93,7 +93,7 @@ public class ChatService extends Service {
                 }, 500);
             } else {
                 Log.d(TAG, "网络连接已经断开");
-                message = "网络连接已经断开";
+                message = "网络断开";
                 isReconnectWhenDisconnect = false;
             }
 
@@ -173,17 +173,17 @@ public class ChatService extends Service {
 
                 if (oldState == ConnectionState.Disconnected && newState == ConnectionState.Connecting) {
                     Log.d(TAG, "聊天服务正在连接");
-                    message = "聊天服务正在连接";
+                    message = "正在连接";
                 }
 
                 if (oldState == ConnectionState.Connecting && newState == ConnectionState.Connected) {
                     Log.d(TAG, "聊天服务连接成功");
-                    message = "聊天服务连接成功";
+                    message = "连接成功";
                 }
 
                 if (oldState == ConnectionState.Connected && newState == ConnectionState.Disconnected) {
                     Log.d(TAG, "聊天服务连接断开");
-                    message = "聊天服务连接断开";
+                    message = "连接断开";
                     if (isReconnectWhenDisconnect) {
                         mHandler.postDelayed(new Runnable() {
                             @Override
@@ -196,17 +196,17 @@ public class ChatService extends Service {
 
                 if (oldState == ConnectionState.Disconnected && newState == ConnectionState.Reconnecting) {
                     Log.d(TAG, "正在重新连接聊天服务");
-                    message = "正在重新连接聊天服务";
+                    message = "重新连接";
                 }
 
                 if (oldState == ConnectionState.Reconnecting && newState == ConnectionState.Connected) {
                     Log.d(TAG, "重新连接聊天服务成功");
-                    message = "重新连接聊天服务成功";
+                    message = "重连成功";
                 }
 
                 if (oldState == ConnectionState.Reconnecting && newState == ConnectionState.Disconnected) {
                     Log.d(TAG, "重新连接聊天服务失败");
-                    message = "重新连接聊天服务失败";
+                    message = "重连失败";
                     if (isReconnectWhenDisconnect) {
                         mHandler.postDelayed(new Runnable() {
                             @Override
